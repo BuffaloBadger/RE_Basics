@@ -1,0 +1,102 @@
+# Solving Algebraic Equations {#sec-solving-ates}
+
+This appendix provides a simplified overview of the numerical solution of sets of algebraic-transcendental equations (ATEs). It is not specific to any one computer program or language. Students seeking a more complete understanding should consult a numerical methods textbook or take a course on numerical methods.
+
+## Writing ATEs as Residuals
+
+For present purposes, an algebraic-transcendental equation (ATE) is one that does not contain derivatives, integrals, limits, etc., but that might contain transcendental functions such as exponentials, logarithms, etc. Equations [-@eq-example-ate-1], [-@eq-example-ate-2] and [-@eq-example-ate-3] are an example of a set of ATEs that might need to be solved to find the values of $\dot n_A$, $\dot n_Z$ and $T$ in a *Reaction Engineering Basics* problem. Those equations have been written so that there is a zero on one side of the equation. When an equation is written this way, the function on the other side of the equals sign can be called a *residual*.
+
+$$
+0 = \dot n_{A,in} - \dot n_A - Vk_0\exp{\left(  \frac{-E}{RT} \right)}\frac{\dot n_A^2 \dot n_Z}{\dot V^3}
+$$ {#eq-example-ate-1}
+
+$$
+0 = \dot n_{Z,in} - \dot n_Z + Vk_0\exp{\left(  \frac{-E}{RT} \right)}\frac{\dot n_A^2 \dot n_Z}{\dot V^3}
+$$ {#eq-example-ate-2}
+
+$$
+0 = \left( \dot n_{A,in} \hat C_{p,A} + \dot n_{Z,in} \hat C_{p,Z} \right)\left(  T - T_0 \right) + Vk_0\exp{\left(  \frac{-E}{RT} \right)}\frac{\dot n_A^2 \dot n_Z}{\dot V^3}\Delta H
+$$ {#eq-example-ate-3}
+
+Letting $u_1$, $u_2$ and $u_3$ represent the three unknown quantities and $f_1$, $f_2$ and $f_3$ represent the residuals, it can be seen that the equations are of the general form shown in Equations [-@eq-example-general-ate-1], [-@eq-example-general-ate-2] and [-@eq-example-general-ate-3]. Clearly, if the value of the three residuals are each 0 when a set of values ($u_1$, $u_2$,$u_3$) is substituted into them, then the values ($u_1$, $u_2$,$u_3$) are a solution to the set of equations.
+
+$$
+0=f_1\left(  u_1, u_2, u_3 \right)
+$$ {#eq-example-general-ate-1}
+
+$$
+0=f_2\left(  u_1, u_2, u_3 \right)
+$$ {#eq-example-general-ate-2}
+
+$$
+0=f_3\left(  u_1, u_2, u_3 \right)
+$$ {#eq-example-general-ate-3}
+
+## Preparing the ATEs for Solution
+
+In order to solve a set of $N$ ATEs, there must be a total of $N$ unknowns in the equations. So, given a set of $N$ ATEs, the first step in preparing to solve them is to **identify $N$ unknowns that will found by solving the equations**. Continuing with the example in the preceding section, if Equations [-@eq-example-ate-1], [-@eq-example-ate-2] and [-@eq-example-ate-3] are going to be solved for $\dot n_A$, $\dot n_Z$ and $T$, the equations can be rewritten as shown in Equations [-@eq-example-ate-1u], [-@eq-example-ate-2u] and [-@eq-example-ate-3u] where $u_1$, $u_2$ and $u_3$ represent $\dot n_A$, $\dot n_Z$ and $T$, respectively.
+
+$$
+0 = \dot n_{A,in} - u_1 - Vk_0\exp{\left(  \frac{-E}{Ru_3} \right)}\frac{u_1^2 u_2}{\dot V^3}
+$$ {#eq-example-ate-1u}
+
+$$
+0 = \dot n_{Z,in} - u_2 + Vk_0\exp{\left(  \frac{-E}{Ru_3} \right)}\frac{u_1^2 u_2}{\dot V^3}
+$$ {#eq-example-ate-2u}
+
+$$
+0 = \left( \dot n_{A,in} \hat C_{p,A} + \dot n_{Z,in} \hat C_{p,Z} \right)\left( u_3 - T_0 \right) + Vk_0\exp{\left(  \frac{-E}{Ru_3} \right)}\frac{u_1^2 u_2}{\dot V^3}\Delta H
+$$ {#eq-example-ate-3u}
+
+Once $N$ equations and $N$ unknowns have been identified, the second step in preparing to solve them is to **express every other quantity appearing in the equations in terms of known constants and the $N$ unknowns**. In the example being used here, that means that $\dot n_{A,in}$, $V$, $k_0$, $E$, $R$, $\dot V$, $\dot n_{Z,in}$, $\hat C_{p,A}$, $\hat C_{p,Z}$ and $\Delta H$, must each be expressed in terms of $u_1$, $u_2$, $u_3$ and known constants. When that has been done, the set of ATEs is ready to be solved.
+
+## Items that must be Provided to the Solver
+
+Sets of ATEs can be solved numerically. In this appendix, the term "solver" is used to refer to the computer program or function that numerically solves a set of ATEs. There are many different ATE solvers available, and each has specific instructions on how to use it. This appendix makes no attempt to explain the details of using any of the available equation solvers.
+
+No matter which solver is used, there are **two things that must be provided** to it. The first is **a guess for the solution**. In the case of Equations [-@eq-example-ate-1u], [-@eq-example-ate-2u] and [-@eq-example-ate-3u] the guess would consist of a value for $u_1$, a value for $u_2$ and a value for $u_3$. The other thing that must be provided to the solver is **a means of calculating the value of each of the residuals**, given values for the unknowns. Typically this is done by providing the name of a function or subroutine to the solver. That subroutine receives values of the unknowns as arguments. It then evaluates the residuals, e. g. $f_1$, $f_2$ and $f_3$ in Equations [-@eq-example-ate-1u], [-@eq-example-ate-2u] and [-@eq-example-ate-3u], and returns their values.
+
+## A Simplistic Explanation of How the ATEs are Solved
+
+It should be noted that the solver can solve a set of *linear* equations exactly, or at least to within the roundoff error of the computer, easily and rapidly. When ATEs are solved numerically, the solution is not exact, but it is "very close" to the actual solution. See the following section on convergence for a more complete explanation of what is meant by "very close."
+
+The description of numerical solution of ATEs presented here is overly simplistic. It is intended to provide a sense of how the solver works. The solver begins by approximating the residuals as linear functions that pass through the point provided to it as a guess. It then solves the linear approximation to obtain an improved guess. The values of the residuals are calculated using the improved guess and checked to see whether they are "very close" to zero. If so, the improved guess is the solution to the ATEs. The solver returns the improved guess as the solution and quits. If the residuals are not "very close" to zero, the entire process is repeated starting with the improved guess. This continues until a solution is found or until the solver determines it is not able to find a solution (see the following sections on convergence and cautions).
+
+## Convergence
+
+As explained in the preceding section, the numerical solution of a set of ATEs is an iterative process. In each iteration the values of the residuals are calculated and checked to determine whether they are "very close" to zero. Ideally, the values of the residuals should get closer and closer to zero with each iteration. This is called convergence to the solution. Sometimes the solver is unable to converge to the point where the residuals are "very close" to zero. In this situation, the solver eventually has to quit without finding the solution (hopefully warning the user of this fact). Most solvers have several criteria that they use to determine when to stop iterating. Common convergence criteria include the following:
+
+* the residuals are smaller than a specified amount (a solution has been found).
+* a specified number of iterations has occurred (a solution was not found).
+* the residuals have been evaluated a specified number of times (a solution was not found).
+* the values of the residuals are getting farther from zero instead of closer (a solution was not found).
+* the values of the residuals are changing by less than a specified amount between iterations (a solution was not found).
+* the improved guess is changing by less than a specified amount between iterations (a solution was not found).
+
+Each "specified amount" in these criteria typically has a default value that can can be over-ridden when the solver is started.
+
+## Cautions Related to Numerical Solutions
+
+1. As noted in the preceding section on convergence, sometimes the solver is not able to converge to a solution. Assuming there are no errors in the function that calculates the values of the residuals, when this happens, it is often because the guess provided to the solver wasn't close enough to the solution. Another reason might be a singularity in the residuals, as written. If the solver does not converge there are a few things that can be tried.
+    a. Restart the solver using a different guess.
+    b. Rewrite the residuals so that there are no denominators that contain an unknown. This can be done multiplying both sides of the residual by each denominator that contains an unknown.
+2. Nonlinear equations can have more than one solution. For example, a quadratic polynomial has two solutions. Most solvers will only locate one solution. To find other solutions, the solver should be re-started using a different guess.
+
+## Symbols Used in this Appendix
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $f_i$ | $i^{\text{th}}$ residual function. |
+| $k_0$ | Pre-exponential factor in the Arrhenius expression. |
+| $\dot n_i$ | Molar flow rate of reagent $i$; an additional subscripted $in$ denotes the inlet molar flow rate. |
+| $u_i$ | $i^{\text{th}}$ unknown. |
+| $\hat C_{p,i}$ | Molar heat capacity of reagent $i$. |
+| $E$ | Activation energy in the Arrhenius expression. |
+| $N$ | Number of ATEs being solved and number of unknowns being found. |
+| $R$ | Ideal gas constant. |
+| $T$ | Temperature. | 
+| $V$ | Volume of reacting fluid. |
+| $\dot V$ | Volumetric flow rate. |
+| $\Delta H$ | Heat of reaction. |
+
+: {tbl-colwidths="[20,80]"}

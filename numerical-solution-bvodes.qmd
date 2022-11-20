@@ -1,0 +1,109 @@
+# Solving Boundary-Value ODEs {#sec-solving-bvodes}
+
+There is only one situation where boundary value ordinary differential equations (BVODEs) are encountered in *Reaction Engineering Basics*. This appendix presents a simplified overview of how to solve them numerically. It offers a general description that is not specific to any one computer program or language.
+
+## Boundary-value ODEs in *Reaction Engineering Basics*
+
+The axial dispersion reactor model equations are second-order BVODEs. @eq-bvode-ex, with the boundary conditions given in Equations [-@eq-bvode-ex-bc1] and [-@eq-bvode-ex-bc2], is an example of a BVODE that might be encountered in *Reaction Engineering Basics*. Notice that the boundary values are written in the form of residuals (with a zero on one side of the equation).
+
+$$
+-D_{ax} \frac{d^2 C_A}{dz^2} + u_s \frac{dC_A}{dz} = -kC_A
+$$ {#eq-bvode-ex}
+
+
+$$
+u_s C_A \Bigr\rvert_{z=0} - D_{ax} \frac{dC_A}{dz} \Bigr\rvert_{z=0} - u_s C_{A,in} = 0
+$$ {#eq-bvode-ex-bc1}
+
+$$
+\frac{dC_A}{dz} \Bigr\rvert_{z=L} = 0
+$$ {#eq-bvode-ex-bc2}
+
+ Each BVODE can be written in the form shown in @eq-bvode, where $g_1$ and $g_2$ may be constants or functions of $x$ and $y$. The BVODE applies only in the range of $x$ from $a$ to $b$, where $a$ and $b$ are constants. The boundary conditions take the form shown in Equations [-@eq-bvode-bc1] and [-@eq-bvode-bc2], where $f_1$ and $f_2$ are residual functions that evaluate to zero when the boundary conditions are satisfied. BVODEs differ from initial-value ODEs in that one boundary condition applies at one end of the range of $x$ and the other applies at the other end of the range.
+
+$$
+\frac{d^2y}{dx^2} -g_1 \frac{dy}{dx} = g_2 \, \quad a \le x \le b
+$$ {#eq-bvode}
+
+$$
+f_1\left(y \Big\rvert_{x=a}, \left( \frac{dy}{dx} \right)\Bigg\rvert_{x=a} \right) = 0 
+$$ {#eq-bvode-bc1}
+
+$$
+f_2\left(y \Big\rvert_{x=b}, \left( \frac{dy}{dx} \right)\Bigg\rvert_{x=b} \right) = 0 
+$$ {#eq-bvode-bc2}
+
+## Writing a Second-Order ODE as Two First-Order ODEs
+
+Before solving, each second-order BVODE is converted to two first-order ODEs. Using @eq-bvode-ex as an example, a new first-order ODE simply defines a new variable, $w$, @eq-bvode-new-var. Noting that with that definition, $\frac{dw}{dz} = \frac{d^2C_A}{dz^2}$, substituting for $\frac{d^2C_A}{dz^2}$ and $\frac{dC_A}{dz}$ in @eq-bvode-ex yields the other first order ODE, @eq-bvode-new-ode. The boundary conditions also need to be re-written as Equations [-@eq-bvode-new-bc1] and [-@eq-bvode-new-bc2].
+
+$$
+\frac{dC_A}{dz}=w
+$$ {#eq-bvode-new-var}
+
+$$
+-D_{ax} \frac{dw}{dz} + u_s w = -kC_A \quad \Rightarrow \quad \frac{dw}{dz} = \frac{kC_A + u_sw}{D_{ax}}
+$$ {#eq-bvode-new-ode}
+
+$$
+u_s C_A \Bigr\rvert_{z=0} - D_{ax} w \Bigr\rvert_{z=0} - u_s C_{A,in} = 0
+$$ {#eq-bvode-new-bc1}
+
+$$
+w \Bigr\rvert_{z=L} = 0 
+$$ {#eq-bvode-new-bc2}
+
+At this point, Equations [-@eq-bvode-new-var] through [-@eq-bvode-new-bc2] are in a form that can be solved numerically.
+
+## Items that Must be Provided to the Solver
+
+As in the other numerical methods appendices, the term "solver" is used here to refer to the computer program or function that numerically solves a set of BVODEs. There are many different BVODE solvers available, and each has specific instructions on how to use it. This appendix makes no attempt to explain the details of using any one of the available solvers.
+
+However, no matter which specific solver one uses, there are six things that must be provided to the solver. The first of two of these are the values of $x$ at each end of the range where the BVODEs are valid. In terms of Equations [-@eq-bvode] through [-@eq-bvode-bc2] this means providing the values of $a$ and $b$. In the example here, Equations [-@eq-bvode-ex] through [-@eq-bvode-ex-bc2], those values are 0 and $L$.
+
+The process for solving the BVODEs requires dividing the range of $x$ between $a$ and $b$ into a number of small intervals. The third thing that must be supplied to the solver is the number of intervals to be used. Generally a larger number of intervals results in a more accurate answer, but increases the computation time.
+
+The fourth thing that must be provided to the solver is a guess for the values of the dependent variables. The form in which this is provided might vary depending on the specific software being used. In the simplest case, the fourth item is simply a guess for the average value of $C_A$ between $z=0$ and $z=L$ and a guess for the average value of $w$ between $z=0$ and $z=L$. In a more demanding case, this might entail providing a guess for the values of $C_A$ and $w$ at the boundary of each of the intervals between $z=0$ and $z=L$.
+
+The fifth thing that must be provided to the BVODE solver is a means of calculating the values of each of the first order derivatives, given values for the independent variable and the dependent variables. Quite commonly, this is done by providing the name of a function or subroutine to the solver. That subroutine receives values of the independent variable and the dependent variables as arguments. It then uses the expressions for the first-order ODEs being solved, Equations [-@eq-bvode-new-var] and [-@eq-bvode-new-ode] in the present example, to calculate the values of the derivatives, $\frac{dC_A}{dz}$ and $\frac{dw}{dz}$, and returns them.
+
+The final thing that must be provided to the BVODE solver is a means of evaluating the boundary conditions, i. e. a means of evaluating the residual functions, $f_1$ and $f_2$, given values for the dependent variables, $y$ and $w$, at each of the boundaries, $x=a$ and $x=b$. Again, this is commonly done by providing the name of another function or subroutine to the solver. That subroutine receives $y \Big\rvert_{x=a}$, $w \Big\rvert_{x=a}$, $y \Big\rvert_{x=b}$ and $w \Big\rvert_{x=b}$ as arguments. It then calculates the values of $f_1$ and $f_2$ and returns them. In the present example, this second subroutine would receive $C_A \Bigr\rvert_{z=0}$, $C_A \Bigr\rvert_{z=L}$, $w\Bigr\rvert_{z=0}$, and $w\Bigr\rvert_{z=L}$ as arguments, use  Equations [-@eq-bvode-new-bc1] and [-@eq-bvode-new-bc2] to evaluate the residuals, and return them.
+
+## A Simplified Description of How the BVODEs are Solved
+
+The description in this section is highly simplified, and it leaves out some details. It is intended only to provide a sense of how BVODEs are solved numerically. To start, the solver uses the information provided to it to divide the $x$ range into many small intervals. It uses an approximating polynomial, e. g. $y = m_1x^3 + m_2x^2 + m_3x + m_4$, to approximate each dependent variable in each of the intervals. That is, the values of $m_1$, $m_2$, $m_3$, and $m_4$ will be different for each dependent variable and in each interval. At this point those values are unknown, and solving the BVODEs equates to finding those values. Note that $\frac{dy}{dx}$ can also be approximated by taking the derivative of the approximating polynomial. The equations used to find the values of the coefficients are based on requirements that the solution must meet.
+
+* At the boundary between any two intervals, the approximating polynomials on each side must yield the same value of $y$.
+* At the two ends of the range of $x$, the approximating polynomials must satisfy the boundary conditions in Equations [-@eq-bvode-bc1] and [-@eq-bvode-bc2].
+* At any point within an interval, the approximating functions must obey the ODEs, Equations [-@eq-bvode-new-var] and [-@eq-bvode-new-ode].
+    * There is an infinite number of points within the interval, so to meet this requirement distinct points within each interval, called collocation points, are chosen and this requirement is applied at those points. Typically, the collocation points include the two ends of the interval and as many equally-spaced points in between as are needed to calculate the values of $m_1$, $m_2$, $m_3$, and $m_4$ for every dependent variable in every interval.
+    
+Applying those requirements leads to a set of non-linear equations that needs to be solved to find the values of $m_1$, $m_2$, $m_3$, and $m_4$ for every dependent variable in every interval. See [Appendix -@sec-solving-ates] for an overview of how that is accomplished. Doing so requires an initial guess for the values; the solver generates the guess using the guess for the value of $y$ that is provided to it.
+
+## Cautions Related to Numerical Solution
+
+The process of dividing the range of $x$ into intervals is sometimes called *mesh generation*. The presentation here implied that the intervals were equally sized, but this is not required. If the solution varies very stronly in one part of the range of $x$ and not in other parts, it is possible to use smaller intervals where it is varying strongly and larger intervals elsewhere. This can increase the accuracy of the result without increasing the amount of computation required.
+
+A related caution is that some solvers will adjust the number of intervals in order to maintain accuracy. As such, the number of intervals returned by the solver should not be assumed to equal the number specified in the call to the solver.
+
+It won't be encountered in *Reaction Engineering Basics*, but when BVODEs are written in cylindrical or spherical coordinates, a term may contain $x^{-1}$. Then, if the range of $x$ includes $0$, that term will become infinite at that point. This is known as a singularity. If the BVODEs have such a singluarity, there are methods that have not been discussed here that can be used to solve them.
+
+## Symbols Used in this Appendix
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $a$, $b$ | End points of the range over with the BVODE applies. |
+| $f_i$ | $i^{th}$ residual function. |
+| $g_i$ | $i^{th}$ function of the independent and dependent variables. |
+| $k$ | Rate coefficient.|
+| $m_i$ | $i^{th}$ coefficient in the polynomial used to approximate the dependent variable in one of the intervals of the range of interest. |
+| $u_s$ | Superficial velocity. |
+| $w$ | New dependent variable used to convert a second-order ODE into two first-order ODEs. |
+| $x$ | Independent variable. |
+| $y$ | Dependent variable. |
+| $z$ | Axial distance from the reactor inlet. |
+| $C_A$ | Concentration of reagent A; an additional subscripted $in$ denotes the concentration at the reactor inlet. |
+| $D_{ax}$ | Axial dispersion coefficient. |
+| $L$ | Length of the reactor. |
+
+: {tbl-colwidths="[20,80]"}
