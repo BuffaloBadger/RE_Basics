@@ -1,9 +1,5 @@
 Things to do or think about doing
 
-* Revise all equations with indices with restricted ranges
-* Revise all fractions containing summations or continuous products to use displaystyle so the indices are under the summation or product symbol.
-* Revise all equations that are too long, splitting them into multiple lines.
-* Purge upper limits that were removed from summations and continuous products from the table of symbols used in the chapter.
 * Revise 4.4.3 to note that unimolecular reactions aren't elementary but note that equations 4.15 and 4.16 will given the correct mathematical form except for gas phase systems at very low pressures.
 * Revise preface once SCoRE is available.
 * As SCoRE video is added for each example, add link to the numerical calculations videos (python) and (Matlab)
