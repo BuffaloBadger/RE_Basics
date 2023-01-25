@@ -7,7 +7,7 @@ As noted in @sec-react-eng-def, the composition of a reacting system changes ove
 Consider a closed system that initially contains a mixture of reagents. Let $N_{i,0}$ represent the number of molecules of reagent $i$ in that mixture. Suppose that there is only one reaction, $j$, that can occur, and further suppose that in the reaction expression, the stoichiometric coefficients, $\nu _{i,j}$, equal the number of $i$ molecules that participate each time molecular reaction event $j$ occurs. If $N_{j,net}$ is the *net* number of times molecular reaction event $j$ has occurred, then the change in the number of molecules of $i$ is equal to $\nu _{i,j} N_{j,net}$. (Remember, if $i$ is a reactant, its stoichiometric coefficient will be negative, so the change in the number of molecules will be negative, and the number of $i$ molecules will decrease, as it should. Similarly, if $i$ is a product, the stoichiometric coefficient will be positive and the number of $i$ molecules will increase.)
 
 $$
-\Delta N_i = N_i - N_{i,0} = \nu _{i,j} N_{j,net}
+N_i - N_{i,0} = \nu _{i,j} N_{j,net}
 $$
 
 In real-world systems, the number of molecules is huge, and it is more convenient to work with moles. Dividing both sides of the equation by Avogadro’s number, $N_{Av}$, and rearranging, gives an expression for the moles of $i$ at any later time, given the number of moles of $i$ at the start of the process.
@@ -49,11 +49,11 @@ If the starting composition is stoichiometric, then the fractional conversion of
 If it is desired to have a conversion that always ranges from 0 to 100%, the fraction of equilibrium conversion, @eq-frac_of_eq_conversion_closed for a closed system or @eq-frac_of_eq_conversion_open for an open, steady-state system, can be used. The fraction of equilibrium conversion, $g_i$ is just the actual conversion relative to the conversion at equilibrium, so it, too, is an intensive variable. The vertical bar in these equations means "evaluated at", and “eq” is shorthand for equilibrium, so together the vertical bar followed by a subscripted "eq" means the quantity it follows is evaluated at equilibrium. (See [Appendix -@sec-notation] for a complete list of the sign conventions and notation used in *Reaction Engineering Basics*.)
 
 $$
-g_i = \frac{f_i}{{f_i}\Bigr\rvert_{eq}}= \frac{\frac{n_{i,0} - n_i}{n_{i,0}}}{\frac{n_{i,0} - \left( n_i \right)\Bigr\rvert_{eq}}{n_{i,0}}} = \frac{n_{i,0} - n_i}{n_{i,0} - \left( n_i \right)\Bigr\rvert_{eq}}
+g_i = \frac{f_i}{f_{i,eq}}= \frac{\frac{n_{i,0} - n_i}{n_{i,0}}}{\frac{n_{i,0} -  n_{i,eq}}{n_{i,0}}} = \frac{n_{i,0} - n_i}{n_{i,0} - n_{i,eq}}
 $$ {#eq-frac_of_eq_conversion_closed}
 
 $$
-g_i = \frac{\dot n_{i,in} - \dot n_i}{\dot n_{i,in} - \left( \dot n_i \right)\Bigr\rvert_{eq}}
+g_i = \frac{\dot n_{i,in} - \dot n_i}{\dot n_{i,in} - \dot n_{i,eq}}
 $$ {#eq-frac_of_eq_conversion_open}
 
 The fraction of equilibrium conversion may not be convenient to use. For one thing, in order to use it, you have to do additional calculations to determine what the conversion is at equilibrium. In addition, the conversion at equilibrium changes with temperature which means a change in temperature would change the fraction of equilibrium conversion even if no reaction took place.
@@ -185,11 +185,11 @@ In this way, the rows in the third column corresponding to each of the species a
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The problem directs me to use @tbl-mole_table_reb_3_1 to calculate the final mole fraction of CO~2~. Having practiced reacion engineering for some time, now, I know that when a problem provides the initial composition of a system and some measure of its final composition (in this case the conversion and selectivity) and asks for a different measure of the final composition (in this case, a mole fraction), generating the answer will require three steps. First, the measures of the final composition provided in the problem must be expressed in terms of the apparent extents of reaction. Second, the resulting equations are solved to obtain the values of the apparent extents of reaction. Finally, the desired measure of final composition is expressed in terms of the apparent extents of reaction and calculated using the values obtained in the second step.
+The problem directs me to use @tbl-mole_table_reb_3_1 to calculate the final mole fraction of CO~2~. Having practiced reacion engineering for some time, now, I know how to proceed when a problem provides the initial composition of a system and some measure of its final composition (in this case the conversion and selectivity) and asks for a different measure of the final composition (in this case, a mole fraction). The first step is to use the known initial and final values to calculate the apparent extents of reaction. The desired measure of final composition can then be calculated using the resulting apparent extents of reaction.
 
 Here, upon reading this problem, I also can see that every quantity that is provided is an intensive quantity. That means that if I need to, I can assume the value of any one extensive quantity and use it as the basis for my calculations.
 
-Finally, I think it is good practice to begin by assigning each quantity given in the problem statement to the appropriate variable.
+I think it is good practice to begin by assigning each quantity given in the problem statement to the appropriate variable.
 
 :::
 
@@ -268,7 +268,7 @@ results <- read.csv("../RE_Basics_Examples/reb_3_1/reb_3_1_Python_results.csv")
 :::{.callout-tip collapse="true"}
 ## Click Here to see What an Expert Might be Thinking at this Point
 
-This problem provides the starting composition and asks me to express one final value in terms of another. Back when I was first studying kinetics and reaction engineering, I had to do this often as one part of solving various problems. From that experience, I know that the way to do this is to express each of the final values in terms of the apparent extent of reaction, and then eliminate the apparent extent from the two equations. Now that I solve most problems numerically, I don't need to do this as often as I used to, but it's still good to know how to do it.
+This problem provides the starting composition and asks me to express one final value in terms of another. From past experience, I know that the way to do this is to express each of the final values in terms of the apparent extent of reaction, and then eliminate the apparent extent from the two equations.
 
 I could write a mole table, but with only one reaction taking place, I think I can get by without one.
 
@@ -546,18 +546,17 @@ kbl(results, format = "markdown", align = "cc", col.names = c("Reagent",
 
 | Symbol | Meaning |
 |:-------|:--------|
-| $eq$ | Abbreviation for "equilibrium." |
-| $f_i$ | Fractional conversion of reactant $i$. |
-| $g_i$ | Fraction of equilibrium conversion of reactant $i$. |
-| $i$ | Subscript denoting a specific reagent present in the system. |
-| $j$ | Subscript denoting a specific reaction. |
-| $j^\prime$ | As a subscript, denotes a specific reaction from a complete, mathematically independent subset of the reactions occurring in the system.\
-As a summation or continuous product index, indexes the reactions that constitute a complete, mathematically independent subset of the reactions occurring in the system. |
+| $eq$ | Subscript denoting an equilibrium value. |
+| $f_i$ | Fractional conversion of *reactant* $i$. |
+| $g_i$ | Fraction of equilibrium conversion of *reactant* $i$. |
+| $i$ | Subscript denoting a fluid phase reagent. |
+| $j$ | Subscript denoting a reaction occurring in the system. |
+| $j^\prime$ | Subscript denoting a reaction from a complete, mathematically independent subset of the reactions occurring in the system. |
 | $n$ | Number of moles; a sub-scripted $i$ denotes the number of moles of reagent $i$; an additional subscripted $0$ denotes the initial moles. |
 | $\dot n$ | Molar flow rate; a sub-scripted $i$ denotes the molar flow rate of reagent $i$; an additional subscripted $in$ denotes the inlet molar flow rate. |
 | $y_i$ | Gas phase mole fraction of reagent $i$; an additional subscripted $0$ denotes the initial mole fraction; an additional subscripted $in$ denotes the inlet mole fraction. |
 | $C_i$ | Molar concentration of reagent $i$. |
-| $N_i$ | Number of molecules of species $i$, ; an additional subscripted $0$ denotes the initial number of molecules of $i$. |
+| $N_i$ | Number of molecules of reagent $i$; an additional subscripted $0$ denotes the initial number of molecules of $i$. |
 | $N_{j,net}$ | Net number of times reaction event $j$ has occurred. |
 | $N_{Av}$ | Avogadro's number. |
 | $P$ | Pressure. |
@@ -568,8 +567,8 @@ As a summation or continuous product index, indexes the reactions that constitut
 | $Y_{D/i}$ | Overall yield of product $D$ from reactant $i$. |
 | $Y^\prime_{D/i}$ | Overall stoichiometric yield of product $D$ from reactant $i$. |
 | $\nu_{i,j}$ | Stoichiometric coefficient of reagent $i$ in reaction $j$; if only one reaction is taking place the index, $j$ is optional. |
-| $\xi_{j^\prime}$ | Apparent extent of reaction $j^\prime$. |
-| $\dot \xi_{j^\prime}$ | Apparent extent of reaction $j^\prime$ in an open, steady-state system. |
+| $\xi_{j\text{-}ind}$ | Apparent extent of reaction $j\text{-}ind$. |
+| $\dot \xi_{j\text{-}ind}$ | Apparent extent of reaction $j\text{-}ind$ in an open, steady-state system. |
 | $\Xi_j$ | True extent of reaction $j$. |
 | $\dot \Xi_j$ | True extent of reaction $j$ in an open, steady-state system. |
 
