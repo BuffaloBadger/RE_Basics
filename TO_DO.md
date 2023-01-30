@@ -1,5 +1,7 @@
 Things to do or think about doing
 
+* Change examples to match chapter 5.
+* Revise notation for sums.
 * Revise preface once SCoRE is available.
 * As SCoRE video is added for each example, add link to the numerical calculations videos (python) and (Matlab)
 * Add illustration of laminar, turbulent and plug flow to prerequsite knowledge section on fluids; see slide 18 in VO Slides - RE Basics 1.3
