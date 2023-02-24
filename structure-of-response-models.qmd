@@ -1,3 +1,1415 @@
-# Structure of Reactor Response Models {#sec-struct-response-models}
+# Reactor Response Functions {#sec-struct-response-models}
 
-[add]
+Chapter 6 described how to model a chemical reactor. It assumed that the model would *always* be solved for the final  molar amounts, temperature, pressure and exchange fluid temperature. As a result, the reactor model is always formulated in the same way, no matter what the problem asks for. *The key to this standardization is that the reactor model is contained within a reactor response function*. This chapter shows how the reactor response function provides any missing input to the reactor model so that it can be solved for the final molar amounts, temperatures and pressure. Additionally, it illustrates the generation of reactor response functions that calculate and return either a single reactor response or a set of reactor responses. The resulting reactor response functions can be used in every type of ideal reactor analysis considered in subsequent chapters of *Reaction Engineering Basics*.
+
+To reduce confusion in the discussion that follows, "reactor model inputs" will refer to a *complete* set of values for the input variables of a reactor model. As described in @sec-modeling-ideal-reactors, the reactor model inputs include starting condition variables, a reaction time variable, reactor properties variables, fluid properties variables and reaction properties variables. "Reactor model output" will refer to the values that result from solving the reactor model, namely the final/outlet molar amount of every reagent, the final/outlet temperature and pressure of the reacting fluid and the outlet temperature of the exchange fluid.
+
+## Reactor Response and Response Functions
+
+In any reactor analysis, one or more outcomes of operating the reactor are of interest. Those outcomes of interest can be referred to collectively as the **reactor response**. The reactor response might include one or more of the reactor model outputs. It also might include quantities related to the reactor model outputs such as conversions, yields, selectivities, etc. Once the reactor model output has been found, it is generally straightforward to calculate any of these quantities.
+
+A **reactor response function** is just that. It is a computer function or subroutine. The exact format will depend upon the programming language being used, but the reactor response function must have certain features. One such feature is that the values of certain variables may be provided to it at the time it is excecuted, if necessary. This feature typically takes the form of arguments to the function. The second feature of a reactor response function is that it must have access to numerical equation solvers that can solve the reactor model equations to find the reactor model output. The third feature is that it must be able to return reactor responses calculated from the reactor model output.
+
+Reaction engineering can be performed without generating reactor response functions like the ones presented in this chapter. Using that approach it can seem like every analysis or problem requires that the reactor model be formulated in a slightly different way and that slightly different computer code or numerical methods must be used to solve the reactor model equations, depending on the information available and the questions asked. The **purpose** of the reactor response functions introduced in this chapter is not simply to calculate the response of interest. The reactor response functions described here have a structure that leads to a standardized approach to reactor analysis. In particular, within reactor response functions, the reactor model equations are always formulated and solved the same way (see @sec-modeling-ideal-reactors). Nonetheless, the resulting reactor response functions can be used directly to solve the variety of problem types encountered in subsequent chapters of *Reaction Engineering Basics*.
+
+@fig-reactor_response_function shows the general structure of a reactor response function. The blue box represents the reactor response function. Three kinds of arguments can be used to pass information to a response function. These are represented by the boxes labeled "Adjusted Values," "Missing Values," and "Solver Guesses" at the top of the figure. These arguments are discussed later in this chapter. A reactor response function returns one or more reactor responses, as indicated by the box at the bottom of the figure. The red box within the response function in @fig-reactor_response_function highlights the core functionality of a reactor response function. 
+
+![Structure of a reactor response function. The blue box represents the complete reactor response function, and the red box encloses its core functionality.](./Graphics/Reactor_response_function.png){#fig-reactor_response_function}
+
+## Core Functionality of a Reactor Response Function
+
+Looking at the core functionality of a reactor response function, it starts with a *complete* set of reactor model inputs. The complete set of reactor model inputs begin with the **fixed input**. The fixed input consists of every known quantity that is constant throughout the entire analysis. In an academic course, the fixed input consists of all of the constant values given in a problem statement. It includes the values of variables in the starting conditions, reaction time, reactor properties, fluid properties and reaction properties variable groups of @sec-modeling-ideal-reactors. These values are encoded within the response function, they are not passed into it as arguments. As @fig-reactor_response_function shows, missing values and/or adjusted values may be added to the fixed input in order to form a complete set of reactor model inputs.
+
+The second core component of a response function is the **reactor model**. It includes the reactor design and ancillary equations that must be solved to find the reactor model output for the reactor under consideration. If the reactor design equations are IVODEs, it also specifies the initial values and stopping criterion needed for solving the reactor model equations. In the last component of the reactor model, a numerical equation solver that is appropriate for solving the reactor model equations is accessed. That is, the final part of the reactor model component uses an ATE solver, an IVODE solver, or a DAE solver to find the reactor model output.
+
+The third core component of a response function is the **response calculation** section. This section contains code that uses the reactor model input and output to calculate the response for the analysis or problem at hand. Overall then, the core functionality of a reactor response function consists of assembling a complete set of reactor model inputs, solving the reactor model equations, and calculting the response of interest.
+
+## Reactor Response Function Arguments and Return Values
+
+The simplest reactor response function has **no arguments**. The value of *every* reactor model input variable is known and is encoded within the response function. It can simply be executed and it will return the response. This type of reactor response function is used when the analysis or problem involves predicting the response of a given reactor being operated in a known manner. [Example -@sec-example_7_1] illustrates the generation of a reactor response function with no arguments.
+
+Missing value arguments and adjusted value arguments are similar. A **missing value argument** is used when a problem statement does not contain a *complete* set of reactor model inputs. The missing value or values are passed to the reactor response function at the time it is executed. The response function combines these values with the fixed input encoded within the response function. Once a complete set of reactor inputs has been formed, it proceeds to solve the reactor model equations and calculate the response. One situation where a missing value argument is used is for an analysis or problem that specifies a desired response and asks for the value of a reactor input that will result in that response. In this situation, there is typically only one missing value. A similar situation involves a problem or analysis that specifies a response to be minimized or maximized with respect to one or more reactor model input variables. Here the number of missing input values equals the number of variables being used to optimize the response. The third common situation where a missing value argument is used is in kinetics data analysis. In this situation, the missing input values are the kinetics parameters that need to be estimated. Examples [-@sec-example_7_2] and [-@sec-example_7_4] illustrate the generation of reactor response functions with a missing value argument.
+
+An **adjusted value argument** is similar to a missing value argument. The key distinction is that there are two or more *sets of missing input values*, and the reactor response function must calculate and return a corresponding *set of responses*. The sets of missing input values are passed to the response function using the adjusted value argument. The same missing input variables will appear in every set of missing values, but their values will differ from set to set. For example, when doing kinetics experiments the reactor might be operated many times using different combinations of the starting concentration of reagent A, the starting concentration of reagent B, and the temperature. *Every set* of missing input values will contain those same three variables, but the values of the three variables will change from one set to the next. The name for this argument reflects this situation: the reactor was operated at one set of inputs, then one or more of those inputs was adjusted, and the reactor was operated at the new inputs, then the same inputs were again adjusted, and so on.
+
+When a reactor response function is passed an adjusted argument, it must return a set of responses. The first response is for the first set of missing inputs, the second is for the second set of missing inputs, etc. This is indicated in @fig-reactor_response_function where the adjusted value argument is directed to the diamond labeled "Next Adjusted Value". From there the next set of missing inputs is combined with the fixed inputs and the missing value inputs to form a complete set of reactor model inputs. The reactor model is then solved to obtain the model output and the response for that set of missing inputs is calculated. As @fig-reactor_response_function shows, that response is then added to a growing set of "Accumulated Responses." After it has been added to the "Accumulated Responses," the code within the reactor response function checks to see whether there are any sets of missing inputs remaining. If so, the next set of missing inputs is combined with the fixed inputs and missing values, the reactor model is solved, and the response is calculated and added to the "Accumulated Responses." When there are no more sets of missing inputs, the reactor response function returns the "Accumulated Responses." One situation where an adjusted values argument is used when the analysis or problem involves estimation of kinetics parameters using experimental response data. The generation of a reactor response function for that situation is illustrated in @sec-example_7_4. The other common situation where an adjusted values argument is used is when the analysis or problem calls for parametric analysis, that is to show or plot how a specified response changes as one of the model inputs is varied. [Example -@sec-example_7_3] illustrates the generation of a reactor response function with an adjusted values argument for this situation.
+
+The final type of argument that can be passed to a reactor response function is a **solver guesses argument**. Solver guesses arguments are optional and are used if the reactor model is a set of ATEs or DAEs. Numerical methods for solving ATEs and DAEs often require that a guess for the solution be provided. A guess can be encoded within the response function, in which case a solver guesses argument is not needed. From a practical perspective, it is often necessary to try many different guesses before a guess that leads to a converged solution is found (see Appendices [-@sec-solving-ates] and [-@sec-solving_daes]). If the guess is encoded within the response function, the response function will need to be edited each time the guess is changed. If a guess is passed to the response function as a solver guesses argument, trying a different guess does not require editing the response function.
+
+## Generation of a Reactor Response Function
+
+When an experienced reaction engineer reads a problem statement, they can often proceed directly to generating the reactor response function. When one is first learning reaction engineering, though, it helps to first create a **response function worksheet**. The exact format of the worksheet isn't critical. Its purpose is to organize the information and computational process associated with the reactor response function. Once completed, the actual reactor response function can be generated straight from the worksheet with ease. A typical response function worksheet might contain the following headings or sections.
+
+* Returned Response: 
+* Missing Values Argument: 
+* Adjusted Values Argument: 
+* Solver Guesses Argument: 
+* Given and Known Constants: 
+* Calculated Fixed Input: 
+* Reactor Design and Ancillary Equations:
+* Reactor Model Solver:
+* Response Calculation:
+
+The order of the headings in the list above is the order in which the items typically appear in the reactor response function. An experienced reaction engineer might be able to start with the first heading and move sequentially through to the last section. It may be easier for one just learning reaction engineering to complete the sections of the response function worksheet in a different order, as described in this section. The creation of a response function worksheet is described here in terms of solving a problem in a course or textbook and takes the form of a set of instructions. A practicing engineer might be working on an assignment that is not as fully specified as a typical textbook example or problem.
+
+The first step in completing a response function worksheet is to read the problem statement, identify the response for this particluar analysis, and enter it in the Returned Response section. Then jump down to the Given and Known Constants section. Read through the problem statement and each time a value is given in the problem statement, write the variable representing that value and set it equal to the given value.
+
+Often the information given in the problem statement is not an input variable for the reactor model, but an input variable can be calculated from it. For example, a problem statement might include a value for the reacting fluid volume, $V$, in a BSTR along with the initial concentrations of some reagents including that of reagent A, $C_{A,0}$. These values would have been included in the Given and Known Constants section as just described. The initial concentration is not an input variable for the reactor model, but it can be used to calculate the initial molar amount which is an input for the reactor model. Therefore the expression for calculating the initial moles of A, @eq-resp_wksht_calc_input_example, is written in the Calculated Fixed Input section. Expressions for all other *constant* model inputs that can be calculated from the values in the Given and Known Constants section should be added to the Calculated Fixed Input section.
+
+$$
+n_{A,0} = VC_{A,0}
+$$ {#eq-resp_wksht_calc_input_example}
+
+Under the Reactor Design and Ancillary Equations heading, the reactor design equations should be written along with the ancillary equations needed to calculate every non-constant quantity appearing in them, as described in @sec-modeling-ideal-reactors. Once all of the design and ancillary equations have been written, any quantities that appear in the equations (other than the reactor model output variables) and that have not been assigned a value in the Given and Known Constants section or calculated in the Calculated Fixed Input section are missing values. If the problem involves a single response, these quantities should be listed in the Missing Values Argument section; if the problem involves multiple responses these quantities should be listed in the Adjusted Values Argument section. 
+
+The next step is to identify the reactor design equations as ATEs, IVODEs or DAEs and write the variables that will be found by solving them under the Reactor Model Solver heading. If any of the design equations are IVODEs, the initial values and stopping criterion needed for solving them should be written under the Reactor Model Solver heading, too. If any of the design equations are ATEs, guesses for the unknowns in the ATEs optionally can be written under the Solver Guesses Argument heading.
+
+To complete the response function worksheet, the equations needed to calculate the response should be written under the Response Calculation heading. The completed response function worksheet contains all the information needed to write a response function in any programming language. In most cases the information will be listed on the worksheet in the same order that it is entered into the reactor response function. Each of the Examples that follow illustrate the creation of a response function worksheet. The generation of the actual reactor response function will depend upon the software one is using. The *use* of reactor response functions is illustrated in later chapters of *Reaction Engineering Basics*.
+
+## Examples
+
+:::{.callout-note collapse="false"}
+## Note
+
+Each of the example problems that follow ask for a reactor response function. The actual response function will depend upon the computer programming language one uses. *Reaction Engineering Basics* does not include actual computer code, but instead has been written in a way that it can be used no matter what programming language a reader prefers. Therefore, instead of generating actual response functions, the solutions to these example problems show how to create a response function worksheet.
+
+The challenge in presenting the creation of a response function worksheet is that the sections of the worksheet are not completed sequentially. Pedagogically it seems best to present the steps in the order they are performed. For this reason, a paradigm different from that used in previous chapters is used in the solutions. Instead of presenting a concise solution where expert thinking and clarifying information is hidden in pop-up callouts, here the expert thinking and clarifying detail form the main body of the solution and the evolving worksheet is presented in pop-up callouts. Then at the end of the solution, the completed worksheet is presented in the body text.
+
+:::
+
+### Reactor Response Function with no Arguments {#sec-example_7_1}
+
+{{< include ../RE_Basics_Examples/reb_7_1/problem_statement.qmd >}}
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I am asked to generate a response function for a steady-state PFR in this problem. To begin, I will create a skeleton response function worksheet that contains only the section headings of the worksheet.
+
+I like to start problems by identifying the information provided in the problem statement along with what I'm asked to do or find. To do this I read through the problem statement, and each time I encounter a number, I choose a variable to represent it and add it to the worksheet. In this problem, each of the values that are presented are given constants, so that is where I add them to the worksheet. Reading through the problem another time I see that I'm asked to calculate the outlet temperature, pressure and conversion, so I list variables representing those quantities in the returned response section.
+
+:::
+
+**Given and Known Constants**: $y_{A,in}$ = 0.75, $y_{I,in}$ = 0.25, $\dot V_{in}$ = 100 cm^3^ s^-1^, $\dot m$ = 0.44 g s^-1^, $P_{in}$ = 3 atm, $T_{in}$ = 375 °C, $D$ = 2.5 cm, $L$ = 8 m, $T_e$ = 375 °C, $U$ = 187 kJ h^-1^ m^-2^ K^-1^, $D_p$ = 0.25 cm, $\Phi _s$ = 0.7, $\epsilon$ = 0.60, $k_{0,f}$ = 9.0 x 10^17^ mol cm^3^ s^-1^ atm^-1^ , $E_f$ = 285 kJ mol^-1^, $k_{0,r}$ = 4.09 x 10^-4^ mol cm^3^ s^-1^ atm^-4^, $E_r$ = 85 kJ mol^-1^, $\Delta H$ = 200 kJ mol^-1^, $\hat C_{p,A}$ = 11.7 cal mol^-1^ K^-1^, $\hat C_{p,Y}$ = 8.3 cal mol^-1^ K^-1^, $\hat C_{p,Z}$ = 4.3 cal mol^-1^ K^-1^, $\hat C_{p,I}$ = 5.8 cal mol^-1^ K^-1^, and $\mu$ = 0.27 cp.
+
+**Returned Response**: $T_{out}$, $P_{out}$, $f_A$
+
+:::{.callout-warning icon=false collapse="true"}
+## Click Here to See the Evolving Solution
+
+**Returned Response**: $T_{out}$, $P_{out}$, $f_A$
+
+**Missing Values Argument**: 
+
+**Adjusted Values Argument**: 
+
+**Solver Guesses Argument**: 
+
+**Given and Known Constants**: $y_{A,in}$ = 0.75, $y_{I,in}$ = 0.25, $\dot V_{in}$ = 100 cm^3^ s^-1^, $\dot m$ = 0.44 g s^-1^, $P_{in}$ = 3 atm, $T_{in}$ = 375 °C, $D$ = 2.5 cm, $L$ = 8 m, $T_e$ = 375 °C, $U$ = 187 kJ h^-1^ m^-2^ K^-1^, $D_p$ = 0.25 cm, $\Phi _s$ = 0.7, $\epsilon$ = 0.60, $k_{0,f}$ = 9.0 x 10^17^ mol cm^3^ s^-1^ atm^-1^ , $E_f$ = 285 kJ mol^-1^, $k_{0,r}$ = 4.09 x 10^-4^ mol cm^3^ s^-1^ atm^-4^, $E_r$ = 85 kJ mol^-1^, $\Delta H$ = 200 kJ mol^-1^, $\hat C_{p,A}$ = 11.7 cal mol^-1^ K^-1^, $\hat C_{p,Y}$ = 8.3 cal mol^-1^ K^-1^, $\hat C_{p,Z}$ = 4.3 cal mol^-1^ K^-1^, $\hat C_{p,I}$ = 5.8 cal mol^-1^ K^-1^, and $\mu$ = 0.27 cp.
+
+**Calculated Fixed Input**: 
+
+**Reactor Design and Ancillary Equations**:
+
+**Reactor Model Solver**:
+
+**Response Calculation**:
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I know that I'm going to need a reactor model, so the next thing I do is to formulate the reactor model using the approach described in @sec-modeling-ideal-reactors. The reactor in this problem is an ideal PFR, so I begin by writing mole balances on each reagent present in the system. In this problem there are four reagents in the system, A, Y, Z, and I, leading to the mole balances shown in equations (3) through (6). An *energy balance on the reacting fluid, equation (7), must also be included in the reactor design equations.
+
+This problem states that the reactor shell contains a molten salt at 375 °C. As noted in @sec-modeling-ideal-reactors, when the temperature in the shell is known, the other reactor design equations can be solved separately from the energy balance on the exchange fluid. In this problem, I'm not asked anything about the exchange fluid, and if I wrote an energy balance on it I'd find that I'm missing multiple quantities that appear in it. So even if I wrote it, I wouldn't be able to solve it.
+
+The problem states that the reactor contains a packed bed of catalyst particles, and it does *not* state that the pressure drop is negligible, so I need to include a momentum balance, equation (8), among the reactor design equations. The momentum balance for a steady-state packed bed, @eq-pfr_ergun_eqn, does not require further simplification and can be used directly.
+
+:::
+
+**Mole balances on each reagent**
+
+$$
+\frac{d \dot{n}_A}{dz} = -\frac{\pi D^2}{4}r_1 \tag{3}
+$$
+
+$$
+\frac{d \dot{n}_Y}{dz} = \frac{\pi D^2}{4}r_1 \tag{4}
+$$
+
+$$
+\frac{d \dot{n}_Z}{dz} = 3\frac{\pi D^2}{4}r_1 \tag{5}
+$$
+
+$$
+\frac{d \dot{n}_I}{dz} = 0 \tag{6}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See Where That Came From
+
+Start with the general PFR mole balance, @eq-pfr_mol_balance.
+
+$$
+\frac{\partial \dot n_i}{\partial z} + \frac{\pi D^2}{4\dot V} \frac{\partial\dot n_i}{\partial t} - \frac{\pi D^2\dot n_i}{4\dot V^2} \frac{\partial \dot V}{\partial t}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j
+$$
+
+In this problem, the reactor operates at steady state, so all of the time derivatives are zero and the remaining partial derivative becomes an ordinary derivative. There is only one reaction taking place, so the last term reduces to a single term.
+
+$$
+\frac{d \dot n_i}{d z}  = \nu_{i,1}\frac{\pi D^2}{4} r_1
+$$
+
+The stoichiometric coefficients of A, Y, Z, and I, are -1, 1, 3, and 0, respectively, leading to equations (3) through (6).
+
+:::
+
+**Energy balance on the reacting fluid** 
+
+$$
+\frac{dT}{dz} = \frac{\pi DU\left( T_e - T \right) - \frac{\pi D^2}{4} r_1\Delta H_1}{\dot n_A \hat C_{p,A} + \dot n_Y \hat C_{p,Y} + \dot n_Z \hat C_{p,Z} + \dot n_I \hat C_{p,I}} \tag{7}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See Where That Came From
+
+Start with the general PFR energy balance, @eq-pfr_energy_balance.
+
+$$
+\begin{split}
+\left(\sum_i \dot n_i \hat C_{p,i} \right) \frac{\partial T}{\partial z} +& \frac{\pi D^2}{4\dot V} \sum_i \left(\dot n_i \hat C_{p,i} \right) \frac{\partial T}{\partial t} - \frac{\pi D^2}{4} \frac{\partial P}{\partial t} \\ &= \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+\end{split}
+$$
+
+As with the mole balances the derivatives with respect to time are zero since the reactor operates at steady state, and the spatial derivative become an ordinary derivative. There are four reagents (A, Y, Z, and I) so the summation over $i$ expands to four terms and there is one reaction, so the summation over $j$ reduces to a single term. Making those substitutions and rearranging leads to equation (7).
+
+:::
+
+**Momentum balance**
+
+$$
+\frac{{dP}}{{dz}} =  - \frac{{1 - \varepsilon }}{{{\varepsilon ^3}}}\frac{{{G^2}}}{{\rho {\Phi _s}{D_p}}}\left[ {\frac{{150\left( {1 - \varepsilon } \right)\mu }}{{{\Phi _s}{D_p}G}} + 1.75} \right] \tag{8}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point, I have six design equations, equations (3) through (8). They are IVODEs that contain six dependent variables ($\dot{n}_A$, $\dot{n}_Y$, $\dot{n}_Z$, $\dot{n}_I$, $T$, and $P$); the independent variable is $z$. Since the number of IVODEs is equal to the number of dependent variables, they can be solved to find the values of the dependent variables as functions of $z$ over the range from $z=0$ to $z=L$. This information, along with the reactor design equations can be added to the response function worksheet.
+
+:::
+
+:::{.callout-warning icon=false collapse="true"}
+## Click Here to See the Evolving Solution
+
+**Returned Response**: $T_{out}$, $P_{out}$, $f_A$
+
+**Missing Values Argument**: 
+
+**Adjusted Values Argument**: 
+
+**Solver Guesses Argument**: 
+
+**Given and Known Constants**: $y_{A,in}$ = 0.75, $y_{I,in}$ = 0.25, $\dot V_{in}$ = 100 cm^3^ s^-1^, $\dot m$ = 0.44 g s^-1^, $P_{in}$ = 3 atm, $T_{in}$ = 375 °C, $D$ = 2.5 cm, $L$ = 8 m, $T_e$ = 375 °C, $U$ = 187 kJ h^-1^ m^-2^ K^-1^, $D_p$ = 0.25 cm, $\Phi _s$ = 0.7, $\epsilon$ = 0.60, $k_{0,f}$ = 9.0 x 10^17^ mol cm^3^ s^-1^ atm^-1^ , $E_f$ = 285 kJ mol^-1^, $k_{0,r}$ = 4.09 x 10^-4^ mol cm^3^ s^-1^ atm^-4^, $E_r$ = 85 kJ mol^-1^, $\Delta H$ = 200 kJ mol^-1^, $\hat C_{p,A}$ = 11.7 cal mol^-1^ K^-1^, $\hat C_{p,Y}$ = 8.3 cal mol^-1^ K^-1^, $\hat C_{p,Z}$ = 4.3 cal mol^-1^ K^-1^, $\hat C_{p,I}$ = 5.8 cal mol^-1^ K^-1^, and $\mu$ = 0.27 cp.
+
+**Calculated Fixed Input**: 
+
+**Reactor Design and Ancillary Equations**:
+
+$$
+\frac{d \dot{n}_A}{dz} = -\frac{\pi D^2}{4}r_1 \tag{3}
+$$
+
+$$
+\frac{d \dot{n}_Y}{dz} = \frac{\pi D^2}{4}r_1 \tag{4}
+$$
+
+$$
+\frac{d \dot{n}_Z}{dz} = 3\frac{\pi D^2}{4}r_1 \tag{5}
+$$
+
+$$
+\frac{d \dot{n}_I}{dz} = 0 \tag{6}
+$$
+
+$$
+\frac{dT}{dz} = \frac{\pi DU\left( T_e - T \right) - \frac{\pi D^2}{4} r_1\Delta H_1}{\dot n_A \hat C_{p,A} + \dot n_Y \hat C_{p,Y} + \dot n_Z \hat C_{p,Z} + \dot n_I \hat C_{p,I}} \tag{7}
+$$
+
+$$
+\frac{{dP}}{{dz}} =  - \frac{{1 - \varepsilon }}{{{\varepsilon ^3}}}\frac{{{G^2}}}{{\rho {\Phi _s}{D_p}}}\left[ {\frac{{150\left( {1 - \varepsilon } \right)\mu }}{{{\Phi _s}{D_p}G}} + 1.75} \right] \tag{8}
+$$
+
+**Reactor Model Solver**:
+
+The reactor design equations are a set of 6 coupled IVODEs, equations (7) through (12). They can be solved numerically to find the values of $\dot n_A$, $\dot n_Y$, $\dot n_Z$, $\dot n_I$, $T$, and $P$ as functions of $z$ in the range from $z=0$ to $z=L$.
+
+**Response Calculation**:
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Before the reactor design equations can be solved, ancillary equations must be provided for calculating the value of every variable quantity appearing in them other than the independent variable, $z$, and the dependent variables, $\dot n_A$, $\dot n_Y$, $\dot n_Z$, $\dot n_I$, $T$, and $P$. Similarly, equations must be provided for calculating any variable quantities introduced in the ancillary equations. The only quantities introduced in the mole balances are $D$ (a given constant) and $r_1$. The latter can be calculated using equation (2) from the problem statement. Equation (2) introduces two rate coefficients and three partial pressures. Ancillary equations are needed for each of these variable quantities. 
+
+The rate coefficients can be calculated using the Arrhenius expression, equations (9) and (10). The pre-exponential factors, activation energies and the ideal gas constant are all constants, and $T$ is one of the dependent variables, so equations (9) and (10) do not introduce an other variables quantities.
+
+The partial pressures of A, Y, and Z can be calculated using the defining equation for partial pressure as shown in equation (11) through (13). Those equations do not introduce any additional quantities.
+
+The quantities other than $r_1$ introduced in the energy balance, equation (7), are all known constants, and the rate expression has already been considered. Finally, other than $G$, all of the new quantities introduced in the momentum balance, equation (8), are known constants. The mass velocity, $G$ is also a constant. It can be calculated using its definition, equation (14).
+
+Equations (9) through (13) each contain at least one dependent variable, so they can be added to the response function worksheet as ancillary equations. Equation (14) only contains known constants, so it can be added to the calculated fixed input section. (It could also be added as an ancillary equation.)
+
+:::
+
+**Ancillary equations**
+
+$$
+k_f = k_{0,f} \exp{\left( \frac{-E_f}{RT}  \right)} \tag{9}
+$$
+
+$$
+k_r = k_{0,r} \exp{\left( \frac{-E_r}{RT}  \right)} \tag{10}
+$$
+
+$$
+P_A = y_AP = \frac{\dot n_A P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{11}
+$$
+
+$$
+P_Y = y_YP = \frac{\dot n_Y P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{12}
+$$
+
+$$
+P_Z = y_ZP = \frac{\dot n_Z P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{13}
+$$
+
+**Calculated Input Constants**
+
+$$
+G = \frac{4\dot m_{tot}}{\pi D^2} \tag{14}
+$$
+
+:::{.callout-warning icon=false collapse="true"}
+## Click Here to See the Evolving Solution
+
+**Returned Response**: $T_{out}$, $P_{out}$, $f_A$
+
+**Missing Values Argument**: 
+
+**Adjusted Values Argument**: 
+
+**Solver Guesses Argument**: 
+
+**Given and Known Constants**: $y_{A,in}$ = 0.75, $y_{I,in}$ = 0.25, $\dot V_{in}$ = 100 cm^3^ s^-1^, $\dot m$ = 0.44 g s^-1^, $P_{in}$ = 3 atm, $T_{in}$ = 375 °C, $D$ = 2.5 cm, $L$ = 8 m, $T_e$ = 375 °C, $U$ = 187 kJ h^-1^ m^-2^ K^-1^, $D_p$ = 0.25 cm, $\Phi _s$ = 0.7, $\epsilon$ = 0.60, $k_{0,f}$ = 9.0 x 10^17^ mol cm^3^ s^-1^ atm^-1^ , $E_f$ = 285 kJ mol^-1^, $k_{0,r}$ = 4.09 x 10^-4^ mol cm^3^ s^-1^ atm^-4^, $E_r$ = 85 kJ mol^-1^, $\Delta H$ = 200 kJ mol^-1^, $\hat C_{p,A}$ = 11.7 cal mol^-1^ K^-1^, $\hat C_{p,Y}$ = 8.3 cal mol^-1^ K^-1^, $\hat C_{p,Z}$ = 4.3 cal mol^-1^ K^-1^, $\hat C_{p,I}$ = 5.8 cal mol^-1^ K^-1^, and $\mu$ = 0.27 cp.
+
+**Calculated Fixed Input**: 
+
+$$
+G = \frac{4\dot m_{tot}}{\pi D^2} \tag{14}
+$$
+
+**Reactor Design and Ancillary Equations**:
+
+$$
+\frac{d \dot{n}_A}{dz} = -\frac{\pi D^2}{4}r_1 \tag{3}
+$$
+
+$$
+\frac{d \dot{n}_Y}{dz} = \frac{\pi D^2}{4}r_1 \tag{4}
+$$
+
+$$
+\frac{d \dot{n}_Z}{dz} = 3\frac{\pi D^2}{4}r_1 \tag{5}
+$$
+
+$$
+\frac{d \dot{n}_I}{dz} = 0 \tag{6}
+$$
+
+$$
+\frac{dT}{dz} = \frac{\pi DU\left( T_e - T \right) - \frac{\pi D^2}{4} r_1\Delta H_1}{\dot n_A \hat C_{p,A} + \dot n_Y \hat C_{p,Y} + \dot n_Z \hat C_{p,Z} + \dot n_I \hat C_{p,I}} \tag{7}
+$$
+
+$$
+\frac{{dP}}{{dz}} =  - \frac{{1 - \varepsilon }}{{{\varepsilon ^3}}}\frac{{{G^2}}}{{\rho {\Phi _s}{D_p}}}\left[ {\frac{{150\left( {1 - \varepsilon } \right)\mu }}{{{\Phi _s}{D_p}G}} + 1.75} \right] \tag{8}
+$$
+
+$$
+r_1 = k_f P_A - k_r P_Y P_Z^3 \tag{2}
+$$
+
+$$
+k_f = k_{0,f} \exp{\left( \frac{-E_f}{RT}  \right)} \tag{9}
+$$
+
+$$
+k_r = k_{0,r} \exp{\left( \frac{-E_r}{RT}  \right)} \tag{10}
+$$
+$$
+P_A = y_AP = \frac{\dot n_A P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{11}
+$$
+
+$$
+P_Y = y_YP = \frac{\dot n_Y P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{12}
+$$
+
+$$
+P_Z = y_ZP = \frac{\dot n_Z P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{13}
+$$
+
+**Reactor Model Solver**:
+
+The reactor design equations are a set of 6 coupled IVODEs, equations (7) through (12). They can be solved numerically to find the values of $\dot n_A$, $\dot n_Y$, $\dot n_Z$, $\dot n_I$, $T$, and $P$ as functions of $z$ in the range from $z=0$ to $z=L$.
+
+**Response Calculation**:
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The reactor design equations are IVODEs, so initial values and a stopping criterion are needed in order to solve them. Here the initial values are the values of the independent variable and the dependent variables at the reactor inlet: $z=0$, $\dot n_A = \dot n_{A,in}$, $\dot n_Y = \dot n_{Y,in}$, $\dot n_Z = \dot n_{Z,in}$, $\dot n_I = \dot n_{I,in}$, $T = T_{in}$, and $P=P_{in}$. The inlet temperature and pressure are known constants, but the inlet molar flow rates must be calculated from information given in the problem statement. In this case the mole fractions of A and I at the inlet are given, so the inlet molar flow rates of A and I can be calculated using those values and the ideal gas law, equations (14) and (15). Since the mole fractions of A and I sum to 1, they are the only reagents present in the feed, and the molar flow rate os Y and Z are equal to zero, equations (16) and (17).
+
+In this case, the reaction starts when the feed enters the reactor and it stops when the reacting fluid leaves the reactor, so the stopping criterion is $z=L$. The equations for the inlet molar flow rates can be added to the calculated fixed input section of the worksheet and the initial values and stopping criterion can be added to the reactor model solver section. In addition, values for every reactor model input variable are known or can be calculated, so there are no missing values or adjusted values. The design equations are IVODEs, so solver guesses are not needed, either. This information can also be added to the worksheet.
+
+:::
+
+$$
+\dot n_{A,in} = y_{A,in}\frac{P_{in}\dot V_{in}}{RT_{in}} \tag{15}
+$$
+
+$$
+\dot n_{I,in} = y_{I,in}\frac{P_{in}\dot V_{in}}{RT_{in}} \tag{16}
+$$
+
+$$
+\dot n_{Y,in} = 0 \tag{17}
+$$
+
+$$
+\dot n_{Z,in} = 0 \tag{18}
+$$
+
+:::{.callout-warning icon=false collapse="true"}
+## Click Here to See the Evolving Solution
+
+**Returned Response**: $T_{out}$, $P_{out}$, $f_A$
+
+**Missing Values Argument**: None.
+
+**Adjusted Values Argument**: None.
+
+**Solver Guesses Argument**: None.
+
+**Given and Known Constants**: $y_{A,in}$ = 0.75, $y_{I,in}$ = 0.25, $\dot V_{in}$ = 100 cm^3^ s^-1^, $\dot m$ = 0.44 g s^-1^, $P_{in}$ = 3 atm, $T_{in}$ = 375 °C, $D$ = 2.5 cm, $L$ = 8 m, $T_e$ = 375 °C, $U$ = 187 kJ h^-1^ m^-2^ K^-1^, $D_p$ = 0.25 cm, $\Phi _s$ = 0.7, $\epsilon$ = 0.60, $k_{0,f}$ = 9.0 x 10^17^ mol cm^3^ s^-1^ atm^-1^ , $E_f$ = 285 kJ mol^-1^, $k_{0,r}$ = 4.09 x 10^-4^ mol cm^3^ s^-1^ atm^-4^, $E_r$ = 85 kJ mol^-1^, $\Delta H$ = 200 kJ mol^-1^, $\hat C_{p,A}$ = 11.7 cal mol^-1^ K^-1^, $\hat C_{p,Y}$ = 8.3 cal mol^-1^ K^-1^, $\hat C_{p,Z}$ = 4.3 cal mol^-1^ K^-1^, $\hat C_{p,I}$ = 5.8 cal mol^-1^ K^-1^, and $\mu$ = 0.27 cp.
+
+**Calculated Fixed Input**: 
+
+$$
+G = \frac{4\dot m_{tot}}{\pi D^2} \tag{14}
+$$
+
+$$
+\dot n_{A,in} = y_{A,in}\frac{P_{in}\dot V_{in}}{RT_{in}} \tag{15}
+$$
+
+$$
+\dot n_{I,in} = y_{I,in}\frac{P_{in}\dot V_{in}}{RT_{in}} \tag{16}
+$$
+
+$$
+\dot n_{Y,in} = 0 \tag{17}
+$$
+
+$$
+\dot n_{Z,in} = 0 \tag{18}
+$$
+
+**Reactor Design and Ancillary Equations**:
+
+$$
+\frac{d \dot{n}_A}{dz} = -\frac{\pi D^2}{4}r_1 \tag{3}
+$$
+
+$$
+\frac{d \dot{n}_Y}{dz} = \frac{\pi D^2}{4}r_1 \tag{4}
+$$
+
+$$
+\frac{d \dot{n}_Z}{dz} = 3\frac{\pi D^2}{4}r_1 \tag{5}
+$$
+
+$$
+\frac{d \dot{n}_I}{dz} = 0 \tag{6}
+$$
+
+$$
+\frac{dT}{dz} = \frac{\pi DU\left( T_e - T \right) - \frac{\pi D^2}{4} r_1\Delta H_1}{\dot n_A \hat C_{p,A} + \dot n_Y \hat C_{p,Y} + \dot n_Z \hat C_{p,Z} + \dot n_I \hat C_{p,I}} \tag{7}
+$$
+
+$$
+\frac{{dP}}{{dz}} =  - \frac{{1 - \varepsilon }}{{{\varepsilon ^3}}}\frac{{{G^2}}}{{\rho {\Phi _s}{D_p}}}\left[ {\frac{{150\left( {1 - \varepsilon } \right)\mu }}{{{\Phi _s}{D_p}G}} + 1.75} \right] \tag{8}
+$$
+
+$$
+r_1 = k_f P_A - k_r P_Y P_Z^3 \tag{2}
+$$
+
+$$
+k_f = k_{0,f} \exp{\left( \frac{-E_f}{RT}  \right)} \tag{9}
+$$
+
+$$
+k_r = k_{0,r} \exp{\left( \frac{-E_r}{RT}  \right)} \tag{10}
+$$
+$$
+P_A = y_AP = \frac{\dot n_A P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{11}
+$$
+
+$$
+P_Y = y_YP = \frac{\dot n_Y P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{12}
+$$
+
+$$
+P_Z = y_ZP = \frac{\dot n_Z P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{13}
+$$
+
+**Reactor Model Solver**:
+
+The reactor design equations are a set of 6 coupled IVODEs, equations (7) through (12). They can be solved numerically to find the values of $\dot n_A$, $\dot n_Y$, $\dot n_Z$, $\dot n_I$, $T$, and $P$ as functions of $z$ in the range from $z=0$ to $z=L$.
+
+The initial values are $z=0$, $\dot n_A = \dot n_{A,in}$, $\dot n_Y = \dot n_{Y,in}$, $\dot n_Z = \dot n_{Z,in}$, $\dot n_I = \dot n_{I,in}$, $T = T_{in}$, and $P=P_{in}$.
+
+The stopping criterion is $z=L$.
+
+**Response Calculation**:
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point, the reactor design equations can be solved to find the values of $\dot n_A$, $\dot n_Y$, $\dot n_Z$, $\dot n_I$, $T$, and $P$ as functions of $z$ in the range from $z=0$ to $z=L$. The outlet exchange fluid temperature is a known constant, so all of the reactor model outputs have been found. The last thing that need to be done is to calculate the response. The outlet temperature and pressure are known from solving the reactor design equations as shown in equations (14) and (15). The other response variable for this problem, the conversion, can be calculated using the defining equation for fractional conversion, equation (16). Adding these equations to the response calculation section completes the response function worksheet.
+
+:::
+
+**Response calculation**
+
+$$
+T_{out} = T\Big\vert_{z=L} \tag{19}
+$$
+
+$$
+P_{out} = P\Big\vert_{z=L} \tag{20}
+$$
+
+$$
+f_A = \frac{\dot n_{A,in} - \dot n_A\Big\vert_{z=L}}{\dot n_{A,in}} \tag{21}
+$$
+
+The following complete response function worksheet can be used to generate a reactor response function in any computer programming language.
+
+**Response Function Worksheet**
+
+**Returned Response**: $T_{out}$, $P_{out}$, $f_A$
+
+**Missing Values Argument**: None.
+
+**Adjusted Values Argument**: None.
+
+**Solver Guesses Argument**: None.
+
+**Given and Known Constants**: $y_{A,in}$ = 0.75, $y_{I,in}$ = 0.25, $\dot V_{in}$ = 100 cm^3^ s^-1^, $\dot m$ = 0.44 g s^-1^, $P_{in}$ = 3 atm, $T_{in}$ = 375 °C, $D$ = 2.5 cm, $L$ = 8 m, $T_e$ = 375 °C, $U$ = 187 kJ h^-1^ m^-2^ K^-1^, $D_p$ = 0.25 cm, $\Phi _s$ = 0.7, $\epsilon$ = 0.60, $k_{0,f}$ = 9.0 x 10^17^ mol cm^3^ s^-1^ atm^-1^ , $E_f$ = 285 kJ mol^-1^, $k_{0,r}$ = 4.09 x 10^-4^ mol cm^3^ s^-1^ atm^-4^, $E_r$ = 85 kJ mol^-1^, $\Delta H$ = 200 kJ mol^-1^, $\hat C_{p,A}$ = 11.7 cal mol^-1^ K^-1^, $\hat C_{p,Y}$ = 8.3 cal mol^-1^ K^-1^, $\hat C_{p,Z}$ = 4.3 cal mol^-1^ K^-1^, $\hat C_{p,I}$ = 5.8 cal mol^-1^ K^-1^, and $\mu$ = 0.27 cp.
+
+**Calculated Fixed Input**: 
+
+$$
+G = \frac{4\dot m_{tot}}{\pi D^2} \tag{14}
+$$
+
+$$
+\dot n_{A,in} = y_{A,in}\frac{P_{in}\dot V_{in}}{RT_{in}} \tag{15}
+$$
+
+$$
+\dot n_{I,in} = y_{I,in}\frac{P_{in}\dot V_{in}}{RT_{in}} \tag{16}
+$$
+
+$$
+\dot n_{Y,in} = 0 \tag{17}
+$$
+
+$$
+\dot n_{Z,in} = 0 \tag{18}
+$$
+
+**Reactor Design and Ancillary Equations**:
+
+$$
+\frac{d \dot{n}_A}{dz} = -\frac{\pi D^2}{4}r_1 \tag{3}
+$$
+
+$$
+\frac{d \dot{n}_Y}{dz} = \frac{\pi D^2}{4}r_1 \tag{4}
+$$
+
+$$
+\frac{d \dot{n}_Z}{dz} = 3\frac{\pi D^2}{4}r_1 \tag{5}
+$$
+
+$$
+\frac{d \dot{n}_I}{dz} = 0 \tag{6}
+$$
+
+$$
+\frac{dT}{dz} = \frac{\pi DU\left( T_e - T \right) - \frac{\pi D^2}{4} r_1\Delta H_1}{\dot n_A \hat C_{p,A} + \dot n_Y \hat C_{p,Y} + \dot n_Z \hat C_{p,Z} + \dot n_I \hat C_{p,I}} \tag{7}
+$$
+
+$$
+\frac{{dP}}{{dz}} =  - \frac{{1 - \varepsilon }}{{{\varepsilon ^3}}}\frac{{{G^2}}}{{\rho {\Phi _s}{D_p}}}\left[ {\frac{{150\left( {1 - \varepsilon } \right)\mu }}{{{\Phi _s}{D_p}G}} + 1.75} \right] \tag{8}
+$$
+
+$$
+r_1 = k_f P_A - k_r P_Y P_Z^3 \tag{2}
+$$
+
+$$
+k_f = k_{0,f} \exp{\left( \frac{-E_f}{RT}  \right)} \tag{9}
+$$
+
+$$
+k_r = k_{0,r} \exp{\left( \frac{-E_r}{RT}  \right)} \tag{10}
+$$
+$$
+P_A = y_AP = \frac{\dot n_A P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{11}
+$$
+
+$$
+P_Y = y_YP = \frac{\dot n_Y P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{12}
+$$
+
+$$
+P_Z = y_ZP = \frac{\dot n_Z P}{\dot n_A + \dot n_Y + \dot n_Z + \dot n_I} \tag{13}
+$$
+
+**Reactor Model Solver**:
+
+The reactor design equations are a set of 6 coupled IVODEs, equations (7) through (12). They can be solved numerically to find the values of $\dot n_A$, $\dot n_Y$, $\dot n_Z$, $\dot n_I$, $T$, and $P$ as functions of $z$ in the range from $z=0$ to $z=L$.
+
+The initial values are $z=0$, $\dot n_A = \dot n_{A,in}$, $\dot n_Y = \dot n_{Y,in}$, $\dot n_Z = \dot n_{Z,in}$, $\dot n_I = \dot n_{I,in}$, $T = T_{in}$, and $P=P_{in}$.
+
+The stopping criterion is $z=L$.
+
+**Response Calculation**:
+
+$$
+T_{out} = T\Big\vert_{z=L} \tag{19}
+$$
+
+$$
+P_{out} = P\Big\vert_{z=L} \tag{20}
+$$
+
+$$
+f_A = \frac{\dot n_{A,in} - \dot n_A\Big\vert_{z=L}}{\dot n_{A,in}} \tag{21}
+$$
+
+:::{.callout-note collapse="false"}
+## Note
+
+When a problem provides all of the reactor model input variables and asks for values associated with the reactor output, like this problem does, the reactor response function can be used directly to obtain the answer. That is, the reactor response function can be executed directly and it will return the response that the problem requested.
+
+:::
+
+### Reactor Response Function with a Missing Values Argument {#sec-example_7_2}
+
+{{< include ../RE_Basics_Examples/reb_7_2/problem_statement.qmd >}}
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+This problem asks me to generate a reactor response function that could be used to perform an analysis of a BSTR. I will first create a skeleton response function worksheet (i. e. a worksheet with only the section headings). As is my practice, I will then identify all the quantities that are given in the problem statement and add them to the worksheet in the given and known constants section.
+
+I also like to identify the response that is needed to answer the question as I start to solve it. This problem asks for the initial reacting fluid temperature, $T_0$, and the yield of D, $Y_{D/A}$, and it specifies the desired conversion of A, $f_A$. The initial reacting fluid temperature is a reactor model input variable, not an output variable. Since its value is not provided, **$T_0$ is a missing input value**. The response variables of interest in this problem are the yield and the conversion.
+
+:::
+
+**Returned Response**: $Y_{D/A}$ and $f_A$
+
+**Missing Values Argument**: $T_0$
+
+**Given and Known Constants**: $P_{A,0}=1\text{ atm}$, $P_{B,0}=2\text{ atm}$, $t_f = 12\text{ min}$, $V= 2\text{ L}$, $A= 600\text{ cm}^2$, $U= 0.6 \text{ cal cm}^{-2} \text{ min}^{-1}\text{ K}^{-1}$, $T_{ex} =30\text{ °C}$, $k_{0,1} =  3.34 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $k_{0,2} = 4.99 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $E_1= 20.5\text{ kcal mol}^{-1}$, $E_2= 21.8\text{ kcal mol}^{-1}$, $\Delta H_1= -6,300 \text{ cal mol}^{-1}$, $\Delta H_2= -6,900 \text{ cal mol}^{-1}$, $\hat C_{p,A}= 7.4 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,B}= 8.6 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,D}= 10.7 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,Z}= 5.2 \text{ cal mol}^{-1}\text{ K}^{-1}$ $\hat C_{p,U}= 10.3 \text{ cal mol}^{-1}\text{ K}^{-1}$, and $f_A = 0.8$.
+
+:::{.callout-warning icon=false collapse="true"}
+## Click Here to See the Evolving Solution
+
+**Returned Response**: $Y_{D/A}$ and $f_A$
+
+**Missing Values Argument**: $T_0$
+
+**Adjusted Values Argument**: 
+
+**Solver Guesses Argument**: 
+
+**Given and Known Constants**: $P_{A,0}=1\text{ atm}$, $P_{B,0}=2\text{ atm}$, $t_f = 12\text{ min}$, $V= 2\text{ L}$, $A= 600\text{ cm}^2$, $U= 0.6 \text{ cal cm}^{-2} \text{ min}^{-1}\text{ K}^{-1}$, $T_{ex} =30\text{ °C}$, $k_{0,1} =  3.34 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $k_{0,2} = 4.99 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $E_1= 20.5\text{ kcal mol}^{-1}$, $E_2= 21.8\text{ kcal mol}^{-1}$, $\Delta H_1= -6,300 \text{ cal mol}^{-1}$, $\Delta H_2= -6,900 \text{ cal mol}^{-1}$, $\hat C_{p,A}= 7.4 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,B}= 8.6 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,D}= 10.7 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,Z}= 5.2 \text{ cal mol}^{-1}\text{ K}^{-1}$ $\hat C_{p,U}= 10.3 \text{ cal mol}^{-1}\text{ K}^{-1}$, and $f_A = 0.8$.
+
+**Calculated Fixed Input**: 
+
+**Reactor Design and Ancillary Equations**:
+
+**Reactor Model Solver**:
+
+**Response Calculation**:
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I know I am going to need a model for the reactor, so I will formulate that next. That means I need to write the reactor design equations for this reactor. I will start with mole balances on each reagent present in the system (A, B, D, Z, and U).
+
+:::
+
+**Mole Balances**
+
+$$
+\frac{dn_A}{dt} = -Vr_1 \tag{5}
+$$
+
+$$
+\frac{dn_B}{dt} = -V\left(r_1 + r_2\right) \tag{6}
+$$
+
+$$
+\frac{dn_D}{dt} = V\left(r_1 - r_2\right) \tag{7}
+$$
+
+$$
+\frac{dn_Z}{dt} = V\left(r_1 + r_2\right) \tag{8}
+$$
+
+$$
+\frac{dn_U}{dt} = Vr_2 \tag{9}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See Where That Came From
+
+Start from the general mole balance for a BSTR, @eq-bstr_mole_balance.
+
+$$
+\frac{dn_i}{dt} = V \sum_j \nu_{i,j}r_j
+$$
+
+In this problem, there are two reactions taking place, so the sum expands to two terms.
+
+$$
+\frac{dn_i}{dt} = V \left( \nu_{i,1}r_1 + \nu_{i,2}r_2 \right)
+$$
+
+The stoichiometric coefficient of reagent A in reaction (1) is -1, and its stoichiometric coefficient in reaction (2) is zero. Substituting those values leads to equation (5). Analogous substitutions lead to equations (6) through (9).
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The next reactor design equations are energy balances on the reacting fluid and on the exchange fluid. In this problem, however, I'm told nothing about the exchange fluid except that the temperature in the jacket is 30 °C. Presumably this means it is constant throughout the process (I included it among the known constants, above). Since I know the exchange fluid temperature, the other reactor design equations can be solved separately from an energy balance on the exchange fluid (see @sec-modeling-ideal-reactors). In this problem I'm not asked anything about the exchange fluid, so an energy balance on it is not needed.
+
+:::
+
+**Energy Balance**
+
+$$
+\begin{align}
+\frac{dT}{dt} &\left(n_A \hat C_{p,A} + n_B \hat C_{p,B} +n_D \hat C_{p,D} +n_Z \hat C_{p,Z} +n_U \hat C_{p,U} \right) \\&- V \frac{dP}{dt} = UA\left(T_{ex}-T\right) - V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right)
+\end{align} \tag{10}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See Where That Came From
+
+Start from the general energy balance for a BSTR, @eq-bstr_energy_balance.
+$$
+\left(\sum_i n_i \hat C_{p,i} \right) \frac{dT}{dt} - V\frac{dP}{dt}  - P  \frac{dV}{dt}  = \dot Q - \dot W - V \sum_j \left(r_j \Delta H_j \right)
+$$
+
+The reactor walls are presumably rigid, so the gas always expands to fill it, meaning the reaction fluid volume is constant. If the volume is constant, its time derivative must equal zero. There are no moving boundaries doing work on the surroundings, so assuming that the work associated with agitating the gas is negligible, the rate of work term is equal to zero. The rate of heat transfer from the exchange fluid to the reacting fluid can be written in terms of the given heat transfer coefficient and heat transfer area.
+
+$$
+\left(\sum_i n_i \hat C_{p,i} \right) \frac{dT}{dt} - V\frac{dP}{dt}  - P  \cancelto{0}{\frac{dV}{dt}}  = UA\left(T_{ex}-T\right) - \cancelto{0}{\dot W} - V \sum_j \left(r_j \Delta H_j \right)
+$$
+
+There are five reagents in this system, so the first summation expands to five terms, and there are two reactions, so the last summation expands to two terms.
+
+$$
+\begin{align}
+\frac{dT}{dt} &\left(n_A \hat C_{p,A} + n_B \hat C_{p,B} +n_D \hat C_{p,D} +n_Z \hat C_{p,Z} +n_U \hat C_{p,U} \right) \\&- V \frac{dP}{dt} = UA\left(T_{ex}-T\right) - V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right)
+\end{align}
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+A momentum balance is not used with stirred tank reactors. However, looking at the five reactor design equations I've written so far, I see that they contain six dependent variables ($n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$). That means that I either need to eliminate one of the dependent variables or add another IVODE before I can solve the reactor design equations. As noted in @sec-modeling-ideal-reactors, a differential form of the ideal gas law, @eq can be used in this situation.
+
+:::
+
+**Equation of State** (Ideal Gas Law)
+
+$$
+V\frac{dP}{dt} - R\left(n_A + n_B + n_D + n_Z + n_U \right)\frac{dT}{dt}=0 \tag{11}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See Where That Came From
+
+Start with the differential form of the ideal gas law for batch reactors, @eq-bstr_diff_eqn_state.
+
+$$
+V \frac{dP}{dt} - R \left( T \sum_i \frac{dn_i}{dt} + \left( \sum_i n_i \right) \frac{dT}{dt} \right) = 0
+$$
+
+This equation already assumes that the reactor volume is constant. There are five reagents in this system, so I could expand each of the two summations to five terms, and use the resulting equation. Here, I happened to notice that the total moles are constant because each reaction has two reactants and two products. In that case, the first summation is equal to zero. (You could also reach this conclusion by summing the mole balances, equations (5) through (9).)
+
+$$
+\sum_i \frac{dn_i}{dt} = \frac{dn_{\text{total}}}{dt} = 0
+$$
+
+Making that substitution and expanding the other summation leads to equation (11).
+
+:::
+
+:::{.callout-warning icon=false collapse="true"}
+## Click Here to See the Evolving Solution
+
+**Returned Response**: $Y_{D/A}$ and $f_A$
+
+**Missing Values Argument**: $T_0$
+
+**Adjusted Values Argument**: 
+
+**Solver Guesses Argument**: 
+
+**Given and Known Constants**: $P_{A,0}=1\text{ atm}$, $P_{B,0}=2\text{ atm}$, $t_f = 12\text{ min}$, $V= 2\text{ L}$, $A= 600\text{ cm}^2$, $U= 0.6 \text{ cal cm}^{-2} \text{ min}^{-1}\text{ K}^{-1}$, $T_{ex} =30\text{ °C}$, $k_{0,1} =  3.34 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $k_{0,2} = 4.99 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $E_1= 20.5\text{ kcal mol}^{-1}$, $E_2= 21.8\text{ kcal mol}^{-1}$, $\Delta H_1= -6,300 \text{ cal mol}^{-1}$, $\Delta H_2= -6,900 \text{ cal mol}^{-1}$, $\hat C_{p,A}= 7.4 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,B}= 8.6 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,D}= 10.7 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,Z}= 5.2 \text{ cal mol}^{-1}\text{ K}^{-1}$ $\hat C_{p,U}= 10.3 \text{ cal mol}^{-1}\text{ K}^{-1}$, and $f_A = 0.8$.
+
+**Calculated Fixed Input**: 
+
+**Reactor Design and Ancillary Equations**:
+
+$$
+\frac{dn_A}{dt} = -Vr_1 \tag{5}
+$$
+
+$$
+\frac{dn_B}{dt} = -V\left(r_1 + r_2\right) \tag{6}
+$$
+
+$$
+\frac{dn_D}{dt} = V\left(r_1 - r_2\right) \tag{7}
+$$
+
+$$
+\frac{dn_Z}{dt} = V\left(r_1 + r_2\right) \tag{8}
+$$
+
+$$
+\frac{dn_U}{dt} = Vr_2 \tag{9}
+$$
+
+$$
+\begin{align}
+\frac{dT}{dt} &\left(n_A \hat C_{p,A} + n_B \hat C_{p,B} +n_D \hat C_{p,D} +n_Z \hat C_{p,Z} +n_U \hat C_{p,U} \right) \\&- V \frac{dP}{dt} = UA\left(T_{ex}-T\right) - V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right)
+\end{align} \tag{10}
+$$
+
+$$
+V\frac{dP}{dt} - R\left(n_A + n_B + n_D + n_Z + n_U \right)\frac{dT}{dt}=0 \tag{11}
+$$
+
+**Reactor Model Solver**:
+
+**Response Calculation**:
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point there are six reactor design equations. They are IVODEs. The independent variable is $t$ and the dependent variables are $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$. The number of dependent variables is equal to the number of IVODEs, so the reactor design equations can be solved numerically to find the values of the dependent variables as functions of the independent variable. Before that can be done, though, ancillary equations are needed for calculating every variable quantity appearing in the reactor design equations from the independent and dependent variables. If the ancillary equations contain variable quantities, ancillary equations for those variables are also needed.
+
+The reacting fluid volume is a known constant, so only variable quantities appearing in the mole balances are the two rates. They can be calculated using equations (3) and (4). The pre-exponential factors and activation energies in equations (3) and (4) are known constants, but ancillary equations are needed to calculate the three partial pressures that appear in the rate expressions. The ideal gas law provides the necessary equations, (12) through (14).
+
+The energy balance and differential equation of state introduce several additional quantities, but they are all known constants, so no other ancillary equations are needed.
+
+:::
+
+**Ancillary Equations for Solving the Reactor Design Equations**
+
+The reaction rates can be calculated using equations (3) and (4).
+
+$$
+P_A = \frac{n_ART}{V} \tag{12}
+$$
+
+$$
+P_B = \frac{n_BRT}{V} \tag{13}
+$$
+
+$$
+P_D = \frac{n_DRT}{V} \tag{14}
+$$
+
+:::{.callout-warning icon=false collapse="true"}
+## Click Here to See the Evolving Solution
+
+**Returned Response**: $Y_{D/A}$ and $f_A$
+
+**Missing Values Argument**: $T_0$
+
+**Adjusted Values Argument**: 
+
+**Solver Guesses Argument**: 
+
+**Given and Known Constants**: $P_{A,0}=1\text{ atm}$, $P_{B,0}=2\text{ atm}$, $t_f = 12\text{ min}$, $V= 2\text{ L}$, $A= 600\text{ cm}^2$, $U= 0.6 \text{ cal cm}^{-2} \text{ min}^{-1}\text{ K}^{-1}$, $T_{ex} =30\text{ °C}$, $k_{0,1} =  3.34 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $k_{0,2} = 4.99 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $E_1= 20.5\text{ kcal mol}^{-1}$, $E_2= 21.8\text{ kcal mol}^{-1}$, $\Delta H_1= -6,300 \text{ cal mol}^{-1}$, $\Delta H_2= -6,900 \text{ cal mol}^{-1}$, $\hat C_{p,A}= 7.4 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,B}= 8.6 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,D}= 10.7 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,Z}= 5.2 \text{ cal mol}^{-1}\text{ K}^{-1}$ $\hat C_{p,U}= 10.3 \text{ cal mol}^{-1}\text{ K}^{-1}$, and $f_A = 0.8$.
+
+**Calculated Fixed Input**: 
+
+**Reactor Design and Ancillary Equations**:
+
+$$
+\frac{dn_A}{dt} = -Vr_1 \tag{5}
+$$
+
+$$
+\frac{dn_B}{dt} = -V\left(r_1 + r_2\right) \tag{6}
+$$
+
+$$
+\frac{dn_D}{dt} = V\left(r_1 - r_2\right) \tag{7}
+$$
+
+$$
+\frac{dn_Z}{dt} = V\left(r_1 + r_2\right) \tag{8}
+$$
+
+$$
+\frac{dn_U}{dt} = Vr_2 \tag{9}
+$$
+
+$$
+\begin{align}
+\frac{dT}{dt} &\left(n_A \hat C_{p,A} + n_B \hat C_{p,B} +n_D \hat C_{p,D} +n_Z \hat C_{p,Z} +n_U \hat C_{p,U} \right) \\&- V \frac{dP}{dt} = UA\left(T_{ex}-T\right) - V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right)
+\end{align} \tag{10}
+$$
+
+$$
+V\frac{dP}{dt} - R\left(n_A + n_B + n_D + n_Z + n_U \right)\frac{dT}{dt}=0 \tag{11}
+$$
+
+$$
+P_A = \frac{n_ART}{V} \tag{12}
+$$
+
+$$
+P_B = \frac{n_BRT}{V} \tag{13}
+$$
+
+$$
+P_D = \frac{n_DRT}{V} \tag{14}
+$$
+
+**Reactor Model Solver**:
+
+**Response Calculation**:
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point, the reactor design equations can be solved, but to do so initial values and a stopping criterion must be provided. The initial values are the values of $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ at the start of the process (where $t$ is defined to equal zero). The problem statement does not provide the initial temperature, so that will be provided to the response function as a missing value argument. The problem does provide the initial partial pressures of A and B; presumably the initial partial pressures of D, Z, and U are equal to zero. The ideal gas law can then be used to calculate the initial molar amounts. The initial pressure is just the sum of the initial partial pressures. Since these are all constants, they can be added to the response function worksheet in the calculated fixed input section.
+
+The problem states that the reaction takes place for 12 min, so that is used as the stopping criterion.
+
+:::
+
+**Calculated Fixed Input**:
+
+$$
+n_{A,0} = \frac{P_{A,0}V}{RT_0} \tag{15}
+$$
+
+$$
+n_{B,0} = \frac{P_{B,0}V}{RT_0} \tag{16}
+$$
+
+$$
+n_{D,0} = 0 \tag{17}
+$$
+
+$$
+n_{Z,0} = 0 \tag{18}
+$$
+
+$$
+n_{U,0} = 0 \tag{19}
+$$
+
+$$
+P_0= P_{A,0} + P_{B,0} \tag{20}
+$$
+
+The reactor design equations are a set of 7 coupled IVODEs, equations (11) through (17). They can be solved numerically to find the values of $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ as functions of $t$ in the range from $t=0$ to $t=t_f$.
+
+The initial values are $t=0$, $n_A = n_{A,0}$, $n_B = n_{B,0}$, $n_D = n_{D,0}$, $n_Z = n_{Z,0}$, $n_U = n_{U,0}$, $T = T_0$, and $P=P_0$.
+
+The stopping criterion is $t=t_f$.
+
+:::{.callout-warning icon=false collapse="true"}
+## Click Here to See the Evolving Solution
+
+**Returned Response**: $Y_{D/A}$ and $f_A$
+
+**Missing Values Argument**: $T_0$
+
+**Adjusted Values Argument**: 
+
+**Solver Guesses Argument**: 
+
+**Given and Known Constants**: $P_{A,0}=1\text{ atm}$, $P_{B,0}=2\text{ atm}$, $t_f = 12\text{ min}$, $V= 2\text{ L}$, $A= 600\text{ cm}^2$, $U= 0.6 \text{ cal cm}^{-2} \text{ min}^{-1}\text{ K}^{-1}$, $T_{ex} =30\text{ °C}$, $k_{0,1} =  3.34 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $k_{0,2} = 4.99 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $E_1= 20.5\text{ kcal mol}^{-1}$, $E_2= 21.8\text{ kcal mol}^{-1}$, $\Delta H_1= -6,300 \text{ cal mol}^{-1}$, $\Delta H_2= -6,900 \text{ cal mol}^{-1}$, $\hat C_{p,A}= 7.4 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,B}= 8.6 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,D}= 10.7 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,Z}= 5.2 \text{ cal mol}^{-1}\text{ K}^{-1}$ $\hat C_{p,U}= 10.3 \text{ cal mol}^{-1}\text{ K}^{-1}$, and $f_A = 0.8$.
+
+**Calculated Fixed Input**: 
+
+$$
+n_{A,0} = \frac{P_{A,0}V}{RT_0} \tag{15}
+$$
+
+$$
+n_{B,0} = \frac{P_{B,0}V}{RT_0} \tag{16}
+$$
+
+$$
+n_{D,0} = 0 \tag{17}
+$$
+
+$$
+n_{Z,0} = 0 \tag{18}
+$$
+
+$$
+n_{U,0} = 0 \tag{19}
+$$
+
+$$
+P_0= P_{A,0} + P_{B,0} \tag{20}
+$$
+
+**Reactor Design and Ancillary Equations**:
+
+$$
+r_1 = k_{0,1} \exp{\left(\frac{-E_1}{RT}\right)}P_AP_B \tag{3}
+$$
+
+$$
+r_2 = k_{0,2} \exp{\left(\frac{-E_2}{RT}\right)}P_DP_B \tag{4}
+$$
+
+$$
+\frac{dn_A}{dt} = -Vr_1 \tag{5}
+$$
+
+$$
+\frac{dn_B}{dt} = -V\left(r_1 + r_2\right) \tag{6}
+$$
+
+$$
+\frac{dn_D}{dt} = V\left(r_1 - r_2\right) \tag{7}
+$$
+
+$$
+\frac{dn_Z}{dt} = V\left(r_1 + r_2\right) \tag{8}
+$$
+
+$$
+\frac{dn_U}{dt} = Vr_2 \tag{9}
+$$
+
+$$
+\begin{align}
+\frac{dT}{dt} &\left(n_A \hat C_{p,A} + n_B \hat C_{p,B} +n_D \hat C_{p,D} +n_Z \hat C_{p,Z} +n_U \hat C_{p,U} \right) \\&- V \frac{dP}{dt} = UA\left(T_{ex}-T\right) - V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right)
+\end{align} \tag{10}
+$$
+
+$$
+V\frac{dP}{dt} - R\left(n_A + n_B + n_D + n_Z + n_U \right)\frac{dT}{dt}=0 \tag{11}
+$$
+
+$$
+P_A = \frac{n_ART}{V} \tag{12}
+$$
+
+$$
+P_B = \frac{n_BRT}{V} \tag{13}
+$$
+
+$$
+P_D = \frac{n_DRT}{V} \tag{14}
+$$
+
+**Reactor Model Solver**:
+
+The reactor design equations are a set of 7 coupled IVODEs, equations (11) through (17). They can be solved numerically to find the values of $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ as functions of $t$ in the range from $t=0$ to $t=t_f$.
+
+The initial values are $t=0$, $n_A = n_{A,0}$, $n_B = n_{B,0}$, $n_D = n_{D,0}$, $n_Z = n_{Z,0}$, $n_U = n_{U,0}$, $T = T_0$, and $P=P_0$.
+
+The stopping criterion is $t=t_f$.
+
+**Response Calculation**:
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Solving the reactor design equations yields the values of $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ as functions of $t$ in the range from $t=0$ to $t=t_f$. That reactor model output can be used to calculate the response for this problem. In this case the yield and conversion are calculated using their defining equations.
+
+:::
+
+$$
+Y_{D/A}=\frac{n_D\Big\vert_{t=t_f}}{n_{A,0}} \tag{21}
+$$
+
+$$
+f_A=\frac{n_{A,0} - n_A\Big\vert_{t=t_f}}{n_{A,0}} \tag{22}
+$$
+
+The items discussed above can be combined to create the following response function worksheet.
+
+**Response Function Worksheet**
+
+**Returned Response**: $Y_{D/A}$ and $f_A$
+
+**Missing Values Argument**: $T_0$
+
+**Adjusted Values Argument**: 
+
+**Solver Guesses Argument**: 
+
+**Given and Known Constants**: $P_{A,0}=1\text{ atm}$, $P_{B,0}=2\text{ atm}$, $t_f = 12\text{ min}$, $V= 2\text{ L}$, $A= 600\text{ cm}^2$, $U= 0.6 \text{ cal cm}^{-2} \text{ min}^{-1}\text{ K}^{-1}$, $T_{ex} =30\text{ °C}$, $k_{0,1} =  3.34 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $k_{0,2} = 4.99 \times 10^9 \text{ mol cm}^{-3}\text{ min}^{-1}\text{ atm}^{-2}$, $E_1= 20.5\text{ kcal mol}^{-1}$, $E_2= 21.8\text{ kcal mol}^{-1}$, $\Delta H_1= -6,300 \text{ cal mol}^{-1}$, $\Delta H_2= -6,900 \text{ cal mol}^{-1}$, $\hat C_{p,A}= 7.4 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,B}= 8.6 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,D}= 10.7 \text{ cal mol}^{-1}\text{ K}^{-1}$, $\hat C_{p,Z}= 5.2 \text{ cal mol}^{-1}\text{ K}^{-1}$ $\hat C_{p,U}= 10.3 \text{ cal mol}^{-1}\text{ K}^{-1}$, and $f_A = 0.8$.
+
+**Calculated Fixed Input**: 
+
+$$
+n_{A,0} = \frac{P_{A,0}V}{RT_0} \tag{15}
+$$
+
+$$
+n_{B,0} = \frac{P_{B,0}V}{RT_0} \tag{16}
+$$
+
+$$
+n_{D,0} = 0 \tag{17}
+$$
+
+$$
+n_{Z,0} = 0 \tag{18}
+$$
+
+$$
+n_{U,0} = 0 \tag{19}
+$$
+
+$$
+P_0= P_{A,0} + P_{B,0} \tag{20}
+$$
+
+**Reactor Design and Ancillary Equations**:
+
+$$
+r_1 = k_{0,1} \exp{\left(\frac{-E_1}{RT}\right)}P_AP_B \tag{3}
+$$
+
+$$
+r_2 = k_{0,2} \exp{\left(\frac{-E_2}{RT}\right)}P_DP_B \tag{4}
+$$
+
+$$
+\frac{dn_A}{dt} = -Vr_1 \tag{5}
+$$
+
+$$
+\frac{dn_B}{dt} = -V\left(r_1 + r_2\right) \tag{6}
+$$
+
+$$
+\frac{dn_D}{dt} = V\left(r_1 - r_2\right) \tag{7}
+$$
+
+$$
+\frac{dn_Z}{dt} = V\left(r_1 + r_2\right) \tag{8}
+$$
+
+$$
+\frac{dn_U}{dt} = Vr_2 \tag{9}
+$$
+
+$$
+\begin{align}
+\frac{dT}{dt} &\left(n_A \hat C_{p,A} + n_B \hat C_{p,B} +n_D \hat C_{p,D} +n_Z \hat C_{p,Z} +n_U \hat C_{p,U} \right) \\&- V \frac{dP}{dt} = UA\left(T_{ex}-T\right) - V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right)
+\end{align} \tag{10}
+$$
+
+$$
+V\frac{dP}{dt} - R\left(n_A + n_B + n_D + n_Z + n_U \right)\frac{dT}{dt}=0 \tag{11}
+$$
+
+$$
+P_A = \frac{n_ART}{V} \tag{12}
+$$
+
+$$
+P_B = \frac{n_BRT}{V} \tag{13}
+$$
+
+$$
+P_D = \frac{n_DRT}{V} \tag{14}
+$$
+
+**Reactor Model Solver**:
+
+The reactor design equations are a set of 7 coupled IVODEs, equations (11) through (17). They can be solved numerically to find the values of $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ as functions of $t$ in the range from $t=0$ to $t=t_f$.
+
+The initial values are $t=0$, $n_A = n_{A,0}$, $n_B = n_{B,0}$, $n_D = n_{D,0}$, $n_Z = n_{Z,0}$, $n_U = n_{U,0}$, $T = T_0$, and $P=P_0$.
+
+The stopping criterion is $t=t_f$.
+
+**Response Calculation**:
+
+$$
+Y_{D/A}=\frac{n_D\Big\vert_{t=t_f}}{n_{A,0}} \tag{21}
+$$
+
+$$
+f_A=\frac{n_{A,0} - n_A\Big\vert_{t=t_f}}{n_{A,0}} \tag{22}
+$$
+
+Using the response function worksheet, it is straightforward to generate a reactor response function using any computer programming language that supports numerical solution of IVODEs.
+
+:::{.callout-note collapse="false"}
+## Note
+
+This problem asks for the initial reacting fluid temperature, $T_0$, that will result in a conversion of 80%. The reactor response function cannot be used directly to calculate that temperature becaure it does not return $T_0$. Instead, equation (23) must be solved numerically to find the value of $T_0$. In equation (23), $f_{A,\text{response}}$ is the conversion predicted by the response function.
+
+
+
+the reactor response function must be provided with the initial reacting fluid temperature, $T_0$, as a missing value argument. Effectively, the reactor response function 
+
+
+
+To do that, equation (23) must first be solved to find $t_f$. Equation (23) can be solved numerically by calling a maximization function and "telling" it to use the reactor response function to calculate $Y_{D/U}$. Once $t_f$ has been found, the reactor response function can be called with $t_f$ as the argument and it will return the maximum yield and the corresponding conversion of A.
+
+$$
+f_{A,\text{response}} = 0.8 \tag{23}
+$$
+
+:::
+
+### Reactor Response Function with an Adjusted Values Argument {#sec-example_7_3}
+
+{{< include ../RE_Basics_Examples/reb_7_3/problem_statement.qmd >}}
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+[add thinking here]
+
+:::
+
+**Returned Response**: $\underline{T_{max}}$
+
+**Missing Values Argument**: None.
+
+**Adjusted Values Argument**: $\underline{\dot{V}_{ex,in}}$
+
+**Solver Guesses Argument**: None.
+
+**Given and Known Constants**: $C_{A,1}$ = 3 mol L^−1^, $V_1$ = 250 cm^3^, $C_{B,2}$ = 3 mol L^−1^, $V_2$ = 250 cm^3^, $T_0$ = (50 + 273.15) K, $T_{ex,0}$ = (40 + 273.15) K, $T_{ex,in}$ = (40 + 273.15) K, $\tilde{C}_p$ = 0.35 cal g^−1^ K^−1^, $\rho$ = 0.93 g cm^−3^, $k_{0,1}$ = 1.24 × 10^13^ cm^3^ mol^−1^ s^−1^, $E_1$ = 20 kcal mol^−1^, $\Delta H_1$ = −80 kJ mol^−1^, $A$ = 66 cm^2^, $V_{ex}$ = 40 cm^3^, $U$ = 35 BTU ft^−2^ h^−1^ °F^−1^, $\rho_{ex}$ = 1 g cm^−3^, $\tilde{C}_{p,ex}$ = 1 cal g^−1^ K^−1^, and $f_{A,f}$ = 0.9.
+
+**Calculated Fixed Input**: 
+
+$$
+n_{A,0} = C_{A,1}V_1 \tag{3}
+$$
+
+$$
+n_{B,0} = C_{B,2}V_2 \tag{4}
+$$
+
+$$
+n_{Y,0} = 0 \tag{5}
+$$
+
+$$
+n_{Z,0} = 0 \tag{6}
+$$
+
+$$
+n_{A,f} = n_{A,0} \left( 1 - f_{A,f} \right) \tag{7}
+$$
+
+**Reactor Design and Ancillary Equations**:
+
+$$
+\frac{dn_A}{dt} = -r_1V \tag{8}
+$$
+
+$$
+\frac{dn_B}{dt} = -r_1V \tag{9}
+$$
+
+$$
+\frac{dn_Y}{dt} = r_1V \tag{10}
+$$
+
+$$
+\frac{dn_Z}{dt} = r_1V \tag{11}
+$$
+
+$$
+\frac{dT}{dt} = \frac{UA\left( T_{ex} - T \right) - r_1V\Delta H_1}{\rho V \tilde{C}_{p,ex}} \tag{12}
+$$
+
+$$
+\frac{dT_{ex}}{dt} = \frac{\rho_{ex}\dot{V}_{ex}\tilde{C}_{p,ex}\left( T_{ex,in} - T_{ex} \right) - UA\left( T_{ex} - T \right)}{\rho_{ex}V_{ex}\tilde{C}_{p,ex}} \tag{13}
+$$
+
+$$
+k_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)} \tag{14}
+$$
+
+$$
+C_A = \frac{n_A}{V} \tag{15}
+$$
+
+$$
+C_B = \frac{n_B}{V} \tag{16}
+$$
+
+**Reactor Model Solver**:
+
+The reactor design equations are a set of 6 coupled IVODEs, equations (8) through (13). They can be solved numerically to find the values of $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ as functions of $t$ in the range from $t=0$ to the time when $n_A = n_{A,f}$.
+
+The initial values are $t=0$, $n_A = n_{A,0}$, $n_B = n_{B,0}$, $n_Y = n_{Y,0}$, $n_Z = n_{Z,0}$, $T = T_0$, and $T_{ex}=T_{ex,0}$.
+
+The stopping criterion is $n_A=n_{A,f}$.
+
+**Response Calculation**:
+
+$$
+T_{max} = \max \left(T\right) \tag{17}
+$$
+
+
+### Reactor Response Function with a Missing Values Argument and an Adjusted Values Argument {#sec-example_7_4}
+
+{{< include ../RE_Basics_Examples/reb_7_4/problem_statement.qmd >}}
+
+The table below presents the results from the first few experiments; the full set of experimental data is included in the Excel file, [reb_7_4_data.xlsx](./reb_7_4_data.xlsx). 
+
+```{r}
+#| echo: false
+#| warning: false
+library(tidyverse)
+library(readxl)
+library(knitr)
+library(kableExtra)
+kinData <- read_xlsx("./Data/reb_7_4_data.xlsx")
+kbl(head(kinData,5), escape=FALSE, caption="PFR Kinetics Data from the First Five Experiments", col.names=
+    c("$\\dot{V}_{A,in}\\text{ (cm} ^3 \\text{ s}^{-1} \\text{)}$","$\\dot{V}_{Y,in}\\text{ (cm} ^3 \\text{ s}^{-1} \\text{)}$","$\\dot{V}_{Z,in}\\text{ (cm} ^3 \\text{ s}^{-1} \\text{)}$","$T\\text{ (°C)}$", "$R_{Y/A}$"), format = 'markdown',
+    align = "ccccc")
+```
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+[add thinking here]
+
+:::
+
+**Returned Response**: $\underline{R_{Y/A}}$
+
+**Missing Values Argument**: $k_{0,1}$ and $E_1$.
+
+**Adjusted Values Argument**: $\underline{\dot {V}_{A,in}}$, $\underline{\dot {V}_{Y,in}}$, $\underline{\dot {V}_{Z,in}}$, and $\underline{T}$
+
+**Solver Guesses Argument**: None.
+
+**Given and Known Constants**: $D = 2.5\text{ cm}$,  $L = 1\text{ m}$, and $P = 1\text{ atm}$.
+
+**Calculated Fixed Input**:
+
+$$
+\dot{n}_{A,in} = \frac{P \dot{V}_{A,in}}{RT} \tag{4}
+$$
+
+$$
+\dot{n}_{Y,in} = \frac{P \dot{V}_{Y,in}}{RT} \tag{5}
+$$
+
+$$
+\dot{n}_{Z,in} = \frac{P \dot{V}_{Z,in}}{RT} \tag{6}
+$$
+
+**Reactor Design and Ancillary Equations**:
+
+$$
+\frac{d \dot{n}_A}{dz} = -\frac{\pi D^2}{4}r_1 \tag{7}
+$$
+
+$$
+\frac{d \dot{n}_Y}{dz} = \frac{\pi D^2}{4}r_1 \tag{8}
+$$
+
+$$
+\frac{d \dot{n}_Z}{dz} = -\frac{3\pi D^2}{4}r_1 \tag{9}
+$$
+
+
+
+**Reactor Model Solver**:
+
+The reactor design equations are a set of 3 coupled IVODEs, equations (7) through (9). They can be solved numerically to find the values of $\dot{n}_A$, $\dot{n}_Y$, and $\dot{n}_Z$ as functions of $z$ in the range from $z=0$ to $z=L$.
+
+The initial values are $z=0$, $\dot{n}_A = \dot{n}_{A,0}$, $\dot{n}_Y = \dot{n}_{Y,0}$, and $\dot{n}_Z = \dot{n}_{Z,0}$.
+
+The stopping criterion is $z=L$.
+
+**Response Calculation**:
+
+$$
+R_{Y/A} = \frac{\dot{n}_Y\Big\vert_{z=L}}{\dot{n}_A\Big\vert_{z=L}} \tag{10}
+$$
+
+
+## Symbols Used in @sec-modeling-ideal-reactors
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $n_{A,0}$ | Initial moles of reagent A. |
+| $C_{A,0}$ | Initial concentration of reagent A. |
+| $V$ | Volume of the reacting fluid. |
+
+: {tbl-colwidths="[20,80]"}
