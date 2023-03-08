@@ -14,3 +14,10 @@ Things to do or think about doing
 * Add link for reporting errors
 * Fix figures in Appendix D so they all have the same size.
 * Get citation for transient momentum balance in Chapter 6
+
+Kinetics Data Analysis Resources
+
+* CE 329 2021 Classes 9 through 12 and 14 (13 was ethics and safety)
+* CE 329 2022 Classes 9 through 12
+* AFCoKaRE 11 through 16
+* Documents/Hold for Action/Kinetics/Need to File/In-class Resources/Class 10 through 13
