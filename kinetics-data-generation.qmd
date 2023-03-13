@@ -123,7 +123,7 @@ To begin, I need to write the reactor design equations for the experimental syst
 
 **Reactor Design Equations**
 
-Mole balances on A and Z are presented in equations (3) and (4).
+Mole balances on A and Z for any one of the experiments are presented in equations (3) and (4).
 
 $$
 \frac{dn_A}{dt} = -r_1 V \tag{3}
@@ -146,8 +146,6 @@ The stoichiometric coefficient of A is -1 and that of Z is +1. Substitution of t
 
 :::
 
-The reactor is isothermal, so only the mole balances are needed to model it.
-
 **Solution of the Reactor Design Equations**
 
 :::{.callout-tip collapse="true"}
@@ -157,17 +155,21 @@ The design equations are IVODEs. The independent variable is $t$, and the depend
 
 To generate the necessary ancillary equations, I'll go through the each of the design equations one quantity at a time. If the quantity is a known constant, $t$, $n_A$, or $n_Z$, I don't need an ancillary equation. If it isn't, I'll write an ancillary equation to calculate its value. If that ancillary equation contains quantities other than known constants, $t$, $n_A$, and $n_Z$, I'll write ancillary equations for those quantities, and so on. I will continue this process until I have a set of ancillary equations that allow every quantity in the design equations to be calculated from known constants, $t$, $n_A$, and $n_Z$.
 
-It is useful to begin by listing all of the known constant quantities. Also, this reactor model will be within a response function. That function will be passed the values of the experimental adjusted inputs and the kinetics parameters, so I'll list those, also. Those lists can then be used as I go through the design equations one quantity at a time, allowing me to quickly see if the quantity is a known constant without needing to read through the entire problem statement.
+It is useful to begin by listing all of the known constant quantities. Also, this reactor model will be within a response function. That function will be passed the values of the experimental adjusted inputs and the kinetics parameters, and it could be provided with the experimental responses, if necessary, so I'll list those, also. Those lists can then be used as I go through the design equations one quantity at a time, allowing me to quickly see if the quantity is a known constant without needing to read through the entire problem statement.
 
 :::
 
 **Given Constants**: $V = 1\text{ L}$.
 
-**Known Adjusted Input and Kinetics Parameters**: $T_i$, $C_{A,0,i}$, $t_i$, $k_{0,1}$, and $E_1$
+**Adjusted Inputs**: $\underline{T}$, $\underline{C_{A,0}}$, and $\underline{t}$
+
+**Kinetics Parameters**: $k_{0,1}$, and $E_1$
+
+**Experimental Responses**: $\underline{C_{A,\text{ expt}}}$
 
 **Ancillary Equations**
 
-The rate, $r_1$, that appears in the design equations can be calculated using the rate expression, equation (2). The concentration of A, $C_A$, introduced in the rare expression can be calculated using the defining equation for concentration as shown in equation (5).
+The rate, $r_1$, that appears in the design equations can be calculated using the rate expression, equation (2). The concentration of A, $C_A$, introduced in the rate expression can be calculated using the defining equation for concentration as shown in equation (5). The temperature appearing in the rate expression will be the input temperature for the experiment being modeled, $T_i$.
 
 $$
 C_A = \frac{n_A}{V} \tag{5}
@@ -175,11 +177,18 @@ $$
 
 **Initial Values and Stopping Criterion**
 
-The design equations will be solved for each of the experimental data points. If $i$ indexes the experiments, the initial moles of A in experiment $i$ can be calculated using equation (6). There is no Z present in the reactor initially in any of the experiments, so the initial value of $n_Z$ is always zero. If $t=0$ is defined to be the instant the reactions start, then the stopping value for data point $i$ is the time, $t_i$, at which the response for experiment $i$ was measured. These initial values and the stopping criterion are summarized in @tbl-example_7_2.
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The design equations will be solved for each experiment, $i$. The initial moles of A in experiment $i$ can be calculated using the defining equation for concentration. There is no Z present in the reactor initially in any of the experiments, so the initial value of $n_Z$ is always zero. If $t=0$ is defined to be the instant the reactions start, then the stopping value for data point $i$ is the time, $t_i$, at which the response for experiment $i$ was measured. 
+
+:::
 
 $$
 n_{A,0} = C_{A,0,i}V \tag{6}
 $$
+
+The initial values and the stopping criterion for each experiment, $i$, are summarized in @tbl-example_7_2.
 
 | Variable | Initial Value | Stopping Criterion |
 |:-------|:-------:|:-------:|
@@ -187,11 +196,16 @@ $$
 | $n_A$ | $n_{A,0}$ | |
 | $n_Z$ | $0$ | |
 
-: Initial values and stopping criterion for solving the design equations. {#tbl-example_7_2 tbl-colwidths="[20, 40, 40]"}
+: Initial values and stopping criterion for solving the design equations for experiment $i$. {#tbl-example_7_2 tbl-colwidths="[20, 40, 40]"}
 
 **Response Function**
 
-The response function is expected to return the model-predicted response for each of the experiments. In these experiments the response was the concentration of A. Therefore, once the reactor design equations have been solved for experiment $i$, the concentration of A for experiment $i$, $C_{A,i}$ must be calculated, equation (7), and saved so it can be combined with the responses for all the other experiments and returned.
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The response function is expected to return the model-predicted response for each of the experiments. In these experiments the response was the concentration of A. Therefore, once the reactor design equations have been solved for experiment $i$, the concentration of A for experiment $i$, $C_{A,i}$ must be calculated and saved so it can be combined with the responses for all the other experiments and returned. The defining equation for concentration again can be used.
+
+:::
 
 $$
 C_{A,i,\text{model}} = \frac{n_A \Big\vert_{t=t_i}}{V} \tag{7}
@@ -271,14 +285,27 @@ $$
 
 :::
 
-If $x$ and $y$ are defined as shown in equations (5) and (6), it can be seen that the model has the linear form shown in equation (7), with the slope equal to $E_1$, equation (8), and an intercept equal to $\ln k_{0,1}$, equation (9).
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I know that I'm going to need to calculate the new variables, $x$ and $y$. It is useful to list the known constants, the adjusted experimental inputs, and the experimental responses, because they can be used to calculate $x$ and $y$. These are all the same as in [Example -@sec-example_7_2]. I won't list the kinetics parameters here, though, because when I solve the problem using a linearized model, these are unknown quantities that won't be available at the time I need to calculate $x$ and $y$.
+
+:::
+
+**Given Constants**: $V = 1\text{ L}$.
+
+**Adjusted Inputs**: $\underline{T}$, $\underline{C_{A,0}}$, and $\underline{t}$
+
+**Experimental Responses**: $\underline{C_{A,\text{ expt}}}$
+
+If $x$ and $y$ for experiment $i$ are defined as shown in equations (5) and (6), it can be seen that the model has the linear form shown in equation (7), with the slope equal to $E_1$, equation (8), and an intercept equal to $\ln k_{0,1}$, equation (9).
 
 $$
-x= \frac{-1}{RT} \tag{5}
+x_i= \frac{-1}{RT_i} \tag{5}
 $$
 
 $$
-y = \ln \left(-\frac{\ln \frac{n_{A}}{n_{A,0}}}{t} \right) = \ln \left(-\frac{\ln \frac{n_{A}/V}{n_{A,0}/V}}{t} \right) = \ln \left(-\frac{\ln \frac{C_{A}}{C_{A,0}}}{t} \right) \tag{6}
+y_i = \ln \left(-\frac{\ln \frac{n_{A,i}}{n_{A,0,i}}}{t_i} \right) = \ln \left(-\frac{\ln \frac{n_{A,i}/V}{n_{A,0,i}/V}}{t_i} \right) = \ln \left(-\frac{\ln \frac{C_{A,i}}{C_{A,0,i}}}{t_i} \right) \tag{6}
 $$
 
 $$
@@ -309,9 +336,15 @@ The problem asks for a description of how the linearized equation can be used to
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This problem asks me to calculate the value of the rate for each experimental data point. I will use a mole balance on A to do that. In the mole balance I will approximate the derivative using backwards differences (see [Appendix -@sec-pre-knowledge]).
+This problem asks me to calculate the value of the rate for each experimental data point. I will use a mole balance on A to do that. In the mole balance I will approximate the derivative using backwards differences (see [Appendix -@sec-pre-knowledge]). Before doing that, it is useful to list the known constants, the adjusted experimental inputs, and the experimental responses, because they can be used in the calculations.
 
 :::
+
+**Given Constants**: $V = 1\text{ L}$.
+
+**Adjusted Inputs**: $\underline{T}$, $\underline{C_{A,0}}$, and $\underline{t}$
+
+**Experimental Responses**: $\underline{C_{A,\text{ expt}}}$
 
 A mole balance on A, equation (3), can be solved for the reaction rate, equation (4). The derivative in that equation can be approximated using backward differences. If the response sampling time for data point $i$ is 5 min, then it is the first measurement of the response in that experiment. Consequently, the time prior to it is $t=0$, and the concentration of A at the time prior to it is $C_{A,0}$, equation (5). Otherwise the differences simply use data point $i-1$, equation (6).
 
