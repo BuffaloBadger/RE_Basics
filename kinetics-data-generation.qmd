@@ -24,25 +24,41 @@ Once the adjusted inputs and the response have been chosen it is necessary to pl
 
 Factorial design provides a systematic way to vary the adjusted inputs. A set of levels that span the desired range is chosen for each adjusted input. The experimental design then simply includes every possible combination of those levels. Clearly, the number of levels determines the total number of experiments that are included in the design. This can result in a trade off between the resolution of the experimental data and the amount of time available for performing the experiments. A design with more levels should capture the effect of changing an adjusted input more fully, but it will require more experimental time. A design with fewer levels will reduce the experimental time required, but may not fully capture the effects of changing temperature and composition. [Example -@sec-example_7_1] illustrates factorial design of kinetics experiments.
 
-## Models and Data Processing for the Analysis of Kinetics Data
+## Analysis of Kinetics Data
 
 *Reaction Engineering Basics* only considers kinetics data analysis for **systems where a single reaction is taking place isothermally and where only one response is measured**. This is sufficient to illustrate the process of developing a rate expression. Systems with more than one reaction taking place require multiple responses, and when done properly, the statistics of parameter estimation using multiple response data are more complicated. Readers interested in the analysis of multiple response kinetics data should consult an intermediate level reaction enginering or statistics textbook.
 
 It was noted in @sec-modeling-ideal-reactors that when a reactor operates isothermally at a known temperature, the mole balance design equations can be solved separately from the energy and momentum balance design equations. Since all kinetics data in *Reaction Engineering Basics* is generated in isothermal reactors, **only mole balances are needed to model the reactor during kinetics data analysis**. In fact, since only one reaction is taking place, it is possible to use a single mole balance on one reactant or product. The amounts of the other reagents are related to that one reactant or product through the reaction stoichiometry. Three different ways of analyzing single response data from an isothermal reactor with only one reaction taking place are considered here.
 
-### Analysis Using a Response Function
+### Using a Response Function
 
-In this approach to kinetics data analysis, the reactor model is used to write a **response function**. The response function is just that, a computer function or subroutine. It is passed the adjusted inputs data from the experiments as an argument. It is also passed a set of values for the kinetics parameters in the rate expression. Using that information, it calculates the model-predicted responses for all of the experiments and returns them. The experimental data and the response function are then passed to parameter estimation software which fits the model to the experimental data. Typically the parameter estimation software yields (a) the best estimates for the values of the kinetics parameters, (b) some measure of the uncertainty in the parameter estimates, e. g. a 95% confidence interval, and (c) the coefficient of determination, $R^2$.
+In this approach to kinetics data analysis, the reactor model is used to write a **response function**. The response function is just that, a computer function or subroutine. It is passed the adjusted inputs data from the experiments as an argument. It is also passed a set of values for the kinetics parameters in the rate expression. Using that information, it calculates the model-predicted responses for all of the experiments and returns them.
 
-In this approach either the full set of mole balances or a single mole balance can be used as the reactor model. This approach can *always* be used, and for this reason, this is the approach used in most examples in *Reaction Engineering Basics*. [Example -@sec-example_7_2] illustrates the analysis of kinetics data using a response function.
+In this approach either the full set of mole balances or a single mole balance can be used as the reactor model. This approach can *always* be used and it does not introduce any approximations that can affect the accuracy of the results. For this reason, this is the approach used in most examples in *Reaction Engineering Basics*.
+
+Once the response function has been written, it is passed to parameter estimation software along with the experimental adjusted inputs data and the experimental responses data. In addition, most parameter estimation software also requires that a guess for the values of the kinetics parameters be provided. A number of different computer programs can be used for parameter estimation. [Appendix -@sec-parameter-est] describes how parameter estimation software works. In essence, it finds values for the kinetics parameters that minimize the difference between the responses predicted by the model and the responses that were measured experimentally.
+
+Typically the parameter estimation software yields (a) the best estimates for the values of the kinetics parameters, (b) some measure of the uncertainty in the parameter estimates, e. g. a 95% confidence interval, and (c) the coefficient of determination, $R^2$.
+
+### Using an Approximate Response Function (Differential Analysis)
+
+The mole balances for a BSTR or a steady-state PFR are initial value ODEs (IVODEs). In this approach, a single mole balance on one of the reactants or products is used. Unlike the first approach described above, here that IVODE is not solved directly. Instead, the value of the derivative is approximated, for example using finite differences (see [Appendix -@sec-pre-knowledge]). The resulting approximate mole balance is then fit to the experimental data.
+
+There isn't any real advantage to this approach today, because it is easy to solve the IVODE form of the mole balance numerically using a computer. In the past, however, computers were not as readily available and it was often necessary to solve the mole balance analytically. Generally it is much easier to analytically solve the approximate mole balance than the IVODE mole balance. Under those circumstances, this approach did offer an advantage, but it is not as accurate as solving the IVODE form of the mole balance. Today it is sometimes used for a quick, preliminary analysis of kinetics data, but the other approaches described in this section are preferred.
 
 ### Analysis Using a Linearized Reactor Model
 
-The second way of analyzing single response data from an isothermal reactor with one reaction occurring uses one mole balance as the reactor model. If the mole balance is an IVODE, it must be solved analytically in order to use this approach. The model must be rearranged so that by combining variables it becomes a linear equation. This is not always possible, so this approach *cannot* always be used. When it can, the experimental data must be processed to calculate the values of the new variables. The resulting processed data are then fit to the linear model to estimate the kinetics parameters. One advantage of this approach is that the data processing and fitting of the model to the processed data can all be performed using a spreadsheet program. Most spreadsheet programs can be used to find parameter estimates, uncertainties in those estimates, and the coefficient of determination. [Example -@sec-example_7_3] illustrates the analysis of kinetics data using a linearized reactor model.
+The third way of analyzing single response data from an isothermal reactor with one reaction occurring also uses one mole balance as the reactor model. If the mole balance is an IVODE, it must be solved analytically in order to use this approach. The model then must be rearranged so that by defining new variables it becomes a linear equation like that shown in @eq-linear_equation, where $y$ and the $x_i$ represent the new variables. The kinetics parameters *do not* appear in the defining equations for the new variables. Additionally, each slope, $m_i$, and the intercept, $b$, *must* contain a *unique* combination of the kinetics parameters in its definition. That means that if there is only one kinetics parameter, the linearized reactor model is of the form, $y=mx$, and if there are two kinetics parameters it has the form $y=mx+b$. Generally, when there are $n+1$ kinetics parameters, the form will be as shown in @eq-linear_equation.
 
-### Analysis Using a Rate Expression Model 
+$$
+y = m_1x_1 + m_2x_2 + \cdots + m_nx_n + b
+$$ {#eq-linear_equation}
 
-The third way of analyzing single response data from an isothermal reactor with one reaction occurring also uses a single mole balance as the reactor model. In this approach the reactor model, or an approximate reactor model, is used to calculate the value of the reaction rate for every experiment. The resulting processed data are then fit directly to the rate expression instead of fitting to a reactor model. When the reactor model is an IVODE, this approach is not as accurate as the others, but it can *always* be used. In practice this approach is most often used when the mole balance is an IVODE. Instead of analytically solving the ODE, the value of the derivative is approximated, e. g. using forward, central, or backward differences. In this situation this approach is often referred to as **differential data analysis**. It is often used for a quick, preliminary analysis, but rigorous parameter estimation methods that return kinetics parameters, uncertainties and the coefficient of determination also can be used. [Example -@sec-example_7_4] illustrates the analysis of kinetics data using a rate expression model.
+The experimental adjusted inputs and the measured responses are then used to calculate the values of the new variables, $y$ and $x_1$ through $x_n$, for each experiment. @eq-linear_equation is then fit to the new variables. This approach is often used, even today, because in the situation where there are only two kinetics parameters and the linearized reactor model takes the form $y=mx+b$. In this case, a spreadsheet can be used to calculate the values of $y$ and $x$, plot the results and fit a linear equation to them. Most spreadsheet programs can be used to estimates for $m$ and $b$, uncertainties in those estimates, and the coefficient of determination, $R^2$.
+
+If the model is accurate, in other words, if the rate expression is accurate, the value of $R^2$ will be close to 1 and the plotted points will lie close to the fitted line with no systematic trends in their deviations from the line. Uncertainties in the slope and intercept should be small compared to the values of the slope and intercept.
+
+It is *not always possible* to analytically solve mole balances that are IVODEs or to linearize the reactor model equation. As such, this approach cannot always be used. When it can be used, it offers the advantages of using a spreadsheet to analyze the data and not requiring a guess for the values of the parameters.
 
 ## Assessment of Accuracy and Recommendations
 
@@ -55,7 +71,7 @@ The next step after fitting the reactor model to the data is **assessment of the
 
 The final step in kinetics data analysis involves **making a recommendation** to accept, reassess with additional data, or reject the rate expression. The intended use of the rate expression, and more importantly the potential consequences of accepting an inaccurate rate expression, can affect the criteria used in making this recommendation. That is, if accepting an inaccurate rate expression might result in severe personal injury, significant property damage or catastrophic financial loss, much more stringent criteria would likely be used than if the model was only going to be used to size a small laboratory reactor.
 
-## Examples
+## Example
 
 ### Design of Kinetics Experiments {#sec-example_7_1}
 
@@ -68,7 +84,7 @@ The final step in kinetics data analysis involves **making a recommendation** to
 
 I am asked to design kinetics experiments, so I need to decide which variables will be adjusted in the experiments. I further need to decide how many levels to use for each adjusted variable and what those levels should be. The problem states that the rate expression developed using these data will be used to design a new process, so I want to be sure to generate a sizeable data set that spans the expected ranges of the adjusted variables and also captures the effects of each of them upon the response. Based upon the information presented in the problem statement, the experimental response here will be the concentration of A.
 
-Reaction rates can be affected by the temperature and the concentration of each reagent present. Here the problem states that the rate is not affected by the concentration of Z, so the temperature and the concentration of A should vary from one experiment to the next. The reactor is isothermal, so the temperature can be adjusted directly in the experiments. The concentration of A will change as the reaction proceeds. This suggests two ways to vary the concentration of A from experiment to experiment. The first is to adjust the initial concentration of A and the second is to adjust the time at which the response is measured. Longer times will lead to smaller concentrations because at longer times more of the A will have reacted. I will use both the initial concentration of A and the reaction time as adjusted variables.
+Reaction rates can be affected by the temperature and the concentration of each reagent present. Here the problem states that the rate is not affected by the concentration of Z, so the temperature and the concentration of A should vary from one experiment to the next. The reactor is isothermal, so the temperature can be adjusted directly in the experiments. The concentration of A will change as the reaction proceeds. This suggests two ways to vary the concentration of A from experiment to experiment. The first is to adjust the initial concentration of A and the second is to adjust the time at which the response is measured. Longer times will lead to smaller concentrations of A because at longer times more of the A will have reacted. I will use both the initial concentration of A and the reaction time as adjusted variables.
 
 Next I need to decide how many levels to use for each adjusted variable and what those levels should be. Normally I would use levels that span a slightly wider range than the range where the rate expression will be used. Here, however, I'm told that the rate is too low below 65 °C and undesireable reactions occur above 90 °C, so I will choose levels that just span that range. The range only spans 25 °C, so four temperature levels seem reasonable, as does spacing them equally across the range.
 
@@ -102,279 +118,19 @@ It will not be necessary to perform 72 experiments, however. Using a reactor at 
 :::{.callout-note collapse="false"}
 ## Note
 
-Some readers might have difficulty with this problem because it relies upon an understanding of how BSTR kinetics experiments are performed and the data they generate. That information has not been presented yet. BSTR kinetics experiments are considered in @sec-bstr-data-analysis. The important aspects of this example are that it was first necessary to decide which reactor model input variables to adjust, and then it was necessary to decide how many levels of each variable to use and what those levels should be. After doing that, the experimental design simply involves performing an experiment at every combination of the adjusted variable levels.
+Some readers might have difficulty with this problem because it relies upon an understanding of how BSTR kinetics experiments are performed and the data they generate, and that information has not been presented yet. BSTR kinetics experiments are considered in @sec-bstr-data-analysis. The important aspects of this example are that it was first necessary to decide which reactor model input variables to adjust, and then it was necessary to decide how many levels of each variable to use and what those levels should be. After doing that, the experimental design simply involves performing an experiment at every combination of the adjusted variable levels.
 
 :::
-
-### Analysis of Kinetics Data Using a Response Function {#sec-example_7_2}
-
-{{< include ../RE_Basics_Examples/reb_7_2/problem_statement.qmd >}}
-
----
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-I am asked to formulate a response function that will predict the response for BSTR experiments given the adjusted reactor inputs and the necessary kinetics parameters. To do that I must first generate a reactor model as described in @sec-modeling-ideal-reactors. Then, after solving the reactor design equations for each experiment, the final concentration of A must be calculated.
-
-To begin, I need to write the reactor design equations for the experimental system. There are two reagents in the system, A and Z, so I will write mole balances for each of them. The reactor operates isothermally which means that the mole balances can be solved independently from the other design equations. In this problem I am not told anything about heat transfer or how the temperature was held constant during the experiments. Even if I wanted to include energy balances in the reactor model, I would not be able to because I have not been provided with enough information to write the energy balances. Additionally, the reactor is a BSTR, so I do not need a momentum balance. Therefore, for this sytesm, the reactor design equations consist of mole balances on A and Z.
-
-:::
-
-**Reactor Design Equations**
-
-Mole balances on A and Z for any one of the experiments are presented in equations (3) and (4).
-
-$$
-\frac{dn_A}{dt} = -r_1 V \tag{3}
-$$
-
-$$
-\frac{dn_Z}{dt} = r_1 V \tag{4}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See Where That Came From
-
-Start from  @eq-bstr_mole_balance. There is only one reaction, so the sum reduces to a single term.
-
-$$
-\frac{dn_i}{dt} = V \sum_j \nu_{i,j}r_j \qquad \Rightarrow \qquad \frac{dn_i}{dt} = \nu_{i,1}r_1V
-$$
-
-The stoichiometric coefficient of A is -1 and that of Z is +1. Substitution of those values yields equations (3) and (4).
-
-:::
-
-**Solution of the Reactor Design Equations**
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The design equations are IVODEs. The independent variable is $t$, and the dependent variables are $n_A$ and $n_Z$. There are two ODEs and 2 dependent variables, so the equations are ready to be solved. I know that to solve a set of IVODEs I need to provide 3 things: (1) ancillary equations to calculate every quantity appearing in the IVODEs from known constants, the independent variable and the dependent variables, (2) initial values, and (3) a stopping criterion.
-
-To generate the necessary ancillary equations, I'll go through the each of the design equations one quantity at a time. If the quantity is a known constant, $t$, $n_A$, or $n_Z$, I don't need an ancillary equation. If it isn't, I'll write an ancillary equation to calculate its value. If that ancillary equation contains quantities other than known constants, $t$, $n_A$, and $n_Z$, I'll write ancillary equations for those quantities, and so on. I will continue this process until I have a set of ancillary equations that allow every quantity in the design equations to be calculated from known constants, $t$, $n_A$, and $n_Z$.
-
-It is useful to begin by listing all of the known constant quantities. Also, this reactor model will be within a response function. That function will be passed the values of the experimental adjusted inputs and the kinetics parameters, and it could be provided with the experimental responses, if necessary, so I'll list those, also. Those lists can then be used as I go through the design equations one quantity at a time, allowing me to quickly see if the quantity is a known constant without needing to read through the entire problem statement.
-
-:::
-
-**Given Constants**: $V = 1\text{ L}$.
-
-**Adjusted Inputs**: $\underline{T}$, $\underline{C_{A,0}}$, and $\underline{t}$
-
-**Kinetics Parameters**: $k_{0,1}$, and $E_1$
-
-**Experimental Responses**: $\underline{C_{A,\text{ expt}}}$
-
-**Ancillary Equations**
-
-The rate, $r_1$, that appears in the design equations can be calculated using the rate expression, equation (2). The concentration of A, $C_A$, introduced in the rate expression can be calculated using the defining equation for concentration as shown in equation (5). The temperature appearing in the rate expression will be the input temperature for the experiment being modeled, $T_i$.
-
-$$
-C_A = \frac{n_A}{V} \tag{5}
-$$
-
-**Initial Values and Stopping Criterion**
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The design equations will be solved for each experiment, $i$. The initial moles of A in experiment $i$ can be calculated using the defining equation for concentration. There is no Z present in the reactor initially in any of the experiments, so the initial value of $n_Z$ is always zero. If $t=0$ is defined to be the instant the reactions start, then the stopping value for data point $i$ is the time, $t_i$, at which the response for experiment $i$ was measured. 
-
-:::
-
-$$
-n_{A,0} = C_{A,0,i}V \tag{6}
-$$
-
-The initial values and the stopping criterion for each experiment, $i$, are summarized in @tbl-example_7_2.
-
-| Variable | Initial Value | Stopping Criterion |
-|:-------|:-------:|:-------:|
-| $t$ | $0$ | $t_i$ |
-| $n_A$ | $n_{A,0}$ | |
-| $n_Z$ | $0$ | |
-
-: Initial values and stopping criterion for solving the design equations for experiment $i$. {#tbl-example_7_2 tbl-colwidths="[20, 40, 40]"}
-
-**Response Function**
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The response function is expected to return the model-predicted response for each of the experiments. In these experiments the response was the concentration of A. Therefore, once the reactor design equations have been solved for experiment $i$, the concentration of A for experiment $i$, $C_{A,i}$ must be calculated and saved so it can be combined with the responses for all the other experiments and returned. The defining equation for concentration again can be used.
-
-:::
-
-$$
-C_{A,i,\text{model}} = \frac{n_A \Big\vert_{t=t_i}}{V} \tag{7}
-$$
-
-**Parameter Estimation and Assessment of Accuracy**
-
-The problem asks for a description of how the response function can be used to assess the accuracy of the rate expression, equation (2). The specifics will depend upon software being used, but generally a program will be written. That program will define the response function as described above. It will pass the name of the response function to a parameter estimation function along with the experimental adjusted inputs and the experimental responses. That program will return estimates for $k_{0,1}$, and $E_1$, 95% confidence intervals (or some other measure of uncertainty) for $k_{0,1}$, and $E_1$, and the coefficient of determination, $R^2$. Using the estimated values of $k_{0,1}$, and $E_1$, model-predicted responses can be calculated. A parity plot and residuals plots can then be created as described in this chapter. If the rate expression is accurate, the following criteria will be met.
-
-* The coefficient of determination, $R^2$, is close to 1.
-* The uncertainty in $k_{0,1}$ is small compared to the value of $k_{0,1}$.
-* The uncertainty in $E_1$ is small compared to the value of $E_1$.
-* The points in the parity plot are all close to a diagonal line ($C_{A,i,\text{expt}} = C_{A,i,\text{model}}$).
-* In each residuals plot, the points scatter randomly about zero (the horizontal axis) and no systematic deviations are apparent.
-
-### Analysis of Kinetics Data Using a Linearized Reactor Model {#sec-example_7_3}
-
-{{< include ../RE_Basics_Examples/reb_7_3/problem_statement.qmd >}}
-
----
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-This problem asks me to linearize the reactor model for [Example -@sec-example_7_1]. I know that this means I can only use one mole balance as the design equations, and since the mole balances for this system are IVODEs, I need to solve that mole balance analytically. Here I will use the mole balance on A.
-
-:::
-
-**Linearized Reactor Model**
-
-A mole balance on reagent A is presented in quation (3). It is an IVODE, and solving it yields equation (4).
-
-$$
-\frac{dn_A}{dt} = -r_1 V \tag{3}
-$$
-
-$$
-\ln \left(-\frac{\ln \frac{n_{A}}{n_{A,0}}}{t} \right) =  E_1\left( \frac{-1}{RT} \right) + \ln k_{0,1} \tag{4}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See Where That Came From
-
-Start from equation (3), substitute the rate expression, equation (2), and the defining equation for the concentration of A, and cancel out the reacting fluid volume.
-
-$$
-\frac{dn_A}{dt} = -k_{0,1} \exp \left( \frac{-E_1}{RT} \right)C_A V \Rightarrow -k_{0,1} \exp \left( \frac{-E_1}{RT} \right)\frac{n_A}{V} V
-$$
-
-$$
-\frac{dn_A}{dt} = -k_{0,1} \exp \left( \frac{-E_1}{RT} \right)n_A
-$$
-
-Separate the variables and integrate. Defining the instant that the reaction starts as $t=0$ and letting $n_{A,0}$ represent the initial moles of A gives the lower limits of integration, and use unspecified upper limits.
-
-$$
-\frac{dn_A}{n_A} = -k_{0,1} \exp \left( \frac{-E_1}{RT} \right)dt
-$$
-
-$$
-\int_{n_{A,0}}^{n_{A}}\frac{dn_A}{n_A} = -k_{0,1} \exp \left( \frac{-E_1}{RT} \right) \int_0^{t}dt
-$$
-
-$$
-\ln \frac{n_{A}}{n_{A,0}} = -k_{0,1} \exp \left( \frac{-E_1}{RT} \right) t
-$$
-
-The resulting integrated mole balance is not a linear equation. Divide both sides of the equation by $t$ and then take the log of both sides to eliminate the exponential.
-
-$$
--\frac{\ln \frac{n_{A}}{n_{A,0}}}{t} = k_{0,1} \exp \left( \frac{-E_1}{RT} \right)
-$$
-
-$$
-\ln \left(-\frac{\ln \frac{n_{A}}{n_{A,0}}}{t} \right) =  E_1\left( \frac{-1}{RT} \right) + \ln k_{0,1}
-$$
-
-:::
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-I know that I'm going to need to calculate the new variables, $x$ and $y$. It is useful to list the known constants, the adjusted experimental inputs, and the experimental responses, because they can be used to calculate $x$ and $y$. These are all the same as in [Example -@sec-example_7_2]. I won't list the kinetics parameters here, though, because when I solve the problem using a linearized model, these are unknown quantities that won't be available at the time I need to calculate $x$ and $y$.
-
-:::
-
-**Given Constants**: $V = 1\text{ L}$.
-
-**Adjusted Inputs**: $\underline{T}$, $\underline{C_{A,0}}$, and $\underline{t}$
-
-**Experimental Responses**: $\underline{C_{A,\text{ expt}}}$
-
-If $x$ and $y$ for experiment $i$ are defined as shown in equations (5) and (6), it can be seen that the model has the linear form shown in equation (7), with the slope equal to $E_1$, equation (8), and an intercept equal to $\ln k_{0,1}$, equation (9).
-
-$$
-x_i= \frac{-1}{RT_i} \tag{5}
-$$
-
-$$
-y_i = \ln \left(-\frac{\ln \frac{n_{A,i}}{n_{A,0,i}}}{t_i} \right) = \ln \left(-\frac{\ln \frac{n_{A,i}/V}{n_{A,0,i}/V}}{t_i} \right) = \ln \left(-\frac{\ln \frac{C_{A,i}}{C_{A,0,i}}}{t_i} \right) \tag{6}
-$$
-
-$$
-y = m x + b \tag{7}
-$$
-
-$$
-m = E_1 \tag{8}
-$$
-
-$$
-b =\ln k_{0,1} \tag{9}
-$$
-
-The problem asks for a description of how the linearized equation can be used to assess the accuracy of the rate expression, equation (2). This can be done using a spreadsheet program. First, the values of $x$ and $y$ are calculated using equations (5) and (6), and a plot of $y$ vs. $x$ is created. Adding a trendline to the plot will provide the best estimates for the slope, $m$, and intercept, $b$. Equations (8) and (9) can be used to calculate the best estimates for $E_1$ and $k_{0,1}$. The coefficient of determination, $R^2$, and the uncertainties in $m$ and $b$ can also be obtained from the spreadsheet. If the model is accurate, the following criteria will be satisfied.
-
-* The coefficient of determination, $R^2$, is close to 1.
-* The uncertainty in $k_{0,1}$ is small compared to the value of $k_{0,1}$.
-* The uncertainty in $E_1$ is small compared to the value of $E_1$.
-* The $x-y$ data points in the plot scatter randomly about the trendline with no apparent systematic trends.
-
-### Analysis of Kinetics Data Using a Rate Expression Model {#sec-example_7_4}
-
-{{< include ../RE_Basics_Examples/reb_7_4/problem_statement.qmd >}}
-
----
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-This problem asks me to calculate the value of the rate for each experimental data point. I will use a mole balance on A to do that. In the mole balance I will approximate the derivative using backwards differences (see [Appendix -@sec-pre-knowledge]). Before doing that, it is useful to list the known constants, the adjusted experimental inputs, and the experimental responses, because they can be used in the calculations.
-
-:::
-
-**Given Constants**: $V = 1\text{ L}$.
-
-**Adjusted Inputs**: $\underline{T}$, $\underline{C_{A,0}}$, and $\underline{t}$
-
-**Experimental Responses**: $\underline{C_{A,\text{ expt}}}$
-
-A mole balance on A, equation (3), can be solved for the reaction rate, equation (4). The derivative in that equation can be approximated using backward differences. If the response sampling time for data point $i$ is 5 min, then it is the first measurement of the response in that experiment. Consequently, the time prior to it is $t=0$, and the concentration of A at the time prior to it is $C_{A,0}$, equation (5). Otherwise the differences simply use data point $i-1$, equation (6).
-
-$$
-\frac{dn_A}{dt} = -r_1V \tag{3}
-$$
-
-$$
-r_1 = -\frac{1}{V} \frac{dn_A}{dt} = -\frac{dC_A}{dt} \approx -\frac{\Delta C_A}{\Delta t} \tag{4}
-$$
-
-$$
-r_{1,i} \approx -\frac{C_{A,i} - C_{A,0,i}}{t_i - 0} = \frac{C_{A,0,} - C_{A,i}}{t_i} \tag{5}
-$$
-
-$$
-r_{1,i} \approx -\frac{C_{A,i} - C_{A,i-1}}{t_i - t_{i-1}} \tag{6}
-$$
-
-The problem asks for a description of how the resulting data, i. e. the set of values of $r_1$ for each of the experiments can be used to assess the accuracy of the rate expression, equation (2). This is accomplished by using the values of $r_{1,i}$ from equation (6) as the experimental responses and using equation (7) as the response function. From that point on, the assessment of the accuracy of the model is analogous to [Example -@sec-example_7_2].
-
-$$
-r_{1,i,\text{model}} = k_{0,1} \exp \left( \frac{-E_1}{RT_i} \right) C_{A,i} \tag{7}
-$$
 
 ## Symbols Used in @sec-kin-data-gen
 
 | Symbol | Meaning |
 |:-------|:--------|
+| $b$ | The intercept, a unique combination of the kinetics parameters, resulting from the linearization of the reactor model. |
+| $m_i$ | A slope, some unique combination of the kinetics parameters resulting from the linearization of the reactor model. |
+| $x_i$ | Some combination of the experimentally adjusted inputs and the experimental response defined so that the resulting reactor model is a linear equation. |
 | $y_{\text{expt}}$ | Experimentally measured response. |
+| $y$ | Some combination of the experimentally adjusted inputs and the experimental response defined so that the resulting reactor model is a linear equation. |
 | $y_{\text{model}}$ | Model-predicted response. |
 | $R^2$ | Coefficient of determination. |
 
