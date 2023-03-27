@@ -87,6 +87,32 @@ The second possible decision is to generate additional data and then repeat the 
 
 The third possible decision would be to reject the postulated mathematical form for the rate expression. A different mathematical form would then be postulated and the whole process would be repeated. Often, the inaccuracy observed with rejected model will suggest modifications to be used in the next postulated model. It is possible that a number of postulated models will be rejected before an acceptably accurate rate expression is found.
 
+### Rate Coefficients
+
+Every rate expression contains a quantity known as the rate coefficient. A lower case $k$ is usually used to represent a rate coefficient. Additional subscripts may be added to indicate the reaction and other specifics about the rate coefficient. Rate coefficients depend upon temperature. By far the most common equation for modeling the temperature dependence of a rate coefficient is the Arrhenius expression, @eq-arrhenius.
+
+$$
+k_j = k_{0,j} \exp{\left(  \frac{-E_j}{RT} \right)}
+$$ {#eq-arrhenius}
+
+When using @eq-arrhenius, the temperature must be expressed in absolute units, either K or °R. The constants, $k_{0,j}$ and $E_j$ are kinetics parameters known as the pre-exponential factor and the activation energy, respectively. It should be noted that the activation energy, $E_j$, is a *positive* quantity.
+
+As with other kinetics parameters, the values of $k_{0,j}$ and $E_j$ are determined during the parameter estimation stage of the validation of the rate expression. The most common way of doing this uses linear least squares. Taking the logarithm of each side of the Arrhenius expression yields @eq-linear_arrhenius. Letting $y = \ln{k_j}$ and $x = \left( \frac{-1}{RT} \right)$, it can be seen that @eq-linear_arrhenius is a linear equation with a slope equal to $E_j$ and an intercept equal to $\ln{k_{0,j}}$. As such, linear least squares can be used to estimate $E_j$ and $k_{0,j}$. 
+
+$$
+\ln{k_j} = E_j \left( \frac{-1}{RT} \right) + \ln{k_{0,j}}
+$$ {#eq-linear_arrhenius}
+
+In addition to the estimated values of $E_j$ and $k_{0,j}$, linear least squares can be used to find the 95% confidence intervals for $E_j$ and $k_{0,j}$ and the coefficient of determinations, $R^2$. Typical nomenclature for reporting an estimated parameter and its 95% confidence interval is provided in [Appendix -@sec-notation]. As an example, $E$ = 20.0, 95% CI [19.2, 21.0] kJ mol^-1^ means that the best estimate for $E$ is 20.0 kJ mol^-1^ with a 95% confidence interval between 19.2 and 21.0 kJ mol^-1^.
+
+Once the values of the parameters have been estimated, a so-called model plot can be prepared. In a model plot, the experimental $x$ *vs*. $y_\text{expt}$ data are plotted as points, and on the same axes, the model-predicted $x$ *vs*. $y_\text{pred}$ data are plotted as a line. The following criteria will be satisfied if the Arrhenius expression accurately predicts the experimental results.
+
+* In the model plot, the experimental data points will scatter randomly about the line for the predicted results. The deviations from the line will be small and there will not be any systematic deviations about the line.
+* The coefficient of determination, $R^2$, will be close to 1.0
+* The uncertainty in each parameter will be small relative to its value.
+
+The estimation of Arrhenius parameters and assessment of the resulting expression are illustrated in [Example @sec-example_4_4].
+
 ### Empirical Rate Expressions
 
 In *Reaction Engineering Basics*, the term **empirical rate expression** is used to refer to an experimentally validated rate expression in which the mathematical form was chosen for convenience. **Power-law rate expressions** are very common empirical rate expressions. In a power-law rate expression, the rate is proposed to depend upon the concentration or partial pressure (for gases) of each reagent in the system raised to an unknown power as shown in @eq-power_law_expr_conc and @eq-power_law_expr_part_press.
@@ -101,13 +127,7 @@ $$ {#eq-power_law_expr_part_press}
 
 In power-law rate expressions, the exponents, $\alpha_i$, are unknown kinetics parameters. Their values are found during the parameter estimation stage of validating the rate expression.  They do not necessarily equal the stoichiometric coefficient of $i$ in reaction $j$, nor are they necessarily integers or simple fractions. The rate may not depend on the amount of *every* species in the system. That is, for some reagents, $\alpha_i$ may be equal to zero. The sum of all of the exponents is known as the **reaction order**. The value of the exponent, $\alpha_i$ is the reaction order in $i$.
 
-The $k_j$ in @eq-power_law_expr_conc and @eq-power_law_expr_part_press represents the **rate coefficient** for reaction $j$. Every rate expression has a rate coefficient, and they vary with temperature. Most commonly, the Arrhenius expression, @eq-arrhenius, is used to characterize the temperature dependence of rate coefficients. When using @eq-arrhenius, the temperature must be expressed in absolute units, either K or °R. The constants, $k_{0,j}$ and $E_j$ are kinetics parameters known as the pre-exponential factor and the activation energy, respectively. It should be noted that the activation energy, $E_j$, is a *positive* quantity. As with other kinetics parameters, the values of $k_{0,j}$ and $E_j$ are determined during the parameter estimation stage of the validation of the rate expression. [Example @sec-example_4_4] illustrates the use of experimental data and parameter estimation to determine the "best" values of the pre-exponential factor and activation energy of the Arrhenius expression.
-
-$$
-k_j = k_{0,j} \exp{\left(  \frac{-E_j}{RT} \right)}
-$$ {#eq-arrhenius}
-
-Rate coefficients are not necessarily the only source of temperature dependence in rate expressions. It was noted earlier in this chapter that it is not uncommon for equilibrium constants to appear in rate expressions. Despite being called an equilibrium *constant*, they actually vary with temperature. If the standard entropy and standard enthalpy of reaction $j$ are assumed to be constant, the equilibrium constant varies with temperature as shown in @eq-equil_like_arrhenius. @eq-equil_like_arrhenius is similar to the Arrhenius expression for the temperature dependence of rate coefficients. One difference is that the heat of reaction, $\Delta H_j^0$ can be either positive or negative, but the activation energy, $E_j$, is always positive.
+The $k_j$ in @eq-power_law_expr_conc and @eq-power_law_expr_part_press represents the **rate coefficient** for reaction $j$. Rate coefficients are not necessarily the only source of temperature dependence in rate expressions. It was noted earlier in this chapter that it is not uncommon for equilibrium constants to appear in rate expressions. Despite being called an equilibrium *constant*, they actually vary with temperature. If the standard entropy and standard enthalpy of reaction $j$ are assumed to be constant, the equilibrium constant varies with temperature as shown in @eq-equil_like_arrhenius. @eq-equil_like_arrhenius is similar to the Arrhenius expression for the temperature dependence of rate coefficients. One difference is that the heat of reaction, $\Delta H_j^0$ can be either positive or negative, but the activation energy, $E_j$, is always positive.
 
 $$
 K_j = \exp{\frac{\Delta S_j^0}{R}} \exp{\frac{-\Delta H_j^0}{RT}} = K_{0,j}\exp{\frac{-\Delta H_j^0}{RT}}
@@ -438,194 +458,85 @@ kbl(results, format = "markdown", align = "ccc", col.names = c("i (Expt. Number)
     "k (L mol^-1^ min^-1^)"))
 ```
 
+The data are available in the .csv file, [reb_4_4_data.csv](./Data/reb_4_4_data.csv).
+
 ---
-
-:::{.callout-note collapse="false"}
-## Note
-
-The solution presented here assumes that the reader is familiar with numerical parameter estimation with non-linear, single-response models. Since this is the first parameter estimation problem encountered in *Reaction Engineering Basics*, reading [Appendix -@sec-parameter-est] before continuing with this example is **strongly suggested**. Even if the reader is familiar with parameter estimation, [Appendix -@sec-parameter-est] introduces the nomenclature and approach that will be used throughout *Reaction Engineering Basics*.
-
-:::
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This problem presents experimental data and then asks whether those data are "consistent with" the Arrhenius expression, @eq-arrhenius. In other words, does the Arrhenius expression accurately predict the value of the rate coefficient, $k$, at each of the tempertures, $T$, listed in @tbl-data_reb_4_4. The Arrhenius expression contains two unknown kinetics parameters, $k_0$ and $E$, so this is a parameter estimation problem.
+This problem presents experimental data and then asks whether those data are "consistent with" the Arrhenius expression, @eq-arrhenius. In other words, does the Arrhenius expression accurately predict the value of the rate coefficient, $k$, at each of the tempertures, $T$, listed in @tbl-data_reb_4_4. To answer this question, I can see that I'll need to fit the Arrhenius expression to the experimental data and then assess the accuracy of the model.
 
-I know that to solve parameter estimation problems I will use numerical software designed for doing so, and that I will need to provide the following:
+From the information provided in this chapter, I now that the most common way to fit the Arrhenius expression to experimental data is by using the linearized form shown in @eq-linear_arrhenius. To do that, I'll first need to convert the temperatures to absolute units. Then I can calculate the values of $x$ and $y$ for each experimental data point.
 
-* a column vector, $\underline x$, or matrix, $\underline{\underline x}$, containing the experimentally adjusted inputs with one row per experiment and one column for each adjusted input variable.
-* a column vector, $\underline{y_{expt}}$, containing the experimental responses with one row per experiment and with the experiments/rows in the same order as in $\underline x$ or $\underline{\underline x}$.
-* a function or subroutine that is provided with the experimentally adjusted inputs and a set of possible values for the model parameters and that returns the model-predicted responses for the experiments as a column vector, $\underline{y_{pred}}$, with one row per experiment and with the experiments/rows in the same order as in $\underline x$ or $\underline{\underline x}$.
-* an initial *guess* for the values of the model parameters.
-
-I also know that if it is successful, the parameter estimation software will return the estimated value of each model parameter, the 95% confidence interval for each parameter, and the coefficient of determination, $R^2$. Using the estimated parameter values in the model, I can then calculate the model-predicted responses, construct a parity plot and generate a set of residuals plots. If the Arrhenius expression is an accurate model for the experimental data the following will be true:
-
-* The coefficient of determination, $R^2$, will be close to 1.
-* The uncertainty in each model parameter will be small compared to its value.
-* The points in the parity plot will all be close to a diagonal line passing through the origin.
-* In each residuals plot, the points will scatter randomly about the horizontal axis, and no systematic deviations will be apparent.
+In general, when solving problems I like to start by listing the quantities whose values are given in the problem statement, assigning them to approprite variable symbols. In this problem I'm given several values of $T$ and $k$; I'll underline these in my listing to indicate that they are vector quantities. I also like to list any relationships I'm provided. Here I'm told to use the Arrhenius expression, and since I now I'll use the linearized form, I'll list that.
 
 :::
 
-**Response Model**
+**Given and Known**: $\underline{T}$ and $\underline{k}$.
 
-This is a parameter estimation problem. The Arrhenius expression, equation (1), is the response model. It contains two unknown parameters: the pre-exponential factor, $k_0$, and the activation energy, $E$. The possible values for the pre-exponential factor span many, many orders of magnitude. That makes it difficult to make an initial guess for its value and can lead to convergence problems during parameter estimation. For these reasons a new parameter, $\beta$, is defined as shown in equation (2) and substituted into the Arrhenuis expression yielding a new response model, equation (3), where the model parameters are $\beta$ and $E$. Given values for $\beta$ and $E$ together with a set of experimental absolute temperatures, equation (3) can be used to calculate model-predicted values of $k$ (the response).
-
-$$
-k = k_0 \exp{\left(  \frac{-E}{RT} \right)} \tag{1}
-$$
+**Model**: 
 
 $$
-\beta = \log_{10} {\left(k_0\right)} \tag{2}
+\ln{k} = E \left( \frac{-1}{RT} \right) + \ln{k_0} \tag{1}
+$$
+
+Defining $y$ and $x$ as shown in equations (2) and (3) shows that equation (1) has the linear form shown in equation (4) when the slope, $m$, and intercept, $b$, are defined as in equations (5) and (6).
+
+$$
+y = \ln{k} \tag{2}
 $$
 
 $$
-k = 10^\beta \exp{\left(  \frac{-E}{RT} \right)} \tag{3}
+x = \left( \frac{-1}{RT} \right) \tag{3}
 $$
 
- **Adjusted Experimental Input Vector, $\underline{x}$**
-
-In each experiment the value of the temperature was set by the person who performed the experiment. No other quantities were set by the experimenter in any of the experiments. Therefore, the adjusted experimental input is a column vector, $\underline{x}$, where each row is equal to the temperature used in one of the experiments. However, in the Arrhenius expression, the temperature must always be in absolute units. Thus, letting $T_i$ represent the Celsius temperature provided in @tbl-data_reb_4_4 for experiment $i$, the absolute temperature in K for experiment $i$, $T_{K,i}$, can be calculated using equation (4) and used as element $x_i$ of the adjusted input vector, $\underline{x}$.
-
 $$
-T_{K,i} = T_i + 273.15 = x_i \tag{4}
+y = m x + b \tag{4}
 $$
 
-**Experimental Response Vector, $\underline{y_{expt}}$**
-
-The quantity that was measured in each of the experiments is the second order rate coefficient, $k$. Let $k_i$ represent the value of the rate coefficient measured in experiment $i$. The experimental response vector is then a column vector with $k_i$ in row $i$, equation (5). In other words, the experimental response vector is the second column of @tbl-data_reb_4_4.
-
 $$
-y_{expt,i} = k_i \tag{5}
+m = E \tag{5}
 $$
 
-**Parameter Estimation**
- 
-Guesses for the values of $\beta$ and $E$ can be provided to parameter estimation software together with a the adjusted input vector, $\underline{x}$, the experimental response vector, $\underline{y_{expt}}$, and the response model above (as a function or subroutine). Because the responses vary by over two orders of magnitude, the sums of the squares of the *relative* errors will be minimized to estimate the parameters. The parameter estimation software will return (a) the best estimates for the values of $\beta$ and $E$, (b) 95% confidence intervals for $\beta$ and $E$, and (c) the coefficient of determination, $R^2$.
+$$
+b = \ln{k_0} \tag{6}
+$$
 
-:::{.callout-note collapse="false"}
-## Note
+After converting the temperatures to K, $y$ and $x$ can be computed for each experiment using equations (2) and (3).
 
-In *Reaction Engineering Basics* the 95% confidence interval will always be used as the measure of uncertainty in an estimated parameter value. The reported value will take the form x [x~ll~, x~ul~] (95% CI). This means that the best value is x, and that x values between x~ll~ and x~ul~ fall within the 95% confidence interval. 
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Now I need to fit equation (4) to the data. This can be done using a spreadsheet program. The original data would first be entered in two columns, then new columns would be added for $y$ and $x$. Those columns would the be plotted as a $x-y$ scatterplot. Adding a linear trendline will fit equation (4) to the data, and in most spreadsheets the equation can be displayed on the graph along with the coefficient of determination, $R^2$. I would also like the undertainty in the values of the slope, $E$, and intercept, $\ln{k_0}$. The way those are calculated will depend upon the specific spreadsheet program being used.
+
+An alternative approach is to simply use linear least squares software to do the fitting and then plotting the results.
 
 :::
-
-The best estimate for $k_0$ is found from the best value for $\beta$ by rearranging equation (2), as shown in equation (6). The upper and lower limits of its 95% conficence interval are calculated analogously.
-
-$$
-\beta = \log_{10} {\left(k_0\right)} \quad \Rightarrow \quad k_0 = 10^\beta \tag{6}
-$$
-
-A model-predicted response vector, $\underline{y_{pred}}$, can then be calculated by first substituting the best estimates of $k_0$ and $E$ into equation (1). The value of the predicted rate coefficient for experiment $i$, $k_{i,p}$ can then be calculated as shown in equation (7) and entered in row $i$ of the model-predicted response vector, $\underline{y_{pred}}$.
-
-$$
-k_{i,p} = k_0 \exp{\left(  \frac{-E}{RT_{K,i}} \right)} = y_{pred,i} \tag{7}
-$$
-
-A residuals vector, $\underline{\epsilon}$, can then be generated where each row, $i$, contains the residual for experiment $i$ as shown in equation (8).
-
-$$
-\epsilon_i = k_i - k_{i,p} \tag{8}
-$$
-
-Finally a parity plot can be created by plotting $k_i$ *vs*. $k_{i,p}$ (or equivalently, $y_{expt,i}$ *vs*. $y_{pred,i}$), and a residuals plot gan be generated by plotting $\epsilon_i$ *vs*. $T_{K,i}$ (or equivalently, ($\epsilon_i$ *vs*. $x_i$).
-
-**Model Assessment**
-
-The Arrhenius expression accurately predicts the experimental results in @tbl-data_reb_4_4 if the following criteria are satisfied:
-
-* The coefficient of determination, $R^2$, is close to 1.
-* The uncertainty in each model parameter is small compared to its value.
-* The points in the parity plot are all close to a diagonal line passing through the origin.
-* In each residuals plot, the points scatter randomly about the horizontal axis, and no systematic deviations are apparent.
-
-**Calculations**
-
-1. Calculate the absolute temperature for each data point use them to construct the adjusted input vector, $\underline{x}$ using equation (4).
-2. Generate the experimental response vector, $\underline{y_{expt}}$, using equation (5).
-3. Fit equation (3) to the resulting $\underline{x}$ - $\underline{y_{expt}}$ data using parameter estimation software.
-4. Calculate $k_{0,j}$ from the best estimate for $\beta$, using equation (6).
-5. Generate the predicted response vector, $\underline{y_{pred}}$, using equation (7).
-6. Generate the residuals vector, $\underline{\epsilon}$, using equation (8).
-7. Generate a parity plot by plotting $y_{expt,i}$ *vs*. $y_{pred,i}$}.
-8. Generate a residuals plot by plotting $\epsilon_i$ *vs*. $x_i$.
-6. Assess the accuracy of the resulting model using the following criteria for an accurate model:
-    a. The coefficient of determination, $R^2$, is close to 1.
-    b. The uncertainty in each model parameter is small compared to its value.
-    c. The points in the parity plot are all close to a diagonal line passing through the origin.
-    d. In the residuals plot, the points scatter randomly about the horizontal axis, and no systematic deviations are apparent.
-
-**Results and Final Answer** 
 
 ```{r}
 #| echo: false
 #| output: false
 library(tidyverse)
-source("~/Libraries/R/fmt_tibble_col.R")
-results <- read.csv("../RE_Basics_Examples/reb_4_4/reb_4_4_Python_results_rel.csv")
-results <- fmt_tibble_col(results,2,3,3,1)
+source("~/Libraries/R/fmt_kable_col.R")
+results <- read.csv("../RE_Basics_Examples/reb_4_4/reb_4_4_Python_results.csv") %>%
+    select(-item)
+results <- fmt_kable_col(results,1,3,3,1)
 ```
- 
-The best estimate for the Arrhenius pre-exponential factor is $k_0$ = `r results$value[1]` [`r results$value[2]`, `r results$value[3]`] (95%CI) L mol^-1^ min^-1^, and that for the activation energy is $E$ = `r results$value[4]` [`r results$value[5]`, `r results$value[6]`] (95%CI) kJ mol^-1^. The coefficient of determination, $R^2$, is `r results$value[7]`. The parity plot is shown in @fig-example_4_4_parity_rel and the residuals plot in @fig-example_4_4_residual_rel.
-
-::: {layout-ncol=2}
-
-![Parity plot after fitting using relative errors.](./Graphics/reb_4_4_Python_parity_plot_rel.png){#fig-example_4_4_parity_rel}
-
-![Residuals plot after fitting using relative errors.](./Graphics/reb_4_4_Python_residual_plot_rel.png){#fig-example_4_4_residual_rel}
-
-:::
-
-Inspection of the parity plot, @fig-example_4_4_parity_rel, indicates that the Arrhenius expression accurately predicts the temperature dependence of the rate coefficient. The closeness of $R^2$ to 1 supports this assessment. The residuals plot, @fig-example_4_4_residual_rel, does show a systematic trend where the error decreases slightly and then increases sharply as the temperature increases. This indicates that the Arrhenius expression does not *fully* capture the temperature dependence of $k$. Nonetheless, based upon the small magnitude of the deviations in the parity plot and the $R^2$ value that is very close to 1.0, it can be concluded that the Arrhenius expression accurately captures the majority of the temperature dependence.
-
-The uncertainty in $k_0$ is relatively high; the estimated value could be increased 8-fold or decreased to 1/8 of its value and it would still fall within the 95% confidence interval. It is not uncommon, however, for Arrhenius pre-exponential factors to have large relative uncertainties. In contrast, the uncertainty in the activation energy is reasonable (plus or minus ca. 6 out of 58.3 kJ mol^-1^ or about 10%).
-
-Overall, the Arrhenius expression accurately predicts the value of the rate coefficient as a function of temperature within the range of temperatures studied in the experiments. Given the trends that can be observed in both the parity plot and the residuals plot, the Arrhenius expression found here should not be used to predict the rate coefficient at temperatures outside of the range used in the experiments.
 
 
-:::{.callout-note collapse="false"}
-## Note
+Using linear least squares software, the following Arrhenius parameter values were estimated: $k_0$ = `r results$value[1]`, 95% CI [`r results$value[2]`, `r results$value[3]`] `r results$units[1]` and $E$ = `r results$value[4]`, 95% CI [`r results$value[5]`, `r results$value[6]`] `r results$units[4]`.The coefficient of determination, $R^2$, was found to equal `r results$value[7]`. The results were used to generate the model plot shown in @fig-example_4_4_fig.
 
-The approach used in this example to estimate $k_0$ and $E$ is not the approach that is most often used. It is far more common to "linearize" the Arrhenius expression and fit the linearized model to the data. Specifically, taking the the natural logarithm of each side of the Arrhenius expression as shown in equation (9) leads to a linear model. If $x$ and $y$ are defined as shown in equations (10) and (11), it becomes apparent that equation (9) becomes linear equation (12) with the slope, $m$, and intercept, $b$, related to the original parameters as shown in equations (13) and (14).
+![Arrhenius plot comparing the model (line) to the experimental data (points).](Graphics/reb_4_4_Python_Arrhenius_plot.png){#fig-example_4_4_fig width="80%"}
 
-$$
-\ln{k_j} = \left(  \frac{-E_j}{R} \right)\left(  \frac{1}{T} \right) + \ln{k_{0,j}} \tag{9}
-$$
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
 
-$$
-x = \frac{1}{T} \tag{10}
-$$
-
-$$
-y = \ln{k_j} \tag{11}
-$$
-
-$$
-y = mx + b  \tag{12}
-$$
-
-$$
-m = \frac{-E_j}{R} \tag{13}
-$$
-
-$$
-b = \ln{k_{0,j}} \tag{14}
-$$
-
-The parameters, $m$ and $b$ can then be estimated using linear least squares and a spreasheet program as follows:
-
-1. Create a spreadsheet with columns containing the data in @tbl-data_reb_4_4.
-2. Add a column containing the experimental values of the temperature in K using equation (4).
-3. Add a column containing $x$ as defined in equation (10).
-4. Add a column containing $y$ as defined in equation (11).
-5. Add a linear plot of $x$ *vs*. $y$.
-6. Add a linear trendline to the plot and display the equation for the trendline.
-7. Solve equations (13) and (14) for $k_0$ and $E$, respectively, and use the resulting equations to calculate $k_0$ and $E$ from the slope and intercept of the trendline.
-
-This approach has several advantages, chief among them are that it does not require writing computer code and it does not require a guess for the parameters. Unfortunately, there are many models that cannot be linearized. This includes models that will be encountered in later chapters of *Reaction Engineering Basics*. When the model cannot be linearized, the approach used in this example is the only option for parameter estimation. For this reason, all of the parameter estimation problems in *Reaction Engineering Basics* are solved using software for estimating parameters in non-linear, single-response models.
+The last thing I need to do is to assess the accuracy of the resulting Arrhenius expression. The criteria for assessing the accuracy were presented earlier in this chapter.
 
 :::
+
+The uncertainty in $k_0$, that is the difference between the upper and lower limits of the 95% confidence interval, is 4.69 x 10^7^ `r results$units[1]`. This is quite large compared to the estimated value of $k_0$, `r results$value[1]` `r results$units[1]`. Estimated pre-exponential factors are often found to have large uncertainties. The uncertainty in the activation energy is 10.5 kJ mol^-1^ (18%) compared to the estimated value of `r results$value[4]` kJ mol^-1^. The coefficient of determination is quite close to 1.0, however, and the model plot shows good agreement between the experimental data and the model with no trends in the deviations. Overall, it appears that the experimental data are consistent with the Arrhenius expression.
 
 ## Symbols Used in @sec-rates-rate-express
 
