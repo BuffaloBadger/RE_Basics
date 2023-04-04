@@ -26,9 +26,9 @@ A second way of testing the assumption of perfect mixing involves performing the
 
 ## BSTR Kinetics Experiments and Data
 
-In @sec-kin-data-gen it was recommended that experiments for the generation of kinetics data be performed in blocks where all of the experiments in any one block occur at the same temperature. The basis for this recommendation is that rates are typcially more strongly affected by changes in temperature than by changes in composition. If both temperature and composition change at the same time, the stronger temperature effects may mask the more subtle composition effects.
+In @sec-kin-data-gen it was recommended that experiments for the generation of kinetics data be performed in blocks where all of the experiments in any one block occur at the same temperature. The basis for this recommendation is that rates are typcially more strongly affected by changes in temperature than by changes in composition. If both temperature and composition change between two experiments, the stronger temperature effects may mask the more subtle composition effects.
 
-In order to follow that recommendation, reactors being used to generate kinetics data should operate isothermally. In *Reaction Engineering Basics* it is always assumed that kinetics data have been generated using an isothermal reactor wherein only one reaction is occurring. If the kinetics data will be analzed using a linearized reactor model (see @sec-kin-data-gen), there is a second reason for operating a BSTR isothermally. If the reactor is isothermal, it is possible to write only one mole balance, and that mole balance can be solved separately from the energy balance. If the reactor is non-isothermal, the energy and mole balances must be solved simultaneously, and this will typically make it impossible to linearize the reactor model.
+In order to follow that recommendation, reactors being used to generate kinetics data should operate isothermally. In *Reaction Engineering Basics* it is always assumed that kinetics data have been generated using an isothermal reactor wherein only one reaction is occurring. If the kinetics data will be analzed using a linearized reactor model (see @sec-kin-data-gen and below), there is a second reason for operating a BSTR isothermally. If the reactor is isothermal, it is possible to write only one mole balance, and that mole balance can be solved separately from the energy balance. If the reactor is non-isothermal, the energy and mole balances must be solved simultaneously, and this will typically make it very difficult or even impossible to linearize the reactor model.
 
 In a typical BSTR kinetics experiment, the reactants are first loaded into the reactor; this is also called charging the reactor. If the charge to the reactor has not been pre-heated, then once the reagents are in the vessel, it may be necessary to heat the contents to the desired temperature. If the reaction being studied involves two or more reactants, they can be pre-heated separately to the desired temperature before adding them to the reactor. Alternatively, it may be necessary to add catalyst to start the reaction.
 
@@ -56,7 +56,9 @@ One other possibility for the measured response from BSTR kinetics experiments i
 
 ## BSTR Data Analysis
 
-The analysis of kinetics data generated using an ideal, isothermal BSTR makes use of the ideal BSTR mole balance, @eq-bstr_mole_balance. In *Reaction Engineering Basics* there will alway be one reaction taking place within the reactor, so the mole balance on any reactant or product, $i$, will take the from shown in @eq-bstr_mole_bal_one_reaction. Because only one reaction is taking place, it is not necessary to use an index for the reaction.
+When the experimental data consist of blocks with all of the data in any one block being at the same temperature, the analysis proceeds in two phases as described in @sec-kin-data-gen. In the first phase the data blocks are analyzed individually and the results are used to assess how accurately the proposed rate expression captures the effects of composition and pressure upon the reaction rate. A model of the reactor is used in this analysis to estimate the value of the rate coefficient and other kinetics parameters at each of the block temperatures. **This first phase of the analysis is the focus of this section and this chapter**. Once the rate coefficients have been estimated at all of the block temperatures, they are used to assess how accurately the proposed rate expression captures the temperature depenence of the reaction rate. That phase does not use the reactor model; it involves fitting the Arrhenius expression to the data from the first phase, resulting in estimates for the pre-exponential factor and the activation energy. This was described in @sec-rates-rate-express and illustrated in [Example -@sec-example_4_4]. It will be illustrated again in the examples at the end of this chapter, but it will not be discussed here.
+
+The analysis of a block of kinetics data generated using an ideal, isothermal BSTR makes use of the ideal BSTR mole balance, @eq-bstr_mole_balance. In *Reaction Engineering Basics* there will alway be one reaction taking place within the reactor, so the mole balance on any reactant or product, $i$, will take the from shown in @eq-bstr_mole_bal_one_reaction. Because only one reaction is taking place, it is not necessary to use an index for the reaction.
 
 $$
 \frac{dn_i}{dt} = \nu_i r V
@@ -87,19 +89,19 @@ $$
 \frac{dn_i}{dt} = \nu_i r V \qquad \Rightarrow \qquad n_i = f\left( n_i, t \right)
 $$ {#eq-integrated_bstr_mole_bal}
 
-Assuming that the mole balance can be solved to find the function, $f$, the solution of the IVODE is re-written so that by defining new variables it becomes a linear equation. Sometimes this can be done using only algebraic manipulations. When the integrated model equation contains a fraction with multiple terms in the denominator, taking the reciprocal of both sides sometimes leads to a linearized equation. Similarly, if the integrated model equation contains an exponential, taking the log of both sides sometimes leads to a linearized equation. The note following [Example -@sec-example_4_4] provides an example of linearizing an equation containing an exponential, specifically the Arrhenius expression. It isn't always possible to linearize the integrated reactor model, in which case this approach again can't be used. If the integrated reactor model can be linearized, it will have the linear form shown in @eq-linear_equation.
+Assuming that the mole balance can be solved to find the function, $f$, the solution of the IVODE is re-written so that by defining new variables it becomes a linear equation. Sometimes this can be done using only algebraic manipulations. When the integrated model equation contains a fraction with multiple terms in the denominator, taking the reciprocal of both sides sometimes leads to a linearized equation. Similarly, if the integrated model equation contains an exponential, taking the log of both sides sometimes leads to a linearized equation. In [Example -@sec-example_4_4] a linearized version of the Arrhenius expression was fit to experimental rate coefficient data. It isn't always possible to linearize the integrated reactor model, in which case this approach again can't be used. If the integrated reactor model can be linearized, it will have the linear form shown in @eq-linear_equation and reproduced here.
 
 $$
 y = m_1x_1 + m_2x_2 + \cdots + m_nx_n + b
 $$
 
-It is important to understand that *the kinetics parameters cannot appear in the defining equation for the new variables*, $y$ and the $x_i$. Also, *each slope, $m_i$, and the intercept, $b$, must contain a unique combination of the kinetics parameters in its definition, and it may not contain any adjusted inputs*. That means that if the rate expression contains $n$ kinetics parameters, the linearized reactor model will have $n-1$ slopes, $m_i$, and one intercept, $b$.
+**It is important to understand** that *the kinetics parameters cannot appear in the defining equation for the new variables*, $y$ and the $x_i$. Also, *the definition of each slope, $m_i$, and the intercept, $b$, must contain a unique combination of the kinetics parameters, and it may not contain any adjusted inputs or the response*. That means that the total number of slopes and intercepts must equal the number of kinetics parameters.
 
-At this point, the analysis proceeds as described in @sec-kin-data-gen. The primary advantage of this approach is that the linearized model can be fit to the new $y$ and $x$ data using linear least squares. It is not necessary to write a response function, nor to use general parameter estimation software. As noted in @sec-kin-data-gen, if there are only two kinetics parameters in the rate expression, the linearized model, $y=mx+b$ can be fit to the $x$ - $y$ data using a spreadsheet.
+At this point, the analysis proceeds as described in @sec-kin-data-gen. The primary advantage of this approach is that the linearized model can be fit to the new $y$ and $x$ data using linear least squares. It is not necessary to write a response function, nor to use general parameter estimation software. As noted in @sec-kin-data-gen, if there are only one or two kinetics parameters in the rate expression, the linearized model, $y=mx$ or $y=mx+b$, can be fit to the $x$ - $y$ data using a spreadsheet.
 
-The criteria for assessing the accuracy of the rate expression is the same as when using a response function. When the rate expression contains two kinetics parameters and a spreadsheet is used for analysis, it isn't necessary to generate parity and residuals plots. Instead, a plot showning the $x$ - $y$ data and the fitted model (trendline) can be used instead. If the model is accurate, the plotted points lie close to the trendline with no systematic deviations from the line. That is, with random scatter about the line.
+The criteria for assessing the accuracy of the rate expression are the same as when using a response function (see @sec-kin-data-gen). When the rate expression contains two kinetics parameters and a spreadsheet is used for analysis, it isn't necessary to generate parity and residuals plots. Instead, a model plot can be used instead. If the model is accurate, the plotted points lie close to the trendline with no systematic deviations from the line. That is, with random scatter about the line.
 
-### Analysis Using the Rate Expression as the Model (Differential Analysis)
+### Analysis Using an Approximate Reactor Model (Differential Analysis)
 
 In this approach, an approximate form of the mole balance, @eq-bstr_diff_mol_bal, is used. The primary advantage of this approach is that it converts the reactor model from an IVODE to an algebraic/transcendental equation (ATE). The derivative can be approximated using backward, forward or central differences (see [Appendix -@sec-pre-knowledge]). In the past, before computers were readily available, the derivative was also estimated graphically. That is $n_i$ was plotted *vs*. $t$, a smooth curve was drawn through the data, and the slopes of tangents to that curve were measured and used to approximate the derivative.
 
@@ -139,7 +141,7 @@ $$ {#eq-half_life_other_order}
 
 ## Examples
 
-All of the examples in [Chapters -@sec-bstr-data-analysis], -@sec-cstr-data-analysis, and -@sec-pfr-data-analysis involve using experimental data to generate and assess a rate expression. Here in @sec-bstr-data-analysis the experimental data have been generated using an ideal BSTR. This type of problem can be called a "kinetics data analysis problem." When one is assigned any problem to solve, one of the first things they need to do is to identify what type of problem it is. Instead of repeating how an expert would identify each problem in this chapter as a kinetics data analysis problem at the start of the problem, a single expert thinking callout is provided here. Readers should mentally insert this callout at the start of every example in this chapter.
+All of the examples in [Chapters -@sec-bstr-data-analysis], [-@sec-cstr-data-analysis], and [-@sec-pfr-data-analysis] involve using experimental data to generate and assess a rate expression. Here in @sec-bstr-data-analysis the experimental data have been generated using an ideal BSTR. This type of problem can be called a "kinetics data analysis problem." When one is assigned any problem to solve, one of the first things they need to do is to identify what type of problem it is. Instead of repeating how an expert would identify the problem type in each of the following examples, a single expert thinking callout is provided here. Readers should mentally insert this callout at the start of every example in this chapter.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking after Reading each Problem Statement in this Chapter
@@ -155,12 +157,13 @@ I know that to solve a kinetics data analysis problem I will need to do the foll
 * Identify the experimental adjusted reactor inputs. These are the things that the person doing the experiment had control over and was able to set their value.
 * Identify the experimental response. This is some quantity that is related to the composition of the reacting fluid at the time it was measured.
 * Formulate some type of mathematical model of the experiments. In this book, where kinetics experiments are isothermal and involve only one reaction, the model will be based upon one or more mole balances.
-* Fit the model to the experimental data. This yields the value of the kinetics parameters in the rate expression that minimize the difference between the responses the model predicts and the responses that were measured experimentally.
-* Assess whether the model is sufficiently accurate and make a recommendation based upon that assessment.
+* Fit the model separately to the experimental data in each the blocks containing data at a single temperature. This yields the value of the kinetics parameters in the rate expression that minimize the difference between the responses the model predicts and the responses that were measured experimentally.
+* Assess whether the model is sufficiently accurate in capturing the effect of pressure and composition on the reaction rate.
+* Fit the Arrhenius expression to the resulting rate coefficients, assess how accurately the model captures the temperature dependence of the rate, and make a recommendation based upon that assessment.
 
 :::
 
-### Differential Analysis Using Initial Rates {#sec-example_8_1}
+### Differential Analysis {#sec-example_8_1}
 
 {{< include ../RE_Basics_Examples/reb_8_1/problem_statement.qmd >}}
 
@@ -193,7 +196,7 @@ kbl(d[1:8,], format = "markdown", align = "cc", col.names = c('Experiment','T (�
 
 Having identified this as a kinetics data analysis problem as described in the expert thinking callout at the start of this section, I know that I need to identify the adjusted experimental inputs and the measured experimental response. I like to start by additionally summarizing information from the problem statement including the type of reactor used in the experiments and constant quantities provided in the problem statement. Knowing that I need to estimate the values of all of the kinetics parameters appearing in the rate expression, it is also useful to identify and list them, too. Creating these lists at the start of the analysis makes it easier to formulate the model for the experiments. Note that in listing the adjusted experimental inputs and the measured experimental response, the variable symbols are underlined to indicate that they are vector quantities.
 
-I know that the data will be analyzed in two phases as described in [add ref to chapter 7]. In this problem, data were generated at 4 different temperatures. For the first phase of the analysis, I will separate the data into four blocks. One block will contain the data from all experiments conducted at 60 °C, one will contain the 73 °C data, one, the 82 °C data and one, the 90 °C data. I will analyze each of these blocks separately to estimate the best value of $k$ at that temperature and to assess the accuracy of the rate expression at that temperature.
+I know that the data will be analyzed in two phases as described in @sec-kin-data-gen. In this problem, data were generated at 4 different temperatures. For the first phase of the analysis, I will separate the data into four blocks. One block will contain the data from all experiments conducted at 60 °C, one will contain the 73 °C data, one, the 82 °C data and one, the 90 °C data. I will analyze each of these blocks separately to estimate the best value of $k$ at that temperature and to assess the accuracy of the rate expression at that temperature.
 
 :::
 
@@ -209,8 +212,6 @@ I know that the data will be analyzed in two phases as described in [add ref to 
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-
-In this phase of the analysis, I will be analyzing the data in blocks where the temperature is the same in all of the experiments being analyzed. It isn't possible to estimate values of $k_0$ and $E$ for the individual blocks, so the rate expression will be written using $k$ in place of $k_0 \exp \left( \frac{-E}{RT} \right)$. The values of $k_0$ and $E$ will be estimated in the second phase of the analysis.
 
 I am instructed to perform differential data analysis in this problem. That means that I will model the reactor using just one mole balance, and in that mole balance I will approximate the derivative using a finite difference. Since the response in this problem is the concentration of A, it makes sense to write that approximate mole balance on A. 
 
@@ -294,7 +295,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The next step is to estimate the parameters. Since the model is a linear equation, I can do that using linear least squares. I could use a spreadsheet program to do this, but I prefer write a short computer program that calls a linear least squares function. My main reason for this preference is that it the software will provide the coefficient of determination, the parameter estimates, *and* the 95% confidence intervals (or an equivalent measure of uncertainty) for the estimated parameter. When a spreadsheet is used to plot the data and add a trendline, the uncertainties are shown. Additional calculations must be performed in the spreadsheet to generate those uncertainties. 
+The next step is to estimate the parameters. Since the model is a linear equation, I can do that using linear least squares. I could use a spreadsheet program to do this, but I prefer write a short computer program that calls a linear least squares function. My main reason for this preference is that it the software will provide the coefficient of determination, the parameter estimates, *and* the 95% confidence intervals (or an equivalent measure of uncertainty) for the estimated parameter. When a spreadsheet is used to plot the data and add a trendline, the uncertainties are *not* shown. Additional calculations must be performed in the spreadsheet to generate those uncertainties. 
 
 In either case, the values of $x$ and $y$ must first be calculated for each experiment using equations (6) and (7). A straight line can then be fit to the resulting $x$ - $y$ data to obtain the coefficient of determination, the parameter estimates, and the 95% confidence intervals for the parameters. The model in this problem, $y=mx$, is linear with only one parameter, so a model plot can be used to assess its accuracy as described in @sec-kin-data-gen.
 
@@ -381,7 +382,7 @@ As the problem instructed, the kinetics data were analyzed using an approximate 
 
 In this experimental study 3 experiments were performed at each temperature, differing only in the initial concentration of A. The elapsed time between each measurement of the response was 5 min in those experiments. Had it been possible to measure the response very quickly, say every 0.25 min, a single experiment could have been used at each temperature.
 
-In addition to reducing the time required to perform the experiments, this might have improved the accuracy of the results. In the present study, the derivative of the molar amount of a with respect to time was approximated using two data points that were 5 min apart. If the data points had been 0.25 min apart, the approximation would have been more accurate.
+In addition to reducing the time required to perform the experiments, this might have improved the accuracy of the results. In the present study, the derivative of the molar amount of A with respect to time was approximated using two data points that were 5 min apart. If the data points had been 0.25 min apart, the approximation would have been more accurate.
 
 :::
 
@@ -434,7 +435,7 @@ I can see that this is a kinetics data analysis problem (see the expert thinking
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The data set includes experiments at each of 3 temperatures. From this I know that I will need to analyze the data in two phases. In the first phase I will analyzed blocks of data, each of which contains all of the experiments at one temperature. Because all of the data in a block are at the same temperature, I know that in the first phase I will only be able to estimate $k$ at each of the block temperatures. That means that in phase 1 of the analysis I will substitute $k$ for $k_0 \exp \left( \frac{-E}{RT} \right)$ in the rate expression, equation (2).
+The data set includes experiments at each of 3 temperatures. From this I know that I will need to analyze the data in two phases. In the first phase I will analyzed blocks of data, each of which contains *all* of the experiments at *one* of the three temperatures. Because all of the data in a block are at the same temperature, I know that in the first phase I will only be able to estimate $k$ at each of the block temperatures. The values of $k_0$ and $E$ will be estimated in the second phase of the analysis.
 
 The problem statement instructs me to use a linearized reactor model. That means I must use a single mole balance on one of the products or reactants to model the reactor. (Because the reactor is isothermal, I can solve the mole balance independently of the energy balances.) The response in this problem is the fractional conversion of reagent A, so I'll write the mole balance on reagent A.
 
@@ -459,13 +460,7 @@ $$
 \frac{dn_i}{dt} = \nu_i r V
 $$
 
-The stoichiometric coefficient of A is -1. For this phase of the analysis, the rate expression, equation (2), is written in terms of $k$ instead of $k_0$ and $E$.
-
-$$
-r = kP_AP_B
-$$
-
-Substitution of this expression and the stoichiometric coefficient gives equation (3).
+The stoichiometric coefficient of A is -1. Substitution of that value and the rate expression gives equation (3).
 
 :::
 
@@ -670,7 +665,7 @@ kbl(d, format = "markdown", align = "cc", col.names = c("T (°C)", "k", "R^2^"))
 Model Plots for each of the three temperature blocks.
 :::
 
-The 95% confidence intervals for each of the three estimated rate coefficients are very small compared to the estimated values and the $R^2$ values are almost equal to 1. The magnitude of the deviations are acceptable of the data points from the model line in the model plots is also small and random. All of these observations suggest that the rate expression is very accurate with respect to the composition dependence of the rate.
+The 95% confidence intervals for each of the three estimated rate coefficients are very small compared to the estimated values and the $R^2$ values are almost equal to 1. The magnitude of the deviations of the data points from the model line in the model plots is also small and random. All of these observations suggest that the rate expression is very accurate with respect to the composition dependence of the rate.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -694,7 +689,7 @@ b <- c(b1,b2,d$value[7])
 d <- data.frame(a,b)
 ```
 
-The Arrhenius expression was fit to the estimated rate coefficients for three four blocks with the following results.
+The Arrhenius expression was fit to the estimated rate coefficients for the three blocks with the following results.
 
 ```{r}
 #| echo: false
@@ -726,12 +721,222 @@ The use of a linearized model, as demonstrated in this example is accurate and s
 
 {{< include ../RE_Basics_Examples/reb_8_3/problem_statement.qmd >}}
 
+
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_8_3/reb_8_3_data.csv")
+ # T,t,P
+```
+
+The first few data points are shown in @tbl-example_8_3_data. The full data set is available in the file [reb_8_3_data.csv](Data/reb_8_3_data.csv).
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_8_3_data
+#| tbl-cap: First 5 of the 72 experimentally generated data.
+library(kableExtra)
+library(knitr)
+kbl(d[1:5,], format = "markdown", align = "cc", col.names = c('T (°C)', 't~rxn~ (s)', 'P (atm)'))
+```
+
 ---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+This problem has all the characteristics of a kinetics data analysis problem. As is my usual practice, I will start by listing the reactor type, constants provided in the problem statement, the adjusted experimental inputs, the measured experimental responses and the kinetics parameters I need to estimate.
+
+:::
+
+**Reactor Type**: BSTR
+
+**Given Constants**: $V=100 \text{ cm}^3$ and $P_{A,0}=4 \text{ atm}$.
+
+**Adjusted Inputs**: $\underline{T}$ and $\underline{t_{rxn}}$
+
+**Experimental Responses**: $\underline{P}$
+
+**Kinetics Parameters**: $k_0$, and $E$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I know that in order to estimate the kinetics parameters I will need to fit a reactor model to the experimental data. I also know that I should analyze the data in blocks where each block contains all of the data at one of the experimental temperatures. I'll use those blocks to estimate the rate coefficient, $k$, at each experimental temperature. Later I'll use the results to find the Arrhenius parameters.
+
+Here I will fit the reactor model to the experimental data using a response function as described in @sec-kin-data-gen. A response function is given the adjusted experimental inputs and values for the kinetics parameters. Internally it must solve the reactor design equations and use the results to calculate and return the model-predicted response. The first thing I need to do then is to identify and write the reactor design equations. As noted in @sec-modeling-ideal-reactors, I know that when the reactor operates isothermally, as it did in these experiments, the mole balances on the reagents can be solved independently of the energy balances. Therefore I'll start by generating mole balances on every reagent to use as the reactor model. For that I can use @eq-bstr_mole_bal_one_reaction.
+$$
+\frac{dn_i}{dt} = \nu_i r V
+$$
+
+This system has only 2 reagents, A and A~2~, and their stoichiometric coefficients are -2 and 1, respectively. With that knowledge, I can write the mole balances.
+
+:::
+
+**Reactor Design Equations**
+
+Mole balances on A and A~2~ are presented in equations (3) and (4).
+
+$$
+\frac{dn_A}{dt} = -2rV \tag{3}
+$$
+
+$$
+\frac{dn_{A_2}}{dt} = rV \tag{4}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Within the response function, the design equations must be solved numerically. Here the design equations are a set of coupled IVODEs. The dependent variables are $n_A$ and $n_{A_2}$ and the independent variable is $t$. I need three things to solve the IVODEs: (1) ancillary equations to calculate every quantity appearing in the IVODEs using known constants, the independent variable, and the dependent variables, (2) initial values, and (3) a stopping criterion. 
+
+To start, I will go through each of the design equations variable by variable. When a variable isn't a constant, the independent variable or one of the dependent variables, I'll write an expression for it. I'll go through that expression variable by variable, writing expressions for any quantities other than known constants, the independent variable or one of the dependent variables, and so on.
+
+:::
+
+**Ancillary Equations**
+
+When the rate expression is substituted into the mole balances, it introduces the partial pressure of A, which can be expressed in terms of known constants, the independent variable or one of the dependent variables using the ideal gas law, equation (5).
+
+$$
+P_A = \frac{n_ART}{V} \tag{5}
+$$
+
+The instant the reaction starts can be defined as $t=0$. At that time, no reagent A~2~ is present, so its initial value is zero. The initial value of the molar amount of reagent A can be found from its initial pressure and the ideal gas law. Thus, the initial values are given by equations (6) and (7).
+
+$$
+n_A\Big\vert_{t=0} = n_{A,0} = \frac{P_{A,0}V}{RT} \tag{6}
+$$
+
+$$
+n_{A_2}\Big\vert_{t=0} = n_{A_2,0} = 0 \tag{7}
+$$
+
+The stopping criterion is that the time equals the time at which the response was measured, $t_{rxn}$, equation (8).
+
+$$
+t_f = t_{rxn}\tag{8}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point the mole balance design equations can be solved numerically. Doing so will yield the values of $n_A$ and $n_{A_2}$ at a range of times between $t=0$ and $t_f$. Within the response function I need to use those values to calculate the response, which in this problem is the final pressure. I can do that using the ideal gas law and the values of $n_A$ and $n_{A_2}$ at $t_f$.
+
+:::
+
+**Response Function**
+
+Letting $n_{A,f}$ and $n_{A_2,f}$ represent the calculated molar amounts of A and A~2~ at the time the response was measured, the total pressure can be found using the ideal gas law, equation (9).
+
+$$
+P = \frac{\left( n_{A,f} + n_{A_2,f} \right)RT}{V} \tag{9}
+$$
+
+**Parameter Estimation and Assessment of Accuracy**
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_8_3/python/reb_8_3_phase_1_results.csv")
+ # T, k, k_ll, k_ul, R_sq_
+d <- fmt_tibble_col(d, 2:5, 3, 2, 2)
+d$k_full = paste0(d$k,' mol cm^-3^ s^-1^ atm^-1^, 95% CI [',d$k_ll,', ',d$k_ul,']')
+```
+
+The reactor model was fit separately to the data in each of the three constant-temperature blocks. The results are shown in @tbl-example_8_3_phase_1_results. The parity and residuals plots shown in @fig-example_8_3_model_plots were then created.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_8_3_phase_1_results
+#| tbl-cap: Estimated values of the rate coefficient at each of the three temperatures studied in the experiments.
+d <- d %>% select(T, k_full, R_sq)
+library(kableExtra)
+library(knitr)
+kbl(d, format = "markdown", align = "cc", col.names = c("T (°C)", "k", "R^2^"))
+```
+
+::: {#fig-example_8_3_model_plots layout-ncol=2}
+
+![](Graphics/reb_8_3_parity_T_equals_250.png)
+
+![](Graphics/reb_8_3_residuals_T_equals_250.png)
+
+![](Graphics/reb_8_3_parity_T_equals_275.png)
+
+![](Graphics/reb_8_3_residuals_T_equals_275.png)
+
+![](Graphics/reb_8_3_parity_T_equals_300.png)
+
+![](Graphics/reb_8_3_residuals_T_equals_300.png)
+
+Parity and Residuals Plots for each of the three temperature blocks.
+:::
+
+The 95% confidence intervals for each of the three estimated rate coefficients are very small compared to the estimated values and the $R^2$ values are almost equal to 1. In the parity plots the magnitude of the deviations of the data points from the line representing a perfect model are small. In the residuals plots the deviations are random (no trends are apparent). All of these observations suggest that the rate expression is very accurate with respect to the composition dependence of the rate.
+
+:::{.callout-note collapse="false"}
+## Note
+
+The deviations in the residuals plots appear to be large, but this is because the $y$ axis is greatly expanded in the residuals plots. The parity plots are used to visually assess the magnitude of the errors. The residuals are used to visually assess the randomness of the errors.
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Having found values for the rate coefficient at each of the three experimental temperature, and having assessed the model to accurately predict the effects of pressure and composition at each experimental temperature, I now need to fit the Arrhenius expression to the rate parameter results I just obtained. I will do this using the linearized form of the Arrhenius expression. (See the previous examples in this Chapter, and @sec-rates-rate-express.)
+
+:::
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_8_3/python/reb_8_3_Arrhenius_results.csv")
+d <- fmt_tibble_col(d, 2, 3, 2, 2)
+a <- c('k~0~','E','R^2^')
+b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
+b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],']')
+b <- c(b1,b2,d$value[7])
+ # item, value, units
+d <- data.frame(a,b)
+```
+
+The Arrhenius expression was fit to the data in @tbl-example_8_3_phase_1_results with the following results.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_8_3_arrhenius_results
+#| tbl-cap: Parameter estimation results
+library(kableExtra)
+library(knitr)
+kbl(d, format = "markdown", align = "cc", col.names = NULL)
+```
+
+The 95% confidence interval for the pre-exponential factor is huge. Specifically it ranges from ca. 5.4 to 11,500 mol cm^-3^ s^-1^ atm^-1^, but a wide confidence interval is often observed for the pre-exponential factor. The 95% confidence interval for the activation energy is smaller (70.8 to 106 kJ mol^-1^). Importantly, the coefficient of determination is equal to 1 and in the Arrhenius plot, @fig-example_8_3_Arrhenius_plot, the estimated rate coefficients fall almost exactly on the line representing the Arrhenius expression.
+
+![Arrhenius plot resulting from the estimated parameters.](Graphics/reb_8_3_Arrhenius_plot.png){#fig-example_8_3_Arrhenius_plot width=80%}
+
+**Recommendation**
+
+The proposed rate expression given in equation (2) provides an accurate representation of the experimental data in this study. It should be accepted with the pre-exponential factor and activation energy shown in @tbl-example_8_3_arrhenius_results.
 
 :::{.callout-note collapse="false"}
 ## Note
 
 problem is not realistic because can't pre-heat reactant and can't heat it instantly.
+
+also it wasn't necessary to use full reactor model, but did so for purposes of illustration. It is preferred because it can **always** be used while linearization can't. See next example.
 
 :::
 
@@ -739,11 +944,190 @@ problem is not realistic because can't pre-heat reactant and can't heat it insta
 
 {{< include ../RE_Basics_Examples/reb_8_4/problem_statement.qmd >}}
 
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_8_4/reb_8_4_data.csv")
+ # CS0, t, CP
+```
+
+The first few data points are shown in @tbl-example_8_4_data. The full data set is available in the file [reb_8_4_data.csv](Data/reb_8_4_data.csv).
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_8_4_data
+#| tbl-cap: First 8 of the 72 experimentally generated data.
+library(kableExtra)
+library(knitr)
+kbl(d[1:5,], format = "markdown", align = "cc", col.names = c('C~S,0~ (mmol L^-1^)', 't~rxn~ (min)', 'C~P~ (mmol L^-1^)'))
+```
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I will start my solution of this kinetics data analysis problem by listing the reactor type, the constants provided in the problem statement, the adjusted experimental inputs, the measured experimental responses and the kinetics parameters I need to estimate.
+
+:::
+
+**Reactor Type**: BSTR
+
+**Given Constants**: $V=50 \text{ ml}$.
+
+**Adjusted Inputs**: $\underline{C_{S,0}}$ and $\underline{t_{rxn}}$
+
+**Experimental Responses**: $\underline{C_P}$
+
+**Kinetics Parameters**: $V_{max}$, and $K_m$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+All of the data in this problem were generated at the same temperature, so they can all be analyzed together. I need to write a reactor model (see @sec-modeling-ideal-reactors), use it to create a reactor response function (see @sec-kin-data-gen and above), and use that to fit the reactor model to the experimental data (see [Appendix -@sec-parameter-est] and [Example -@sec-example_8_3]).
+
+For an isothermal reactor, the mole balances can be solved independently of the other reactor design equations. In this problem there are three reagents, the substrate S, the product P, and water. I will use @eq-bstr_mole_bal_one_reaction to write mole balance on these reagents, noting that their stoichiometric coefficients are -1, 1, and 1, respectively. 
+
+:::
+
+Mole balances on the substrate S, the product P, and water are presented in equations (3) through (5).
+
+$$
+\frac{dn_S}{dt} = -rV \tag{3}
+$$
+
+$$
+\frac{dn_P}{dt} = rV \tag{4}
+$$
+
+$$
+\frac{dn_{H_2O}}{dt} = rV \tag{5}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Within the response function I am creating, I need to solve the mole balance equations numerically. The adjusted inputs and the kinetics parameters will be available in the response function. The mole balances are IVODEs, so to solve them I need to provide three things: (1) ancillary equations to calculate the value of every quantity in the mole balances using only known constants, the independent variable ($t$ in this problem), and the dependent variables ($n_S$, $n_P$, and $n_{H_2O}$); (2) initial values and (3) a stopping criterion.
+
+:::
+
+**Ancillary Equations**
+
+Substitution of the rate expression into the mole balances introduces the concentration of substrate S, which can be calculated using equation (6).
+
+$$
+C_S = \frac{n_S}{V} \tag{6}
+$$
+
+The instant the reaction began can be defined as $t=0$. The initial values are then given by equations (7) and (8).
+
+$$
+n_S\Big\vert_{t=0} = C_{S,0}V \tag{7}
+$$
+
+$$
+n_P\Big\vert_{t=0} = n_{H_2O}\Big\vert_{t=0} = 0 \tag{8}
+$$
+
+The integration of the IVODEs should stop when $t=t_{rxn}$.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point the mole balances can be solved numerically. Doing so will yield the values of $n_S$, $n_P$, and $n_{H_2O}$ at times between $t=0$ and $t=t_{rxn}$. I need to use those results to calculate the response, which in this problem was the concentration of the product P. This is trivial using the definition of a concentration.
+
+:::
+
+**Response Function**
+
+Letting $n_{P,f}$ denote the molar amount of product P found by solving the mole balances, the model-predicted response can be calculated using equation (9).
+
+$$
+C_{P,\text{ model}} = \frac{n_{P,f}}{V} \tag{9}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The response function can now be used to fit the reactor model to the experimental data. Doing so will yield the best estimates for the kinetics parameters, $V_{max}$ and $K_m$, and their 95% confidence intervals. It will also yield the coefficient of determination, $R^2$.
+
+I can use the estimated parameter values to calculate the model-predicted response for every experiment. Then I can create a parity plot (experimental responses *vs*. model-predicted responses) and residuals plots (difference between the experimental and model-preducted responses *vs*. each of the adjusted inputs, in this case the initial substrate concentration and the reaction time).
+
+The accuracy of the rate expression can then be assessed as described in this chapter and in @sec-kin-data-gen. The criteria suggesting accuracy are as follows:
+
+* The coefficient of determination, $R^2$, will be close to 1.
+* The uncertainty in each parameter estimate will be small compared to the estimate.
+* The points in the parity plot will all be close to a diagonal line ($y_{\text{expt}} = y_{\text{model}}$).
+* In each residuals plot, the points will scatter randomly about zero (the horizontal axis), and no systematic deviations will be apparent.
+
+:::
+
+**Parameter Estimation and Assessment of Accuracy**
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_8_4/python/reb_8_4_results.csv")
+d <- fmt_tibble_col(d, 2, 3, 2, 2)
+a <- c('V~max~','K~m~','R^2^')
+b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
+b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],']')
+b <- c(b1,b2,d$value[7])
+ # item, value, units
+d <- data.frame(a,b)
+```
+
+Fitting the reactor model to the experimental data yielded the results shown in @tbl-example_8_4_results. The estimated parameter values were used to create the parity plot shown in @fig-example_8_4_parity and the residuals plots shown in @fig-example_8_4_residuals_t and @fig-example_8_4_residuals_CS.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_8_4_results
+#| tbl-cap: Parameter estimation results
+library(kableExtra)
+library(knitr)
+kbl(d, format = "markdown", align = "cc", col.names = NULL)
+```
+
+![Parity plot for the proposed rate expression.](Graphics/reb_8_4_parity.png){#fig-example_8_4_parity width=80%}
+
+![Residuals *vs*. reaction time.](Graphics/reb_8_4_residuals_vs_t.png){#fig-example_8_4_residuals_t width=80%}
+
+![Residuals *vs*. initial substrate concentration.](Graphics/reb_8_4_residuals_vs_CS.png){#fig-example_8_4_residuals_CS width=80%}
+
+The confidence intervals for both $V_{max}$ and $K_m$ are narrow and the coefficient of determination is close to 1.0. In the parity plot the deviations of the responses from the line representing a perfect model are small. In both residuals plots the deviations about zero are random. All of these results indicate that the proposed rate expression is accurate when the kinetics parameters have the values shown in @tbl-example_8_4_results.
+
+**Recommendation**
+
+When the parameters, $V_{max}$ and $K_m$ have the values shown in @tbl-example_8_4_results, the rate expression is accurate and acceptable.
+
 ---
 
 ## Symbols Used in @sec-bstr-data-analysis
 | Symbol | Meaning |
 |:-------|:--------|
-|   |  . |
+| $b$ | $y$-$ntercept of a linearized response model. |
+| $f\left(\right)$ | Mathematical function of the variables enclosed by the parentheses. |
+| $k$ | Rate coefficient. |
+| $m_i$ | Slope in the $i$ direction of a linear response model. |
+| $n_i$  |  Molar amount of reagent $i$. |
+| $r$ | Rate of reaction per unit volume. |
+| $r_i$ | Rate of generation of reagent $i$ per unit volume. |
+| $t$ | Time. |
+| $t_{1/2}$ | Reaction half-life. |
+| $x_i$ | Independent variable in a linear response function. |
+| $y$ | Reactor response, an additional subscripted "expt" denotes the experimentally measured response, an additional subscripted "model" denotes the response predicted by the model. |
+| $C_i$ | Molar concentration of reagent $i$. |
+| $R^2$ | Coefficient of determination. |
+| $V$ | Volume. |
+| $\alpha$ | Power-law reaction order. |
+| $\nu_i$ | Stoichiometric coefficient of reagent $i$. |
+| $\delta n_i$ | Change in $n_i$. |
+
 
 : {tbl-colwidths="[20,80]"}
