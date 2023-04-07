@@ -1,3 +1,720 @@
 # Analysis of Kinetics Data from a CSTR {#sec-cstr-data-analysis}
 
-Chapter 7
+This section of *Reaction Engineering Basics* focuses upon the analysis of kinetics data for the purpose of assessing the accuracy of a proposed rate expression. @sec-kin-data-gen presented a general introduction to kinetics data analysis and @sec-bstr-data-analysis examined the analysis of kinetics data generated using a BSTR. This chapter is like @sec-bstr-data-analysis except it is focused on the analysis of kinetics data generated using a CSTR.
+
+## Laboratory CSTRs
+
+There are many similarities between BSTRs and CSTRs. The primary difference is that fluid continually flows in and out of a CSTR. Basically CSTRs are BSTRs with inlet and outlet flow streams. Other than the stopped flow reactor, the BSTRs described in @sec-bstr-data-analysis could be converted to CSTR simply by adding a flow in and a flow out. In the case of the recirculation loop reactor, @fig-batch_recirc_reactor, the flow in and out should be small compared to the recirculation flow within the loop. As with the BSTR, one of the most important characteristics of a CSTR is that it is perfectly mixed. As discussed below, when a CSTR is used to generate kinetics data, it is preferable to operate the CSTR at steady state. Consequently, in addition to assessing the mixing before experiments begin, it is also important to verify steady-state operation while conducting the experiments.
+
+### Testing the Ideality of a CSTR
+
+Given the similarities between BSTRs and CSTRs, most of the discussion in @sec-bstr-data-analysis applies here, as well. Specifically, one of the most important requirements is that the reactor must be perfectly mixed. Smoke tests and the measurement of the reactor response as the agitation rate is increased again can be used to test for perfect mixing. In addition, a property known as the residence time distribution can be used to assess how well a reactor conforms to the assumptions of an ideal CSTR. Essentially, it provides a necessary, but not sufficient, criterion that the laboratory reactor must satisfy. The measurement and use of the residence time distribution will be presented in @sec-seg-flow-models.
+
+## CSTR Kinetics Experiments and Data
+
+The nature of kinetics experiments involving a CSTR and the data they generate is different in some respects from a BSTR. To prevent the generally strong temperature dependence of reaction rates from masking weaker composition and pressure effects, experiments should be performed in blocks where all of the experiments in a block are performed at the same temperature. The examples in @sec-bstr-data-analysis showed how each block of data can then be analyzed to estimate the rate coefficient at the temperature used in that block. Then, once all of the blocks have been analyzed, the Arrhenius expression can be fit to the resulting $k$ *vs*. $T$ data to estimate the pre-exponential factor and the activation energy.
+
+When using a CSTR to generate kinetics data, it should operate at steady state. There are two good reasons for this. First, the temperature of the reacting fluid is likely to change during transient operation, and that prevents the use of same-temperature data blocks. Second, when the reactor operates at steady state, data analysis is greatly simplified. Specifically, the steady-state reactor design equations are algebraic-transcendental equations (ATEs) whereas the transient design equations are initial value ordinary differential equations (IVODEs). Additionally, when the reactor operates at steady state at a known temperature, the mole balance design equations can be solved independently of the energy balances, so only the mole balances are needed when analyzing steady-state CSTR kinetics data.
+
+In a typical CSTR kinetics experiment, the rate of fluid flow into the reactor is set along with the composition of the feed fluid. The pressure and temperature are also adjusted to their desired values for that experiment. Once these inputs have been fixed, the flow rate and composition of the fluid leaving the reactor is monitored. Initially the outlet composition and flow rate may change over time. This indicates that the CSTR has not yet reached steady state. When the outlet flow rate and composition become constant, the CSTR has reached steady state, and the response is measured, and that concludes the experiment. This is very different from BSTR experiments where the response was measured several times during a single experiment. The reason, of course, is that the composition changes during a BSTR experiment wherease nothing changes during a steady-state CSTR experiment. Consequently, the generation of kinetics data using a CSTR typically involves many more experiments compared to when a BSTR is used.
+
+## Design of CSTR Experiments
+
+In isothermal BSTR experiments the initial composition and pressure of the reacting fluid and the elapsed time at which the response was measured were the inputs that were adjusted so that the experiments sampled a wide range of compositions. In a sense, the same is true of flow reactor experiments (both CSTR and PFR), but in flow reactors the space time, @eq-space_time, determines how much long the reaction is allowed to proceed instead of the elapsed wall-clock time (see @sec-modeling-ideal-reactors). This means that for flow reactors there are more reactor inputs that can be adjusted in order to vary the space time.
+
+As noted in @sec-bstr-data-analysis, preliminary studies typically define ranges of interest for temperature, pressure, and composition, and the purpose of kinetics experiments is to generate kinetics data that span those ranges. For each factor (e.g. the temperature, pressure, the concentration of reagent A, the concentration of reagent B, etc) a set of values (also called levels) are chosen that span its range of interest. Increasing the number of levels improves the resolution of the effect of that factor upon the reaction rate. Once the levels have been chosen for each factor, a factorial design like that described in @sec-kin-data-gen can be used to specify the experiments that will be performed.
+
+### Adjusted Experimental Inputs
+
+Temperature is always an important factor, and as previously noted CSTR experiments are conducted in blocks where the steady-state temperature is the same for all experiments in each block. The pressure is constant in CSTR experiments, so if pressure is a factor of interest, the reactor pressure becomes one of the adjusted inputs.
+
+The concentrations (or, for gases, partial pressures) within the reactor are the ones that need to span their range of interest, but unfortunately they cannot be adjusted directly. Instead, the composition and flow rate of the feed entering the reactor are adjusted. Depending upon the configuration of the feed system, the variables that can be adusted include the molar flow rates of the individual reagents or the volumetric flow rate of the feed and the concentrations of the reagents in that feed. Changing these quantities effectively changes the starting composition and the space time.  (This assumes that the same reactor will be used in every experiment so the reactor volume cannot be adjusted to vary the space time.)
+
+### Experimental Responses
+
+It was noted in @sec-bstr-data-analysis that there are many different quantities that can be used as the experimental response. That discussion won't be repeated here. The response should be a quantity that is directly related to the composition of the fluid leaving the reactor or to the extent of reaction relative to the reactor feed. In other words, after measuring the response and knowing the feed, it should be possible to calculate the concentration of every reagent in the product stream leaving the reactor.
+
+## CSTR Data Analysis
+
+The focus of this section is the analysis of a block of experimental CSTR kinetics data where the steady-state reactor temperature was the same in every experiment. Once all blocks have been analyzed as described here, the Arrhenius expression can be fit to resulting rate coefficients for the block temperatures. The fitting of the Arrhenius expression has been discussed and illustrated several time in @sec-rates-rate-express, @sec-kin-data-gen, and @sec-bstr-data-analysis, and should be familiar at this point. It won't be repeated again here, but instead, analysis of a constant-temperture block of CSTR kinetics data using the CSTR reactor design equations is featured.
+
+@sec-modeling-ideal-reactors explained that when a reactor operates at a constant, known temperature, the mole balances for the reactor can be solved independently of the other reactor design equations. Consequently the steady-state form of the ideal CSTR mole balance, @eq-cstr_ss_mole_balance, is the only equation needed to model the reactor used to generate CSTR kinetics data. In *Reaction Engineering Basics* the kinetics data analysis problems are limited to systems where only one reaction is taking place. In that situation, it is not necessary to use an index to differentiate between multiple reactions, and the mole balance takes the form shown in @eq-cstr_mole_bal_one_reaction.
+
+$$
+0 = \dot{n}_{i,in} - \dot{n}_i + \nu_i r V
+$${#eq-cstr_mole_bal_one_reaction}
+
+When a rate expression is substituted into @eq-cstr_mole_bal_one_reaction it will introduce the concentration (or possibly for gases, partial pressure) of one or more reagents. In order to solve the mole balances for the outlet molar flow rates of the reagents, the concentration or partial pressure must be expressed in terms of the molar flow rates. Assuming liquids to be incompressible ideal mixtures, the volumetric flow rate is constant and the concentration is related to the molar flow rates as shown in @eq-concentration_open.
+
+$$
+C_i = \frac{\dot n_i}{\dot V}
+$$
+
+CSTRs operate at constant pressure, and when used in kinetics experiments, the temperature is also constant. For gas phase systems, however, the volumetric flow rate will change if the reaction causes a change in the total number of moles. In this situation, the ideal gas law can be used to express the volumetric flow rate in terms of the molar flow rates as shown in @eq-conc_cstr_kinetics.
+
+$$
+C_i = \frac{\dot n_iP}{RT\displaystyle \sum_i\left( \dot{n}_i \right)}
+$${#eq-conc_cstr_kinetics}
+
+If the rate expression for a gas-phase reaction uses partial pressures instead of concentrations, the partial pressure is related to the molar flow rates as shown in @eq-partial_pressure_kinetics.
+
+$$
+P_i = y_iP = \frac{\dot{n}_iP}{\displaystyle \sum_i\left( \dot{n}_i \right)}
+$${#eq-partial_pressure_kinetics}
+
+### Analysis Using a Response Function
+
+The analysis of CSTR kinetics data using a response function is analogous to the analysis of BSTR kinetics data using a response function. The only difference is that the reactor model is a set of ATEs that must be solved numerically instead of a set of IVODEs. Briefly, the procedure is a follows. A response function is created. It is passed the adjusted experimental inputs and values for the kinetics parameters as arguments. Within the response function, the reactor model (the ATEs) is solved for each experiment to find the outlet molar flow rates of all reagents. The results are then used to calculate the model-predicted value of the response. The response function returns the model-predicted responses for all of the experiments.
+
+The response function is then provided to parameter estimation software along with the adjusted experimental inputs, the experimental responses, and a guess for the parameters. The parameter estimation software returns the estimated values of the kinetics parameters, their 95% confidence intervals and the coefficient of determination, $R^2$. The estimated parameters can then be used to calculate the model-predicted responses for the experiments. From these, a parity plot and residuals plots can be created. If the rate expression is accurate, the following criteria will be satisfied.
+
+* The coefficient of determination, $R^2$, will be close to 1.
+* The uncertainty in each parameter estimate will be small compared to the estimate.
+* The points in the parity plot will all be close to a diagonal line ($y_{\text{expt}} = y_{\text{model}}$).
+* In each residuals plot, the points will scatter randomly about zero (the horizontal axis), and no systematic deviations will be apparent.
+
+### Analysis Using a Linearized Model
+
+When only one reaction is taking place, as is the case in *Reaction Engineering Basics* kinetics data analysis problems, the reactor can be modeled using only one mole balance on a reactant or product in the reaction. When this is done, the apparent extent of reaction is used to relate the amounts of all other reagents to the reagent for which the mole balance is written. If that one mole balance can be rearranged into a linear form, the model can be fit to the experimental data using linear least squares. This was described and illustrated in @sec-kin-data-gen and @sec-bstr-data-analysis and won't be repeated or illustrated in this chapter.
+
+One point to note, however, is that with CSTR kinetics data, the mole balance is already an ATE. It isn't necessary to integrate an IVOVE before linearizing it. Indeed, for a simple rate expression with only one rate coefficient of the form shown in @eq-simple_rate_expr, the mole balance, @eq-cstr_mole_bal_one_reaction, will already have the linear form shown in @eq-linear_no_intercept if $y$ and $x$ are defined as shown in @eq-def_y and @eq-def_x.
+
+$$
+r = kf\left(\dot{n}_i,P\right)
+$${#eq-simple_rate_expr}
+
+$$
+y=kx
+$${#eq-linear_no_intercept}
+
+$$
+y = \dot{n}_i - \dot{n}_{i,in}
+$${#eq-def_y}
+
+$$
+x=\nu_i V f\left(\dot{n}_i,P\right)
+$${#eq-def_x}
+
+## Examples
+
+The start of the Examples section of @sec-bstr-data-analysis noted that before one can solve a problem, they must identify what type of problem it is. The following callout was provided with the suggestion that the reader mentally insert it at the start of every example in that chapter *and* in @sec-cstr-data-analysis and @sec-pfr-data-analysis.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking after Reading each Problem Statement in this Chapter
+
+This is what I call a "kinetics data analysis problem." It has 3 distinguishing characteristics.
+
+* The problem statement describes reactor experiments.
+* The data resulting from performing those experiments are provided.
+* The problem asks you to generate a rate expression or to assess the accuracy of a proposed rate expression using those data.
+
+I know that to solve a kinetics data analysis problem I will need to do the following things.
+
+* Identify the experimental adjusted reactor inputs. These are the things that the person doing the experiment had control over and was able to set their value.
+* Identify the experimental response. This is some quantity that is related to the composition of the reacting fluid at the time it was measured.
+* Formulate some type of mathematical model of the experiments. In this book, where kinetics experiments are isothermal and involve only one reaction, the model will be based upon one or more mole balances.
+* Fit the model separately to the experimental data in each the blocks containing data at a single temperature. This yields the value of the kinetics parameters in the rate expression that minimize the difference between the responses the model predicts and the responses that were measured experimentally.
+* Assess whether the model is sufficiently accurate in capturing the effect of pressure and composition on the reaction rate.
+* Fit the Arrhenius expression to the resulting rate coefficients, assess how accurately the model captures the temperature dependence of the rate
+* Make a recommendation based upon the accuracy of the rate expression.
+
+:::
+
+It should also be noted that each of the examples in this chapter present only a single constant-temperature block of data and ask that those data be used to assess the accuracy of a rate expression with respect to the concentration dependence of a rate expression. This is intentional. Three of the four examples in @sec-bstr-data-analysis illustrated the second phase of the analysis where the Arrhenius expression was fit to the rate coefficients found by fitting the reactor model to the experimental data. By now, the reader should know how to fit the Arrhenius expression to $k$ *vs*. $T$ data. The examples here focus exclusively on fitting a CSTR reactor model to CSTR kinetics data with the assumption that the reader already knows how to process the resulting rate coefficients and estimate their pre-exponential factor and activation energy.
+
+### Analysis of Data for Liquid-Phase Reaction
+
+{{< include ../RE_Basics_Examples/reb_9_1/problem_statement.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("Data/reb_9_1_data.csv")
+ # VFR, CAin, CBin, CYin, CZin, CYout
+```
+
+The first few data points are shown in @tbl-example_9_1_data. The full data set is available in the file [reb_9_1_data.csv](Data/reb_9_1_data.csv).
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_9_1_data
+#| tbl-cap: First 8 of the 72 experimentally generated data.
+library(kableExtra)
+library(knitr)
+kbl(d[1:8,], format = "markdown", align = "cccccc", 
+  col.names = c('$\\dot{V}$ (cm^3^ min^-1^)', 'C~A,in~ (M)', 'C~Bin~ (M)',
+  'C~Y,in~ (M)', 'C~Zin~ (M)', 'C~Y,out~ (M)'))
+```
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+This is a kinetics data analysis problem. I'll begin by listing information I'm given including the type of reactor, constants from the problem statement, the adjusted inputs, the response and the kinetics parameter I need to estimate.
+
+:::
+
+**Reactor Type**: CSTR
+
+**Given Constants**: $V=100 \text{ cm}^3$ and $T=\left( 35 + 273.15 \right) \text{ K}$.
+
+**Adjusted Inputs**: $\underline{\dot{V}}$, $\underline{C_{A,in}}$, $\underline{C_{B,in}}$, $\underline{C_{Y,in}}$, and $\underline{C_{Z,in}}$
+
+**Experimental Responses**: $\underline{C_{Y,out}}$
+
+**Kinetics Parameter**: $k$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I know that in kinetics data analysis problems I need to create a response function, and within that function, I need to solve the reactor model equations. Since the steady-state temperature of the reacting fluid is known, I can model the reactor using only mole balances. There are four reagents, A, B, Y, and Z, so I'll write the mole balance, @eq-cstr_mole_bal_one_reaction, for each of them. 
+The stoichiometric coefficients of A and B are -1 and the stoichiometric coefficients of Y and Z are +1.
+$$
+0 = \dot{n}_{i,in} - \dot{n}_i + \nu_i r V
+$$
+
+:::
+
+**Reactor Design Equations**
+
+Mole balances on the four reagents are shown in equations (3) through (6).
+
+$$
+0 = \dot{n}_{A,in} - \dot{n}_A - rV \tag{3}
+$$
+
+$$
+0 = \dot{n}_{B,in} - \dot{n}_B - rV \tag{4}
+$$
+
+$$
+0 = \dot{n}_{Y,in} - \dot{n}_Y + rV \tag{5}
+$$
+
+$$
+0 = \dot{n}_{Z,in} - \dot{n}_Z + rV \tag{6}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Within the response function I will need to solve the mole balances numerically. I will solve them for the four outlet molar flow rates, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Y$, and $\dot{n}_Z$. That means I need  to write equations for calculating every other quantity in the equations from those four unknowns and known constants. The response function will be provided with the adjusted experimental inputs and the parameter, $k$. Thus, I need equations for the four inlet molar flow rates. I have equation (2) for the rate, but that introduces the concentrations of A and B, so I need equations for them, too.
+
+:::
+
+**Ancillary Equations**
+
+The inlet molar flow rates in equations (3) through (6) can be calculated using the defining equation for concentration and the known inlet concentrations and volumetric flow rate, equations (7) through (10). Substitution of the rate expression, equation (2), into equations (3) through (6) introdues the concentrations of A and B. Since the volumetric flow rate is constant in a liquid-phase system, the concentrations can be expressed in terms of the unknown outlet molar flow rates using the definition of concentration as shown in equation (11) and (12).
+
+$$
+\dot{n}_{A,in} = C_{A,in}\dot{V} \tag{7}
+$$
+
+$$
+\dot{n}_{B,in} = C_{B,in}\dot{V} \tag{8}
+$$
+
+$$
+\dot{n}_{Y,in} = C_{Y,in}\dot{V} \tag{9}
+$$
+
+$$
+\dot{n}_{Z,in} = C_{Z,in}\dot{V} \tag{10}
+$$
+
+$$
+C_A = \frac{\dot{n}_A}{\dot{V}} \tag{11}
+$$
+
+$$
+C_B = \frac{\dot{n}_B}{\dot{V}} \tag{12}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point equations (3) through (6) can be solved for the outlet molar flow rates, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Y$, and $\dot{n}_Z$. Within the response function I need to use those results to calculate the model-predicted response. In this problem the response is the outlet concentration of Y.
+
+:::
+
+**Response Function**
+
+Upon solving the reactor design equations, the model-predicted response, that is, the value of $C_Y$ predicted by the model, can be calculated as shown in equation (13).
+
+$$
+C_Y = \frac{\dot{n}_Y}{\dot{V}} \tag{13}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point I can create a response function that takes the adjusted experimental inputs and a value for $k$ as arguments and returns the model-predicted responses for all of the experimental data points. I can provide that response function, along with the adjusted experimental inputs, the experimental responses and a guess for the parameter, to parameter estimation software to fit the model to the data.
+
+:::
+
+**Parameter Estimation and Assessment of Accuracy**
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_9_1/python/reb_9_1_results.csv")
+d <- fmt_tibble_col(d, 2, 3, 2, 2)
+k <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
+```
+
+The reactor model was fit to the experimental data in @tbl-example_9_1_data. The resulting estimate for the rate coefficient is `r k`, and the coefficient of determination is `r d$value[4]`. The estimated rate coefficient was used to calculate the model-predicted response for each experiment, and that was used to calculate the residual for each experiment. The results were then used to generate the parity plot shown in @fig-example_9_1_plots.
+
+::: {#fig-example_9_1_plots layout-ncol=2}
+
+![](Graphics/reb_9_1_parity.png)
+
+![](Graphics/reb_9_1_VFR_residuals.png)
+
+![](Graphics/reb_9_1_CA_residuals.png)
+
+![](Graphics/reb_9_1_CB_residuals.png)
+
+![](Graphics/reb_9_1_CY_residuals.png)
+
+![](Graphics/reb_9_1_CZ_residuals.png)
+
+Parity and Residuals Plots.
+:::
+
+The 95% confidence interval for $k$, 744 to 856 L mol^-1^ min^-1^, is approximately plus or minus 7% of its estimated value, 798 L mol^-1^ min^-1^. There is some scatter apparent in the parity plot, and the coefficient of determination is 0.988. These factors suggest that the rate expression is reasonably accurate. The residuals plots for $\dot{V}$ and $C_Y$ show random deviations of the residuals about zero, too. However, in the residuals plots for $C_A$ and $C_B$ the residuals at low concentration do not scatter equally about zero. The residuals for $C_Z$ show a definite trend, decreasing steadily as $C_Z$ increases. This suggests that the reaction rate may have some functional dependence on the concentration of Z that is not captured in the rate expression.
+
+**Recommendation**
+
+The rate expression is reasonably accurate, but there are indications that the rate expression may not fully capture the dependence of the rate on the concentration of reagent Z. Rate expressions that include a functional dependence on the concentration of Z should be postulated and assessed to determine whether they can represent the experimental results more accurately.
+
+:::{.callout-note collapse="false"}
+## Note
+
+In this example, the accuracy of the rate expression is marginal. In a real-world study, there would be blocks of data at other temperatures. If the same trends were observed for each data block, the recommendation to try different rate expressions that include functional dependence on Z would be supported. If none of the other temperature blocks showed these trends, it might be recommended that the rate expression was marginally acceptable.
+
+:::
+
+### Analysis of Data for a Gas-Phase Reaction with Change of Total Moles
+
+{{< include ../RE_Basics_Examples/reb_9_2/problem_statement.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("Data/reb_9_2_data.csv")
+ # tau, yAin, CZout
+```
+
+The first few data points are shown in @tbl-example_9_2_data. The full data set is available in the file [reb_9_2_data.csv](Data/reb_9_2_data.csv).
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_9_2_data
+#| tbl-cap: First 6 of the 36 experimentally generated data.
+library(kableExtra)
+library(knitr)
+kbl(d[1:6,], format = "markdown", align = "ccc", 
+  col.names = c('$\\tau$ (s)', 'y~A,in~', 'C~Z,out~ (mmol L^-1^)'))
+```
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+This problem describes reactor experiments, provides the data from the experiments, and asks me to assess the accuracy of a rate expression, so it is a kinetics data analysis problem. I'll start by listing the reactor type, constants given in the problem statement, the adjusted experimental inputs, the experimental response, and the kinetics parameter I need to estimate.
+
+:::
+
+**Reactor Type**: CSTR
+
+**Given Constants**: $P = 3 \text{ atm}$ and $T = 450 + 273.15 \text{ K}$.
+
+**Adjusted Inputs**: $\underline{\tau}$ and $\underline{y_{A,in}}$.
+
+**Experimental Response**: $\underline{C_Z}$
+
+**Kinetics Parameters**: $k$, $\alpha_A$, and $\alpha_B$.
+
+**Reactor Design Equations**
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I need to generate a response function that predicts the responses using the rate expression. To start, I need a model for the reactor. Referring back to @sec-modeling-ideal-reactors, I know that when the reactor operates at a known temperature, the mole balances can be solved independently from the other design equations, so all I need here is a set of mole balances for this reactor.
+
+:::
+
+Mole balances on A, B, and Z are shown in equations (3) through (5).
+
+$$
+0 = \dot{n}_{A,in} - \dot{n}_A - rV \tag{3}
+$$
+
+$$
+0 = \dot{n}_{B,in} - \dot{n}_B - rV \tag{4}
+$$
+
+$$
+0 = \cancelto{0}{\dot{n}_{Z,in}} - \dot{n}_Z + rV \tag{5}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See Where That Came From
+
+Start from @eq-cstr_mole_bal_one_reaction
+$$
+0 = \dot{n}_{i,in} - \dot{n}_i + \nu_i r V
+$$
+
+The stoichiometric coefficients of A, B, and Z are -1, -1 and 1, respectively. Substitution of those values leads to equations (3) through (5).
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Within the response function I will need to numerically solve equations (3) through (5) for the outlet molar flow rates of A, B, and Z. To do that, I must provide equations for calculating every other quantity in the equations from those unknowns and known constants. So I'll go through each of the mole balances and write equations for the quantities other than the unknowns and known constants. I'll similarly go through each equation I write, expressing everything in it in terms of the unknown outlet molar flow rates and known constants.
+
+At first it appears that I'm not given sufficient information to do this, but upon careful reading of the problem statement I see that all of the quantities provided are *intensive* quantities. When that is true, I can choose the value for one *extensive* quantity and use it as the basis for my calculations. I'm going to choose a reactor volume of 1 L as the basis for my calculations.
+
+:::
+
+**Ancillary Equations**
+
+In order to solve equations (3) through (5) numerically, for $\dot{n}_A$, $\dot{n}_B$, and $\dot{n}_Z$, every other quantity appearing in or introduced into the equations must be expressed in terms of known constants and those three unknowns. Assuming a basis, equation (6), allows calculation of the inlet volumetric flow rate, equation (7). The inlet molar flow rates of A and B can then be calculated using their inlet mole fractions and the ideal gas law, equations (8) and (9)
+
+$$
+V = 1 \text{ L }\left( \text{Basis} \right) \tag{6}
+$$
+
+$$
+\dot{V}_{in} = V/\tau \tag{7}
+$$
+
+$$
+\dot{n}_{A,in} = y_{A,in}\frac{P\dot{V}_{in}}{RT} \tag{8}
+$$
+
+$$
+\dot{n}_{B,in} = \left(1 - y_{A,in}\right)\frac{P\dot{V}_{in}}{RT} \tag{9}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See Where That Came From
+
+Looking at the first mole balance, I see I need an equation to calculate the inlet molar flow rate of A. I know the inlet mole fraction of A, so I start by using that.
+
+$$
+\dot{n}_{A,in} = y_{A,in}\dot{n}_{\text{total,in}}
+$$
+
+I'm not given the total inlet molar flow rate, but having assumed a reactor volume as my basis, I can calculate the inlet volumetric flow rate because I'm given the space time, equation (7) above. Then I can calculate the total inlet molar flow rate using the ideal gas law.
+
+$$
+\dot{n}_{\text{total,in}} = \frac{P\dot{V}_{in}}{RT}
+$$
+
+Substitution of this result into the equation above it gives equation (8). Then, to calculate the inlet molar flow rate of B, I note that A and B are the only reagents present in the feed, so $y_B = 1 - y_A$. This then leads to equation (9).
+
+:::
+
+When the rate expression, equation (2), is substituted into the mole balances, it introduces the partial pressures of A and B. They can be expressed in terms of known constants and the three unknowns using @eq-partial_pressure_kinetics, as shown in equations (10) and (11).
+
+$$
+P_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_Z}P \tag{10}
+$$
+
+$$
+P_B = \frac{\dot{n}_B}{\dot{n}_A + \dot{n}_B + \dot{n}_Z}P \tag{11}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point the mole balances can be solved numerically for the outlet molar flow rates of A, B, and Z. This will be done within the response function, and then the results must be used to calculate the response predicted by the model. In this problem the response is the concentration of Z in the stream leaving the reactor. That can be calculated using the ideal gas law, @eq-conc_cstr_kinetics.
+
+:::
+
+**Response Function**
+
+After solving the mole balances, the resulting values of $\dot{n}_A$, $\dot{n}_B$, and $\dot{n}_Z$ can be used to predict the response (the concentration of Z leaving the reactor), equation (12).
+
+$$
+C_Z = \frac{\dot{n}_ZP}{\left(\dot{n}_A + \dot{n}_B + \dot{n}_Z\right)RT} \tag{12}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point I can write the response function. It is given the adjusted experimental inputs and values for the kinetics parameters and using the equations presented above, it calculates the model-predicted response for each of the experiments.
+
+I can then use parameter estimation software to fit the model to the data. The parameter estimation software is given the response function along with the adjusted experimental inputs, the experimental responses, and guesses for the kinetics parameters. It returns the estimated values of the kinetics parameters, their 95% confidence intervals, and the coefficient of determination, $R^2$.
+
+As detailed in @sec-kin-data-gen, having estimated the values of the parameters, I can calculate the model-predicted response for every experiment. Then I can calculate the residual (difference between the experimental response and the model-predicted response) for each experiment. Then a parity plot and residuals plots can be generated. The following criteria will be satisifed if the model is accurate.
+
+* The coefficient of determination, $R^2$, will be close to 1.
+* The uncertainty in each parameter estimate will be small compared to the estimate.
+* The points in the parity plot will all be close to a diagonal line ($y_{\text{expt}} = y_{\text{model}}$).
+* In each residuals plot, the points will scatter randomly about zero (the horizontal axis), and no systematic deviations will be apparent.
+
+:::
+
+**Parameter Estimation and Assessment of Accuracy**
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_9_2/python/reb_9_2_results.csv")
+d <- fmt_tibble_col(d, 2, 3, 2, 2)
+a <- c('k','$\\alpha_A$','$\\alpha_B$','R^2^')
+b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
+b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],']')
+b3 <- paste0(d$value[7],' ',d$units[7],', 95% CI [',d$value[8],', ',d$value[9],']')
+b <- c(b1,b2,b3,d$value[10])
+ # item, value, units
+d <- data.frame(a,b)
+```
+
+The reactor model described above was fit to the experimental data presented in @tbl-example_9_2_parameters. A parity plot is shown in @fig-example_9_2_parity and residuals plots are shown in @fig-example_9_2_residuals_plots.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_9_2_parameters
+#| tbl-cap: Parameter estimation results
+library(kableExtra)
+library(knitr)
+kbl(d, format = "markdown", align = "cc", col.names = NULL)
+```
+
+![Parity plot.](Graphics/reb_9_2_parity.png){#fig-example_9_2_parity}
+
+::: {#fig-example_9_2_residuals_plots layout-ncol=2}
+
+![](Graphics/reb_9_2_tau_residuals.png)
+
+![](Graphics/reb_9_2_yA_residuals.png)
+
+Parity and Residuals Plots.
+:::
+
+The model offers an accurate representation of the experimental data as evidenced by the narrow 95% confidence intervals for the estimated parameters, the coefficient of determination being very close to 1, the minimal scatter of the experimental data about the line representing the model in the parity plot and the random deviations of the residuals about zero.
+
+**Recommendation**
+
+The proposed rate expression accurately describes the concentration dependence of the rate and should be accepted.
+
+### Analysis of Data for a Reversible Reaction
+
+{{< include ../RE_Basics_Examples/reb_9_3/problem_statement.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("Data/reb_9_3_data.csv")
+ # VFR, CAin, CYin, CZin, CA
+```
+
+The first few data points are shown in @tbl-example_9_3_data. The full data set is available in the file [reb_9_3_data.csv](Data/reb_9_3_data.csv).
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_9_3_data
+#| tbl-cap: First 6 of the 240 experimental data.
+library(kableExtra)
+library(knitr)
+kbl(d[1:6,], format = "markdown", align = "ccccc", 
+  col.names = c('$\\dot{V}$ (gal min^-1^)', 'C~A,in~ (lbmol gal^-1^)', 
+  'C~Y,in~ (lbmol gal^-1^)','C~Z,in~ (lbmol gal^-1^)','C~A,out~ (lbmol gal^-1^)'))
+```
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I will begin the kinetics data analysis problem by summarizing the information provided in the problem statement.
+
+:::
+
+**Reactor Type**: CSTR
+
+**Given Constants**: $V = 3 \text{ gal}$.
+
+**Adjusted Inputs**: $\underline{\dot{V}}$, $\underline{C_{A,in}}$, $\underline{C_{Y,in}}$, and $\underline{C_{Z,in}}$
+
+**Experimental Response**: $\underline{C_{A,out}}$.
+
+**Kinetics Parameters**: $k_f$ and $k_r$.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I need to write a model for the reactor that will be fit to the experimental data. Since the reactor operated at a known temperature, I only need mole balances to model it. There are 3 reagents in this system, so I'll write @eq-cstr_mole_bal_one_reaction for each of them.
+
+$$
+0 = \dot{n}_{i,in} - \dot{n}_i + \nu_i r V
+$$
+
+The stoichiometric coefficients of A, Y, and Z, are -1, 1, and 1, respectively.
+
+:::
+
+**Reactor Design Equations**
+
+Mole balances on A, Y, and Z are shown in equations (3) through (5).
+
+$$
+0 = \dot{n}_{A,in} - \dot{n}_A - rV \tag{3}
+$$
+
+$$
+0 = \dot{n}_{Y,in} - \dot{n}_Y + rV \tag{4}
+$$
+
+$$
+0 = \dot{n}_{Z,in} - \dot{n}_Z + rV \tag{5}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I need to solve equations (3) through (5) for $\dot{n}_A$, $\dot{n}_Y$, and $\dot{n}_Z$. To do so numerically, I need to express every other quantity appearing in or substituted into equations (3) through (5) in terms of $\dot{n}_A$, $\dot{n}_Y$, $\dot{n}_Z$ and known constants. Looking at equations (3) through (5) I can see that I will need expressions for the inlet molar flow rates, $\dot{n}_{A,in}$, $\dot{n}_{Y,in}$, and $\dot{n}_{Z,in}$. I know the volumetric flow rate and the inlet concentrations of the reagents, so those expressions are straightforward.
+
+When the rate expression is substituted into the mole balances it introduces the concentrations of the reagents. This is a steady-state, liquid phase system, so the volumetric flow rate is constant. Knowing that, @eq-concentration_open can be used to express the concentrations in terms of the unknowns.
+
+$$
+C_i = \frac{\dot n_i}{\dot V}
+$$
+
+:::
+
+**Ancillary Equations**
+
+Equations (6) through (11) can be used to express all quantities in the mole balances and the rate expression in terms of the outlet molar flow rates of A, Y, and Z.
+
+$$
+\dot{n}_{A,in} = C_{A,in}\dot{V} \tag{6}
+$$
+
+$$
+\dot{n}_{Y,in} = C_{Y,in}\dot{V} \tag{7}
+$$
+
+$$
+\dot{n}_{Z,in} = C_{Z,in}\dot{V} \tag{8}
+$$
+
+$$
+C_A = \frac{\dot{n}_A}{\dot{V}} \tag{9}
+$$
+
+$$
+C_Y = \frac{\dot{n}_Y}{\dot{V}} \tag{10}
+$$
+
+$$
+C_Z = \frac{\dot{n}_Z}{\dot{V}} \tag{11}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Now that I have formulated the solution of the reactor model, I need to create a response function. The response function will be given the adjusted experimental inputs and values for the kinetics parameters. Within it, the reactor model must be solved as described above for each data point. The resulting values of $\dot{n}_A$, $\dot{n}_Y$, and $\dot{n}_Z$ then must be used to predict the experimental response. In this study, the response was the outlet concentration of A.
+
+:::
+
+**Response Function**
+
+A response function can be written to solve the reactor design equations as described above. The resulting value of $\dot{n}_A$ can then be used to predict the outlet concentration of A using equation (9).
+
+**Parameter Estimation and Assessment of Accuracy**
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_9_3/python/reb_9_3_results.csv")
+d <- fmt_tibble_col(d, 2, 3, 2, 2)
+a <- c('k~f~','k~r~','R^2^')
+b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
+b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],']')
+b <- c(b1,b2,d$value[7])
+ # item, value, units
+d <- data.frame(a,b)
+```
+
+To estimate the kinetics parameters, the response function described above was passed to parameter estimation software along with the adjusted experimental inputs, the experimental responses and a guess for the kinetics parameters. The results returned by that software are shown in @tbl-example_9_3_results.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_9_3_results
+#| tbl-cap: Parameter estimation results
+library(kableExtra)
+library(knitr)
+kbl(d, format = "markdown", align = "cc", col.names = NULL)
+```
+
+The results from the parameter estimation were then used to create the parity plot shown in @fig-example_9_3_parity and residuals plots shown in @fig-example_9_3_residuals_plots as described in @sec-kin-data-gen.
+
+![Parity plot.](Graphics/reb_9_3_parity.png){#fig-example_9_3_parity}
+
+::: {#fig-example_9_3_residuals_plots layout-ncol=2}
+
+![](Graphics/reb_9_3_VFR_residuals.png)
+
+![](Graphics/reb_9_3_CA_residuals.png)
+
+![](Graphics/reb_9_3_CY_residuals.png)
+
+![](Graphics/reb_9_3_CZ_residuals.png)
+
+Parity and Residuals Plots.
+:::
+
+The confidence intervals for $k_f$ and $k_r$ form a narrow range of values about the estimates and the coefficient of determination is close to 1.0. Both of these results suggest that the model is accurate. In the parity plot the experimental data all lie close to the line representing the model, and in the residuals plots, the deviations of the experimental residuals from zero appear to be random with no apparent trends. These graphical results also suggest that the model is acceptably accurate.
+
+**Recommendation**
+
+When the rate coefficients in @tbl-example_9_3_results are used in the rate expression, equation (2), it provides an accurate representation of the experimental results. It should be accepted.
+
+## Symbols Used in @sec-cstr-data-analysis
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $i$ | index denoting a reagent. |
+| $k$ | Rate coefficient. |
+| $f\left(\right)$ | A mathematical function of the variables within the parentheses. |
+| $\dot{n}_i$ | Molar flow rate of reagent $i$, and additional subscripted "in" denotes the flow into the reactor. |
+| $r$ | Net rate of reaction per unit fluid volume. |
+| $x$ | Independent variable in a linear model. |
+| $y$ | Dependent variable in a linear model. |
+| $y_i$ | Mole fraction of reagent $i$. |
+| $C_i$ | Concentration of reagent $i$. |
+| $P$ | Pressure. |
+| $P_i$ | Partial pressure of reagent $i$. |
+| $R$ | Ideal gas constant. |
+| $T$ | Temperature. |
+| $V$ | Volume of fluid within the reactor. |
+| $\dot{V}$ | Volumetric flow rate. |
+| $\nu_i$ | Stoichiometric coefficient of reagent $i$. |
+
+
+: {tbl-colwidths="[20,80]"}
