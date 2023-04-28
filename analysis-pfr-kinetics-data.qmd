@@ -1,25 +1,776 @@
 # Analysis of Kinetics Data from a PFR {#sec-pfr-data-analysis}
 
-Intro
+This chapter completes the Kinetics Data Analysis section of *Reaction Engineering Basics*. It focuses on the generation and analysis of kinetics data for a PFR, as defined in @sec-modeling-ideal-reactors and [Appendix -@sec-ideal-reactor-models]. @sec-kin-data-gen presented an overview of the data generation and analysis processes and Chapters [-@sec-bstr-data-analysis] and [-@sec-cstr-data-analysis] examined BSTRs and CSTRs, respectively. Much of the information presented in those chapters also applies to PFRs and won't be duplicated here.
 
 ## Laboratory PFRs
 
-packed bed
+In its most basic form, a PFR is simply a length of rigid tubing or pipe. Reagents flow in at one end and out at the other. The key assumption of the PFR model is that of plug flow. As explained in @sec-modeling-ideal-reactors and [Appendix -@sec-ideal-reactor-models], the fluid flow velocity is constant across the tube diameter in plug flow. There is no mixing in the axial direction, and perfect mixing in the radial direction. Thus, in contrast to stirred tank reactors, **the composition varies spatially in a PFR**. That is, as one moves from the reactor inlet to the reactor outlet, the concentrations of reactants decrease and those of products increase.
+
+A second difference between PFRs and stirred tank reactors is that **there is no agitation in PFRs**. It is difficult to agitate solids, and for this reason, PFRs are very often used to generate kinetics data for heterogeneous catalytic reactions. Recall, a heterogeneous catalyst is a material that exists as a separate phase from the reacting fluid and that causes the rate of one or more reactions to increase. Most commonly heterogeneous catalysts are porous solids that are immersed in the reacting fluid. When a heterogeneous catalytic reaction is studied in a PFR, the catalyst is typically contained within the reactor tube as a stationary packed bed through which the reacting fluid flows. A section of pipe filled with small pellets or beads that are held in place by screens or other means offers a good mental picture of a packed bed.
+
+[Appendix -@sec-ideal-reactor-models] explains how **the ideal PFR mole, energy and momentum balances can be used to model a packed bed reactor**. Basically, the model simply treats the combined packed bed and reaction fluid as if they were a single, homogeneous fluid. The most important assumption that this introduces to the analysis is that there are no concentration or temperature gradients at the interface between the solid and fluid phases or within the pores of the solid. In reality, there will be concentration and temperature gradients between the bulk of the fluid and the surface of the heterogeneous catalyst particles and there will be gradients within the pores of the catalyst particles. This topic is considered in more detail in @sec-pfr-analysis. For present purposes, the important point is that these gradients must be negligibly small if the PFR mole, energy and momentum balances from @sec-modeling-ideal-reactors are used to model the reactor.
+
+### Testing the Ideality of a PFR
+
+Before a PFR is used to generate kinetics data, it should be tested to ensure it conforms to the asumptions of an ideal PFR. Importantly, it should be tested for plug flow, and if it is a packed bed, it should be tested for negligible concentration and temperature gradients.
+
+**Testing for plug flow** is not easy. As noted in [Appendix -@sec-pre-knowledge], in laminar flow the radial velocity profile is parabolic, and it flattens as the flow becomes turbulent. The Reynolds number, $N_{Re}$, offers a measure of how turbulent the flow is. It can be computed using @eq-Reynolds_number. In cylindrical pipes, a Reynolds number greater than ca. 3500 indicates turbulent flow; a much greater Reynolds number is needed in order to approach plug flow.
+
+$$
+N_{Re} = \frac{\rho vD}{\mu}
+$${#eq-Reynolds_number}
+
+Smoke- or dye-based flow visualizations are useful for gauging the mixing in an agitated vessel, but they are difficult to apply for gauging plug flow. A related approach involves measuring the residence time distribution or age function for the reactor. Doing so is described in @sec-seg-flow-models. The measured age distribution function can then be compared to that expected for plug flow to determine whether plug flow prevails in the reactor.
+
+When a tubular reactor contains a packed bed of solid particles, gradients in concentration and temperature can exist between the bulk fluid and the surface of the solid particles. When present, these are referred to as **external gradients** because they are external to the solid material. A common experimental test for external mass transfer limitations (i. e. for non-negligible external concentration gradients) in a plug-flow (packed bed) reactor relies on the fact that for an ideal PFR, the conversion depends only upon the residence time within the reactor and not the linear velocity of the flowing fluid. The external mass transfer coefficient, in contrast, does depend upon the linear velocity of the flowing fluid. Thus, if the conversion changes when the linear velocity is changed while holding the residence time constant, this indicates that the apparent rate is being affected by the rate of external mass transfer. One approach to this test is to measure the conversion at varying fluid velocities with a fixed amount of catalyst and plot the conversion versus the residence time. The experiment is then repeated using a different amount of catalyst. In the absence of mass transfer limitations, the plots should superimpose. An alternative approach is to measure the conversion with a given amount of catalyst and at a given fluid flow rate. The conversion is then measured again using a different amount of catalyst, but with a flow rate that gives the same residence time as in the first experiment. In the absence of external mass transfer limitations, the conversions should be equal. Care should be taken in applying this test, however, because at the very low Reynolds numbers that are often used in laboratory reactors, the mass transfer coefficient depends very weakly upon the fluid velocity [@chambers_lack_1966].
+
+When external mass transfer limitations are very severe, a first-order rate expression, @eq-apparent_first_order, will be found to fit the experimental data very well. In this case it is more appropriate to refer to @eq-apparent_first_order as the *apparent* rate expression because the rate it refers to is the rate of external mass transfer and not the rate of reaction. The true rate expression can be first-order, but when external mass transfer limitations are severe, the apparent activation energy, $E$, will be very low (≲ 10 to 15 kJ mol^-1^). True reaction rates typically have activation energies that are greater than this. This can serve as a warning indicator when kinetics data are being analyzed. If the reaction kinetics are observed to change to first order and the activation energy is simultaneously observed to become small, the kinetics data may contain experiments where external transport limitations existed. There are also computational tests for external transport limitations that can be applied [@mears_tests_1971; @satterfield_heterogeneous_1980; @wheeler_reaction_1951].
+
+$$
+r=k_0\exp{\left( \frac{-E}{RT} \right)}C_i
+$${#eq-apparent_first_order}
+
+ Most heterogeneous catalysts are porous solids with very high specific surface areas. Most of this surface area is internal and corresponds to the walls of pores (picture the catalyst interior as looking like a microscopic sponge). The only way for reactants to reach the majority of the catalytic sites is to diffuse into the pore structure. If the rate of the reaction at the active sites is large, this can lead to the formation of significant **internal concentration gradients** within the pores. For present purposes, the goal is to be able to identify experimental conditions where these gradients are insignificantly small. As a general rule of thumb, internal concentration gradients are more likely than external concentration gradients.
+
+One experimental test for the presence of internal heat or mass transfer limitations is to repeatedly measure the conversion using finer and finer catalyst particle sizes. In the absence of internal gradients, the conversion should not depend upon the particle size, but if gradients are present, their effects should diminish as the particle size is decreased. This happens because the diffusional path length becomes smaller as the particle size is decreased.
+Koros and Nowak [-@koros_diagnostic_1967] suggest a test where the catalyst is prepared from two powders that are mixed and formed into catalyst pellets. One powder is inert while the other is catalytic. Two or more sets of pellets are prepared using different ratios of the powders. In the absence of internal gradients, the ratio of the observed rates should equal the ratio of amounts of the active powders used to prepare the catalysts. Madon and Boudart [-@madon_experimental_1982] describe a similar test where the catalyst comprises very small active catalyst nanoparticles supported on a porous oxide carrier.
+
+There are also a few computational tests for the presence of intraparticle temperature or concentration gradients. For an isothermal reaction, @eq-internal_conc_gradients can be used to calculate $\phi_s$. For a zero-order reaction, the effects of concentration gradients in the pores will be negligible if $\phi_s$ is less than 6. For first order reactions it should be less than 1, and for second order reactions it should be less than 0.3.
+
+$$
+\phi_s = \frac{r_p^2\left( -r \right)}{D_{\text{eff}}C_i}
+$${#eq-internal_conc_gradients}
 
 ## PFR Kinetics Experiments and Data
 
+From an operational viewpoint, the procedure for performing kinetics experiments using a PFR is exactly the same as the procedure used with a CSTR. Each experiment will yield a single data point. As with the stirred tank reactors, experiments should be performed in blocks where all of the experiments in a block are performed at the same temperature to prevent the generally strong temperature dependence of reaction rates from masking weaker composition and pressure effects. Similarly, the PFR should operate at steady state so that the temperature of the reacting fluid is constant. Doing so allows kinetics data analysis using only the PFR mole balance design equations.
+
 ### Differential Operation
+
+The mole balances for a steady-state PFR are IVODEs. As was the case with BSTRs in @sec-bstr-data-analysis, it is possible to analyze PFR kinetics data using an approximate mole balance. This method, described below, is known as the differential method of analysis of PFR data. Unlike differential analysis of BSTR data, if one plans to use the differential method of analysis for PFR data, then an additional restriction is imposed during the experiments. This requirement is that the molar flow rate of each species present in the feed should not differ by more than ca. 5% from the flow rate of the same species at the outlet from the reactor.
 
 ## Design of PFR Experiments
 
+It was noted in the preceding section that **the operational procedure for generating kinetics data using a PFR is essentially the same as that for a CSTR**. Both of these reactors are flow reactors, and consequently the adjusted inputs and experimental responses are the same. The space time determines the amount of time during which reaction can occur, and the space time is adjusted by varying reagent or total flow rates. In principle the reactor volume could also be varied to change space time, but doing so is impractical. The temperature is controlled directly making it easy to generate blocks of same-temperature kinetics data. In a PFR the composition changes continually as the reagents flow through the reactor. The composition and flow rate of the feed to the reactor can be varied so that the concentrations or partial pressures of the reagents each span their range of interest. As with BSTRs and CSTRs, the experimental response can be any quantity that is directly related to the composition of the fluid leaving the reactor or to the extent of reaction relative to the reactor feed.
+
 ## PFR Data Analysis
 
-pseudo-continuum approximation for heterogeneous catalysts
+*Reaction Engineering Basics* only considers the generation and analysis of kinetics data for single reactions occurring in isothermal, steady-state PFRs. Further, it assumes that the data were generated in blocks where all of the experiments in a given block were conducted at the same temperature. When this is true, each of the data blocks first can be analyzed separately to find the best values of the rate expression kinetics parameters at that temperature. Once all of the data blocks have been analyzed, a second analysis is performed to find the best values of the pre-exponential factors and activation energies/enthalpies for the rate coefficients and unknown equilibrium constants. The second analysis was illustrated in the examples in @sec-bstr-data-analysis. It does not involve the reactor model, but instead the Arrhenius expression, @eq-arrhenius, or the equivalent model for the equilibrium constant, @eq-equil_like_arrhenius. As such, the second analysis is exactly the same no matter which of the ideal reactor types was used to generate the data. Since the second analysis has already been demonstrated in @sec-bstr-data-analysis, the examples in this chapter focus upon the first analysis of a single data block that was generated using a PFR. However, see the notes that follow Examples [-@sec-example_10_2] and [-@sec-example_10_3].
+
+**Only the PFR mole balance is necessary to analyze a single data block** because when the reactor operates isothermally at a known temperature, the mole balances can be solved independently of the energy and momentum balances for the reactor. The PFR mole balance was derived in @sec-ideal-reactor-models, and the steady-state version is given in @eq-pfr_ss_mol_balance. In *Reaction Engineering Basics* kinetics data analysis problems, there is only one reaction taking place, so there is only one rate term, making it unnecessary to index the reaction, @eq-pfr_mole_bal_one_reaction.
+
+$$
+\frac{d \dot n_i}{d z}  =\frac{\pi D^2}{4}\nu_{i}r
+$${#eq-pfr_mole_bal_one_reaction}
+
+This reactor model is an IVODE, and in order to solve it, every quantity appearing in or substituted into it must be expressed in terms of known constants, the independent variable, $z$, and the dependent variable, $\dot{n}_i$. When a rate expression is substituted into @eq-pfr_mole_bal_one_reaction, it generally will introduce either concentrations or partial pressures. Since this is a flow system, these quantities can be expressed in terms of the molar flow rate of reagent $i$ using Equations [-@eq-concentration_open], [-@eq-conc_cstr_kinetics], and [-@eq-partial_pressure_kinetics].
+$$
+C_i = \frac{\dot n_i}{\dot V}
+$$
+
+$$
+P_i = y_iP = \frac{\dot{n}_iP}{\displaystyle \sum_i\left( \dot{n}_i \right)}
+$$
+
+$$
+C_i = \frac{\dot n_iP}{RT\displaystyle \sum_i\left( \dot{n}_i \right)}
+$$
+
+ If only one mole balance is being used in the analysis, the concentrations or partial pressures of reagents other than $i$ can be related to the molar flow rate of $i$ using the apparent extent of reaction as described in @sec-reaction-progress and illustrated in [Example -@sec-example_8_2].
+
+When the reactor temperature is known and only the mole balance design equations are being used to analyze the data, **the cumulative reactor volume, $V$, is sometimes used as the independent variable** instead of the axial distance into the reactor, $z$. When this is done, it is not necessary to know both the reactor diameter and length, only the reactor volume is needed. Changing the independent variable in the PFR mole balance, @eq-pfr_mole_bal_one_reaction, from $z$ to $V$ is straightforward. Dividing both sides of the equation by the reactor cross-sectional area and recognizing that the cross-sectional area time an increment in the axial position, $dz$, is equal to an increment in the volume, $dV$, leads to the desired form of the mole balance, @eq-pfr_mole_bal_one_rxn_using_V.
+
+$$
+\frac{d \dot n_i}{d z} =\frac{\pi D^2}{4}\nu_{i}r 
+$$
+
+$$
+\frac{d \dot n_i}{\displaystyle\frac{\pi D^2}{4}d z} = \nu_{i}r
+$$
+
+$$
+\frac{d \dot n_i}{dV} = \nu_{i}r
+$${#eq-pfr_mole_bal_one_rxn_using_V}
+
+PFRs are commonly used to generate kinetics data for heterogeneous catalytic reactions. Using the pseudo-homogeneous approximation described in [Appendix -@sec-ideal-reactor-models], the ideal PFR design equations can still be used to analyze the data. However, **it is a very common practice to normalize heterogeneous catalytic reaction rates using the catalyst mass** instead of the reacting fluid volume. If $\rho_{\text{bed}}$ is the apparent packed bed density, that is the combined volume of the solid catalyst and the fluid per mass of catalyst, the mole balance takes the form shown in @eq-pfr_mole_bal_one_rxn_using_rho where the rate has units of mol time^-1^ (catalyst mass)^-1^. **The mass of catalyst can also be used as the independent** variable by simply dividing both sides of @eq-pfr_mole_bal_one_rxn_using_rho by the apparent bed density and the reactor cross-sectional area, @eq-pfr_mole_bal_one_rxn_using_m where the rate again has units of mol time^-1^ (catalyst mass)^-1^.
+
+$$
+\frac{d \dot n_i}{d z}  =\frac{\pi D^2}{4}\nu_{i}\rho_{\text{bed}} r
+$${#eq-pfr_mole_bal_one_rxn_using_rho}
+
+$$
+\frac{d \dot n_i}{dm}  =\nu_{i} r
+$${#eq-pfr_mole_bal_one_rxn_using_m}
+
+Finally, **if the reactor was operated differentially when generating the data**, an approximate mole balance can be used, @eq-differential_pfr_mole_bal_one_rxn. This is completely analogous to the approximate mole balance used for analysis of BSTR data. It converts the mole balance from an IVODE to an ATE. The derivative can be approximated using backward, forward or central differences (see [Appendix -@sec-pre-knowledge]). The approximation of the derivative as the ratio, $\frac{\Delta \dot n_i}{\Delta z}$, is only valid when the changes in $\dot n_i$ and $z$ are small. That is why it is necessary to operate the reactor differentially for this type of analysis.
+
+$$
+\frac{d \dot n_i}{d z}  =\frac{\pi D^2}{4}\nu_{i}r \approx \frac{\Delta \dot n_i}{\Delta z}  =\frac{\pi D^2}{4}\nu_{i}r
+$${#eq-differential_pfr_mole_bal_one_rxn}
 
 ### Analysis Using a Response Function
 
+The **analysis of PFR kinetics data using a response function is analogous to the analysis of BSTR kinetics data** using a response function. A response function is created that is passed the adjusted experimental inputs and values for the kinetics parameters as arguments. Within the response function, the reactor model (the IVODE PFR mole balances) is solved for each experiment to find the outlet molar flow rates of all reagents. The results are then used to calculate the model-predicted value of the response. The response function returns the model-predicted responses for all of the experiments.
+
+**The response function is then used as an argument in parameter estimation software** along with the adjusted experimental inputs, the experimental responses, and a guess for the parameters. The parameter estimation software returns the estimated values of the kinetics parameters, their 95% confidence intervals and the coefficient of determination, $R^2$. The estimated parameters can then be used to calculate the model-predicted responses for the experiments. From these, a parity plot and residuals plots can be created. If the rate expression is accurate, the following criteria will be satisfied.
+
+* The coefficient of determination, $R^2$, will be close to 1.
+* The uncertainty in each parameter estimate will be small compared to the estimate (so the confidence interval is narrow relative to the parameter value).
+* The points in the parity plot will all be close to a diagonal line ($y_{\text{expt}} = y_{\text{model}}$).
+* In each residuals plot, the points will scatter randomly about zero (the horizontal axis), and no systematic deviations will be apparent.
+
 ### Analysis Using a Linearized Model
+
+When only one reaction is taking place, as is the case in *Reaction Engineering Basics* kinetics data analysis problems, the reactor can be modeled using only one mole balance on a reactant or product in the reaction. When this is done, the apparent extent of reaction is used to relate the amounts of all other reagents to the reagent for which the mole balance is written. Sometimes the single mole balance can be solved analytically, for example by separation of variables. Doing so yields an integrated mole balance that is an ATE. **If the integrated mole balance can be rearranged into a linear form, the model can be fit to the experimental data using linear least squares**. This was described and illustrated in @sec-kin-data-gen and @sec-bstr-data-analysis and won't be repeated or illustrated in this chapter.
 
 ### Analysis Using an Approximate Reactor Model
 
+This approach, commonly referred to a **differential data analysis, is completely analogous to differential analysis of BSTR data**. The one significant difference is that to use differential data analysis with PFR data, the reactor must have been operated differentially when the data were generated. The mole balance given in @eq-differential_pfr_mole_bal_one_rxn is used. As noted in @sec-bstr-data-analysis, the approximate mole balance is often linearized and the analysis is performed using linear least squares. In most cases, differential analysis is less accurate than analysis using a response function or a linearized integrated mole balance. Since differential data analysis was illustrated in @sec-bstr-data-analysis, it is not repeated in the examples of this chapter.
+
 ## Examples
+
+The start of the Examples sections of Chapters [-@sec-bstr-data-analysis] and [-@sec-cstr-data-analysis] noted that before one can solve a problem, they must identify what type of problem it is. The following callout was provided. It should be mentally insert it at the start of every example this chapter.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking after Reading each Problem Statement in this Chapter
+
+This is what I call a "kinetics data analysis problem." It has 3 distinguishing characteristics.
+
+* The problem statement describes reactor experiments.
+* The data resulting from performing those experiments are provided.
+* The problem asks you to generate a rate expression or to assess the accuracy of a proposed rate expression using those data.
+
+I know that to solve a kinetics data analysis problem I will need to do the following things.
+
+* Identify the experimental adjusted reactor inputs. These are the things that the person doing the experiment had control over and was able to set their value.
+* Identify the experimental response. This is some quantity that is related to the composition of the reacting fluid at the time it was measured.
+* Formulate some type of mathematical model of the experiments. In this book, where kinetics experiments are isothermal and involve only one reaction, the model will be based upon one or more mole balances.
+* Fit the model separately to the experimental data in each the blocks containing data at a single temperature. This yields the value of the kinetics parameters in the rate expression that minimize the difference between the responses the model predicts and the responses that were measured experimentally.
+* Assess whether the model is sufficiently accurate in capturing the effect of pressure and composition on the reaction rate.
+* Fit the Arrhenius expression to the resulting rate coefficients, assess how accurately the model captures the temperature dependence of the rate
+* Make a recommendation based upon the accuracy of the rate expression.
+
+:::
+
+It was noted earlier in this chapter that each of the examples here illustrate the analysis of a single constant-temperature data block. Doing that yields values of the kinetics parameters at that temperature. The second phase of the analysis where the Arrhenius expression is fit to the rate coefficients was illustrated in @sec-bstr-data-analysis and is not repeated here. However see the notes following Examples [-@sec-example_10_2] and [-@sec-example_10_3]. As also noted previously in this chapter, analysis using a linearized reactor model and an approximate reactor model were illustrated in @sec-bstr-data-analysis and are not repeated here.
+
+### Kinetics of Gas-Phase Decomposition {#sec-example_10_1}
+
+{{< include ../RE_Basics_Examples/reb_10_1/problem_statement.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+d <- read.csv("./Data/reb_10_1_data.csv")
+ # A_in, Y_in, Z_in, fA
+```
+
+The first few data points are shown in @tbl-example_10_1_data; the full data set are available in the file, [reb_10_1_data.csv](./Data/reb_10_1_data.csv).
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_10_1_data
+#| tbl-cap: First 8 of the 160 experimentally generated data.
+library(kableExtra)
+library(knitr)
+kbl(d[1:8,], format = "markdown", align = "cccc", 
+  col.names = c('$\\dot{V}_{A,in}$ (sccm)','$\\dot{V}_{Y,in}$ (sccm)',
+  '$\\dot{V}_{Z,in}$ (sccm)', 'f~A~ (%)'))
+```
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Having identified this as a kinetics data analysis problem, I will begin by listing the reactor type, the constants that are given in the problem statement, the inputs that were adjusted in the experiments, the response that was measured in the experiments, and the kinetics parameter I need to estimate.
+
+:::
+
+**Reactor Type**: PFR
+
+**Given Constants**: $P=1\text{ atm}$, $D=1\text{ cm}$, $L=10\text{ cm}$, and $T=1500\text{ K}$.
+
+**Adjusted Inputs**: $\underline{\dot{V}_{A,in}}$, $\underline{\dot{V}_{Y,in}}$, and $\underline{\dot{V}_{Z,in}}$.
+
+**Experimental Response**: $\underline{f_A}$.
+
+**Kinetics Parameter**: $k$.
+
+**Reactor Design Equations**
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I know that to solve a kinetics data analysis problem I need to write and solve the reactor design equations and then use the results to calculate model-predicted values for the response for each experiment.
+
+Since the PFR operated isothermally in each experiment, I only need the mole balance design equations for each of the reagents in the system.
+
+$$
+\frac{d \dot n_i}{d z} =\frac{\pi D^2}{4}\nu_{i}r
+$$
+
+The reagents in this system are A, Y, and Z, so I will write a mole balance for each of them. Their stoichiometric coefficients are -1, 1, and 1, respectively.
+
+:::
+
+$$
+\frac{d\dot{n}_A}{dz} = -\frac{\pi D^2}{4}r \tag{3}
+$$
+
+$$
+\frac{d\dot{n}_Y}{dz} = \frac{\pi D^2}{4}r \tag{4}
+$$
+
+$$
+\frac{d\dot{n}_Z}{dz} = \frac{\pi D^2}{4}r \tag{5}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The mole balances are IVODEs. To solve them I will need to express every quantity that appears in them or is substituted into them in terms of known constants, the independent variable, $z$, and the dependent variables, $\dot{n}_A$, $\dot{n}_Y$, and $\dot{n}_Z$. I'll also need to provide initial conditions and a stopping criterion, but before I do that I will write the ancillary equations needed to express everything that appears in or is substituted into the mole balances in terms of known constants, the independent variable, and the dependent variables.
+
+:::
+
+**Ancillary Equations**
+
+The rate expression, equation (2), can be substituted into the mole balances, equations (3) through (5). Doing so introduces the partial pressure of A, which is related to the molar flow rates through equation (6). After these substitutions, the mole balances will only contain known constants, the independent variable, $z$, and the dependent variables, $\dot{n}_A$, $\dot{n}_Y$, and $\dot{n}_Z$.
+
+$$
+P_A = \frac{\dot{n}_A}{\dot{n}_A+\dot{n}_Y + \dot{n}_Z}P \tag{6}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See Where That Came From
+
+Start from the defining equation for partial pressure. Then note that the mole fraction of reagent $i$ is simply the molar flow rate of $i$ divided by the total molar flow rate.
+$$
+P_i = y_iP = \frac{\dot{n}_A}{\dot{n}_A+\dot{n}_Y + \dot{n}_Z}P
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The mole balances are IVODEs, so to solve them I need initial values and a stopping criterion. The problem does not provide the inlet molar flow rates of the reagents, but it does provide the inlet volumetric flow rates. The ideal gas law can be used to calculate the inlet molar flow rates.
+
+:::
+
+The initial values needed to solve equations (3) through (5) are presented in equations (7) through (9). In those equations $z=0$ has been defined to represent the inlet to the reactor. Reaction should proceed until the reactor outlet is reached, leading to the stopping criterion shown in equation (10).
+
+$$
+\dot{n}_A\Big\vert_{z=0} = \dot{n}_{A,in} = \frac{P\dot{V}_{A,in}}{RT} \tag{7}
+$$
+
+$$
+\dot{n}_Y\Big\vert_{z=0} = \dot{n}_{Y,in} = \frac{P\dot{V}_{Y,in}}{RT} \tag{8}
+$$
+
+$$
+\dot{n}_Z\Big\vert_{z=0} = \dot{n}_{Z,in} = \frac{P\dot{V}_{Z,in}}{RT} \tag{9}
+$$
+
+$$
+\text{Stopping criterion: }z=L \tag{10}
+$$
+
+**Model-Predicted Response**
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Now that I can solve the mole balances, I need to generate a response function. That function will be provided with values for the kinetics parameters (in this case, only $k$) and the adjusted inputs for each experiment. Within the response function the mole balances must be solved as described above to obtain the values of the outlet molar flow rates of A, Y, and Z. Those results then must be used to calculate the response predicted by the model. In this problem, the response is the conversion of reagent A which can be calculated using the definition of conversion, @eq-conversion_def_open.
+
+:::
+
+At this point, the mole balance equations can be solved to find the outlet values of $\dot{n}_A$, $\dot{n}_Y$, $\dot{n}_Z$. Those values can then be used to calculate the conversion of reagent A predicted by the model, equation (11)
+
+$$
+f_A = \frac{\dot{n}_{A,in} - \dot{n}_A}{\dot{n}_{A,in}} \tag{11}
+$$
+
+**Parameter Estimation and Assessment of Accuracy**
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I wrote a computer function to calculate the model-predicted responses as described above. That function can be passed to computer software for non-linear equation parameter estimation. The parameter estimation software typically will also require the set of adjusted experimental inputs, the corresponding set of experimental responses, and a guess for the value of the parameter to be estimated, in this case, $k$.
+
+Once I have estimated the value of $k$, I can use the reactor model to calculate the model-predicted response for every experiment and the residual (difference between the experimental response and the model-predicted response) for every experiment. Using the model-predicted responses and the residuals a parity plot and a set of residuals plots can be generated.
+
+:::
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("./Code/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_10_1/python/reb_10_1_results.csv")
+d <- fmt_tibble_col(d, 2, 3, 2, 2)
+a <- c('k','R^2^')
+b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
+b <- c(b1,d$value[4])
+d <- data.frame(a,b)
+```
+
+The reactor model described above was fit to the experimental data. The results are presented in @tbl-example_10_1_results.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_10_1_results
+#| tbl-cap: Parameter estimation results
+library(kableExtra)
+library(knitr)
+kbl(d, format = "markdown", align = "cc", col.names = NULL)
+```
+
+The estimated rate coefficient was used in the reactor model to calculate the model-predicted response and the residual for every experiment. The results were used to generate the parity plot and the residuals plots shown in @fig-example_10_1_plots.
+
+::: {#fig-example_10_1_plots layout-ncol=2}
+
+![](./Graphics/reb_10_1_parity.png)
+
+![](./Graphics/reb_10_1_residuals_vs_VFR_A.png)
+
+![](./Graphics/reb_10_1_residuals_vs_VFR_Y.png)
+
+![](./Graphics/reb_10_1_residuals_vs_VFR_Z.png)
+
+Parity and Residuals Plots.
+:::
+
+**Recommendation**
+
+The rate expression in equation (2) provides an accurate representation of the experimental data and should be accepted with the rate coefficient given in @tbl-example_10_1_results. Specifically, the points in the parity plot are all close to the diagonal line representing perfect agreement. The scatter in the residuals plots is random with no noticeable trends. The 95% confidence interval is very small relative to the estimated value of the rate coefficient and the coefficient of determination is very close to 1.0.
+
+---
+
+### Power-Law Kinetics of a Heterogeneous Catalytic Reaction {#sec-example_10_2}
+
+{{< include ../RE_Basics_Examples/reb_10_2/problem_statement.qmd >}}
+
+The first few data points are shown in @tbl-example_10_2_data; the full data set are available in the file, [reb_10_2_data.csv](./Data/reb_10_2_data.csv).
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("./Code/fmt_tibble_col.R")
+d <- read.csv("./Data/reb_10_2_data.csv")
+ # yA, yB, yY, yZ, PA
+```
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_10_2_data
+#| tbl-cap: First 8 of the 45 experimentally generated data.
+library(kableExtra)
+library(knitr)
+kbl(d[1:8,], format = "markdown", align = "ccccc", 
+  col.names = c('y~A,in~','y~B,in~','y~Y,in~', 'y~Z,in~', 'P~A,out~ (atm)'))
+```
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+This is a kinetics data analysis problem. I will begin by listing the reactor type, known constants, inputs that were adjusted during the experiments, response that was measured in the experiments, and kinetics parameters that need to be estimated.
+
+:::
+
+**Reactor Type**: PFR
+
+**Given Constants**: $P=1\text{ atm}$, $m_{\text{cat}}=3\text{ g}$, $\dot{V}_{in}=0.85\text{ standard L min}^{-1}$, $T=400\text{ °C}$, and $K = 12.2$.
+
+**Adjusted Inputs**: $\underline{y_{A,in}}$, $\underline{y_{B,in}}$, $\underline{y_{Y,in}}$, and $\underline{y_{Z,in}}$.
+
+**Experimental Response**: $\underline{P_A}$.
+
+**Kinetics Parameters**: $k$, $\alpha_A$, $\alpha_B$, $\alpha_Y$, and $\alpha_Z$.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The first step in solving a kinetics data analysis problem is to generate a model for the reactor. Since the reactor is isothermal and its temperature is known, I can model it using only mole balances on the reagents A, B, Y, and Z. The reaction is catalytic and the size of the reactor is not provided. The mass of catalyst is provided, so I will use a form of the PFR mole balance where the catalyst mass is the independent variable, @eq-pfr_mole_bal_one_rxn_using_m. The stoichiometric coefficients of A, B, Y, and Z are -1, -1, 1, and 1, respectively.
+
+$$
+\frac{d \dot n_i}{dm} =\nu_{i} r
+$$
+
+:::
+
+**Reactor Design Equations**
+
+Mole balances on reagents A, B, Y, and Z are presented in equations (3) through (6).
+
+$$
+\frac{d\dot{n}_A}{dm} = -r \tag{3}
+$$
+
+$$
+\frac{d\dot{n}_B}{dm} = -r \tag{4}
+$$
+
+$$
+\frac{d\dot{n}_Y}{dm} = r \tag{5}
+$$
+
+$$
+\frac{d\dot{n}_Z}{dm} = r \tag{6}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Since the mole balances are IVODEs, I will need to express every quantity that appears in them or is substituted into them in terms of known constants, the independent variable, $z$, and the dependent variables, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Y$, and $\dot{n}_Z$ before I can solve them. When the rate expression is substituted into equations (3) through (6) it will introduce the partial pressures of each of the reagents. These can be related to the molar flow rates using the ideal gas law.
+
+:::
+
+**Ancillary Equations**
+
+The partial pressures in the rate expression can be expressed in terms of the molar flow rates using equations (7) through (10).
+
+$$
+P_A = \frac{\dot{n}_A}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{7}
+$$
+
+$$
+P_B = \frac{\dot{n}_B}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{8}
+$$
+
+$$
+P_Y = \frac{\dot{n}_Y}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{9}
+$$
+
+$$
+P_Z = \frac{\dot{n}_Z}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{10}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The mole balances now contain only known constants, the independent variable and the dependent variables. In order to solve them, I need to provide initial values and a stopping criterion. The initial values of the dependent variables, that is the values of the molar flow rates at $z=0$, can be found from the inlet volumetric flow rate and their inlet mole fractions.
+
+:::
+
+The initial values of the molar flow rates are given by equations (11) through (14) where $\tilde{V}_{STP}$ represents the molar volume of an ideal gas at standard temperature and pressure (1 mol = 22.4 L).
+
+$$
+\dot{n}_A\Big\vert_{m=0} = \dot{n}_{A,in} = y_{A,in}\frac{\dot{V}_{in}}{\tilde{V}_{STP}} \tag{11}
+$$
+
+$$
+\dot{n}_B\Big\vert_{m=0} = \dot{n}_{B,in} = y_{B,in}\frac{\dot{V}_{in}}{\tilde{V}_{STP}} \tag{12}
+$$
+
+$$
+\dot{n}_Y\Big\vert_{m=0} = \dot{n}_{Y,in} = y_{Y,in}\frac{\dot{V}_{in}}{\tilde{V}_{STP}} \tag{13}
+$$
+
+$$
+\dot{n}_Z\Big\vert_{m=0} = \dot{n}_{Z,in} = y_{Z,in}\frac{\dot{V}_{in}}{\tilde{V}_{STP}} \tag{14}
+$$
+
+At the point where the feed is about to enter the reactor, it has not contacted any catalyst, so the initial conditions above are specified at $m=0$. The reaction will proceed until the fluid has contacted all of the mass in the packed bed, so the stopping criterion is given by equation (15).
+
+$$
+\text{Stopping criterion: }m=m_{\text{cat}} \tag{15}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point the mole balances can be solved to find the outlet molar flow rates of A, B, Y, and Z. The response in this problem is the partial pressure of A. Therefore, the model-predicted response can be calculated using equation (7).
+
+:::
+
+**Model-Predicted Response**
+
+The mole balances, equations (3) through (6) can be solved to find $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Y$, and $\dot{n}_Z$ at the reactor outlet. Equation (7) can then be used to calculate the model-predicted outlet partial pressure of reagent A.
+
+**Parameter Estimation and Assessment of Accuracy**
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I wrote a computer function to calculate the model-predicted responses as described above. That function can be passed to computer software for non-linear equation parameter estimation. The parameter estimation software typically will also require the set of adjusted experimental inputs, the corresponding set of experimental responses, and a guess for the value of the parameter to be estimated, in this case, $k$, $\alpha_A$, $\alpha_B$, $\alpha_Y$, and $\alpha_Z$.
+
+Once I have estimated the values of $k$, $\alpha_A$, $\alpha_B$, $\alpha_Y$, and $\alpha_Z$, I can use the reactor model to calculate the model-predicted response for every experiment and the residual (difference between the experimental response and the model-predicted response) for every experiment. Using the model-predicted responses and the residuals a parity plot and a set of residuals plots can be generated.
+
+:::
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("./Code/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_10_2/python/reb_10_2_results.csv")
+d <- fmt_tibble_col(d, 2, 3, 2, 2)
+a <- c('k','α~A~','α~B~','α~Y~','α~Z~','R^2^')
+b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
+b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],']')
+b3 <- paste0(d$value[7],' ',d$units[7],', 95% CI [',d$value[8],', ',d$value[9],']')
+b4 <- paste0(d$value[10],' ',d$units[10],', 95% CI [',d$value[11],', ',d$value[12],']')
+b5 <- paste0(d$value[13],' ',d$units[13],', 95% CI [',d$value[14],', ',d$value[15],']')
+b <- c(b1,b2,b3,b4,b5,d$value[16])
+d <- data.frame(a,b)
+```
+
+The reactor model described above was fit to the experimental data. The results are presented in @tbl-example_10_2_results.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_10_2_results
+#| tbl-cap: Parameter estimation results
+library(kableExtra)
+library(knitr)
+kbl(d, format = "markdown", align = "cc", col.names = NULL)
+```
+
+The estimated rate coefficient was used in the reactor model to calculate the model-predicted response and the residual for every experiment. The results were used to generate the parity plot shown in @fig-example_10_2_parity and the residuals plots shown in @fig-example_10_2_residuals_plots.
+
+![Parity Plot.](./Graphics/reb_10_2_parity.png){#fig-example_10_2_parity width=80%}
+
+::: {#fig-example_10_2_residuals_plots layout-ncol=2}
+
+![](./Graphics/reb_10_2_residuals_vs_yAin.png)
+
+![](./Graphics/reb_10_2_residuals_vs_yBin.png)
+
+![](./Graphics/reb_10_2_residuals_vs_yYin.png)
+
+![](./Graphics/reb_10_2_residuals_vs_yZin.png)
+
+Residuals Plots.
+:::
+
+**Recommendation**
+
+Based upon the parity plot, residuals plots and coefficient of determination, the rate expression in equation (2) accurately predicts the experimental results when the parameters have the values shown in @tbl-example_10_2_results. The confidence intervals are not narrow relative to the parameters' values, but they are acceptable. It is possible that additional experiments at different conditions would tighten the confidence intervals for the parameters.
+
+---
+
+:::{.callout-note collapse="false"}
+## Note
+
+Suppose similar blocks of experimental data had been generated at several other temperatures and that equation (2) had been found to be accurate at those temperatures. The next step would be to assess how well the rate expression captures the temperature dependence of the rate. For the rate coefficient, $k$, this would be done by fitting the Arrhenius expression to the set of values of $k$ from each of the data blocks.
+
+However, there isn't any theoretical or empirical basis for assuming that $\alpha_A$, $\alpha_B$, $\alpha_Y$, and $\alpha_Z$ obey the Arrhenius expression. In fact, it isn't known how these parameters might vary with temperature. This is a disadvantage of using an empirical power-law rate expression.
+
+If the estimated value of $\alpha_A$ was effectively the same at every temperature and the same was true for $\alpha_B$, $\alpha_Y$, and $\alpha_Z$, then they could be taken to be constant and the accuracy of the rate expression could be assessed by fitting the Arrhenius expression to the $k$ values. In other words, the only temperature-dependent kinetics parameter would be $k$. If it was accurate, equation (2) would be useful as a rate expression.
+
+However, if the estimated values of $\alpha_A$, $\alpha_B$, $\alpha_Y$, and $\alpha_Z$ vary with temperature it would necessary to (a) find expressions that predict their variation with temperature and (b) assess the accuracy of those expressions.
+
+If expressions for the temperature dependence of $\alpha_A$, $\alpha_B$, $\alpha_Y$, and $\alpha_Z$ could not be found, then in order to use the rate expression in equation (2) a table of their values *vs*. temperature would be necessary. Interpolation would need to be used for temperatures not in the table. In this scenario, equation (2) would not be very useful, even if it was very accurate in representing the individual data blocks.
+
+:::
+
+### Mechanistic Kinetics of a Heterogeneous Catalytic Reaction {#sec-example_10_3}
+
+{{< include ../RE_Basics_Examples/reb_10_3/problem_statement.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("./Code/fmt_tibble_col.R")
+d <- read.csv("./Data/reb_10_2_data.csv")
+ # yA, yB, yY, yZ, PA
+```
+
+The first few data points are shown in @tbl-example_10_3_data; the full data set are available in the file, [reb_10_2_data.csv](./Data/reb_10_2_data.csv). This is the same data set as that used in [Example -@sec-example_10_2].
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_10_3_data
+#| tbl-cap: First 5 of the 45 experimentally generated data.
+library(kableExtra)
+library(knitr)
+kbl(d[1:5,], format = "markdown", align = "ccccc", 
+  col.names = c('y~A,in~','y~B,in~','y~Y,in~', 'y~Z,in~', 'P~A,out~ (atm)'))
+```
+
+---
+
+The formulation and solution of the reactor model and the calculation of the model-predicted response for this problem are exactly the same as [Example -@sec-example_10_2] except that the rate expression is different (but still depends upon the same composition variables) and the kinetics parameters are $k$, $K_A$, $K_B$, $K_Y$, and $K_Z$. 
+
+**Parameter Estimation and Assessment of Accuracy**
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("./Code/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_10_3/python/reb_10_3_results.csv")
+d <- fmt_tibble_col(d, 2, 3, 2, 2)
+a <- c('k','K~A~','K~B~','K~Y~','K~Z~','R^2^')
+b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
+b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],']')
+b3 <- paste0(d$value[7],' ',d$units[7],', 95% CI [',d$value[8],', ',d$value[9],']')
+b4 <- paste0(d$value[10],' ',d$units[10],', 95% CI [',d$value[11],', ',d$value[12],']')
+b5 <- paste0(d$value[13],' ',d$units[13],', 95% CI [',d$value[14],', ',d$value[15],']')
+b <- c(b1,b2,b3,b4,b5,d$value[16])
+d <- data.frame(a,b)
+```
+
+The reactor model was fit to the experimental data, and the results are presented in @tbl-example_10_3_results.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_10_3_results
+#| tbl-cap: Parameter estimation results
+library(kableExtra)
+library(knitr)
+kbl(d, format = "markdown", align = "cc", col.names = NULL)
+```
+
+The estimated rate coefficient was used in the reactor model to calculate the model-predicted response and the residual for every experiment. The results were used to generate the parity plot shown in @fig-example_10_3_parity and the residuals plots shown in @fig-example_10_3_residuals_plots.
+
+![Parity Plot.](./Graphics/reb_10_3_parity.png){#fig-example_10_3_parity width=80%}
+
+::: {#fig-example_10_3_residuals_plots layout-ncol=2}
+
+![](./Graphics/reb_10_3_residuals_vs_yAin.png)
+
+![](./Graphics/reb_10_3_residuals_vs_yBin.png)
+
+![](./Graphics/reb_10_3_residuals_vs_yYin.png)
+
+![](./Graphics/reb_10_3_residuals_vs_yZin.png)
+
+Residuals Plots.
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Looking at the parity plot and $R^2$, the model appears to be accurate, but there is a problem. For three of the five parameters the confidence interval ranges from 0 to infinity. Based on my experience (a novice would not be expected to know this) I know that this can mean that some of the kinetics parameters are kinetically insignificant or coupled. Here, $K_B$ and $K_Y$ are of the order of 10^7^. The total pressure is 1 atm, so the partial pressures will be of the order of 0.1 atm. With this information, looking at the denominator in equation (2) it is apparent that the terms containg $K_B$ and $K_Y$ will be much greater than the other terms ($K_A$ ~ 10^-4^ and $K_Z$ ~ 10^-2^), so the other terms can be eliminated.
+
+$$
+r = \frac{kP_{A}P_{B}}{\cancelto{0}{1} + \cancelto{0}{K_AP_A} + K_BP_B + K_YP_Y + \cancelto{0}{K_ZP_Z} }\left( 1 - \frac{P_YP_Z}{K_1P_AP_B} \right)
+$$
+
+There is still a problem with the remaining rate expression. Specifically there cannot be a unique set of values of $k$, $K_B$, and $K_Y$ that will minimize the sum of the squares of the residuals. Multiplying the numerator and denominator by any constant, $\alpha$, does not change the rate. Therefore the rate will be the same if the parameters equal $k$, $K_B$, and $K_Y$ or if they equal $\alpha k$, $\alpha K_B$, and $\alpha K_Y$. In other words, the remaining parameters are coupled. This problem can be eliminated by dividing the numerator and denominator by $K_Y$ and defining two new kinetics parameters.
+
+$$
+k^\prime = \frac{k}{K_Y}
+$$
+
+$$
+K_B^\prime = \frac{K_B}{K_Y}
+$$
+
+$$
+r = \frac{k^\prime P_{A}P_{B}}{K_B^\prime P _B + P_Y}\left( 1 - \frac{P_YP_Z}{K_1P_AP_B} \right)
+$$
+
+:::
+
+**Recommendation**
+
+The uncertainty in the kinetics parameters is unacceptable. Some of the parameters in equation (2) may be kinetically insignificant or coupled. It is recommended to repeat the analysis using the rate expression shown in equation (3).
+
+$$
+r = \frac{k^\prime P_{A}P_{B}}{K_B^\prime P _B + P_Y}\left( 1 - \frac{P_YP_Z}{K_1P_AP_B} \right) \tag{3}
+$$
+
+**Follow-up**
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("./Code/fmt_tibble_col.R")
+d <- read.csv("../RE_Basics_Examples/reb_10_3/python/reb_10_3_two_par_results.csv")
+d <- fmt_tibble_col(d, 2, 3, 2, 2)
+a <- c("k'","K~B~'",'R^2^')
+b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
+b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],']')
+b <- c(b1,b2,d$value[7])
+d <- data.frame(a,b)
+```
+
+The analysis was repeated a third time using equation (3) as the rate expression. The parameter estimation results are shown in @tbl-example_10_3_results_2_par. The parity plot is shown in @fig-example_10_3_parity_two_par and the residuals plots are shown in @fig-example_10_3_residuals_plots_two_par.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_10_3_results_2_par
+#| tbl-cap: Parameter estimation results for equation (3)
+library(kableExtra)
+library(knitr)
+kbl(d, format = "markdown", align = "cc", col.names = NULL)
+```
+
+![Parity Plot for Rate Expression (3).](./Graphics/reb_10_3_2_par_parity.png){#fig-example_10_3_parity_two_par width=80%}
+
+::: {#fig-example_10_3_residuals_plots_two_par layout-ncol=2}
+
+![](./Graphics/reb_10_3_2_par_residuals_vs_yAin.png)
+
+![](./Graphics/reb_10_3_2_par_residuals_vs_yBin.png)
+
+![](./Graphics/reb_10_3_2_par_residuals_vs_yYin.png)
+
+![](./Graphics/reb_10_3_2_par_residuals_vs_yZin.png)
+
+Residuals for Rate Expression (3).
+:::
+
+**Final Recommendation**
+
+Based upon the parity plot, residuals plots, and coefficient of determination, the rate expression in equation (3) is just as accurate as that in equation (2). In addition, for rate expression (3), there are fewer parameters and their confidence intervals are narrow relative to their values. The rate expression in equation (3) should be accepted, not the rate expression in equation (2).
+
+---
+
+:::{.callout-note collapse="false"}
+## Note
+
+Suppose the rate expression in equation (2) had been found to be acceptable, that similar blocks of experimental data had been generated at several other temperatures and that equation (2) had been found to be accurate at those temperatures, too. The next step would be to assess how well the rate expression captures the temperature dependence of the rate. Unlike [Example -@sec-example_10_2], all of the kinetics parameters in this rate expression would be expected to display Arrhenius-like temperature dependence, making it straightforward to assess the accuracy of the rate expression with respect to temperature. Mechanistic types of rate expressions have an advantage over power-law types of rate expressions in this regard. With mechanistic types of rate expressions one knows how all of the parameters should vary with temperature, with power-law rate expressions one does not know how the power-law exponents should vary.
+
+:::
+
+## Symbols Used in @sec-pfr-data-analysis
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $i$ | index denoting a reagent. |
+| $k_0$ | Pre-exponential factor in the Arrhenius expression. |
+| $\dot{n}_i$ | Molar flow rate of reagent $i$. |
+| $m$ | Mass of catalyst. |
+| $r$ | Net rate of reaction (per unit fluid volume or per catalyst mass, depending on context). |
+| $r_p$ | Catalyst particle radius. |
+| $v$ | Fluid velocity. |
+| $y_i$ | Mole fraction of reagent $i$. |
+| $z$ | Axial distance from the reactor inlet. |
+| $C_i$ | Concentration of reagent $i$. |
+| $D$ | Reactor diameter. |
+| $D_{\text{eff}}$ | Effective diffusion coefficient. |
+| $E$ | Activation energy in the Arrhenius expression. |
+| $N_{Re}$ | Reynolds number. |
+| $P$ | Pressure. |
+| $P_i$ | Partial pressure of reagent $i$. |
+| $R$ | Ideal gas constant. |
+| $R^2$ | Coefficient of determination. |
+| $T$ | Absolute temperature. |
+| $V$ | Volume. |
+| $\dot{V}$ | Volumetric flow rate. |
+| $\mu$ | Fluid viscosity. |
+| $\nu_i$ | Stoichiometric coefficient of reagent $i$. |
+| $\rho$ | Fluid density. |
+| $\rho_{\text{bed}}$ | Apparent catalyst bed density. |
+| $\phi_s$ | Internal concentration gradient metric. |
+
+: {tbl-colwidths="[20,80]"}

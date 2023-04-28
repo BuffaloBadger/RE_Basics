@@ -37,3 +37,4 @@ Appendices
 * Add illustration of laminar, turbulent and plug flow to prerequsite knowledge section on fluids; see slide 18 in VO Slides - RE Basics 1.3
 * Fix figures in Appendix D so they all have the same size.
 * Add linear least squares to prerequisite knowledge appendix.
+* Add a section to Appendix G discussing packed beds and the psuedo-homogeneous assumption
