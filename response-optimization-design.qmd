@@ -1,3 +1,98 @@
 # Response, Optimization and Design of Reactors {#sec-response-opt-design}
 
-Chapter 10
+This section of *Reaction Engineering Basics* focuses on the reaction engineering analysis of an isolated ideal reactor. The analyses involve only a reactor and no other equipment. This chapter is not specific to any one type of reactor, it applies equally to reaction engineering of BSTRs, SBSTRs, CSTRs, and PFRs. It begins by presenting distinguishing characteristics of isolated reactor modeling problems. It then offers a general description of three common reaction engineering tasks: reactor response tasks, reactor optimization tasks, and reactor design tasks. Finally it describes the general approach that is used to solve response, optimization and design problems in the remaining chapters of this section of *Reaction Engineering Basics*.
+
+## Isolated Ideal Reactor Analysis
+
+Reactors are typically one component of a larger chemical process. That process might include heat exchangers, other reactors, splitting and mixing of fluid streams, and many other types of equipment. Nonetheless, for analysis purposes it often is possible to draw an imaginary box around only the reactor, and treat it as an isolated system. If the reactor is a BSTR, SBSTR, CSTR or PFR, that is if the reactor is one of the ideal reactor types, then the system consists of an isolated ideal reactor.
+
+@sec-modeling-ideal-reactors defined groups of variables and parameters that appear in the model for a generic isolated reactor. They included reactor inputs, reactor outputs, reactor parameters, fluid properties and reaction properties. In the analyses considered in this section of *Reaction Engineering Basics*, the fluid properties (heat capacities, densities, viscosities, etc.) are known. The reactions taking place in the reactor and their properties (rate expression, heat of reaction, etc.) are also known.
+
+When the fluid and reaction properties are known, the reactor design equations establish a relationship between the reactor parameters, inputs, and outputs. Collectively, the reactor parameters, inputs, and outputs can be called the reactor variables. Then, given values of a sufficient number of reactor variables, the reactor design equations can be solved to find the values of the remaining reactor variables. In *Reaction Engineering Basics*, doing so is referred to as an isolated reactor analysis.
+
+## Common Reaction Engineering Tasks
+
+Three common reaction engineering tasks that require the modeling of an isolated reactor are reactor response tasks, reactor optimization tasks, and reactor design tasks. **Reactor response assignments**, as defined here, are the most straightforward of the three. A reactor response assignment includes sufficient information to solve the reactor design equations and find the values of the unknown reactor variables. The analysis involves solving the design equations one time to obtain the requested information. Generally there is a single, correct answer to response problems.
+
+There are two varieties of response tasks. In one, the assignment provides the necessary input and reactor information and requests information about the response. In the other the assignment provides a response and requests a reactor parameter or input that is needed to cause that response. In both cases, the design equations are solved only once, but the computational details differ slightly.
+
+**Optimization tasks** require that the reactor design equations be solved multiple times. In the simplest form, an optimization assignment includes values for all but two reactor variables. It then ask what value of one missing variable, the optimization parameter, will maximize or minimize the value of the other missing variable. The design equations are solved many times using different values of the optimization parameter. The value that maximizes or minimizes the second variable is the the requested information.
+
+Optimization tasks can be much more complicated than that, however. The assignment may specify multiple optimization parameters.  There can also be constraints on the values of the optimization parameters or the variables being optimized. Constraints are conditions that must be obeyed. An example of a constraint would be that the temperature of the heat exchange fluid cannot exceed some specified value. Here too, the reactor design equations are solved many times, but additional calculations are needed to make sure that the constraints are obeyed.
+
+In *Reaction Engineering Basics*, optimization tasks will usually involve only one optimization parameter. In this case the value of the optimization parameter that maximizes or minimizes the other reactor variable can be found graphically or using tabulated results. Generally there is a single correct answer to the assignment. There are numerical methods and corresponding computer software that can be used to optimize a reactor variable with respect to multiple optimization parameters and subject to constraints. The latter types of problems are not considered in *Reaction Engineering Basics*.
+
+**Reactor design tasks** are the most complicated of the tasks considered here. A reactor design assignment **does not** provide sufficient information to solve the reactor design equations. The reaction engineer must choose values for the missing reactor variables. In more extreme cases, the assignment may provide little more than the reagents that area available and the products that are to be produced. The type of reactor to use and how to operate it may be among the choices the reaction engineer needs to make.
+
+Design tasks almost always involve an optimization sub-task. The quantity that needs to be maximized is typically financial in nature. The goal is to maximize the rate of making profit subject to both technical and financial constraints. Design at this level is typically taught in chemical courses on plant design, and the system being optimized is typically an entire process, not just an isolated reactor.
+
+That level of design task is well beyond the scope of *Reaction Engineering Basics*. However, highly simplified design tasks are presented. In general there are reactor variables that are related to the finances of an overall process. Design tasks in *Reaction Engineering Basics* use reactor variables as the quantities to be optimized. In general, there **is not** a single correct solution to a reactor design task. Design tasks are inherently “open-ended,” and multiple solutions are possible and acceptable.
+
+## Creating a Response Function
+
+ @sec-modeling-ideal-reactors described how to generate, simplify and solve the reactor design equations for each of the four ideal reactor types. The quantities that appear in the reactor design equations were categorized as reaction properties, fluid properties, reactor parameters, reactor input and reactor output. Generally the reactor design equations have access to the reaction properties, fluid properties, reactor parameters, and reactor input. The reactor output then is found by solving the design equations.
+
+@sec-kin-data-gen then introduced response functions. A response function is a computer function. The reaction properties, fluid properties, reactor parameters, and reactor input are provided to it either internally or as arguments. The response function first calculates the reactor output by solving the reactor design equations. It then uses the reactor output to calculate and return the reactor response of interest, if it is a quantity other than the reactor output.
+
+Response functions were used for kinetics data analysis in the previous section of *Reaction Engineering Basics*. They are used again in this section of the book for modeling isolated ideal reactors. When modeling an isolated ideal reactor, the reaction and fluid properties are known. Those known values, together with known reactor parameters and reactor inputs, should be made available within the response function. An unknown reactor parameter or input should be passed to the response function as an argument. Similarly, when performing an optimization task, the optimization parameter should be passed to the response function as an argument.
+
+When the response function is called, the argument passed to it will provide the missing information needed to solve the reactor design equations. The response function should calculate the reactor output by solving them. The reactor output is the final/outlet molar amounts, temperatures, and pressure. These could be the response of interest, but alternatively, something like the conversion of one of the reactants could be a response of interest. It is related to the reactor output, but it is not found by solving the reactor design equations. If so, after finding the reactor outputs by solving the design equations, that response should be calculated and returned by the response function.
+
+## Using the Response Function
+
+The reactor response function described above is used in every isolated ideal reactor analysis. It is used to perform response, optimization, and design tasks. Because the nature of these tasks differ, the manner in which the response function is used also differs depending upon the task.
+
+### Performing Response Tasks
+
+As noted above, there are two varieties of response tasks. In the **first variety of response task**, the reaction engineering assignment provides all of the necessary reactor parameters and inputs, and it requests information about a response. For this variety of response task, the response function will not have any input arguments. It can be executed directly to generate the requested information.
+
+In the **second variety of response task**, the assignment will not provide all of the necessary reactor parameters and inputs, but it will provide the value of a response. In this case, the response function will have an input argument representing the reactor parameter or input that was not provided. Letting $f$ represent the response function, $x$ represent the missing reactor parameter or input, and $y$ represent the response of interest, the response function can be thought of as an equation relating the missing input to the response of interest, @eq-generic_response_function. 
+
+$$
+y = f\left( x \right)
+$${#eq-generic_response_function}
+
+The assignment provides the desired value of $y$. After substitution of that value, @eq-generic_response_function can be solved numerically to find the value of $x$ using software that solves sets of algebraic-transcendental equations (ATEs) (see [Appendix -@sec-solving-ates]). Typically a guess for the value of $x$, together with the response function, will be provided to the ATE solver and it will return the value of $x$ found by solving @eq-generic_response_function. So instead of executing the response function directly to obtain the requested information, the second variety of response task is completed by passing the response function to an ATE solver which returns the requested information.
+
+### Performing Optimization and Design Tasks
+
+In **optimization tasks** the assignment again will not provide all of the necessary reactor parameters and inputs. Consequently, the response function again will have an input argument as in @eq-generic_response_function. In contrast to the second variety of response tasks considered above, however, there will not be a known value of the response, $y$. Instead, the assignment will specify that $y$ should be minimized or maximized. To do so, a vector of progressively increasing $x$ values can be created. @eq-generic_response_function can be solved for each of those values to find the corresponding values of $y$.
+
+To find the value of $x$ that maximizes $y$, the resulting $x-y$ data can then be tabulated or plotted, and the table/graph can be examined to see whether $y$ passes through a maximum as $x$ increased. If it does, the value of $x$ at the maximum represents the requested information. If $y$ does not pass through a maximum, additional values must be added to the vector of $x$ values and the process repeated. Once the maximum has been located, it is prudent to calculate $y$ for a value of $x$ well below the smallest value in the vector and for a value well above the largest value in the vector. If the corresponding value of $y$ in either case is larger than the previous maximum, then a local maximum, and not the global maximum was located. In this case the procedure should continue until a global maximum is found. The minimization of $y$ can be accomplished in an analogous manner.
+
+**Design tasks** involve much more thought and analysis on the part of the reaction engineer. Chapters [-@sec-non-continuous-design] and [-@sec-continuous-design]  provide a small glimpse of the design process. As noted above, design almost always includes one or more optimization sub-tasks. Those sub-tasks can be performed as described here.
+
+Finally it is important to recognize that the optimization tasks presented in *Reaction Engineering Basics* are of a very simple nature. Optimization with respect to multiple parameters and subject to constraints requires numerical approaches and software that will not be considered here. Nonetheless, the same reactor response function still would  be used when performing the more complicated optimization.
+
+## General Approach to Modeling Isolated Ideal Reactors
+
+A reaction engineer must know two things when given an assignment. The first is how to identify the assignment's type, and the second is to know the general approach that is used when solving that type of assignment. **Isolated ideal reactor modeling assignments can be identified** by the following distinguishing characteristics.
+
+* The system consists of one ideal reactor and no other equipment.
+* The assignment describes the reactor and how it is operated.
+* The reactions taking place are known, and rate expressions are available for them.
+* The assignment asks for a reactor parameter, a reactor input, or reactor output.
+
+Having identified an assigment as an isolated ideal reactor modeling assignment, **the general approach to completing the assignment** begins with the **collection of the information** provided as part of the assignment. This should include the ideal reactor type, fluid and reaction properties, and known or specified reactor parameters, inputs and outputs. The available information should be examined to determine whether any of the known quantities are extensive. If no extensive quantites are known, the value of one unknown extensive variable can be chosen and used as a basis for the calculations. At this point it can be helpful to additionally identify the response or responses of interest and the information requested in assignment.
+
+Next, the procedures described in @sec-modeling-ideal-reactors should be followed to **generate and simplify the reactor design equations**. When the design equations are initial value ordinary differential equations (IVODEs), the initial values and stopping criterion needed to solve them should be included with the design equations. It is a good idea to determine what values will be obtained by solving the reactor design equations. In *Reaction Engineering Basics*, the design equations will be IVODEs in all cases except when the reactor is a steady-state CSTR. Design equations that are IVODEs will always be solved to find the values of the dependent variables over a range of values of the independent variable. The design equations for a steady-state CSTR will be a set of ATEs. If there are $N$ ATEs, then the design equations can be solved to find the values of $N$ unknowns. Those unknowns should be identified at this point.
+
+Having written the design equations, including initial values and a stopping criterion in the case of IVODEs, and having identified the quantities to be found by solving the design equations, **ancillary equations** to calculate every other quantity must be written. The ancillary equations should express every other quantity appearing in the design equations in terms of known constants and the unknowns that will be found by solving the design equations. Doing this will help identify any missing reactor parameters or inputs as well as any optimization parameters that will need to be provided when the response function is written.
+
+The **response function** can then be created as described previously. Briefly, it should accept missing inputs and/or optimization parameters as arguments. It should solve the reactor design equations to find the reactor outputs, and it should calculate any responses of interest other than the reactor outputs. It should return the responses of interest. Once the response function has been created, it can be used to **complete the response or optiization task**. As described above, the way the response function is used varies slightly depending on the type of task being completed.
+
+This chapter has presented a general description of modeling isolated ideal reactors. It was not specific to any reactor type, and for this reason, no examples are included with this chapter. The chapters that follow focus specifically on specific types of ideal reactor, and they will provide examples illustrating the modeling of those isolated ideal reactors.
+
+## Symbols Used in @sec-response-opt-design
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $f$ | The reactor response function. |
+| $x$ | A reactor parameter or input that is missing from a reactor response assignment, or the optimization parameter to be used to minimize or maximize a specified reactor variable. |
+| $y$ | A reactor response that is of interest in a reaction engineering task. |
+| $N$ | The number of ATE design equations needed to model a steady-state CSTR. |
+
+
+: {tbl-colwidths="[20,80]"}
+
+
