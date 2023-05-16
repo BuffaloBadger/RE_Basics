@@ -1,4 +1,4 @@
-# Analysis of Kinetics Data from a BSTR {#sec-bstr-data-analysis}
+# Analysis of Kinetics Data from a BSTR {#sec-4_bstr_data_analysis}
 
 @sec-kin-data-gen presented an overview of the design of kinetics experiments and the generation and analysis of kinetics data. This chapter focuses specifically on using reactors for those activities that conform to the assumptions of the ideal BSTR model described in @sec-modeling-ideal-reactors and [Appendix -@sec-ideal-reactor-models]. The most critical aspect of the ideal BSTR model is the assumption of perfect mixing, so the chapter begins with a few examples of devices that can be modeled as ideal BSTRs.
 
@@ -166,20 +166,20 @@ I know that to solve a kinetics data analysis problem I will need to do the foll
 
 ### Differential Analysis {#sec-example_8_1}
 
-{{< include ../RE_Basics_Examples/reb_8_1/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_9_1/problem_statement.qmd >}}
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
 source("~/Libraries/R/fmt_tibble_col.R")
 d <- read.csv("Data/reb_8_1_data.csv")
 # Experiment, T, CA0, t, CA
-```
+``
 
-The first few data points are shown in @tbl-example_8_1_data. The full data set is available in the .csv file [reb_8_1_data.csv](./Data/reb_8_1_data.csv)
+The first few data points are shown in @tbl-example_9_1_data. The full data set is available in the .csv file [reb_8_1_data.csv](./Data/reb_8_1_data.csv)
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_1_data
@@ -188,7 +188,7 @@ library(kableExtra)
 library(knitr)
 kbl(d[1:8,], format = "markdown", align = "cc", col.names = c('Experiment','T (°C)',
     'C~A,0~ (M)', 't~rxn~ (min)', 'C~A~ (M)'))
-```
+``
 
 ---
 
@@ -197,7 +197,7 @@ kbl(d[1:8,], format = "markdown", align = "cc", col.names = c('Experiment','T (�
 
 Having identified this as a kinetics data analysis problem as described in the expert thinking callout at the start of this section, I know that I need to identify the adjusted experimental inputs and the measured experimental response. I like to start by additionally summarizing information from the problem statement including the type of reactor used in the experiments and constant quantities provided in the problem statement. Knowing that I need to estimate the values of all of the kinetics parameters appearing in the rate expression, it is also useful to identify and list them, too. Creating these lists at the start of the analysis makes it easier to formulate the model for the experiments. Note that in listing the adjusted experimental inputs and the measured experimental response, the variable symbols are underlined to indicate that they are vector quantities.
 
-I know that the data will be analyzed in two phases as described in @sec-kin-data-gen. In this problem, data were generated at 4 different temperatures. For the first phase of the analysis, I will separate the data into four blocks. One block will contain the data from all experiments conducted at 60 °C, one will contain the 73 °C data, one, the 82 °C data and one, the 90 °C data. I will analyze each of these blocks separately to estimate the best value of $k$ at that temperature and to assess the accuracy of the rate expression at that temperature.
+I know that the data will be analyzed in two phases as described in @sec-4_kin_data_gen. In this problem, data were generated at 4 different temperatures. For the first phase of the analysis, I will separate the data into four blocks. One block will contain the data from all experiments conducted at 60 °C, one will contain the 73 °C data, one, the 82 °C data and one, the 90 °C data. I will analyze each of these blocks separately to estimate the best value of $k$ at that temperature and to assess the accuracy of the rate expression at that temperature.
 
 :::
 
@@ -304,7 +304,7 @@ In either case, the values of $x$ and $y$ must first be calculated for each expe
 
 **Parameter Estimation and Assessment of Accuracy**
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
@@ -313,11 +313,11 @@ d <- read.csv("../RE_Basics_Examples/reb_8_1/python/reb_8_1_phase_1_results.csv"
 # T, k, k_ll, k_ul, R_sq_
 d <- fmt_tibble_col(d, 2:5, 3, 2, 2)
 d$k_full = paste0(d$k,' min^-1^, 95% CI [',d$k_ll,', ',d$k_ul,']')
-```
+``
 
 Within each block of data, values of $x$ and $y$ were calculated for each experimental data point, equation (8) was fit to the resulting data, and a model plot was created. The fitting results are given in @tbl-example_8_1_phase_1_results, and the model plots are shown in @fig-example_8_1_phase_1_plots.
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_1_phase_1_results
@@ -326,7 +326,7 @@ d <- d %>% select(T, k_full, R_sq)
 library(kableExtra)
 library(knitr)
 kbl(d, format = "markdown", align = "cc", col.names = c("T (°C)", "k", "R^2^"))
-```
+``
 
 ::: {#fig-example_8_1_phase_1_plots layout-ncol=2}
 
@@ -343,7 +343,7 @@ Model Plots for each of the four temperature blocks.
 
 The 95% confidence intervals for each of the four estimated rate coefficients are relatively small compared to the estimated values and the $R^2$ values are all close to 1. Looking at the model plots, the deviations of the experimental data appear to be random. In general, the magnitude of the deviations are acceptable. The deviations are greater for the experiments at lower temperatures. If this is a concern, additional experiments should be performed at the lower temperatures.
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
@@ -356,11 +356,11 @@ b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],'
 b <- c(b1,b2,d$value[7])
 # item, value, units
 d <- data.frame(a,b)
-```
+``
 
 The Arrhenius expression was fit to the estimated rate coefficients in @tbl-example_8_1_phase_1_results. The parameter estimation results are shown in @tbl-example_8_1_arrhenius_results.
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_1_arrhenius_results
@@ -368,7 +368,7 @@ The Arrhenius expression was fit to the estimated rate coefficients in @tbl-exam
 library(kableExtra)
 library(knitr)
 kbl(d, format = "markdown", align = "cc", col.names = NULL)
-```
+``
 
 The 95% confidence interval for the pre-exponential factor is quite large, but this is often observed for the pre-exponential factor. The confidence interval for the activation energy is small relative to its value, suggesting a good fit. Additionally, the coefficient of determination is equal to 1, which indicates a very good fit. The Arrhenius plot is shown in @fig-example_8_1_arrhenius_plot. The estimated rate coefficients fall almost exactly on the line representing the Arrhenius expression.
 
@@ -389,20 +389,20 @@ In addition to reducing the time required to perform the experiments, this might
 
 ### Analysis Using a Linearized Reactor Model {#sec-example_8_2}
 
-{{< include ../RE_Basics_Examples/reb_8_2/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_9_2/problem_statement.qmd >}}
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
 source("~/Libraries/R/fmt_tibble_col.R")
 d <- read.csv("Data/reb_8_2_data.csv")
  # T, PA0, PB0, t, fA
-```
+``
 
 The first few data points are shown in @tbl-example_8_2_data. The full data set is available in the file [reb_8_2_data.csv](Data/reb_8_2_data.csv).
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_2_data
@@ -412,7 +412,7 @@ library(knitr)
 kbl(d[1:5,], format = "markdown", align = "cc", 
     col.names = c('T (°C)', 'P~A,0~ (atm)', 'P~B,0~ (atm)', 't~rxn~ (min)', 
     'f~A~'))
-```
+``
 
 ---
 
@@ -631,7 +631,7 @@ The next step in this phase of the analysis is to fit equation (9) to the $x$ - 
 
 **Parameter Estimation and Assessment of Accuracy**
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
@@ -640,11 +640,11 @@ d <- read.csv("../RE_Basics_Examples/reb_8_2/python/reb_8_2_phase_1_results.csv"
  # T, k, k_ll, k_ul, R_sq_
 d <- fmt_tibble_col(d, 2:5, 3, 2, 2)
 d$k_full = paste0(d$k,' mol cm^-3^ min^-1^ atm^-2^, 95% CI [',d$k_ll,', ',d$k_ul,']')
-```
+``
 
 Equation (9) was fit separately to the data in each of the three constant-temperature blocks. The results are shown in @tbl-example_8_2_phase_1_results. The model plots shown in @fig-example_8_2_model_plots were then created.
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_2_phase_1_results
@@ -653,7 +653,7 @@ d <- d %>% select(T, k_full, R_sq)
 library(kableExtra)
 library(knitr)
 kbl(d, format = "markdown", align = "cc", col.names = c("T (°C)", "k", "R^2^"))
-```
+``
 
 ::: {#fig-example_8_2_model_plots layout-ncol=1 width=60%}
 
@@ -675,7 +675,7 @@ At this point I have completed the first phase of the analysis, and I know that 
 
 :::
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
@@ -688,11 +688,11 @@ b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],'
 b <- c(b1,b2,d$value[7])
  # item, value, units
 d <- data.frame(a,b)
-```
+``
 
 The Arrhenius expression was fit to the estimated rate coefficients for the three blocks with the following results.
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_2_arrhenius_results
@@ -700,7 +700,7 @@ The Arrhenius expression was fit to the estimated rate coefficients for the thre
 library(kableExtra)
 library(knitr)
 kbl(d, format = "markdown", align = "cc", col.names = NULL)
-```
+``
 
 The 95% confidence interval for the pre-exponential factor is large. Specifically it ranges from ca. one-third of the estimated value to three times the estimated value, but a wide confidence interval is often observed for the pre-exponential factor. The confidence interval for the activation energy is small relative to its value, suggesting a good fit. Additionally, the coefficient of determination is equal to 1, which indicates a very good fit. The Arrhenius plot is shown in @fig-example_8_2_Arrhenius_plot. The estimated rate coefficients fall almost exactly on the line representing the Arrhenius expression.
 
@@ -720,22 +720,22 @@ The use of a linearized model, as demonstrated in this example is accurate and s
 
 ### A Gas-Phase Reaction With Total Pressure as the Response {#sec-example_8_3}
 
-{{< include ../RE_Basics_Examples/reb_8_3/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_9_3/problem_statement.qmd >}}
 
 
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
 source("~/Libraries/R/fmt_tibble_col.R")
 d <- read.csv("../RE_Basics_Examples/reb_8_3/reb_8_3_data.csv")
  # T,t,P
-```
+``
 
 The first few data points are shown in @tbl-example_8_3_data. The full data set is available in the file [reb_8_3_data.csv](Data/reb_8_3_data.csv).
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_3_data
@@ -743,7 +743,7 @@ The first few data points are shown in @tbl-example_8_3_data. The full data set 
 library(kableExtra)
 library(knitr)
 kbl(d[1:5,], format = "markdown", align = "cc", col.names = c('T (°C)', 't~rxn~ (s)', 'P (atm)'))
-```
+``
 
 ---
 
@@ -840,7 +840,7 @@ $$
 
 **Parameter Estimation and Assessment of Accuracy**
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
@@ -849,11 +849,11 @@ d <- read.csv("../RE_Basics_Examples/reb_8_3/python/reb_8_3_phase_1_results.csv"
  # T, k, k_ll, k_ul, R_sq_
 d <- fmt_tibble_col(d, 2:5, 3, 2, 2)
 d$k_full = paste0(d$k,' mol cm^-3^ s^-1^ atm^-1^, 95% CI [',d$k_ll,', ',d$k_ul,']')
-```
+``
 
 The reactor model was fit separately to the data in each of the three constant-temperature blocks. The results are shown in @tbl-example_8_3_phase_1_results. The parity and residuals plots shown in @fig-example_8_3_model_plots were then created.
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_3_phase_1_results
@@ -862,7 +862,7 @@ d <- d %>% select(T, k_full, R_sq)
 library(kableExtra)
 library(knitr)
 kbl(d, format = "markdown", align = "cc", col.names = c("T (°C)", "k", "R^2^"))
-```
+``
 
 ::: {#fig-example_8_3_model_plots layout-ncol=2}
 
@@ -897,7 +897,7 @@ Having found values for the rate coefficient at each of the three experimental t
 
 :::
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
@@ -910,11 +910,11 @@ b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],'
 b <- c(b1,b2,d$value[7])
  # item, value, units
 d <- data.frame(a,b)
-```
+``
 
 The Arrhenius expression was fit to the data in @tbl-example_8_3_phase_1_results with the following results.
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_3_arrhenius_results
@@ -922,7 +922,7 @@ The Arrhenius expression was fit to the data in @tbl-example_8_3_phase_1_results
 library(kableExtra)
 library(knitr)
 kbl(d, format = "markdown", align = "cc", col.names = NULL)
-```
+``
 
 The 95% confidence interval for the pre-exponential factor is huge. Specifically it ranges from ca. 5.4 to 11,500 mol cm^-3^ s^-1^ atm^-1^, but a wide confidence interval is often observed for the pre-exponential factor. The 95% confidence interval for the activation energy is smaller (70.8 to 106 kJ mol^-1^). Importantly, the coefficient of determination is equal to 1 and in the Arrhenius plot, @fig-example_8_3_Arrhenius_plot, the estimated rate coefficients fall almost exactly on the line representing the Arrhenius expression.
 
@@ -943,20 +943,20 @@ This problem could have been solved using a linearized reactor model, but for pu
 
 ### Assessing a Michaelis-Menten Rate Expression {#sec-example_8_4}
 
-{{< include ../RE_Basics_Examples/reb_8_4/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_9_4/problem_statement.qmd >}}
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
 source("~/Libraries/R/fmt_tibble_col.R")
 d <- read.csv("../RE_Basics_Examples/reb_8_4/reb_8_4_data.csv")
  # CS0, t, CP
-```
+``
 
 The first few data points are shown in @tbl-example_8_4_data. The full data set is available in the file [reb_8_4_data.csv](Data/reb_8_4_data.csv).
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_4_data
@@ -964,7 +964,7 @@ The first few data points are shown in @tbl-example_8_4_data. The full data set 
 library(kableExtra)
 library(knitr)
 kbl(d[1:5,], format = "markdown", align = "cc", col.names = c('C~S,0~ (mmol L^-1^)', 't~rxn~ (min)', 'C~P~ (mmol L^-1^)'))
-```
+``
 
 ---
 
@@ -1068,7 +1068,7 @@ The accuracy of the rate expression can then be assessed as described in this ch
 
 **Parameter Estimation and Assessment of Accuracy**
 
-```{r}
+``{r}
 #| echo: false
 #| output: false
 library(tidyverse)
@@ -1081,11 +1081,11 @@ b2 <- paste0(d$value[4],' ',d$units[4],', 95% CI [',d$value[5],', ',d$value[6],'
 b <- c(b1,b2,d$value[7])
  # item, value, units
 d <- data.frame(a,b)
-```
+``
 
 Fitting the reactor model to the experimental data yielded the results shown in @tbl-example_8_4_results. The estimated parameter values were used to create the parity plot shown in @fig-example_8_4_parity and the residuals plots shown in @fig-example_8_4_residuals_t and @fig-example_8_4_residuals_CS.
 
-```{r}
+``{r}
 #| echo: false
 #| warning: false
 #| label: tbl-example_8_4_results
@@ -1093,7 +1093,7 @@ Fitting the reactor model to the experimental data yielded the results shown in 
 library(kableExtra)
 library(knitr)
 kbl(d, format = "markdown", align = "cc", col.names = NULL)
-```
+``
 
 ![Parity plot for the proposed rate expression.](Graphics/reb_8_4_parity.png){#fig-example_8_4_parity width=80%}
 
