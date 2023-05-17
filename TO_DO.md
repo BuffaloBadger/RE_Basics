@@ -6,6 +6,7 @@ General
 * Add link for reporting errors
 * Revise any tables or text where scientific notation uses E to use x 10^x instead.
 * Change code blocks that source fmt_tibble_col.R to use the copy in the Code folder.
+* Double-check cross-references.
 * In each chapter, describe the differences in the analytical procedures for the chapter problems under the examples header. (e.g.
 in example 1 the reactor response is known and the input needed to cause that response is requested while in example 2, the input is 
 known and the response is requested.)
@@ -24,9 +25,7 @@ Part 3 - Reactor Models
 * Add an example of code for solving the reactor design equations to Chapter 6.
 
 Part 4 - Kinetics Data Analysis
-* Revise Chapter 7 to use two-part kinetics data analysis and to describe creation of a response function analogous to that in chapter 11.
-* As examples are added to chapter 8, add references to them in the text of the chapter
-* Add an example of a response function and an example of passing it to parameter estimation software to Chapter 7. Then add a reference to it to all examples in Chapters 8, 9, and 10.
+* Revise all chapters to refer to Chapter 7
 * Create a standard formulation and calculations (see isolated reactor analysis) and re-write all examples using it.
 
 Part 5 - Modeling Isolated Ideal Reactors

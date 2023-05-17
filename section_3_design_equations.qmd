@@ -422,7 +422,7 @@ $$
 \frac{{dP}}{{dz}} =  - \frac{{1 - \varepsilon }}{{{\varepsilon ^3}}}\frac{{{G^2}}}{{\rho {\Phi _s}{D_p}}}\left[ {\frac{{150\left( {1 - \varepsilon } \right)\mu }}{{{\Phi _s}{D_p}G}} + 1.75} \right]
 $$ {#eq-pfr_ergun_eqn}
 
-## Numerical Solution of the Reactor Design Equations
+## Numerical Solution of the Reactor Design Equations{#sec-soln_of_design_equations}
 
 In *Reaction Engineering Basics*, the transient PFR reactor design equations are not used in any analyses. Consequently, in all but two cases, the reactor design equations are a set of coupled, initial-value ordinary differential equations (IVODEs). The numerical solution of sets of IVODEs is discussed in [Appendix -@sec-apndx_solve_ivodes]. For present purposes, the following points are important.
 
@@ -448,7 +448,7 @@ Additional calculations that use the results from solving the design equations a
 
 ## Examples
 
- The examples in this chapter illustrate choosing those design equations that are needed to perform a few specific reactor analyses. After the necessary design equations have been selected, the formulation of their solution leading to values for the reactor outputs is also presented. The examples involve each of the ideal reactor types and both steady-state and transient operation. They illustrate many of the common simplifications, a variety of ancillary equations, and the use of the minimum number of mole balances.
+The examples in this chapter illustrate choosing those design equations that are needed to model the reactors described in the example. In doing so, all summations and continuous products are expanded and any terms that are negligible or equal to zero are eliminated. Solving the design equations presented in these examples would require additional ancillary equations. The solution of the design equations and the ancillary equations needed for doing so will be described and discussed in subsequent chapters.
 
 ### Modeling an Isothermal BSTR using the Minimum Number of Mole Balances {#sec-example_6_1}
 
@@ -459,9 +459,9 @@ Additional calculations that use the results from solving the design equations a
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The problem asks me to write the design equations an ideal BSTR model for an isothermal system involving five reagents and one reaction. It further instructs me to use the minimum number of mole balances. Reagent I does not participate in reaction (1), so a mole balance *will* be needed for it. The minimum number of additional mole balances is equal to the number of independent reactions. Here there is only one reaction, so only one other mole balance is needed. I can write it for any of the reagents that participate in the reaction: A, B, Y, or Z; here I'll write it for A.
+This problem doesn't ask me to calculate anything. It asks me to write the minimum number of design equations for the system. The design equations always include mole balances for each of the inert reagents, so I'll need a mole balance for reagent I. The minimum number of additional mole balances equals the number of mathematically independent reactions that are taking place. In this case only one reaction is occurring, so I will need one additional mole balance on one of the reactants or products. I'll write it for reactant A.
 
-The problem also states that the reactor operates isothermally and the output temperature is known. That means the mole balances can be solved separately from the energy balances. Beyond that, the problem does not ask any questions or provide sufficient information about heating or cooling to allow solution of the energy balances. (That is, the heat transfer coefficient, heat transfer area, exchange fluid temperatures, etc. are not provided.) As such, energy balances on the reaction fluid and exchange fluid are not needed. Neither is a momentum balance needed because they are not used with stirred tank reactors.
+The problem also states that the reactor operates isothermally and the temperature is known. That means the mole balances can be solved separately from the energy balances. Momentum balances are not used with stirred tanks. Solving the mole balances will yield the molar amounts *vs*. time, so the minimum set of design equations consists of a mole balance on I and a mole balance on A (or B, or Y, or Z).
 
 :::
 
@@ -480,7 +480,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See Where That Came From
 
-Start with @eq-bstr_mole_balance and expand the sum.
+Start with @eq-bstr_mole_balance. There is only one reaction, $j$, so the sum becomes a single term.
 
 $$
 \frac{dn_i}{dt} = V \sum_j \nu_{i,j}r_j \quad \Rightarrow \quad \frac{dn_i}{dt} =  \nu_{i,1}r_1V
@@ -492,7 +492,7 @@ $$
 \frac{dn_I}{dt} = 0 \quad \Rightarrow \quad n_I = \text{constant} = n_{I,0}
 $$
 
-In the case of reagent A, its stoichiometric coefficient in reaction (1) is -1.
+In the case of reagent A, its stoichiometric coefficient in reaction (1) is -1, which can be substituted into the general mole balance.
 
 $$
 \frac{dn_A}{dt} = \nu_{A,1}r_1V = -r_1V
@@ -500,87 +500,12 @@ $$
 
 :::
 
-The reactor is isothermal, so the temperature at all times will equal the initial temperature, equation (5).
-
-$$
-T = T_0 \tag{5}
-$$
-
-**Solution of the Reactor Design Equations**
-
-Equation (3) was solved analytically, so it remains to solve equation (4).
-
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The design equation that needs to be solved, equation (4), is an IVODE. That one equation constains one dependent variable, $n_A$, so no additional equations or simplification is needed. I know that IVODEs are *always* solved to find the values of the the independent and dependent variables over some range of the independent variable. I also know that to solve a set of IVODEs I need to provide three things: (1) ancillary equations to calculate every quantity appearing in, or substituted into, the IVODEs from known constants, the independent variable and the dependent variables, (2) initial values, and (3) a stopping criterion.
+The design equation that needs to be solved, equation (4), is an IVODE, and as the problem implies, initial values and a stopping criterion are needed in order to solve it. The instant that the reaction begins can be defined as $t=0$ and used as the initial value of the independent variable. To solve equation (4), the corresponding initial value of the dependent variable $n_A$ must be specified. In this problem the initial molar amount of A, $n_{A,0}$, is known.
 
-To generate the necessary ancillary equations, I'll go through the mole balance one quantity at a time. If the quantity is a known constant, $t$, or $n_A$, I don't need an ancillary equation. If it isn't, I'll write an ancillary equation to calculate its value. If that ancillary equation contains quantities other than known constants, $t$, and $n_A$, I'll write ancillary equations for those quantities, and so on. I will continue this process until I have a set of ancillary equations that allow every quantity in the design equation to be calculated from known constants, $t$, and $n_A$.
-
-It is useful to begin by listing all of the known constant quantities. That list can then be used as I go through the design equations one quantity at a time, allowing me to quickly see if the quantity is a known constant without needing to read through the entire problem statement. Doing this also makes it easier to write the computer code to solve the equations. Normally I would list the quantity *and its value*, but here I'm not told the values.
-
-:::
-
-**Given Constants**: $V$, $n_{A,0}$, $n_{B,0}$, $n_{I,0}$, $n_{Y,0} = 0$, $n_{Z,0} = 0$, $T_0$, $P_0$, $k_{0,1}$, $E_1$, $t_0 = 0$, and $t_f$.
-
-**Calculated Constants**: $n_I$, equation (3), and $T$, equation (5).
-
-**Ancillary Equations**:
-
-The rate, $r_1$, in equation (4) can be calculated using the rate expression, equation (2). The rate coefficient, $k_1$, and concentrations, $C_A$ and $C_B$, that appear in equation (2) can be calculated using equations (6) through (8).
-
-$$
-k_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)} \tag{6}
-$$
-
-$$
-C_A = \frac{n_A}{V} \tag{7}
-$$
-
-$$
-C_B = \frac{n_B}{V} \tag{8}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See Where That Came From
-
-Equation (6) is the Arrhenius expression, @eq-arrhenius. Equations (7) and (8) are the definining equation for concentration in a closed system, @eq-concentration_closed, applied to A and B.
-
-:::
-
-The molar amount of B, $n_B$, that appears in equation (8) can be calculated using equation (9) and the apparent extent of reaction, $\xi_1$, that appears in equation (9) can be calculated using equation (10).
-
-$$
-n_B = n_{B,0} - 2 \xi_1 \tag{9}
-$$
-
-$$
-\xi_1 = n_{A,0} - n_A \tag{10}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See Where That Came From
-
-Start with @eq-moles_apparent_extent and expand the summation.
-
-$$
-n_i = n_{i,0} + \sum_{j^\prime} \nu_{i,j^\prime} \xi_{j^\prime} \quad \Rightarrow \quad n_i = n_{i,0} + \nu_{i,1} \xi_1
-$$
-
-The stoichiometric coefficient of B is -2 leading directly to equation (9). The stoichiometric coefficient of A is -1. Substitution and rearrangement leads to equation (10).
-
-$$
-n_A = n_{A,0} - \xi_1 \quad \Rightarrow \quad \xi_1 = n_{A,0} - n_A
-$$
-
-:::
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The instant that the reaction begins can be defined as $t=0$ and used as the initial value of the independent variable. To solve equation (4), the corresponding initial value of the dependent variable $n_A$ must be specified. In this problem the initial moles of A is given.
-
-A stopping criterion is also needed. Here the problem statement says that the reaction time is $t_f$, another given constant.
+A stopping criterion is also needed. Here the problem statement says that the length of time that the reaction proceeded is known. Having defined $t=0$ as the time when the reaction started, the stopping criterion is that the time equals that known length of time, $t_f$.
 
 :::
 
@@ -592,16 +517,14 @@ A stopping criterion is also needed. Here the problem statement says that the re
 | $t$ | $0$ | $t_f$ |
 | $n_A$ | $n_{A,0}$ | |
 
-: Initial values and stopping criterion for solving the design equations. {#tbl-example_6_1 tbl-colwidths="[20, 40, 40]"}
-
-Using the initial values and the stopping criterion from @tbl-example_6_1, the design equation can be solved numerically to find the value of $n_A$ as a function of time in the range from $t=0$ to $t=t_f$.
+: Initial values and stopping criterion for solving the design equation, equation (4). {#tbl-example_6_1 tbl-colwidths="[20, 40, 40]"}
 
 :::{.callout-note collapse="false"}
 ## Note
 
-Prior to the widespread availability of computers it was quite common to formulate reactor modeling equations using the minimum number of mole balances. In a problem like this one, doing so makes it possible to solve the resulting IVODE analytically. Very often, using a single mole balance requires use of the apparent extent of reaction to calculate molar amounts of reagents other than the one used as the dependent variable. This was seen in this example where it was necessary to calculate $n_B$ for use in the rate expression. As a reminder, this use of the apparent extent of reaction was presented in @sec-1_reaction_progress.
+Prior to the widespread availability of computers it was quite common to formulate reactor modeling equations using the minimum number of mole balances. In a problem like this one where the reactor is isothermal, doing so often makes it possible to solve the IVODE design equation analytically.
 
-*Reaction Engineering Basics* includes only a couple of examples that use the minimum number of mole balances. Very often it is *not* possible to solve the reactor modeling equations analytically, even if the minimum number of mole balances is used. If the reactor modeling equations must be solved numerically, then arguably, it is just as easy to write mole balances for every reagent present in the system instead of using the apparent extent of reaction to calculate some of the molar amounts.
+It should also be noted that energy balances were not needed here because the problem specifically stated that the composition of the reactor over time was to be modeled. For an isothermal system where the temperature is known, the mole balances can be solved independently of the energy balances. An alternative assignment might have provided additional information and asked the coolant flow rate as a function of time that would be necessary to operate the reactor isothermally. For that assignment the energy balances would be needed, even though the mole balances still could be solved independently of them.
 
 :::
 
@@ -614,7 +537,7 @@ Prior to the widespread availability of computers it was quite common to formula
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This problem asks me to formulate an ideal BSTR model for an adiabatic system involving two reagents and one reaction. The two reagents in the system are A and B, so mole balances will be written for each of them. An energy balance on the reacting fluid will also be included in the design equations. Since the reactor is adiabatic, there isn't an exchange fluid, meaning an energy balance on the exchange fluid will not be included among the design equations. Neither will there be a momentum balance since they are not used with stirred tank reactors.
+I'm asked here to write and simplify the design equations, but not to solve them. In most assignments, the design equations will be solved numerically, and when that is true, I prefer to include a mole balance for every reagent present in the system. Here the only reagents are A and B, so mole balances will be written for each of them. An energy balance on the reacting fluid will also be included in the design equations. Since the reactor is adiabatic, there isn't an exchange fluid, meaning an energy balance on the exchange fluid will not be included among the design equations. Momentum balances are not used with stirred tanks, so the complete set of design equations will consist of a mole balance on reagent A, a mole balance on reagent B, and an energy balance on the reacting fluid.
 
 :::
 
@@ -656,7 +579,7 @@ $$
 \left(\sum_i n_i \hat C_{p,i} \right) \frac{dT}{dt} - V\frac{dP}{dt}  - P  \frac{dV}{dt}  = \dot Q - \dot W - V \sum_j \left(r_j \Delta H_j \right)
 $$
 
-There are two reagents in the system, A and B, so the first summation expands to two terms. There is only one reaction occurring, so the last summation reduces to a single term. The reactor volume is constant, so the time derivative of the volume is equal to zero. The reactor is adiabatic, so $\dot Q$ is equal to zero, and the reacting fluid does no work, so $\dot W$ is equal to zero (assuming the power associated with agitation is negligible).
+There are two reagents in the system, A and B, so the first summation expands to two terms. There is only one reaction occurring, so the last summation reduces to a single term. The volume of a BSTR is constant, so the time derivative of the volume is equal to zero. The reactor is adiabatic, so $\dot Q$ is equal to zero, and the reacting fluid does no work, so $\dot W$ is equal to zero (assuming the power associated with agitation is negligible).
 
 $$
 \left( n_A \hat C_{p,A} + n_B \hat C_{p,B} \right) \frac{dT}{dt} - V\frac{dP}{dt}  - P  \cancelto{0}{\frac{dV}{dt}}  = \cancelto{0}{\dot Q} - \cancelto{0}{\dot W} -V r_1 \Delta H_1 
@@ -669,82 +592,15 @@ The pressure in this system is not constant because the temperature will change 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The reactor design equations are IVODEs. There are three design equations at this point, but they contain four dependent variables: $n_A$, $n_B$, $T$, and $P$. That means I either need another design equation or I need to eliminate one dependent variable from the current design equations. A differential form of the ideal gas law will provide the missing IVODE.
+The design equations are IVODEs, so initial values and a stopping criterion must be specified.
+
+The instant that the reaction begins can be defined as $t=0$ and used as the initial value of the independent variable. The problem states that initially the reactor contains only reagent A, and $n_{A,0}$ can be used to represent its molar amount. The initial molar amount of B then is zero. The problem states that the initial temperature is $T_0$.
+
+The problem states that the reaction proceeds until a temperature of $T_f$ is reached, so the stopping criterion for this assignment is that $T=T_f$.
 
 :::
-
-Taking the time derivative of the ideal gas law and noting that $V$ is constant yields equation (6).
-
-$$
--RT \frac{dn_A}{dt} - RT \frac{dn_B}{dt} - \left( n_A + n_B \right)R \frac{dT}{dt} + V \frac{dP}{dt} = 0 \tag{6}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See Where That Came From
-
-For a closed system, the differential form of the ideal gas law is given by @eq-differential_ideal_gas_law.
-
-$$
-P \frac{dV}{dt} + V \frac{dP}{dt} - R \left( T \sum_i \frac{dn_i}{dt} + \left( \sum_i n_i \right) \frac{dT}{dt} \right) = 0
-$$
-
-In this system, the volume is constant, so its time derivative is equal to zero.
-
-$$
-V \frac{dP}{dt} - R \left( T \sum_i \frac{dn_i}{dt} + \left( \sum_i n_i \right) \frac{dT}{dt} \right) = 0
-$$
-
-Expanding the two summations to include both reagents, A and B, and rearranging leads to equation (6).
-
-:::
-
-**Solution of the Reactor Design Equations**
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The design equations form a set of four coupled IVODEs, equations (3) through (6). The independent variable is $t$ and the dependent variables are $n_A$, $n_B$, $T$, and $P$. Solving these equations will yield values of $t$ and corresponding values of $n_A$, $n_B$, $T$, and $P$ over a range of $t$. I know that to solve them I need to provide three things: (1) ancillary equations to calculate every quantity appearing in, or substituted into, the IVODEs from known constants, the independent variable and the dependent variables, (2) initial values, and (3) a stopping criterion.
-
-To generate the necessary ancillary equations, I'll go through the each of the design equations one quantity at a time. If the quantity is a known constant, $t$, $n_A$, $n_B$, $T$, or $P$, I don't need an ancillary equation. If it isn't, I'll write an ancillary equation to calculate its value. If that ancillary equation contains quantities other than known constants, $t$, $n_A$, $n_B$, $T$, and $P$, I'll write ancillary equations for those quantities, and so on. I will continue this process until I have a set of ancillary equations that allow every quantity in the design equation to be calculated from known constants, $t$, $n_A$, $n_B$, $T$, and $P$.
-
-It is useful to begin by listing all of the known constant quantities. Normally I would list the quantity *and its value*, but here I'm not told the values.
-
-:::
-
-**Given Constants**: $k_{0,1}$, $E_1$, $\Delta H^0_1$, $\hat C_{p,A}$, $\hat C_{p,B}$, $V$, $T_0$, $P_0$, and $T_f$.
-
-**Ancillary Equations**:
-
-The rate, $r_1$, appearing in equations (3), (4), and (5) can be calculated using the rate expression, equation (2). The rate coefficient, $k_1$ in equation (2) can be calculated using the Arrhenius expression, equation (7), and the concentration of A, $C_A$, in equation (2) can be calculated using the defining equation for concentration, equation (8).
-
-$$
-k_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)} \tag{7}
-$$
-
-$$
-C_A = \frac{n_A}{V} \tag{8}
-$$
 
 **Initial Values and Stopping Criterion**
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The instant that the reaction begins can be defined as $t=0$ and used as the initial value of the independent variable. To solve equations (3) through (6), the corresponding initial values of the dependent variables, $n_A$, $n_B$, $T$, and $P$, must be specified. 
-
-The reactor contains only reagent A, so the initial molar amount of reagent B is zero. The initial temperature and pressure are also given. The initial molar amount of reagent A can be calculated from the volume and initial temperature and pressure using the ideal gas law and noting that A is the only reagent initially present.
-
-A stopping criterion is also needed. Here the problem statement provides the final temperature.
-
-:::
-
-Because A is the only reagent present initially, $n_{A,0}$ can be found using equation (9).
-
-$$
-n_{A,0} = \frac{P_0V}{RT_0} \tag{9}
-$$
-
-@tbl-example_6_2 provides the initial values needed to solve the design equations. Having defined $t=0$ as the time when the process begins, it will continue until the time when the temperature equals $T_f$, giving the stopping criterion that is also listed in @tbl-example_6_2. 
 
 | Variable | Initial Value | Stopping Criterion |
 |:-------|:-------:|:-------:|
@@ -752,22 +608,15 @@ $$
 | $n_A$ | $n_{A,0}$ | |
 | $n_B$ | $0$ | |
 | $T$ | $T_0$ | $T_f$ |
-| $P$ | $P_0$ |  |
+| $P$ | $P_0$ | |
 
-: Initial values and stopping criterion for solving the design equations. {#tbl-example_6_2 tbl-colwidths="[20, 40, 40]"}
-
-Solving the design equations gives the values of $n_A$, $n_B$, $T$, and $P$ over the range of times from $t=0$ to the time when the temperature reaches $T_f$. 
+: Initial values and stopping criterion for solving the design equations, equations (3), (4) and (5). {#tbl-example_6_2 tbl-colwidths="[20, 40, 40]"}
 
 :::{.callout-note collapse="false"}
-## Note
+## Notes
 
-In this formulation, the differential form of the ideal gas law was added to the design equations. Doing so increased the number of design equations from three to four. An equally valid approach would have been to solve equation (6) for $\displaystyle V\frac{dP}{dt}$ as shown in equation (10).
-
-$$
-V \frac{dP}{dt} = RT \frac{dn_A}{dt} + RT \frac{dn_B}{dt} + \left( n_A + n_B \right)R \frac{dT}{dt} \tag{10}
-$$
-
-Substitution of the right side of equation (10) into equation (5) would then eliminate the derivative of P with respect to time, leaving *three* IVODEs with *three* dependent variables: $n_A$, $n_B$, and $T$.
+1. The volume was assumed to be constant when writing the design equations for this assignment. In chemical processing equipment there are almost never moving reactor walls. As a consequence, when the reacting fluid is an ideal gas or an ideal liquid solution, the reactor volume can always be assumed to be fixed, meaning its time derivative may always be assumed to be zero. In *Reaction Engineering Basics*, the assignment would explicity say so if this was not true.
+2. The three design equations written here **cannot be solved as written**. There are 3 IVODEs, but they contain 4 dependent variables ($n_A$, $n_B$, $T$, and $P$). An additional, ancillary ODE is needed that contains at least one of these dependent variables and that does not introduce additional dependent variables. Typically a differential form of the ideal gas law would be used for this purpose.
 
 :::
 
@@ -780,7 +629,7 @@ Substitution of the right side of equation (10) into equation (5) would then eli
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I am asked to formulate a reactor model for a system with an ideal SBSTR, four reagents and one reaction. Mole balances for each of the four reagents will be included in the design equations. The design equations will also include an energy balance on the reacting fluid and an energy balance on the exchange fluid. Momentum balances are not used with SBSTRs.
+The reactor design equations always include mole balances. As noted after this problem, using the minimum number of mole balances is tricky when the reactor is an SBSTR, so I will write a mole balance one each of the reagents, A, B, S, and W. The reactor is neither isothermal nor adiabatic, so energy balances on the reacting fluid and on the exchange fluid must also be included among the design equations. A momentum balance is not included because momentum balances are not used with stirred tank reactors.
 
 :::
 
@@ -870,82 +719,18 @@ Noting that the heat capacity is constant, it can be taken outside of the integr
 
 :::
 
-Assuming that the reacting fluid is an incompressible ideal mixture, the change of the reacting fluid volume over time is equal to the inlet volumetric flow rate, equation (10).
-
-$$
-\frac{dV}{dt} = \dot V_{in} \tag{10}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See Where That Came From
-
-The mole and energy balances, equations (4) through (9) are six IVODEs, but they contain seven dependent variables: $n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$. In order to solve a coupled set of IVODEs, the number of ODEs must equal the number of dependent variables. As noted in @eq-sbstr_expansion_term, for liquids the instantaneous change in the volume of the reacting fluid is just equal to the inlet volumetric flow rate as expressed in equation (10).
-
-Adding this equation to the design equations results in equal numbers of IVODEs and dependent variables.
-
-:::
-
-**Solution of the Reactor Design Equations**
-
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The design equations form a set of seven coupled IVODEs, equations (4) through (10). The independent variable is $t$ and the dependent variables are $n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$. Solving these equations will yield values of $t$ and corresponding values of $n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$ over a range of $t$. I know that to solve them I need to provide three things: (1) ancillary equations to calculate every quantity appearing in, or substituted into, the IVODEs from known constants, the independent variable and the dependent variables, (2) initial values, and (3) a stopping criterion.
+The design equations are IVODEs, so initial values and a stopping criterion must be specified. The instant that the solution containing reagent A begins to flow into the system can be defined as $t=0$ and used as the initial value of the independent variable, $t$. To solve equations (4) through (10), the corresponding initial values of the dependent variables, $n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$, must be specified. In doing so it is imperative to recognize that these are the molar amounts *within the reactor*, and **not** the amounts flowing into the reactor.
 
-To generate the necessary ancillary equations, I'll go through the each of the design equations one quantity at a time. If the quantity is a known constant, $t$, $n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, or $V$, I don't need an ancillary equation. If it isn't, I'll write an ancillary equation to calculate its value. If that ancillary equation contains quantities other than known constants, $t$, $n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$, I'll write ancillary equations for those quantities, and so on. I will continue this process until I have a set of ancillary equations that allow every quantity in the design equation to be calculated from known constants, $t$, $n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$.
-
-It is useful to begin by listing all of the known constant quantities; if their values were available, they would be included in the listing.
-
-:::
-
-**Given Constants**: $\Delta H_1^0$, $\breve C_p$, $k_{0,1}$, $E_1$, $V_0$, $C_{B0}$, $C_{A,in}$, $T_{in}$, $\alpha$, $P$, $T_{ex,0}$, $T_{ex,in}$, $\dot V_{ex,in}$, $\tilde C_{p,ex}$, $\rho_{ex}$, $V_{ex}$, $A$, $U$, and $t_f$
-
-**Ancillary Equations**:
-
-The inlet molar flow rate of A in equation (4) can be calculated using the defining equation for concentration, equation (11), and the inlet volumetric flow rate in equation (11) can be calculated using equation (3).
-
-$$
-\dot n_{A,in} = \dot V_{in} C_{A,in} \tag{11}
-$$
-
-The rate, $r_1$, in equations (4) through (8) can be calculated using the rate expression, equation (2). The rate coefficient in equation (2) can be calculated using the Arrhenius expression, equation (12), and the concentrations in equation (2) can be calculated using the defining equation for concentration, equations (13) and (14).
-
-$$
-k_1 = k_{0,1} \exp{\left(  \frac{-E_1}{RT} \right)} \tag{12}
-$$
-
-$$
-C_A = \frac{n_A}{V} \tag{13}
-$$
-
-$$
-C_B = \frac{n_B}{V} \tag{14}
-$$
-
-The rate of heat exchange from the chilled water to the reacting fluid can be calculated using @eq-bstr_heat_transfer, reproduced here as equation (15).
-
-$$
-\dot Q = UA\left( T_{ex} - T \right) \tag{15}
-$$
-
-**Initial Values and Stopping Criterion**
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The instant that the solution containing reagent A begins to flow into the system can be defined as $t=0$ and used as the initial value of the independent variable. To solve equations (4) through (10), the corresponding initial values of the dependent variables, $n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$, must be specified. 
-
-Initially the reactor contains only reagent B, so the initial molar amounts of reagents A, S, and W are zero. The initial temperatures of the reacting and exchange fluids and the initial volume of the reacting fluid are given. The initial molar amount of reagent B can be calculated from the initial volume its initial concentration.
+Initially the reactor contains only reagent B, so the initial molar amounts of reagents A, S, and W are zero. The initial temperatures of the reacting and exchange fluids and the initial volume of the reacting fluid are given. The initial molar amount of reagent B can be denoted here as $n_{B,0}$.
 
 A stopping criterion is also needed. Here the problem statement provides the final time.
 
 :::
 
-The initial molar amount of B is calculated using its known initial concentration and the initial reacting fluid volume, equation (16).
-
-$$
-n_{B,0} = C_{B,0}V_0 \tag{16}
-$$
+**Initial Values and Stopping Criterion**
 
 | Variable | Initial Value | Stopping Criterion |
 |:-------|:-------:|:-------:|
@@ -958,9 +743,15 @@ $$
 | $T_{ex}$ | $T_{ex,0}$ | |
 | $V$ | $V_0$ |  |
 
-: Initial values and stopping criterion for solving the design equations. {#tbl-example_6_3 tbl-colwidths="[20, 40, 40]"}
+: Initial values and stopping criterion for solving the design equations, equations (4) through (9). {#tbl-example_6_3 tbl-colwidths="[20, 40, 40]"}
 
-Solving the design equations will yield the values of $n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$ as functions of $t$ in the range from $t=0$ to $t=t_f$.
+:::{.callout-note collapse="false"}
+## Notes
+
+1. This problem indicates that the reactor initially contained a solution containing B and that the feed was a solution containing A. That implies that there is a solvent in the system, but a mole balance for the solvent was not written. This is quite common for liquid phase reacting fluids. It is possible because the amount of solvent does not change and because the heat capacity of the reacting fluid as a whole was used in the energy balance. 
+2. The three design equations written here **cannot be solved as written**. There are 6 IVODEs, but they contain 7 dependent variables ($n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$). An additional, ancillary ODE is needed that contains at least one of these dependent variables and that does not introduce additional dependent variables. Typically for fed SBSTRs the additional ODE sets the time derivative of the fluid volume, $V$, equal to zero (for gas phase reacting fluids which always fill the entire volume) or to the inlet volumetric flow rate (for idela liquid phase reacting fluids).
+
+:::
 
 ### Modeling a Steady-State CSTR where the Exchange Fluid Phase Changes {#sec-example_6_4}
 
@@ -971,7 +762,7 @@ Solving the design equations will yield the values of $n_A$, $n_B$, $n_S$, $n_W$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I'm asked to formulate a reactor model for a system with a steady-state CSTR, three reagents and one reaction. Mole balances for each of the three reagents, A, B, and Z, will be included in the design equations. The reactor is being heated by the condensation of steam, so an energy balance on the reacting fluid is also necessary.
+Mole balances are always included among the design equations, so mole balances for each of the three reagents, A, B, and Z, will be written. The reactor is being heated by the condensation of steam, so an energy balance on the reacting fluid is also necessary.
 
 Because I know the temperature at which the steam condenses, I know the outlet temperature of the exchange fluid. I'm not asked any other questions about the exchange fluid, so I will not need to include an energy balance on the exchange fluid among the design equations. (Knowing the outlet temperature of the exchange fluid, the mole balances and energy balance on the reacting fluid can be solved separately from an energy balance on the exchange fluid.) Neither is a momentum balance needed because this is a CSTR and momentum balances are not used with stirred tank reactors.
 
@@ -1043,66 +834,13 @@ Noting that the heat capacity is constant, it can be taken outside the integral 
 
 :::
 
-**Solution of the Reactor Design Equations**
+:::{.callout-note collapse="false"}
+## Notes
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The design equations for this system form a set of four ATEs, equations (3) through (6). I know that they will be solved within a response function where all of the reactor input variables and reactor operating parameters will be known, and the design equations will be solved to find the values of $\dot n_A$, $\dot n_B$, $\dot n_Z$, and $T$.
-
-Before I can solve the design equations numerically, I need to write ancillary equations for calculating every other quantity that appears in, or is substituted into, the ATEs that isn't a known constant or one of the four variables they will be solved for, $\dot n_A$, $\dot n_B$, $\dot n_Z$, and $T$. To generate the ancillary equations, I'll go through the each of the design equations one quantity at a time. If the quantity is a known constant, $\dot n_A$, $\dot n_B$, $\dot n_Z$, or $T$, I don't need an ancillary equation. If it isn't, I'll write an ancillary equation to calculate its value. If that ancillary equation contains quantities other than known constants, $\dot n_A$, $\dot n_B$, $\dot n_Z$, and $T$, I'll write ancillary equations for those quantities, and so on. I will continue this process until I have a set of ancillary equations that allow every quantity in the design equation to be calculated from known constants, $\dot n_A$, $\dot n_B$, $\dot n_Z$, and $T$.
-
-It is useful to begin by listing all of the known constant quantities.
+1. In @sec-soln_of_design_equations it was mentioned that in *Reaction Engineering Basics* the design equations are sets of IVODEs with two exceptions. This is an example of one of those exceptions. The design equations for a steady-state CSTR are ATEs.
+2. ATEs do not have initial values or a stopping criterion. 
 
 :::
-
-**Given Constants**: $\Delta H_1^0$, $\tilde C_p$, $\rho$, $k_{0,1}$, $E_1$, $K_{0,1}$, $C_{A,in}$, $C_{B,in}$, $\dot V_{in}$, $T_{in}$, $V$, $P$, $T_{ex}$, $V_{ex}$, $A$, and $U$.
-
-**Ancillary Equations**
-
-The inlet molar flow rates of A and B in equations (3) and (4) can be calculated using the defining equation for concentration, equations (7) and (8).
-
-$$
-\dot n_{A,in} = \dot V_{in}C_{A,in} \tag{7}
-$$
-
-$$
-\dot n_{B,in} = \dot V_{in}C_{B,in} \tag{8}
-$$
-
-The rate of reaction (1) can be calculated using the rate expression, equation (2). The rate coefficient in equation (2) can be calculated using the Arrhenius expression, equation (9). The concentrations appearing in equation (2) can be calculated using equations (10) through (12). Assuming the liquid to be an incompressible ideal mixture, the outlet volumetric flow rate in equations (10) through (12) will equal the inlet volumetric flow rate, equation (13). The equilibrium constant in equation (2) can be calculated using @eq-equil_like_arrhenius, reproduced here as equation (14).
-
-$$
-k_1 = k_{0,1} \exp{\left(  \frac{-E_1}{RT} \right)} \tag{9}
-$$
-
-$$
-C_A = \frac{\dot n_A}{\dot V} \tag{10}
-$$
-
-$$
-C_B = \frac{\dot n_B}{\dot V} \tag{11}
-$$
-
-$$
-C_Z = \frac{\dot n_Z}{\dot V} \tag{12}
-$$
-
-$$
-\dot V = \dot V_{in} \tag{13}
-$$
-
-$$
-K_1 = K_{0,1}\exp{\frac{-\Delta H_1^0}{RT}} \tag{14}
-$$
-
-The rate of heat transfer from the exchange fluid to the reacting fluid can be calculated using @eq-bstr_heat_transfer, reproduced here as equation (15).
-
-$$
-\dot Q = UA \left( T_{ex} - T \right) \tag{15}
-$$
-
-At this point the reactor design equations, equations (3) through (6), can be solved numerically to find values for the unknowns, $\dot n_A$, $\dot n_B$, $\dot n_Z$, and $T$
 
 ### Modeling a Steady-State PFR where the Exchange Fluid Temperature Changes {#sec-example_6_5}
 
@@ -1199,62 +937,10 @@ Again, the system operates at steady state, so the time derivative is equal to z
 
 :::
 
-**Solution of the Reactor Design Equations**
-
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The design equations for this system form a coupled set of differential-algebraic equations (DAEs), equations (3) through (7). The IVODEs are equations (3) through (6) wherein $z$ is the independent variable and $\dot n_A$, $\dot n_{A_2}$, $\dot n_I$, and $T$ are the dependent variables. Solving them will yield values of $z$ and corresponding values of $n_A$, $n_B$, $T$, and $P$ over a range of $t$. The ATE, equation (6), can be solved to find the value of one other unknown. Here it will be solved to find $T_{ex}$.
-
-I know that because the design equations are DAEs I need to provide three things to solve them: (1) ancillary equations to calculate every quantity appearing in, or substituted into, the IVODEs from known constants, the unknown being found by solving the ATE, the independent variable and the dependent variables, (2) initial values, and (3) a stopping criterion.
-
-To generate the necessary ancillary equations, I'll go through the each of the design equations one quantity at a time. If the quantity is a known constant, $z$, $T_{ex}$, $\dot n_A$, $\dot n_{A_2}$, $\dot n_I$ or $T$, I don't need an ancillary equation. If it isn't, I'll write an ancillary equation to calculate its value. If that ancillary equation contains quantities other than known constants, $z$, $T_{ex}$, $\dot n_A$, $\dot n_{A_2}$, $\dot n_I$ and $T$, I'll write ancillary equations for those quantities, and so on. I will continue this process until I have a set of ancillary equations that allow every quantity in the design equations to be calculated from known constants, $z$, $T_{ex}$, $\dot n_A$, $\dot n_{A_2}$, $\dot n_I$ and $T$.
-
-It is useful to begin by listing all of the known constant quantities. That list can then be used as I go through the design equations one quantity at a time, allowing me to quickly see if the quantity is a known constant without needing to read through the entire problem statement.
-
-:::
-
-**Given Constants**: $k_{0,1}$, $E_1$, $\Delta H_1^0$, $\hat C_{p,A}$, $\hat C_{p,A_2}$, $\hat C_{p,I}$, $D$, $L$, $y_{A,in}$, $y_{I,in}$, $\dot V_{in}$, $T_{in}$, $P$, $T_{ex,in}$, $\dot m_{ex}$, $\tilde C_{p,ex}$, $V_{ex}$, and $U$.
-
-**Ancillary Equations**
-
-The reaction rate, $r_1$, in equations (3), (4), and (6) can be calculated using the rate expression, equation (2). The rate coefficient, $k_1$, in equation (2) can be calculated using the Arrhenius expression, equation (8). The partial pressure of A in equation (2) can be calculated using equation (9).
-
-$$
-k_1 = k_{0,1} \exp{\left(  \frac{-E_1}{RT} \right)} \tag{8}
-$$
-
-$$
-P_A = y_AP = \frac{\dot n_A}{\dot n_A + \dot n_{A_2} + \dot n_I} P \tag{9}
-$$
-
-The rate of heat transfer from the exchange fluid to the reacting fluid can be calculated using equation (10).
-
-$$
-\dot Q = \pi D L U \left( \frac{\left( T_{ex} - T_{in} \right) + \left( T_{ex} - T \Big\vert_{z=L} \right)}{2} \right) \tag{10}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See Where That Came From
-
-In a PFR, the reacting fluid temperature changes continually along the length of the reactor. Consequently, even though the *exchange fluid* temperature is uniform everywhere in the reactor shell, the rate of heat transfer will vary along the length of the reactor. The heat transfer rate through a segment of the reactor of length $dz$, right where the reacting fluid enters the reactor is given by equation (A). The heat transfer rate through a similar seqment right where the fluid exits the reactor is given by equation (B). Equation (10) simply uses the average of the two temperature differences to calculate the total rate of heat transfer.
-
-$$
-d\dot Q = \pi DUdz \left( T_{ex} - T_{in} \right) \tag{A}
-$$
-
-$$
-d\dot Q = \pi DUdz \left( T_{ex} - T \Big\vert_{z=L} \right) \tag{B}
-$$
-
-:::
-
-**Initial Values and Stopping Criterion**
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The inlet to the reactor, $z=0$, is used as the initial value of the independent variable. To solve equations (3) through (6), the corresponding initial values of the dependent variables, $\dot n_A$, $\dot n_{A_2}$, $\dot n_I$ and $T$, must be specified. 
+All but one of the design equations is an IVODE, so initial values and a stopping criterion must be specified. For steady-state PFRs the independent variable is the axial position, $z$, and not the time Hence, the inlet to the reactor, $z=0$, is used as the initial value of the independent variable. To solve equations (3) through (6), the corresponding initial values of the dependent variables, $\dot n_A$, $\dot n_{A_2}$, $\dot n_I$ and $T$, must be specified. 
 
 There isn't any A~2~ present in the feed, so its inlet molar flow rate is zero, and the inlet temperature is given. The inlet molar flow rates of A and I can be calculated using their inlet mole fractions mole fractions and the ideal gas law.
 
@@ -1262,13 +948,7 @@ A stopping criterion is also needed. When analyzing a PFR, the IVODEs are solved
 
 :::
 
-$$
-\dot n_{A,in} = y_{A,in} \frac{P \dot V_{in}}{RT_{in}} \tag{11}
-$$
-
-$$
-\dot n_{I,in} = y_{I,in} \frac{P \dot V_{in}}{RT_{in}} \tag{12}
-$$
+**Initial Values and Stopping Criterion**
 
 | Variable | Initial Value | Stopping Criterion |
 |:-------|:-------:|:-------:|
@@ -1278,9 +958,14 @@ $$
 | $\dot n_I$ | $\dot n_{I,in}$ | |
 | $T$ | $T_{in}$ | |
 
-: Initial values and stopping criterion for solving the design equations. {#tbl-example_6_5 tbl-colwidths="[20, 40, 40]"}
+: Initial values and stopping criterion for solving design equations (3) through (6). {#tbl-example_6_5 tbl-colwidths="[20, 40, 40]"}
 
-Solving the design equations will yield the values of $\dot n_A$, $\dot n_{A_2}$, $\dot n_I$, and $T$ as functions of $z$ in the range from $z=0$ to $z=L$ along with the value of $T_{ex}$ (which does not vary with $z$).
+:::{.callout-note collapse="false"}
+## Note
+
+In @sec-soln_of_design_equations it was mentioned that in *Reaction Engineering Basics* the design equations are sets of IVODEs with two exceptions. [Example -@sec-example_6_4] was one of those exceptions, namely a steady-state CSTR. This is an example of the other exception. When a steady-state PFR is heated or cooled using sensible heat of the exchange fluid, the energy balance on the exchange fluid will be an ATE while the other design equations are IVODES. Consequently, the full set of design equations are differential-algebraic equations (DAEs).
+
+:::
 
 ## Symbols Used in @sec-3_design_eqns
 
