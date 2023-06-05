@@ -151,26 +151,58 @@ A mole table has three columns, as can be seen in @tbl-mole_table_reb_3_1. The f
 
 ## Examples
 
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+source('~/Libraries/R/fmt_tibble_col.R')
+```
+
 ### Calculation of Final Composition in a Closed System using a Mole Table {#sec-example_3_1}
 
 {{< include ../RE_Basics_Examples/reb_3_1/problem_statement.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+path_to_data <- './Data/'
+path_to_results <- '../RE_Basics_Examples/reb_3_1/Results/'
+path_to_figures <- './Graphics/'
+```
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to see What an Expert Might be Thinking at this Point
 
-The problem tells me to construct a mole table, so I'll do that first. I know that when I construct a mole table, I'll need to use @eq-moles_apparent_extent. I also know that to use @eq-moles_apparent_extent, I need to identify a complete, mathematically independent subset of the reactions that are taking place. Since there are only two reactions, I can do that by inspection. The reactions produce different products, so there is no way that one can be a simple multiple of the other, and therefore reactions (1) and (2) are mathematically independent. Consequently, in @eq-moles_apparent_extent, $j^\prime$ will range from 1 to 2.
+What this problem asks me to do is something that is often done as one step in the completion of a reaction engineering assigment. The completion of reaction engineering assignments often requires the calculation of the composition of a system given information about its initial composition together with some measure of how much reaction has taken place. I often refer to this kind of task as a *reaction progress task*.
 
-With that knowledge, I can construct the mole table. There are six reagents in this system: C~2~H~6~, O~2~, C~2~H~4~, H~2~O, CO~2~, and N~2~. The first column of the mole table lists one of these species in each row. A row is added at the bottom listing "Total." The second column lists variables representing the initial molar amounts of each reagent. In @tbl-mole_table_reb_3_1 I used $n_{\text{total},0}$ to represent $n_{C_2H_6,0}$ + $n_{O_2,0}$ + $n_{C_2H_4,0}$ + $n_{H_2O,0}$ + $n_{CO_2,0}$ + $n_{N_2,0}$.
+Almost inevitably, the completion of a reaction progress task entails first using the given information about the initial composition to calculate the initial molar amounts (for closed systems) or inlet molar flow rates (for open, steady-state systems) of every reagent present in the system. The next step involves using these initial amounts and the given measure of reaction progress to calculate the apparent extent of reaction. The amounts of all of the reagents corresponding to the given measure of reaction progress then can be calculated using the known initial composition and the apparent extent of reaction. Finally the desired quantities, e. g. concentrations, mole fractions, partial pressures, etc., corresponding to the given measure of reaction progress can be calculated using their defining equations.
 
-I used @eq-moles_apparent_extent to construct the entries in each row of the third column of @tbl-mole_table_reb_3_1.
+I like to begin by summarizing the information provided in the problem statement. As I started to do so, I noticed that the system initially contains 10% air. Multiplying that 10% by the fraction of O~2~ found in air (21%), gives the mole fraction of O~2~. The same is true for N~2~, except its fraction in air is 79%.
+
+:::
+
+**Given**: $P = 1 \text{ atm}$, $T = 150 \text{ °C}$, $f_{O_2} = 0.5$, $S_{C_2H_4/CO_2} = 3.0$
+
+**Given Initial Composition**: $y_{C_2H_6,0}$ = 0.9, $y_{O_2,0}$ = 0.21(0.1), $y_{N_2,0}$ = 0.79(0.1)
+
+**Requested**: $y_{CO_2}$
+
+:::{.callout-tip collapse="true"}
+## Click Here to see What an Expert Might be Thinking at this Point
+
+A mole table can be a useful tool when performing reaction progress tasks, particularly when one is just beginning to study reaction engineering. This problem tells me to construct a mole table, so I'll do that first. I know that when I construct a mole table, I'll need to use @eq-moles_apparent_extent. I also know that to use @eq-moles_apparent_extent, I need to identify a complete, mathematically independent subset of the reactions that are taking place. Since there are only two reactions taking place in this problem, I can do that by inspection. The reactions produce different products, so there is no way that one can be a simple multiple of the other, and therefore reactions (1) and (2) are mathematically independent. Consequently, in @eq-moles_apparent_extent, $j^\prime$ will range from 1 to 2.
 
 $$
-n_i = n_{i,0} + \sum_{j^\prime} \nu_{i,j^\prime} \xi_{j^\prime}
+n_i = n_{i,0} + \sum_{j^\prime} \nu_{i,j^\prime} \xi_{j^\prime} \qquad \Rightarrow \qquad n_{i,0} + \nu_{i,1} \xi_1 + \nu_{i,2} \xi_2
 $$
 
-For example, the stoichiometric coefficient of C~2~H~6~ in reaction (1), $\nu_{C_2H_6,1}$, is -2, and its stoichiometric coefficient in reaction (2), $\nu_{C_2H_6,2}$, is also equal to -2. Letting $i$ equal C~2~H~6~, substituting these values, and expanding the summation yields an expression for the moles of C~2~H~6~ at any later time. 
+With that knowledge, I can construct the mole table. There are six reagents in this system: C~2~H~6~, O~2~, C~2~H~4~, H~2~O, CO~2~, and N~2~. The first column of the mole table lists one of these species in each row. A row is added at the bottom listing "Total." The second column lists variables representing the initial molar amounts of each reagent. I can use $n_{\text{total},0}$ to represent $n_{C_2H_6,0}$ + $n_{O_2,0}$ + $n_{C_2H_4,0}$ + $n_{H_2O,0}$ + $n_{CO_2,0}$ + $n_{N_2,0}$.
+
+The equation above can then be used to construct the entries in each row of the third column of the mole table. For example, the stoichiometric coefficient of C~2~H~6~ in reaction (1), $\nu_{C_2H_6,1}$, is -2, and its stoichiometric coefficient in reaction (2), $\nu_{C_2H_6,2}$, is also equal to -2. Letting $i$ equal C~2~H~6~, substituting these values, and expanding the summation yields an expression for the moles of C~2~H~6~ at any later time. 
 
 $$
 \begin{align}
@@ -179,9 +211,11 @@ n_{C_2H_6} &= n_{C_2H_6,0} + \nu_{C_2H_6,1} \xi_1 + \nu_{C_2H_6,2} \xi_2 \\
 \end{align}
 $$
 
-In a similar manner, the rows in the third column corresponding to each of the species are completed. For the last row, the expressions in all the other rows are simply added together to complete @tbl-mole_table_reb_3_1
+In a similar manner, the rows in the third column corresponding to each of the species are completed. For the last row, the expressions in all the other rows are simply added together to complete the mole table.
 
 :::
+
+A mole table for this system is presented in @tbl-mole_table_reb_3_1.
 
 | Species | Initial Amount | Later Amount |
 |:-------:|:------:|:------:|
@@ -193,126 +227,179 @@ In a similar manner, the rows in the third column corresponding to each of the s
 | N~2~ | $n_{N_2,0}$ | $n_{N_2,0}$ |
 | Total | $n_{\text{total},0}$ | $n_{\text{total},0} + \xi_1 + \xi_2$ |
 
-: Mole Table for [Example -@sec-example_3_1] {#tbl-mole_table_reb_3_1 tbl-colwidths="[20,40,40]"}
+: Mole Table for [Example -@sec-example_3_1]. {#tbl-mole_table_reb_3_1 tbl-colwidths="[20,40,40]"}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The problem directs me to use @tbl-mole_table_reb_3_1 to calculate the final mole fraction of CO~2~. Having practiced reacion engineering for some time, now, I know how to proceed when a problem provides the initial composition of a system and some measure of its final composition (in this case the conversion and selectivity) and asks for a different measure of the final composition (in this case, a mole fraction). The first step is to use the known initial and final values to calculate the apparent extents of reaction. The desired measure of final composition can then be calculated using the resulting apparent extents of reaction.
-
-Here, upon reading this problem, I also can see that every quantity that is provided is an intensive quantity. That means that if I need to, I can assume the value of any one extensive quantity and use it as the basis for my calculations. Since the initial mole fractions are given, it makes sense to choose the total moles initially present in the system as a basis.
-
-I think it is good practice to begin by assigning each quantity given in the problem statement to the appropriate variable. As I started to do so, I noticed that the system initially contains 10% air. Multiplying that 10% by the fraction of O~2~ found in air (21%), gives the mole fraction of O~2~. The same is true for N~2~, except its fraction in air is 79%.
+The problem directs me to use @tbl-mole_table_reb_3_1 to calculate the final mole fraction of CO~2~. Looking at the mole table and at the given information, I can see that there is no way to calculate the initial molar amounts that appear in the mole table. However, quantity that is provided in the problem statement is an intensive quantity. When no extensive quantities are provided, I can assume the value of any one extensive quantity and use it as the basis for my calculations. Since the initial mole fractions are given, it makes sense to choose the total moles initially present in the system as a basis.
 
 :::
 
-**Given:** $P$ = 1 atm, $T$ = 150 °C, $y_{C_2H_6,0}$ = 0.9, $y_{O_2,0}$ = 0.21(0.1), $y_{N_2,0}$ = 0.79(0.1), $f_{0_2}$ = 0.5, $S_{C_2H_4/CO_2}$ = 3.0.
+**Basis**: $n_{\text{total},0} = 1 \text{ mol}$.
 
-**Basis:** $n_{\text{total},0}$ = 1 mol.
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+As I noted above, the first step in completing a reacton progress task is to calculate the initial molar amounts. Having chosen a basis, this is straightforward. The initial percentages of ethane (90%) and air (10%) add up to 100%, meaning that there was no C~2~H~4~, H~2~O, or CO~2~ initially present. The total initial moles can then be calculated.
+
+:::
 
 **Necessary Equations**
 
-Using the mole table and Equations [-@eq-conversion_def_closed] and [-@eq-selectivity_def_closed], the conversion and the selectivity can be expressed in terms of the apparent extents of reaction, equations (3) and (4).
-
 $$
-\begin{align}
-f_{O_2} &= \frac{n_{O_2,0} - n_{O_2}}{n_{O_2,0}} = \frac{n_{O_2,0} - \left(n_{O_2,0} - \xi_1 - 7 \xi_2\right)}{n_{O_2,0}} \\ &= \frac{\xi_1 + 7 \xi_2}{n_{O_2,0}}
-\end{align} \tag{3}
+n_{C_2H_6,0} = y_{C_2H_6,0} n_{\text{total},0} \tag{3}
 $$
-
-$$
-S_{C_2H_4/CO_2} = \frac{n_{C_2H_4}}{n_{CO_2}} = \frac{n_{C_2H_4,0} + 2 \xi_1}{n_{CO_2,0} + 4 \xi_2} \tag{4}
-$$
-
-Equations (3) and (4) can be solved to find the values of the apparent extents of reaction, $\xi_1$ and $\xi_2$. In order to do so, the value of every other quantity appearing in equations (3) and (4) must be expressed in terms of known constants, $\xi_1$, and $\xi_2$. The other quantities in equations (3) and (4) are $n_{O_2,0}$, $n_{C_2H_4,0}$, and $n_{CO_2,0}$. These can be found by rearranging the definition of a mole fraction, @eq-mole_frac_closed, as shown in equations (4) through (6).
 
 $$
 n_{O_2,0} = y_{O_2,0} n_{\text{total},0} \tag{4}
 $$
 
 $$
-n_{C_2H_4,0} = y_{C_2H_4,0} n_{\text{total},0} \tag{5}
+n_{N_2,0} = y_{N_2,0} n_{\text{total},0} \tag{5}
 $$
 
 $$
-n_{CO_2,0} = y_{CO_2,0} n_{\text{total},0} \tag{6}
-$$
-
-Equations (4) through (6) introduce four additional quantities: $y_{O_2,0}$, $n_{\text{total},0}$, $y_{C_2H_4,0}$, and $y_{CO_2,0}$. The initial mole fraction of O~2~ was given and $n_{\text{total},0}$ was chosen as a basis for the calculations. The initial mole fractions of C~2~H~4~ and CO~2~ are needed before $n_{O_2,0}$, $n_{C_2H_4,0}$, and $n_{CO_2,0}$ can be calculated using equations (4) through (6). The initial percentages of ethane (90%) and air (10%) add up to 100%, meaning that there was no C~2~H~4~, H~2~O, or CO~2~ initially present, giving equations (7) and (8).
-
-$$
-y_{C_2H_4,0} = 0 \tag{7}
+n_{C_2H_4,0} = n_{H_2O,0} = n_{CO_2,0} = 0 \tag{6}
 $$
 
 $$
-y_{CO_2,0} = 0 \tag{8}
+n_{\text{total},0} = n_{C_2H_6,0} + n_{O_2,0} + n_{C_2H_4,0} + n_{H_2O,0} + n_{CO_2,0} + n_{N_2,0} \tag{7}
 $$
 
-With this information, equations (3) and (4) can be solved to find the values of $\xi_1$ and $\xi_2$. Using the mole table, the mole fraction of CO~2~ can be expressed in terms of the apparent extents of reaction, equation (9). Upon substitution of the values of $\xi_1$ and $\xi_2$, the requested mole fraction of CO~2~ can be calculated.
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The second step in completing a reacton progress task is using these initial amounts and the given measures of reaction progress to calculate the apparent extents of reaction. In this problem there are two apparent extents of reaction, and the problem provides two measures of reaction progress, namely the O~2~ conversion and the selectivity for C~2~H~4~ over CO~2~. Thus, I can write the defining equations for these two measures of reaction progress.
+
+:::
 
 $$
-y_{CO_2} = \frac{n_{CO_2}}{n_{\text{total}}} = \frac{n_{CO_2,0} + 4 \xi_2}{n_{\text{total},0} + \xi_1 + \xi_2} \tag{9}
+f_{O_2} = \frac{n_{O_2,0} - n_{O_2}}{n_{O_2,0}} = \frac{n_{O_2,0} - \left(n_{O_2,0} - \xi_1 - 7 \xi_2\right)}{n_{O_2,0}} = \frac{\xi_1 + 7 \xi_2}{n_{O_2,0}} \tag{8}
 $$
+
+$$
+S_{C_2H_4/CO_2} = \frac{n_{C_2H_4}}{n_{CO_2}}  = \frac{n_{C_2H_4,0} + 2 \xi_1}{n_{CO_2,0} + 4 \xi_2} \tag{9}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I can see that if I substitute the initial molar amount of O~2~ into equations (8) and (9) along with the expressions for the molar amounts of O~2~, C~2~H~4~, and CO~2~ from the mole table, I will have two equations with two unknowns, $\xi_1$ and $\xi_2$. So at this point I can calculate the apparent extents of reactions (1) and (2).
+
+All that remains to complete this reaction progress task is to calculate the requested final mole fraction of CO~2~. To do that I simply need the defining equation for a mole fraction in a closed system, @eq-mole_frac_closed.
+
+:::
+
+$$
+y_{CO_2} = \frac{n_{CO_2}}{n_{\text{total}}} \tag{10}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I can substitute the expressions for the molar amount of CO~2~ and the total molar amount from the mole table into equation (10). Then I can substitute the initial molar amounts and the apparent extents of reactions (1) and (2) and calculate the requested mole fraction of CO~2~.
+
+:::
 
 **Calculations**
 
-1. Substitute given values, basis, $y_{C_2H_4,0}$ (from equation (7)), and $y_{CO_2,0}$ (from equation (8)) into all other equations.
-2. Calculate $n_{O_2,0}$, $n_{C_2H_4,0}$, and $n_{CO_2,0}$ using the versions of equations (4) through (6) resulting from step 1, and substitute the results into all remaining equations.
-3. Solve the versions of equations (3) and (4) resulting from steps 1 and 2 for $\xi_1$ and $\xi_2$.
-4. Calculate the mole fraction of CO~2~ using the version of equation (9) resulting from steps 1 and 2 together with the apparent extents of reaction from step 3.
+1. Substitute the given values and the basis into all other equations.
+2. Calculate  $n_{C_2H_6,0}$, $n_{O_2,0}$, $n_{N_2,0}$, $n_{C_2H_4,0}$, $n_{H_2O,0}$, $n_{CO_2,0}$, and $n_{\text{total},0}$ using equations (3) through (7), and substitute the results into all other equations.
+3. Solve equations (8) and (9) for $\xi_1$ and $\xi_2$.
+4. Calculate the mole fraction of CO~2~ using equation (10).
 
-**Final Answer**
+**Result**
 
 ```{r}
 #| echo: false
-results <- read.csv("../RE_Basics_Examples/reb_3_1/reb_3_1_Python_results.csv")
+results <- read.csv(paste0(path_to_results,"reb_3_1_results.csv"))
 ```
 
-@tbl-mole_table_reb_3_1 is a mole table for the system. At the specified conversion and selectivity, the mole fraction of CO~2~ is `r results$value[1]`.
+Performing the calculations as described above shows that the final mole fraction of CO~2~ is `r results$value[1]`.
+
 
 ### Calculation of Outlet Composition from an Open System using the Conversion and Extent of Reaction {#sec-example_3_2}
 
 {{< include ../RE_Basics_Examples/reb_3_2/problem_statement.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+path_to_data <- './Data/'
+path_to_results <- '../RE_Basics_Examples/reb_3_2/Results/'
+path_to_figures <- './Graphics/'
+```
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to see What an Expert Might be Thinking at this Point
 
-This problem provides the starting composition and asks me to express one final value in terms of another. From past experience, I know that the way to do this is to express each of the final values in terms of the apparent extent of reaction, and then eliminate the apparent extent from the two equations. In this problem that means writing expressions for $C_{NO_2}$ and $\dot n_{N_2O_5}$ in terms of $\dot \xi$ and then eliminating $\dot \xi$ from the equations.
+This is what I call a reaction progress task; it is something that is typically done as one step in the completion of a reaction engineering assighment. As I noted in the preceding example, the completion of reaction engineering assignments often requires the calculation of the composition of a system given information about its initial composition together with some measure of how much reaction has taken place. In this case an expression for the composition is requested instead of a value.
 
-I could write a mole table, but with only one reaction taking place, I think I can get by without one. Expressions for the molar flow rates of N~2~O~5~, NO~2~, and O~2~ are straightforward, @eq-molar_flow_apparent_extent. Looking at the reaction, I can see that each time the reaction occurs as written the total number of moles increases by 3, from 2 to 5, so $\dot n_{\text{total}} = \dot n_{\text{total},in} + 3 \dot \xi$.
+Generally here are the steps for completing a reaction progress task: (1) use the given information about the initial composition to calculate the initial molar amounts (for closed systems) or inlet molar flow rates (for open, steady-state systems) of every reagent present in the system, (2) use the resulting initial amounts and the given measure of reaction progress to calculate the apparent extent of reaction, (3) use the apparent extents of reaction to calculate (or here, write expressions for) the final molar amounts or flow rates, and (4) use those results to calculate the requested quantity (or write an expression for it).
 
-I think it is good practice to begin by assigning each quantity given in the problem statement to the appropriate variable. Doing so creates a concise summary of known constant quantities that can be referred to while formulating the solution.
+I will start by summarizing the information profided in the problem statement. The problem only mentions N~2~O~5~ and N~2~ as flowing into the system, so I'll assume the inlet flows of NO~2~ and O~2~ are zero.
 
 :::
 
-The problem only mentions N~2~O~5~ and N~2~ as flowing into the system, so assume the inlet flows of NO~2~ and O~2~ are zero.
+**Given**: $T = 600 \text{ K}$, $P = 5 \text{ MPa}$, $y_{N_2,out} = 0.3$.
 
-**Given**
+**Given Initial Composition**: $\dot n_{N_2O_5,in} = 0.5 \text{ mol min}^{-1}$, $\dot n_{N_2,in} = 0.5 \text{ mol min}^{-1}$, $\dot n_{NO_2,in} = 0$, $\dot n_{O_2,in} = 0$.
 
-$\dot n_{N_2O_5,in}$ = 0.5 mol min^-1^, $\dot n_{N_2,in}$ = 0.5 mol min^-1^, $\dot n_{NO_2,in}$ = 0, $\dot n_{O_2,in}$ = 0, $T$ = 600 K, $P$ = 5 MPa, $y_{N_2,out}$ = 0.3.
+**Requested**: an expression for $C_{NO_2}$ and its value.
+
+:::{.callout-tip collapse="true"}
+## Click Here to see What an Expert Might be Thinking at this Point
+
+I could write a mole table, but with only one reaction taking place, I think I can get by without one. Expressions for the molar flow rates of N~2~O~5~, NO~2~, and O~2~ are straightforward, @eq-molar_flow_apparent_extent. Looking at the reaction, I can see that each time the reaction occurs as written the total number of moles increases by 3, from 2 to 5, so $\dot n_{\text{total}} = \dot n_{\text{total},in} + 3 \dot \xi$.
+
+:::
 
 **Necessary Equations**
 
-Starting with its definition, the concentration of NO~2~ can be expressed in terms of the apparent extent of reaction using the ideal gas law and equation @eq-molar_flow_apparent_extent as shown in equation (2).
-
 $$
-\begin{align}
-C_{NO_2} &= \frac{\dot n_{NO_2}}{\dot V} \\
-&= \frac{\cancelto{0}{\dot n_{NO_2,in}} + 4 \dot \xi}{\frac{\dot n_{total}RT}{P}} \\
-&= \frac{4P\dot \xi}{RT\left( \dot n_{\text{total},in} + 3 \dot \xi \right)}
-\end{align} \tag{2}
-$$
-
-The molar flow rate of N~2~O~5~ can be expressed in terms of the apparent extent of reaction using @eq-molar_flow_apparent_extent, as shown in equation (3). Equation can be solved for the apparent extent of reaction, equation (4). Substitution of equation (4) into equation (2) and noting that $\dot n_{\text{total},in} = \dot n_{N_2O_5,in} + \dot n_{N_2,in}$ yields the requested expression for the conentration of NO~2~ in terms of the molar flow rate of N~2~O~5~ shown in equation (5).
-
-$$
-\dot n_{N_2O_5} = \dot n_{N_2O_5,in} - 2 \dot \xi \tag{3}
+\dot n_{N_2O_5} = \dot n_{N_2O_5,in} - 2 \dot \xi \tag{2}
 $$
 
 $$
-\dot \xi = \frac{\dot n_{N_2O_5,in} - \dot n_{N_2O_5}}{2} \tag{4}
+\dot n_{NO_2} = \dot n_{NO_2,in} + 4 \dot \xi \tag{3}
+$$
+
+$$
+\dot n_{O_2} = \dot n_{O_2,in} + \dot \xi \tag{4}
+$$
+
+$$
+\dot n_{N_2} = \dot n_{N_2,in} \tag{5}
+$$
+
+$$
+\dot n_{\text{total}} = \dot n_{\text{total},in} + 3 \dot \xi \tag{6}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to see What an Expert Might be Thinking at this Point
+
+In this problem, two measures of the final composition are mentioned. The first is the concentration of NO~2~, and the other is the mole fraction of N~2~. I'll write the defining equations for both, and for the concentration, I'll also express the volumetric flow rate in terms of the molar amounts using the ideal gas equation. Then, I'll substitute equations (2) through (6) for all of the molar flow rates. 
+
+:::
+
+$$
+C_{NO_2} = \frac{\dot n_{NO_2}}{\dot V} = \frac{P\dot n_{NO_2}}{\dot n_{total}RT} = \frac{4P\dot \xi}{RT\left( \dot n_{\text{total},in} + 3 \dot \xi \right)} \tag{7}
+$$
+
+$$
+y_{N_2} = \frac{\dot n_{N_2}}{\dot n_{total}} = \frac{\dot n_{N_2,in}}{\dot n_{total,in} + 3 \dot \xi} \tag{8}
+$$
+
+**Expression for $C_{NO_2}$**
+
+The problem asks for an expression for the concentration of NO~2~ in terms of the molar flow rate of N~2~O. Equation (2) can be solved to obtain an expression for the apparent extent of reaction in terms of the molar flow rate of N~2~O. The result can be substituted into equation (7), yielding the requested expression for the concentration of NO~2~, equation (9).
+
+$$
+\dot \xi = \frac{\dot n_{N_2O_5,in} - \dot n_{N_2O_5}}{2}
 $$
 
 $$
@@ -320,46 +407,32 @@ $$
 C_{NO_2} &= \frac{4P\dot \xi}{RT\left( \dot n_{\text{total},in} + 3 \dot \xi \right)} \\
 &= \frac{4P}{RT} \frac{\frac{\dot n_{N_2O_5,in} - \dot n_{N_2O_5}}{2}}{\dot n_{N_2O_5,in} + \dot n_{N_2,in} + 3\frac{\dot n_{N_2O_5,in} - \dot n_{N_2O_5}}{2}} \\
 &= \frac{4P}{RT} \frac{\left(\dot n_{N_2O_5,in} - \dot n_{N_2O_5}\right)}{\left(5\dot n_{N_2O_5,in} + 2\dot n_{N_2,in} - 3 \dot n_{N_2O_5} \right)}
-\end{align} \tag{5}
+\end{align} \tag{9}
 $$
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
 
-That answers the first part of the question. For the second part, I'm given the final mole fraction of N~2~ and asked for the final concentration of NO~2~. I know that final amounts are related through the apparent extent of reaction. I can use the given value of the final mole fraction of N~2~ to calculate the apparent extent of reaction. I could use that to calculate the concentration of NO~2~, or I could use it to calculate the molar flow rate of N~2~O~5~ and the used equation (6) to calculate the concentration of NO~2~. Here I'm going to use the latter approach.
+:::{.callout-tip collapse="true"}
+## Click Here to see What an Expert Might be Thinking at this Point
+
+To find the value of the apparent extent of reaction, I need to use the given measure of reaction progress, which in this case is the final mole fraction of N~2~.
 
 :::
 
-Starting from its definition, the mole fraction of N~2~ can be expressed in terms of the apparent extent of reaction as shown in equation (6). The only unknown quantity in equation (6) is the apparent extent of reaction, so equation (6) can be solved to find the value of $\dot \xi$. 
-
-$$
-\begin{align}
-y_{N_2} &= \frac{\dot n_{N_2}}{\dot n_{total}} = \frac{\dot n_{N_2,in} + 0 \dot \xi}{\dot n_{total,in} + 3 \dot \xi} \\
-&= \frac{\dot n_{N_2,in}}{n_{N_2O_5,in} + \dot n_{N_2,in} + 3 \dot \xi}
-\end{align} \tag{6}
-$$
-
-The molar flow rate of N~2~O~5~ can then be calculated using equation (7). That result can be substituted into equation (5) to find the final concentration of NO~2~.
-
-$$
-\dot n_{N_2O_5} = \dot n_{N_2O_5,in} - 2 \dot \xi \tag{7}
-$$
-
-**Calculations**
+**Calculation of $C_{NO_2}$**
 
 1. Subtitute the given and known quantities into all equations.
-2. Solve the version of equation (6) resulting from step 1 to find the value of $\dot \xi$
-3. Calculate $\dot n_{N_2O_5}$ by substituting the result from step 2 into the version of equation (7) resulting from step 1.
-4. Calculate $C_{NO_2}$ using the version of equation (5) resulting from step 1.
+2. Solve equation (8) to find the value of $\dot \xi$.
+3. Use the resulting apparent extent of reaction to calculate $C_{NO_2}$ using equation (7).
 
-**Final Answer**
+**Results**
 
 ```{r}
 #| echo: false
-results <- read.csv("../RE_Basics_Examples/reb_3_2/reb_3_2_Python_results.csv")
+df <- read.csv(paste0(path_to_results,"reb_3_2_results.csv"))
 ```
 
-Equation (5) expresses the concentration of NO~2~ in terms of the molar flow rate of N~2~O~5~, the inlet molar flows, the temperature, and the pressure. For the conditions described in the problem, the outlet concentration of NO~2~ is `r results$value[1]` mol L^-1^.
+The requested expression for the concentration of NO~2~ is given in equation (9). Performing the calculations as described above yields a value of `r df$value[1]` `r df$units[1]` for the concentration of NO~2~ at the time when the outlet contains 30% N~2~.
+
 
 ### Identification of a Complete, Mathematically Independent Subset of a Group of Reactions {#sec-example_3_3}
 
@@ -370,11 +443,13 @@ Equation (5) expresses the concentration of NO~2~ in terms of the molar flow rat
 :::{.callout-tip collapse="true"}
 ## Click Here to see What an Expert Might be Thinking at this Point
 
-This problem pretty much tells me what to do. It asks me to identify a complete, mathematically independent subset of the six reactions that are taking place. I know from math courses I've taken that identifying mathematically independent equations involves constructing a matrix, and the same is true for identifying independent chemical reactions. Each column in the matrix corresponds to one of the reagants and each row corresponds to one of the reactions. The matrix element at any one row and column is the stoichiometric coefficent of the reagent corresponding to that column in the reaction corresponding to that row.
+What this problem asks me to do is something that is sometimes done as one step in the completion of a reaction engineering assigment. I often refer to this kind of task as an *independent reactions task*, since completing it involves identifying a complete, mathematically independent subset of the reactions that are taking place.
+
+I know from math courses I've taken that identifying mathematically independent equations involves constructing a matrix, and the same is true for identifying independent chemical reactions. Each column in the matrix corresponds to one of the reagants and each row corresponds to one of the reactions. The matrix element at any one row and column is the stoichiometric coefficent of the reagent corresponding to that column in the reaction corresponding to that row.
 
 Here the reaction matrix will have six rows, one for each reaction, and six columns, one for each reagent. I'll let the first column corresponds to CO, the second to H~2~, the third to CH~3~OH, the fourth to CH~4~, the fifth to H~2~O, and the last to CO~2~. Letting the first row correspond to reaction (1), I see that the stoichiometric coefficient of CO in that reaction is -1, and so there is a -1 in the first column of row 1 (see equation (7) below). The stoichiometric coefficeint of H~2~ in the first reaction is -2, so there is a -2 in the second column of row 1. The stoichiometric coefficient of CH~3~OH in reaction (1) is +1, so there is a 1 in the third column of row 1. CH~4~, H~2~O, and CO~2~ do not appear in reaction (1), so there are zeros in the fourth, fifth and sixth columns of row 1. The remaining rows are filled in analogously.
 
-The rank of this matrix will then equal the number of mathematically independent reactions. I'll use computer software to find the rank. Once I know the number of independent reactions, I can build a matrix that only contains independent reactions. To do so, I start with a matrix that only contains the first reaction. This has to be independent and will have a rank of 1. Then I add reactions one at a time. If adding the next reaction increases the rank, I retain the added reaction, otherwise I discard it. I keep doing this until the number of retained reactions equals the number of mathematically independent reactions that I determined previously.
+The rank of this matrix will then equal the number of mathematically independent reactions. I'll use computer software to find the rank. 
 
 :::
 
@@ -462,31 +537,52 @@ While there are six reactions taking place in this system, only three reactions 
 ### Calculation of the Final Composition of a Closed System using the Conversion, Yield, Selectivity and Apparent Extents of Reaction {#sec-example_3_4}
 
 {{< include ../RE_Basics_Examples/reb_3_4/problem_statement.qmd >}}
+  
+```{r}
+#| echo: false
+#| output: false
+path_to_data <- './Data/'
+path_to_results <- '../RE_Basics_Examples/reb_3_4/Results/'
+path_to_figures <- './Graphics/'
+```
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to see What an Expert Might be Thinking at this Point
 
-The system described here is the same as in [Example -@sec-example_3_3] with the addition of information about the initial composition and the final composition. As such, I can use the mole table from that example, @tbl-mole_table_reb_3_3. As with the other examples in this chapter, this problem provides the initial composition and three measures of the final composition (conversion, yield and selectivity). It then asks for a different measure of the final composition (molar amounts of the reagents).
+This is a reaction progress task. Generally here are the steps for completing a reaction progress task: (1) use the given information about the initial composition to calculate the initial molar amounts of every reagent present in the system, (2) use the resulting initial amounts and the given measures of reaction progress to calculate the apparent extents of reaction, (3) use the apparent extents of reaction to calculate the final molar amounts, and (4) use those results to calculate the requested quantities.
 
-The process is the same as in the other examples:
-
-1. Express the given composition measures in terms of the apparent extents of reaction.
-2. Solve the resulting equations for the values of the apparent extents of reaction.
-3. Use the resulting values of the apparent extents of reactionto calculate the disired composition measures.
-
-As always, I will begin by assigning each quantity given in the problem statement to the appropriate variable.
+I'll begin by summarizing the information provided in the problem statement. The system described here is the same as in [Example -@sec-example_3_3], so I can use the mole table from that example, @tbl-mole_table_reb_3_3.
 
 :::
 
-**Given**
+**Given**: $f_{CO} = 0.4$, $Y_{CH_3OH} = 0.107$, and $S_{CH_3OH/CH_4} = 0.38$.
 
-$n_{CO,0}$ = 34 mol, $n_{H_2,0}$ = 66 mol, $n_{CH_3OH,0}$ = 0 mol, $n_{CH_4,0}$ = 0 mol, $n_{H_2O,0}$ = 0 mol, $n_{CO_2,0}$ = 0 mol, $f_{CO}$ = 0.4, $Y_{CH_3OH}$ = 0.107, and $S_{CH_3OH/CH_4}$ = 0.38.
+**Given Initial Composition**: $n_{CO,0} = 34 \text{ mol}$, $n_{H_2,0} = 66 \text{ mol}$, $n_{CH_3OH,0} =  n_{CH_4,0} = n_{H_2O,0} = n_{CO_2,0} = 0 \text{ mol}$.
+
+**Requested**: $n_{CO}$, $n_{H_2}$, $n_{CH_3OH}$, $n_{CH_4}$, $n_{H_2O}$, and $n_{CO_2}$.
+
+| Species | Initial Amount | Later Amount |
+|:-------:|:------:|:------:|
+| CO | $n_{CO,0}$ | $n_{CO,0} - \xi_1 - \xi_2 - \xi_4$ |
+| H~2~ | $n_{H_2,0}$ | $n_{H_2,0} - 2 \xi_1 - 3 \xi_2 + \xi_4$ |
+| CH~3~OH | $n_{CH_3OH,0}$ | $n_{CH_3OH,0} + \xi_1$ |
+| CH~4~ | $n_{CH_4,0}$ | $n_{CH_4,0} + \xi_2$ |
+| H~2~O | $n_{H_2O,0}$ | $n_{H_2O,0} + \xi_2 - \xi_4$ |
+| CO~2~ | $n_{CO_2,0}$ | $n_{CO_2,0} + \xi_4$ |
+| Total | $n_{\text{total},0}$ | $n_{\text{total},0} - 2 \xi_1 - 2 \xi_2$ |
+
+: Mole table (from @sec-example_3_3) {tbl-colwidths="[20,40,40]"}
+
+:::{.callout-tip collapse="true"}
+## Click Here to see What an Expert Might be Thinking at this Point
+
+Knowing the initial molar amounts, I can proceed to calculate the extents of reaction using the given measures of reaction progress. Here I'm given the conversion, yield and selectivity. Starting from their definitions (Equations [-@eq-conversion_def_closed], [-@eq-yield_def_closed], and [-@eq-selectivity_def_closed]) the given values can be related to the apparent extents of reaction using the mole table, @tbl-mole_table_reb_3_3.
+
+:::
 
 **Necessary Equations**
-
-Values are given for the conversion, yield and selectivity. Starting from their definitions (Equations [-@eq-conversion_def_closed], [-@eq-yield_def_closed], and [-@eq-selectivity_def_closed]) the given values can be related to the apparent extents of reaction using the mole table, @tbl-mole_table_reb_3_3, as shown in equations (7) through (9).
 
 $$
 \begin{align}
@@ -504,60 +600,40 @@ $$
 S_{CH_3OH/CH_4} = \frac{n_{CH_3OH}}{n_{CH_4}} = \frac{n_{CH_3OH,0} + \xi_1}{n_{CH_4,0} + \xi_2} \tag{9}
 $$
 
-There are three unknown quantities in these three equations, namely $\xi_1$, $\xi_2$, and $\xi_4$, so equations (7), (8), and (9) can be solved to find the values of $\xi_1$, $\xi_2$, and $\xi_4$. The resulting apparent extents of reaction can then be substituted in the expressions in the third column of @tbl-mole_table_reb_3_3 to compute the molar amounts of each of the species as shown in equations (10) through (15).
+:::{.callout-tip collapse="true"}
+## Click Here to see What an Expert Might be Thinking at this Point
 
-$$
-n_{CO} = n_{CO,0} - \xi_1 - \xi_2 - \xi_4 \tag{10}
-$$
+There are three unknown quantities in equations (7) through (9), so they can be solved to find the values of $\xi_1$, $\xi_2$, and $\xi_4$. The resulting apparent extents of reaction can then be substituted in the expressions in the third column of @tbl-mole_table_reb_3_3 to compute the molar amounts of each of the reagents.
 
-$$
-n_{H_2} = n_{H_2,0} - 2 \xi_1 - 3 \xi_2 + \xi_4 \tag{11}
-$$
-
-$$
-n_{CH_3OH} = n_{CH_3OH,0} + \xi_1 \tag{12}
-$$
-
-$$
-n_{CH_4} = n_{CH_4,0} + \xi_2 \tag{13}
-$$
-
-$$
-n_{H_2O} = n_{H_2O,0} + \xi_2 - \xi_4 \tag{14}
-$$
-
-$$
-n_{CO_2} = n_{CO_2,0} + \xi_4 \tag{15}
-$$
+:::
 
 **Calculations**
 
 1. Subtitute the given and known quantities into all equations.
-2. Solve the versions of equations (7) through (9) resulting from step 1 for $\xi_1$, $\xi_2$, and $\xi_4$, and substitute the results into all remaining equations.
-3. Calculate $n_{CO}$, $n_{H_2}$, $n_{CH_3OH}$, $n_{CH_4}$, $n_{H_2O}$, and $n_{CO_2}$ using the versions of equations (10) through (15) resulting from step 2.
+2. Solve the equations (7) through (9) for $\xi_1$, $\xi_2$, and $\xi_4$.
+3. Use the resulting apparent extents of reaction to alculate $n_{CO}$, $n_{H_2}$, $n_{CH_3OH}$, $n_{CH_4}$, $n_{H_2O}$, and $n_{CO_2}$ using the expressions in the third column of the mole table.
 
-**Final Answer**
+**Results**
+
+Performing the calculations as described yields the final molar amounts shown in @tbl-results_reb_3_4.
 
 ```{r}
 #| echo: false
 #| output: false
-library(tidyverse)
-results <- read.csv("../RE_Basics_Examples/reb_3_4/reb_3_4_Python_results.csv") %>%
+df <- read.csv(paste0(path_to_results,"reb_3_4_results.csv")) %>%
     select(-item, - units)
-results$species = c("CO", "H~2~", "CH~3~OH", "CH~4~", "H~2~O", "CO~2~")
-results <- results %>% select(species, everything())
+df$species = c("CO", "H~2~", "CH~3~OH", "CH~4~", "H~2~O", "CO~2~")
+df <- df %>% select(species, everything())
 ```
  
-@tbl-results_reb_3_4 lists the final moles of each species.
+
 
 ```{r}
 #| echo: false
 #| warning: false
 #| label: tbl-results_reb_3_4
 #| tbl-cap: Final Molar Amount of Each Reagent
-library(kableExtra)
-library(knitr)
-kbl(results, format = "markdown", align = "cc", col.names = c("Reagent",
+kbl(df, format = "markdown", align = "cc", col.names = c("Reagent",
     "Final Moles"))
 ```
 
