@@ -8,9 +8,9 @@ fmt_tibble_col <- function(df, col, sigfig, maxdigits, maxzeros) {
       curVal <- as.numeric(df[iRow,iCol])
       if (is.na(curVal)) {
         newRowVal <- ""
-      } else if (curVal < 10^-maxzeros) {
+      } else if (abs(curVal) < 10^-maxzeros) {
         newRowVal <- format(curVal, scientific = TRUE)
-      } else if (curVal < 10^maxdigits) {
+      } else if (abs(curVal) < 10^maxdigits) {
         newRowVal <- format(curVal, scientific = FALSE, big.mark = ",")
       } else {
         newRowVal <- format(curVal, scientific = TRUE)
