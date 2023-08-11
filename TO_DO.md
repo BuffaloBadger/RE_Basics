@@ -42,3 +42,11 @@ Appendices
 * Add linear least squares to prerequisite knowledge appendix.
 * Add a section to Appendix G discussing packed beds and the psuedo-homogeneous assumption
 * Change references to "problems" to references to "reaction engineering (or kinetics) assignments." 
+
+Text cut from bottom of _quarto.yml
+
+  pdf:
+    documentclass: scrreprt
+    include-in-header: 
+      text: |
+        \usepackage{cancel}
