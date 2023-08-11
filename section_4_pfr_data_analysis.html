@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Reaction Engineering Basics - 10&nbsp; Analysis of Kinetics Data from a PFR</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./section_4_cstr_data_analysis.html" rel="next">
+<link href="./section_4_bstr_data_analysis.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
+    <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/total_ps.html" rel="" target="">
+ <span class="menu-text">ToTaL PS</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Reaction Engineering Basics</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./section_4_intro.html">Kinetics Data Analysis</a></li><li class="breadcrumb-item"><a href="./section_4_pfr_data_analysis.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_1_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Basic Information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_intro_and_defs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Reactions, Reactors, and Reaction Engineering</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_safety_and_ethics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Reaction Engineering Ethics and Safety</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_reaction_progress.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Measures of Reaction Progress</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_2_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rate Expressions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_2_rates_and_expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Reaction Rates and Rate Expressions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_2_mechanisms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reaction Mechanisms and Mechanistic Rate Expressions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reactor Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_3_design_equations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reactor Design Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_3_response_function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Response Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kinetics Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_data_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_data_analysis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Design of Non-continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Thermally Back-mixed PFRs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_7_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Non-Ideal Reactors</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_axial_dispersion_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Axial Dispersion Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_segregated_flow_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Segregated Flow Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_zoned_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Zoned Reactor Models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Notation and Sign Conventions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#laboratory-pfrs" id="toc-laboratory-pfrs" class="nav-link active" data-scroll-target="#laboratory-pfrs"><span class="header-section-number">10.1</span> Laboratory PFRs</a>
+  <ul class="collapse">
+  <li><a href="#testing-the-ideality-of-a-pfr" id="toc-testing-the-ideality-of-a-pfr" class="nav-link" data-scroll-target="#testing-the-ideality-of-a-pfr"><span class="header-section-number">10.1.1</span> Testing the Ideality of a PFR</a></li>
+  </ul></li>
+  <li><a href="#pfr-kinetics-experiments-and-data" id="toc-pfr-kinetics-experiments-and-data" class="nav-link" data-scroll-target="#pfr-kinetics-experiments-and-data"><span class="header-section-number">10.2</span> PFR Kinetics Experiments and Data</a>
+  <ul class="collapse">
+  <li><a href="#differential-operation" id="toc-differential-operation" class="nav-link" data-scroll-target="#differential-operation"><span class="header-section-number">10.2.1</span> Differential Operation</a></li>
+  </ul></li>
+  <li><a href="#design-of-pfr-experiments" id="toc-design-of-pfr-experiments" class="nav-link" data-scroll-target="#design-of-pfr-experiments"><span class="header-section-number">10.3</span> Design of PFR Experiments</a></li>
+  <li><a href="#pfr-data-analysis" id="toc-pfr-data-analysis" class="nav-link" data-scroll-target="#pfr-data-analysis"><span class="header-section-number">10.4</span> PFR Data Analysis</a>
+  <ul class="collapse">
+  <li><a href="#analysis-using-a-response-function" id="toc-analysis-using-a-response-function" class="nav-link" data-scroll-target="#analysis-using-a-response-function"><span class="header-section-number">10.4.1</span> Analysis Using a Response Function</a></li>
+  <li><a href="#analysis-using-a-linearized-model" id="toc-analysis-using-a-linearized-model" class="nav-link" data-scroll-target="#analysis-using-a-linearized-model"><span class="header-section-number">10.4.2</span> Analysis Using a Linearized Model</a></li>
+  <li><a href="#analysis-using-an-approximate-reactor-model" id="toc-analysis-using-an-approximate-reactor-model" class="nav-link" data-scroll-target="#analysis-using-an-approximate-reactor-model"><span class="header-section-number">10.4.3</span> Analysis Using an Approximate Reactor Model</a></li>
+  </ul></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples"><span class="header-section-number">10.5</span> Examples</a>
+  <ul class="collapse">
+  <li><a href="#sec-example_10_1" id="toc-sec-example_10_1" class="nav-link" data-scroll-target="#sec-example_10_1"><span class="header-section-number">10.5.1</span> Kinetics of Gas-Phase Decomposition</a></li>
+  <li><a href="#sec-example_10_2" id="toc-sec-example_10_2" class="nav-link" data-scroll-target="#sec-example_10_2"><span class="header-section-number">10.5.2</span> Power-Law Kinetics of a Heterogeneous Catalytic Reaction</a></li>
+  <li><a href="#sec-example_10_3" id="toc-sec-example_10_3" class="nav-link" data-scroll-target="#sec-example_10_3"><span class="header-section-number">10.5.3</span> Mechanistic Kinetics of a Heterogeneous Catalytic Reaction</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-sec-4_pfr_data_analysis" id="toc-symbols-used-in-sec-4_pfr_data_analysis" class="nav-link" data-scroll-target="#symbols-used-in-sec-4_pfr_data_analysis"><span class="header-section-number">10.6</span> Symbols Used in <span>Chapter&nbsp;10</span></a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-4_pfr_data_analysis" class="quarto-section-identifier"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>This chapter completes the Kinetics Data Analysis section of <em>Reaction Engineering Basics</em>. It focuses on the generation and analysis of kinetics data from a PFR. <a href="section_4_data_generation.html"><span>Chapter&nbsp;8</span></a> presented an overview of kinetics data generation and analysis, and Chapters <a href="section_4_bstr_data_analysis.html"><span>9</span></a> and <a href="section_4_cstr_data_analysis.html"><span>11</span></a> examined analysis of data from BSTRs and CSTRs, respectively. Much of the information presented in those chapters also applies to PFRs and won’t be duplicated here.</p>
+<section id="laboratory-pfrs" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="laboratory-pfrs"><span class="header-section-number">10.1</span> Laboratory PFRs</h2>
+<p>In its most basic form, a PFR is simply a length of rigid tubing or pipe. Reagents flow in at one end and out at the other. The key assumption of the PFR model is that of plug flow. As explained in <a href="section_3_design_equations.html"><span>Chapter&nbsp;6</span></a> and <a href="apndx_ideal_reactor_models.html">Appendix&nbsp;<span>G</span></a>, the fluid flow velocity is constant across the tube diameter in plug flow. There is no mixing in the axial direction, and perfect mixing in the radial direction. Thus, in contrast to stirred tank reactors, <strong>the composition varies spatially in a PFR</strong>. That is, as one moves from the reactor inlet to the reactor outlet, the concentrations of reactants decrease and those of products increase. (The temperature and pressure can also vary along the length of a PFR, but when generating kinetics data the reactor usually operated isothermally and with negligible pressure drop).</p>
+<p>A second difference between PFRs and stirred tank reactors is that <strong>there is no agitation in PFRs</strong>. For this reason, PFRs are very often used to generate kinetics data for heterogeneous catalytic reactions. Recall, a heterogeneous catalyst is a material that exists as a separate phase from the reacting fluid and that causes the rate of one or more reactions to increase. Most commonly heterogeneous catalysts are porous solids that are immersed in the reacting fluid. It is difficult to agitate the solid particles if a stirred tank reactor is used, though this has been done. When a heterogeneous catalytic reaction is studied in a PFR, the catalyst is typically contained within the reactor tube as a stationary packed bed through which the reacting fluid flows. A section of pipe filled with small pellets or beads that are held in place by screens or other means offers a good mental picture of a packed bed.</p>
+<p><strong>The ideal PFR mole, energy and momentum balances can be used to model a packed bed reactor</strong>. To do so, the combined packed bed and reaction fluid are treated as if they are a single, homogeneous fluid. The most important assumption that this introduces to the analysis is that there are no concentration or temperature gradients at the interface between the solid and fluid phases or within the pores of the solid. In reality, there will be concentration and temperature gradients between the bulk of the fluid and the surface of the heterogeneous catalyst particles, and there will be gradients within the pores of the catalyst particles. This topic is considered in more detail in <a href="section_5_pfr_analysis.html"><span>Chapter&nbsp;17</span></a>. For present purposes, the important point is that these gradients must be negligibly small if the PFR mole, energy and momentum balances from <a href="section_3_design_equations.html"><span>Chapter&nbsp;6</span></a> are used to model the reactor.</p>
+<section id="testing-the-ideality-of-a-pfr" class="level3" data-number="10.1.1">
+<h3 data-number="10.1.1" class="anchored" data-anchor-id="testing-the-ideality-of-a-pfr"><span class="header-section-number">10.1.1</span> Testing the Ideality of a PFR</h3>
+<p>Before a PFR is used to generate kinetics data, it should be tested to ensure it conforms to the asumptions of an ideal PFR. Importantly, it should be tested for plug flow, and if it is a packed bed, it should be tested for negligible concentration and temperature gradients.</p>
+<p><strong>Testing for plug flow</strong> is not easy. As noted in <a href="apndx_prereq_knowledge.html">Appendix&nbsp;<span>A</span></a>, in laminar flow the radial velocity profile is parabolic, and it flattens as the flow becomes turbulent. The Reynolds number, <span class="math inline">\(N_{Re}\)</span>, offers a measure of how turbulent the flow is. It can be computed using <a href="#eq-Reynolds_number">Equation&nbsp;<span>10.1</span></a>. In cylindrical pipes, a Reynolds number greater than ca. 3500 indicates turbulent flow; a much greater Reynolds number is needed in order to approach plug flow.</p>
+<p><span id="eq-Reynolds_number"><span class="math display">\[
+N_{Re} = \frac{\rho vD}{\mu}
+\tag{10.1}\]</span></span></p>
+<p>Smoke- or dye-based flow visualizations are useful for gauging the mixing in an agitated vessel, but they are difficult to apply for gauging plug flow. A related approach involves measuring the residence time distribution or age function for the reactor. Doing so is described in <a href="section_7_segregated_flow_model.html"><span>Chapter&nbsp;23</span></a>. The measured age distribution function can then be compared to that expected for plug flow to determine whether plug flow prevails in the reactor.</p>
+<p>As noted above, when a tubular reactor contains a packed bed of solid particles, gradients in concentration and temperature can exist within the fluid that is close to the surface of the solid particles. When present, these are referred to as external gradients because they are external to the solid material. A common <strong>experimental test for external mass transfer limitations</strong> (i. e. for non-negligible external concentration gradients) in a packed bed reactor relies on the fact that for an ideal PFR, the conversion depends only upon the residence time within the reactor and not the linear velocity of the flowing fluid. The external mass transfer coefficient, in contrast, <em>does</em> depend upon the linear velocity of the flowing fluid. Thus, if the conversion changes when the linear velocity is changed while holding the residence time constant, this indicates that the apparent rate is being affected by the rate of external mass transfer.</p>
+<p>One approach to this test is to measure the conversion at varying fluid velocities with a fixed amount of catalyst and plot the conversion versus the residence time. The experiment is then repeated using a different amount of catalyst. In the absence of mass transfer limitations, the plots should superimpose. An alternative approach is to measure the conversion with a given amount of catalyst and at a given fluid flow rate. The conversion is then measured again using a different amount of catalyst, but with a flow rate that gives the same residence time as in the first experiment. In the absence of external mass transfer limitations, the conversions should be equal. Care should be taken in applying this test, however, because at the very low Reynolds numbers that are often used in laboratory reactors, the mass transfer coefficient depends very weakly upon the fluid velocity <span class="citation" data-cites="chambers_lack_1966">(<a href="references.html#ref-chambers_lack_1966" role="doc-biblioref">Chambers and Boudart 1966</a>)</span>.</p>
+<p><strong>When external mass transfer limitations are very severe</strong>, a first-order rate expression, <a href="#eq-apparent_first_order">Equation&nbsp;<span>10.2</span></a>, will be found to fit the experimental data very well. In this case it is more appropriate to refer to <a href="#eq-apparent_first_order">Equation&nbsp;<span>10.2</span></a> as the <em>apparent</em> rate expression because the rate it refers to is the rate of external mass transfer and not the rate of reaction. The true rate expression can be first-order, but when external mass transfer limitations are severe, the apparent activation energy, <span class="math inline">\(E\)</span>, will be very low (≲ 10 to 15 kJ mol<sup>-1</sup>). True reaction rates typically have activation energies that are greater than this. This can serve as a warning indicator when kinetics data are being analyzed. If the reaction kinetics are observed to change to first order and the activation energy is simultaneously observed to become small, the kinetics data may contain experiments where external transport limitations existed. There are also <strong>computational tests for external transport limitations</strong> that can be applied <span class="citation" data-cites="mears_tests_1971 satterfield_heterogeneous_1980 wheeler_reaction_1951">(<a href="references.html#ref-mears_tests_1971" role="doc-biblioref">Mears 1971</a>; <a href="references.html#ref-satterfield_heterogeneous_1980" role="doc-biblioref">Satterfield 1980</a>; <a href="references.html#ref-wheeler_reaction_1951" role="doc-biblioref">Wheeler 1951</a>)</span>.</p>
+<p><span id="eq-apparent_first_order"><span class="math display">\[
+r=k_0\exp{\left( \frac{-E}{RT} \right)}C_i
+\tag{10.2}\]</span></span></p>
+<p>Most heterogeneous catalysts are porous solids with very high specific surface areas. Most of this surface area is internal and corresponds to the walls of pores (picture the catalyst interior as looking like a microscopic sponge). The only way for reactants to reach the majority of the catalytic sites is to diffuse into the pore structure. If the rate of the reaction at the active sites is large, this can lead to the formation of significant <strong>internal concentration gradients</strong> within the pores. For present purposes, the goal is to be able to identify experimental conditions where these gradients are insignificantly small. As a general rule of thumb, internal concentration gradients are more likely than external concentration gradients.</p>
+<p>One <strong>experimental test for the presence of internal heat or mass transfer limitations</strong> is to repeatedly measure the conversion using finer and finer catalyst particle sizes. In the absence of internal gradients, the conversion should not depend upon the particle size, but if gradients are present, their effects should diminish as the particle size is decreased. This happens because the diffusional path length becomes smaller as the particle size is decreased. Koros and Nowak <span class="citation" data-cites="koros_diagnostic_1967">(<a href="references.html#ref-koros_diagnostic_1967" role="doc-biblioref">1967</a>)</span> suggest a test where the catalyst is prepared from two powders that are mixed and formed into catalyst pellets. One powder is inert while the other is catalytic. Two or more sets of pellets are prepared using different ratios of the powders. In the absence of internal gradients, the ratio of the observed rates should equal the ratio of amounts of the active powders used to prepare the catalysts. Madon and Boudart <span class="citation" data-cites="madon_experimental_1982">(<a href="references.html#ref-madon_experimental_1982" role="doc-biblioref">1982</a>)</span> describe a similar test where the catalyst comprises very small active catalyst nanoparticles supported on a porous oxide carrier.</p>
+<p>There are also a few <strong>computational tests for the presence of intraparticle temperature or concentration gradients</strong>. For an isothermal reaction, <a href="#eq-internal_conc_gradients">Equation&nbsp;<span>10.3</span></a> can be used to calculate <span class="math inline">\(\phi_s\)</span>. For a zero-order reaction, the effects of concentration gradients in the pores will be negligible if <span class="math inline">\(\phi_s\)</span> is less than 6. For first order reactions it should be less than 1, and for second order reactions it should be less than 0.3.</p>
+<p><span id="eq-internal_conc_gradients"><span class="math display">\[
+\phi_s = \frac{r_p^2\left( -r \right)}{D_{\text{eff}}C_i}
+\tag{10.3}\]</span></span></p>
+</section>
+</section>
+<section id="pfr-kinetics-experiments-and-data" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="pfr-kinetics-experiments-and-data"><span class="header-section-number">10.2</span> PFR Kinetics Experiments and Data</h2>
+<p>From an operational viewpoint, the procedure for performing kinetics experiments using a PFR is exactly the same as the procedure used with a CSTR. Each experiment will yield a single data point. As with the stirred tank reactors, experiments should be performed in blocks where all of the experiments in a block are performed at the same temperature to prevent the generally strong temperature dependence of reaction rates from masking weaker composition and pressure effects. Similarly, the PFR should operate at steady state so that the temperature of the reacting fluid is constant. Doing so allows kinetics data analysis using only the PFR mole balance design equations (as long as the pressure drop along the length of the reactor also is negligible).</p>
+<section id="differential-operation" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="differential-operation"><span class="header-section-number">10.2.1</span> Differential Operation</h3>
+<p>The mole balances for a steady-state PFR are initial-value ordinary differential equations (IVODEs). As was the case with BSTRs in <a href="section_4_bstr_data_analysis.html"><span>Chapter&nbsp;9</span></a>, it is possible to analyze PFR kinetics data using an approximate mole balance. This method, described below, is known as the differential method of analysis of PFR data. Unlike differential analysis of BSTR data, if one plans to use the differential method of analysis for PFR data, then an additional restriction is imposed during the experiments. This requirement is that the molar flow rate <em>of each reagent</em> present in the feed should not change by more than ca. 5% between the inlet and the outlet of the reactor.</p>
+</section>
+</section>
+<section id="design-of-pfr-experiments" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="design-of-pfr-experiments"><span class="header-section-number">10.3</span> Design of PFR Experiments</h2>
+<p>It was noted in the preceding section that <strong>the operational procedure for generating kinetics data using a PFR is essentially the same as that for a CSTR</strong>. Both of these reactors are flow reactors, and consequently the adjusted inputs and experimental responses are the same. The space time determines the amount of time during which reaction can occur, and the space time is adjusted by varying individual reagent or total flow rates. In principle the reactor volume could also be varied to change space time, but doing so is impractical. The temperature is controlled directly making it easy to generate blocks of same-temperature kinetics data. In a PFR the composition changes continually as the reagents flow through the reactor. The composition and flow rate of the feed to the reactor can be varied so that the concentrations or partial pressures of the reagents each span their range of interest. As with BSTRs and CSTRs, the experimental response can be any quantity that is directly related to the composition of the fluid leaving the reactor or to the extent of reaction relative to the reactor feed.</p>
+</section>
+<section id="pfr-data-analysis" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="pfr-data-analysis"><span class="header-section-number">10.4</span> PFR Data Analysis</h2>
+<p><em>Reaction Engineering Basics</em> only considers the generation and analysis of kinetics data for single reactions occurring in isothermal, isobaric, steady-state PFRs. Further, it assumes that the data are generated in blocks where all of the experiments in a given block are conducted at the same temperature. When this is true, each of the same-temperature data blocks is first analyzed separately to find the best values of the rate expression parameters at that temperature. Once all of the data blocks have been analyzed, a second analysis is performed to find the best values of the pre-exponential factors and activation energies/enthalpies for the rate coefficients and unknown equilibrium constants. The second analysis was illustrated in the examples in <a href="section_4_bstr_data_analysis.html"><span>Chapter&nbsp;9</span></a>. It does not involve the reactor model, but instead the Arrhenius expression, <a href="section_2_rates_and_expressions.html#eq-arrhenius">Equation&nbsp;<span>4.8</span></a>, or the equivalent model for the equilibrium constant, <a href="section_2_rates_and_expressions.html#eq-equil_like_arrhenius">Equation&nbsp;<span>4.12</span></a>. As such, the second analysis is exactly the same no matter which of the ideal reactor types was used to generate the data. Since the analysis of the rate expression parameters obtained from the same-temperture data blocks has already been demonstrated in <a href="section_4_bstr_data_analysis.html"><span>Chapter&nbsp;9</span></a>, the examples in this chapter focus upon the analysis of a single, same-terperature data block that was generated using a PFR. However, see the notes that follow Examples <a href="#sec-example_10_2"><span>10.5.2</span></a> and <a href="#sec-example_10_3"><span>10.5.3</span></a>.</p>
+<p><strong>Only the PFR mole balance is necessary to analyze a single data block</strong> because when the reactor operates isobarically and isothermally at a known temperature, the mole balances can be solved independently of the energy and momentum balances for the reactor. The PFR mole balance was derived in <a href="section_3_design_equations.html"><span>Chapter&nbsp;6</span></a>, and the steady-state version is given in <a href="section_3_design_equations.html#eq-pfr_ss_mol_balance">Equation&nbsp;<span>6.40</span></a>. In <em>Reaction Engineering Basics</em> kinetics data analysis problems, there is only one reaction taking place, so there is only one rate term, making it unnecessary to index the reaction, <a href="#eq-pfr_mole_bal_one_reaction">Equation&nbsp;<span>10.4</span></a>.</p>
+<p><span id="eq-pfr_mole_bal_one_reaction"><span class="math display">\[
+\frac{d \dot n_i}{d z}  =\frac{\pi D^2}{4}\nu_{i}r
+\tag{10.4}\]</span></span></p>
+<p>This reactor model is an IVODE, and in order to solve it, every quantity appearing in or substituted into it must be expressed in terms of known constants, the independent variable, <span class="math inline">\(z\)</span>, and the dependent variable, <span class="math inline">\(\dot{n}_i\)</span>. When a rate expression is substituted into <a href="#eq-pfr_mole_bal_one_reaction">Equation&nbsp;<span>10.4</span></a>, it generally will introduce either concentrations or partial pressures. Since this is a flow system, these quantities can be expressed in terms of the molar flow rate of reagent <span class="math inline">\(i\)</span> using Equations <a href="section_1_intro_and_defs.html#eq-concentration_open"><span>1.15</span></a>, <a href="section_4_cstr_data_analysis.html#eq-conc_cstr_kinetics"><span>11.2</span></a>, and <a href="section_4_cstr_data_analysis.html#eq-partial_pressure_kinetics"><span>11.3</span></a>.</p>
+<p><span class="math display">\[
+C_i = \frac{\dot n_i}{\dot V}
+\]</span></p>
+<p><span class="math display">\[
+P_i = y_iP = \frac{\dot{n}_iP}{\displaystyle \sum_i\left( \dot{n}_i \right)}
+\]</span></p>
+<p><span class="math display">\[
+C_i = \frac{\dot n_iP}{RT\displaystyle \sum_i\left( \dot{n}_i \right)}
+\]</span></p>
+<p>If only one mole balance is being used in the analysis, the concentrations or partial pressures of reagents other than <span class="math inline">\(i\)</span> can be related to the molar flow rate of <span class="math inline">\(i\)</span> using the apparent extent of reaction as described in <a href="section_1_reaction_progress.html"><span>Chapter&nbsp;3</span></a> and illustrated in <a href="section_4_bstr_data_analysis.html#sec-example_9_2">Example&nbsp;<span>9.5.2</span></a>.</p>
+<p>When the reactor temperature is known and only the mole balance design equations are being used to analyze the data, <strong>the cumulative reactor volume, <span class="math inline">\(V\)</span>, is sometimes used as the independent variable</strong> instead of the axial distance into the reactor, <span class="math inline">\(z\)</span>. When this is done, it is not necessary to know both the reactor diameter and length, only the reactor volume is needed. Changing the independent variable in the PFR mole balance, <a href="#eq-pfr_mole_bal_one_reaction">Equation&nbsp;<span>10.4</span></a>, from <span class="math inline">\(z\)</span> to <span class="math inline">\(V\)</span> is straightforward. Dividing both sides of the equation by the reactor cross-sectional area and recognizing that the cross-sectional area time an increment in the axial position, <span class="math inline">\(dz\)</span>, is equal to an increment in the volume, <span class="math inline">\(dV\)</span>, leads to the desired form of the mole balance, <a href="#eq-pfr_mole_bal_one_rxn_using_V">Equation&nbsp;<span>10.5</span></a>.</p>
+<p><span class="math display">\[
+\frac{d \dot n_i}{d z} =\frac{\pi D^2}{4}\nu_{i}r
+\]</span></p>
+<p><span class="math display">\[
+\frac{d \dot n_i}{\displaystyle\frac{\pi D^2}{4}d z} = \nu_{i}r
+\]</span></p>
+<p><span id="eq-pfr_mole_bal_one_rxn_using_V"><span class="math display">\[
+\frac{d \dot n_i}{dV} = \nu_{i}r
+\tag{10.5}\]</span></span></p>
+<p>PFRs are commonly used to generate kinetics data for heterogeneous catalytic reactions. Using the pseudo-homogeneous approximation described in <a href="apndx_ideal_reactor_models.html">Appendix&nbsp;<span>G</span></a>, the ideal PFR design equations can still be used to analyze the data. However, <strong>it is a very common practice to normalize heterogeneous catalytic reaction rates using the catalyst mass</strong> instead of the reacting fluid volume. If <span class="math inline">\(\rho_{\text{bed}}\)</span> is the apparent packed bed density, that is the combined volume of the solid catalyst and the fluid per mass of catalyst, the mole balance takes the form shown in <a href="#eq-pfr_mole_bal_one_rxn_using_rho">Equation&nbsp;<span>10.6</span></a> where the rate has units of mol time<sup>-1</sup> (catalyst mass)<sup>-1</sup>. <strong>The mass of catalyst can also be used as the independent</strong> variable by simply dividing both sides of <a href="#eq-pfr_mole_bal_one_rxn_using_rho">Equation&nbsp;<span>10.6</span></a> by the apparent bed density and the reactor cross-sectional area, <a href="#eq-pfr_mole_bal_one_rxn_using_m">Equation&nbsp;<span>10.7</span></a> where the rate again has units of mol time<sup>-1</sup> (catalyst mass)<sup>-1</sup>.</p>
+<p><span id="eq-pfr_mole_bal_one_rxn_using_rho"><span class="math display">\[
+\frac{d \dot n_i}{d z}  =\frac{\pi D^2}{4}\nu_{i}\rho_{\text{bed}} r
+\tag{10.6}\]</span></span></p>
+<p><span id="eq-pfr_mole_bal_one_rxn_using_m"><span class="math display">\[
+\frac{d \dot n_i}{dm}  =\nu_{i} r
+\tag{10.7}\]</span></span></p>
+<p>Finally, <strong>if the reactor was operated differentially when generating the data</strong>, an approximate mole balance can be used, <a href="#eq-differential_pfr_mole_bal_one_rxn">Equation&nbsp;<span>10.8</span></a>. This is completely analogous to the approximate mole balance used for analysis of BSTR data. It converts the mole balance from an IVODE to an algebraic-transcendental equation (ATE). The derivative can be approximated using backward, forward or central differences (see <a href="apndx_prereq_knowledge.html">Appendix&nbsp;<span>A</span></a>). The approximation of the derivative as the ratio, <span class="math inline">\(\frac{\Delta \dot n_i}{\Delta z}\)</span>, is only valid when the changes in <span class="math inline">\(\dot n_i\)</span> and <span class="math inline">\(z\)</span> are small. That is why it is necessary to operate the reactor differentially for this type of analysis.</p>
+<p><span id="eq-differential_pfr_mole_bal_one_rxn"><span class="math display">\[
+\frac{d \dot n_i}{d z}  =\frac{\pi D^2}{4}\nu_{i}r \approx \frac{\Delta \dot n_i}{\Delta z}  =\frac{\pi D^2}{4}\nu_{i}r
+\tag{10.8}\]</span></span></p>
+<section id="analysis-using-a-response-function" class="level3" data-number="10.4.1">
+<h3 data-number="10.4.1" class="anchored" data-anchor-id="analysis-using-a-response-function"><span class="header-section-number">10.4.1</span> Analysis Using a Response Function</h3>
+<p>The <strong>analysis of PFR kinetics data using a response function is analogous to the analysis of BSTR kinetics data</strong> using a response function. A response function is created that is passed the adjusted experimental inputs and values for the rate expression parameters as arguments. Within the response function, the reactor model (the IVODE PFR mole balances) is solved for each experiment to find the outlet molar flow rates of all reagents. The results are then used to calculate the model-predicted value of the response. The response function returns the model-predicted responses for all of the experiments.</p>
+<p><strong>The response function is then used as an argument in parameter estimation software</strong> along with the adjusted experimental inputs, the experimental responses, and a guess for the parameters. The parameter estimation software returns the estimated values of the rate expression parameters, their 95% confidence intervals and the coefficient of determination, <span class="math inline">\(R^2\)</span>. The estimated parameters can then be used to calculate the model-predicted responses for the experiments. From these, a parity plot and residuals plots can be created. If the rate expression is accurate, the following criteria will be satisfied.</p>
+<ul>
+<li>The coefficient of determination, <span class="math inline">\(R^2\)</span>, will be close to 1.</li>
+<li>The uncertainty in each parameter estimate will be small compared to the estimate (so the confidence interval is narrow relative to the parameter value).</li>
+<li>The points in the parity plot will all be close to a diagonal line (<span class="math inline">\(y_{\text{expt}} = y_{\text{model}}\)</span>).</li>
+<li>In each residuals plot, the points will scatter randomly about zero (the horizontal axis), and no systematic deviations will be apparent.</li>
+</ul>
+</section>
+<section id="analysis-using-a-linearized-model" class="level3" data-number="10.4.2">
+<h3 data-number="10.4.2" class="anchored" data-anchor-id="analysis-using-a-linearized-model"><span class="header-section-number">10.4.2</span> Analysis Using a Linearized Model</h3>
+<p>When only one reaction is taking place, as is always the case in <em>Reaction Engineering Basics</em> kinetics data analysis problems, the reactor can be modeled using only one mole balance on a reactant or product in the reaction. When this is done, the apparent extent of reaction is used to relate the amounts of all other reagents to the reagent for which the mole balance is written. Sometimes the single mole balance can be solved analytically, for example by separation of variables. Doing so yields an integrated mole balance that is an ATE. <strong>If the integrated mole balance can be rearranged into a linear form, the model can be fit to the experimental data using linear least squares</strong>. This was described in in <a href="section_4_data_generation.html"><span>Chapter&nbsp;8</span></a> and illustrated in <a href="section_4_bstr_data_analysis.html"><span>Chapter&nbsp;9</span></a> and won’t be repeated or illustrated in this chapter.</p>
+</section>
+<section id="analysis-using-an-approximate-reactor-model" class="level3" data-number="10.4.3">
+<h3 data-number="10.4.3" class="anchored" data-anchor-id="analysis-using-an-approximate-reactor-model"><span class="header-section-number">10.4.3</span> Analysis Using an Approximate Reactor Model</h3>
+<p>This approach, commonly referred to a <strong>differential data analysis, is completely analogous to differential analysis of BSTR data</strong>. The one significant difference is that to use differential data analysis with PFR data, the reactor must have been operated differentially when the data were generated. The mole balance given in <a href="#eq-differential_pfr_mole_bal_one_rxn">Equation&nbsp;<span>10.8</span></a> is used. As noted in <a href="section_4_bstr_data_analysis.html"><span>Chapter&nbsp;9</span></a>, the approximate mole balance is often linearized and the analysis is performed using linear least squares. In most cases, differential analysis is less accurate than analysis using a response function or a linearized integrated mole balance. Since differential data analysis was illustrated in <a href="section_4_bstr_data_analysis.html"><span>Chapter&nbsp;9</span></a>, it is not repeated in the examples of this chapter.</p>
+</section>
+</section>
+<section id="examples" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="examples"><span class="header-section-number">10.5</span> Examples</h2>
+<p>The start of the Examples sections of Chapters <a href="section_4_bstr_data_analysis.html"><span>9</span></a> and <a href="section_4_cstr_data_analysis.html"><span>11</span></a> noted that before a reaction engineer can solve a problem, they must identify what type of problem it is. The following callout was provided. It should be mentally insert it at the start of every example this chapter.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking after Reading each Problem Statement in this Chapter
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This assignment involves “kinetics data analysis.” I realize that because the problem statement includes 3 distinguishing characteristics of kinetics data analysis assignments.</p>
+<ul>
+<li>The problem statement describes reactor experiments involving a known reaction.</li>
+<li>The data resulting from performing those experiments are provided.</li>
+<li>The assignment is to generate a rate expression or estimate the parameters in a proposed rate expression and then assess its accuracy using those data.</li>
+</ul>
+<p>I know that the preferred way of performing experiments results in sub-sets (or blocks) of the data that each contain a number of experiments all performed at the same temperature. I further know that when this is true, each same-temperature block is first analyzed separately to estimate values of the kinetics parameters at that block’s temperature.</p>
+<p>Thus, to begin this assignment I need to do the following things.</p>
+<ul>
+<li>Separate the experimental data into same temperature blocks.</li>
+<li>Identify (a) the reactor inputs that were varied from experiment, (b) the reactor response that was measured in each experiment, and (c) the rate expression parameters that need to be estimated for each block.</li>
+<li>Develop a mathematical model that relates the adjusted inputs to the measured response.</li>
+<li>Estimate the rate expressions parameters for each block and assess the accuracy of the resulting rate expression for that block.</li>
+</ul>
+</div>
+</div>
+</div>
+<p>It was noted earlier in this chapter that each of the examples here illustrate the analysis of a single constant-temperature data block. That analysis yields values of the rate expression parameters <em>at that temperature</em>. Typically, this would be repeated several times using data blocks at different temperatures. Then the results would be collected and used to estimate additional parameters associated with the temperature dependence of the rate expression parameters. Most commonly, the analysis of the individual data blocks yields values for a rate coefficient at each of the data block temperatures. They are collected and used to estimate the value of the Arrhenius pre-exponential factor and activation energy for that rate coefficient. The Arrhenius analysis, as well as alternative analysis of the data blocks using a linearized reactor model and/or an approximate reactor model are not presented here. For that see Examples <a href="section_2_rates_and_expressions.html#sec-example_4_4"><span>4.5.4</span></a>, <a href="section_4_bstr_data_analysis.html#sec-example_9_1"><span>9.5.1</span></a>, and <a href="section_4_bstr_data_analysis.html#sec-example_9_2"><span>9.5.2</span></a>.</p>
+<section id="sec-example_10_1" class="level3" data-number="10.5.1">
+<h3 data-number="10.5.1" class="anchored" data-anchor-id="sec-example_10_1"><span class="header-section-number">10.5.1</span> Kinetics of Gas-Phase Decomposition</h3>
+<p>The gas-phase decomposition of reagent A, reaction (1), was studied 1 atm using a PFR with a diameter of 1.0 cm and a length of 10 cm. The inlet volumetric flow rates of reagents A, Y, and Z, in standard cm<sup>3</sup> min<sup>-1</sup>, were varied from experiment to experiment. In all experiments the outlet conversion of reagent A was measured. The data for a block of experiments at a temperature of 1500 K are presented below. Using those data, assess the accuracy of the rate expression given in equation (2), paying particular attention to whether the expression might not capture possible effects of the concentrations of Y and Z.</p>
+<p><span class="math display">\[
+A \rightarrow Y + Z \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+r = kP_A \tag{2}
+\]</span></p>
+<p>The first few data points are shown in <a href="#tbl-example_10_1_data">Table&nbsp;<span>10.1</span></a>; the full data set are available in the file, <a href="Data/reb_10_1_data.csv">reb_10_1_data.csv</a>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-example_10_1_data" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;10.1: First 8 of the 160 experimentally generated data.</caption>
+<colgroup>
+<col style="width: 29%">
+<col style="width: 29%">
+<col style="width: 29%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(\dot{V}_{A,in}\)</span> (sccm)</th>
+<th style="text-align: center;"><span class="math inline">\(\dot{V}_{Y,in}\)</span> (sccm)</th>
+<th style="text-align: center;"><span class="math inline">\(\dot{V}_{Z,in}\)</span> (sccm)</th>
+<th style="text-align: center;">f<sub>A</sub> (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">100.8</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">94.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">84.1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">150</td>
+<td style="text-align: center;">74.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">93.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">83.4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">74.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">30</td>
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">150</td>
+<td style="text-align: center;">66.3</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This is a kinetics data analysis assignment. It describes reactor experiments, provides the resulting data and asks me to assess a rate expression. Here I will solve it using a response function, so I need to identify the experimentally adjusted inputs and the measured response. At the same time, I can summarize the other information provided in the problem statement.</p>
+</div>
+</div>
+</div>
+<p><strong>Reactor</strong>: PFR</p>
+<p><strong>Given</strong>: <span class="math inline">\(P=1\text{ atm}\)</span>, <span class="math inline">\(D=1\text{ cm}\)</span>, <span class="math inline">\(L=10\text{ cm}\)</span>, and <span class="math inline">\(T=1500\text{ K}\)</span>.</p>
+<p><strong>Adjusted Inputs</strong>: <span class="math inline">\(\underline{\dot{V}}_{A\text{(STP)},in}\)</span>, <span class="math inline">\(\underline{\dot{V}}_{Y\text{(STP)},in}\)</span>, and <span class="math inline">\(\underline{\dot{V}}_{Z\text{(STP)},in}\)</span>.</p>
+<p><strong>Experimental Response</strong>: <span class="math inline">\(\underline{f}_A\)</span>.</p>
+<p><strong>Rate Expression Parameters</strong>: <span class="math inline">\(k\)</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The purpose of the response function is to solve the reactor design equations for each experiment and use the results to calculate the predicted value of the response. The reactor used here is a PFR. The reactor operated isothermally, and there is no mention of pressure drop, so I don’t need a momentum balance, and I can solve the mole balance design equations separately from the energy balances. The mole balance design equation for a steady-state, PFR with only one reaction taking place is given in <a href="#eq-pfr_mole_bal_one_reaction">Equation&nbsp;<span>10.4</span></a>.</p>
+<p><span class="math display">\[
+\frac{d \dot n_i}{d z} =\frac{\pi D^2}{4}\nu_{i}r
+\]</span></p>
+<p>Since there are three reagents in this system, I need to write a mole balance for each of them. Noting that the stoichiometric coefficients are <span class="math inline">\(\nu_A = -1\)</span>, <span class="math inline">\(\nu_Y = 1\)</span>, and <span class="math inline">\(\nu_Z = 1\)</span> leads to equations (3) through (5). The design equations are initial value ordinary differential equations (IVODEs) with the molar flow rates as the dependent variables and the axial position as the independent variable. I can define <span class="math inline">\(z=0\)</span> to be the inlet to the reactor. The initial values needed to solve the IVODEs are the molar flow rates of A, Y, and Z at the inlet. I can use <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, and <span class="math inline">\(\dot{n}_{Z,in}\)</span>, to represent those inlet molar flow rates. The reaction stops at the end of the reactor, so the stopping criterion is <span class="math inline">\(z=L\)</span>.</p>
+</div>
+</div>
+</div>
+<p><strong>Reactor Model</strong></p>
+<p>Mole balances on A, Y, and Z are shown in equations (3), (4), and (5). The initial values and stopping criterion needed to solve them are given in <a href="#tbl-example_10_1_initial_values">Table&nbsp;<span>10.2</span></a></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_A}{dz} = -\frac{\pi D^2}{4}r \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Y}{dz} = \frac{\pi D^2}{4}r \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Z}{dz} = \frac{\pi D^2}{4}r \tag{5}
+\]</span></p>
+<div id="tbl-example_10_1_initial_values" class="anchored">
+<table class="table">
+<caption>Table&nbsp;10.2: Initial values and stopping criterion for solving the design equations, (3), (4), (5).</caption>
+<colgroup>
+<col style="width: 20%">
+<col style="width: 40%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(L\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_Y\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Y,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Before I can solve the mole balance IVODEs, I need to go through the equations, initial values and stopping criterion, and any equations that will be substituted into them, and express every quantity that appears in them in terms of known constants, the independent variable (<span class="math inline">\(z\)</span>) and the dependent variables (<span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, and <span class="math inline">\(\dot{n}_Z\)</span>). Within the response function, the values of the adjusted inputs and the rate expression parameter will be know and constant, so I don’t need expressions for them. I can see that when the rate expression, equation (2), is substituted into the mole balances it will introduce the partial pressure of A, so I need an expression for that. I am given the inlet (standard) volumetric flow rates of the reagents, so I’ll need to calculate the molar flow rates at the inlet, since they are the initial values.</p>
+<p>For the partial pressure of A, I can just use the defining equation, <a href="section_1_intro_and_defs.html#eq-partial_pressure_open">Equation&nbsp;<span>1.19</span></a>. The volumetric flow rates given in the assignment are volumetric flows at standard temperature and pressure (STP). The molar volume of an ideal gas at STP, <span class="math inline">\(\hat{V}_\text{ STP}\)</span>, is a known constant, e. g. 22.4 L mol<sup>-1</sup>, and can be used to calculate the inlet molar flows from the given inlet volumetric flows. (Note that if, instead, the assignment had provided actual inlet volumetric flows, the ideal gas law would be used and not <span class="math inline">\(\hat{V}_\text{ STP}\)</span>.)</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations</strong></p>
+<p><span class="math display">\[
+P_A = \frac{\dot{n}_A}{\dot{n}_A+\dot{n}_Y + \dot{n}_Z}P \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_A\Big\vert_{z=0} = \dot{n}_{A,in} = \frac{\dot{V}_{A\text{(STP)},in}}{\hat{V}_{\text{ STP}}} \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_Y\Big\vert_{z=0} = \dot{n}_{Y,in} = \frac{\dot{V}_{Y\text{(STP)},in}}{\hat{V}_{\text{ STP}}} \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_Z\Big\vert_{z=0} = \dot{n}_{Z,in} = \frac{\dot{V}_{Z\text{(STP)},in}}{\hat{V}_{\text{ STP}}} \tag{9}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>At this point within the response function, the mole balance design equations can be solved to find the values of the dependent variables, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, and <span class="math inline">\(\dot{n}_Z\)</span>, at the reactor outlet. Those results then must be used to calculate the predicted value of the response. In this study, the response was the fractional conversion of A, which can be calculated using the definition of fractional conversion, <a href="section_1_reaction_progress.html#eq-conversion_def_open">Equation&nbsp;<span>3.5</span></a>.</p>
+</div>
+</div>
+</div>
+<p><strong>Response Calculation</strong></p>
+<p><span class="math display">\[
+f_A = \frac{\dot{n}_{A,in} - \dot{n}_A}{\dot{n}_{A,in}} \tag{10}
+\]</span></p>
+<p><strong>Response Function</strong></p>
+<p>The response function is created with the following structure:</p>
+<ul>
+<li>The adjusted inputs, <span class="math inline">\(\underline{\dot{V}}_{A\text{(STP)},in}\)</span>, <span class="math inline">\(\underline{\dot{V}}_{Y\text{(STP)},in}\)</span>, and <span class="math inline">\(\underline{\dot{V}}_{Z\text{(STP)},in}\)</span>, and the rate expression parameter, <span class="math inline">\(k\)</span>, are passed to it as arguments.</li>
+<li>Variables are defined and assigned the values of all known and given quantities: <span class="math inline">\(P=1\text{ atm}\)</span>, <span class="math inline">\(D=1\text{ cm}\)</span>, <span class="math inline">\(L=10\text{ cm}\)</span>, and <span class="math inline">\(T=1500\text{ K}\)</span>.</li>
+<li>A function that evaluates the derivatives in the design equations given values of the independent variable, <span class="math inline">\(z\)</span>, and the dependent variables, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, and <span class="math inline">\(\dot{n}_Z\)</span>, is defined. It
+<ul>
+<li>Calculates <span class="math inline">\(P_A\)</span> using equation (6).</li>
+<li>Calculates <span class="math inline">\(r\)</span> using equation (2).</li>
+<li>Evaluates and returns the values of the derivatives, equations (3) through (5).</li>
+</ul></li>
+<li>For each experiment, the response function
+<ul>
+<li>Calculates <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, and <span class="math inline">\(\dot{n}_{Z,in}\)</span> using equations (7) through (9).</li>
+<li>Solves the design equations using the initial values and stopping criterion in <a href="#tbl-example_10_1_initial_values">Table&nbsp;<span>10.2</span></a> to find <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, and <span class="math inline">\(\dot{n}_Z\)</span> at <span class="math inline">\(z=L\)</span>.</li>
+<li>Calculates <span class="math inline">\(f_A\)</span> using equation (10).</li>
+</ul></li>
+<li>The values of <span class="math inline">\(f_A\)</span> for all of the experiments are returned.</li>
+</ul>
+<p><strong>Calculations</strong></p>
+<ol type="1">
+<li>Pass the response function, the adjusted inputs, and the experimental responses to parameter estimation software to find <span class="math inline">\(k\)</span>, the uncertainty in <span class="math inline">\(k\)</span>, and the coefficient of determination, <span class="math inline">\(R^2\)</span>.</li>
+<li>Use the resulting value of <span class="math inline">\(k\)</span> to create a parity plot (<span class="math inline">\(F_{A,\text{ expt}}\)</span> <em>vs</em>. <span class="math inline">\(F_{A,\text{ model}}\)</span>) and residuals plots (<span class="math inline">\(F_{A,\text{ expt}} - F_{A,\text{ model}}\)</span> <em>vs</em>. <span class="math inline">\(\dot{V}_{A,in}\)</span>, <em>vs</em>. <span class="math inline">\(\dot{V}_{Y,in}\)</span>, and <em>vs</em>. <span class="math inline">\(\dot{V}_{Z,in}\)</span>,)</li>
+</ol>
+<p><strong>Results</strong></p>
+<p>To estimate <span class="math inline">\(k\)</span>, the response function as described above was passed to parameter estimation software along with the adjusted experimental inputs, the measured experimental responses, and a guess for <span class="math inline">\(k\)</span>. The results returned by that software are shown in <a href="#tbl-example_10_1_results">Table&nbsp;<span>10.3</span></a>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-example_10_1_results" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;10.3: Parameter estimation results</caption>
+<colgroup>
+<col style="width: 6%">
+<col style="width: 93%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">1.5 x 10<sup>-3</sup> mol cm<sup>-3</sup> min<sup>-1</sup> atm<sup>-1</sup>, 95% CI [1.49 x 10<sup>-3</sup>, 1.51 x 10<sup>-3</sup>]</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">R<sup>2</sup></td>
+<td style="text-align: center;">0.993</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<p>A parity plot and residuals plots were generated as described above, and are shown in <a href="#fig-example_10_1_plots">Figure&nbsp;<span>10.1</span></a></p>
+<div id="fig-example_10_1_plots" class="quarto-layout-panel">
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_1_parity.png" class="img-fluid figure-img"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_1_residuals_vs_VFR_A.png" class="img-fluid figure-img"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_1_residuals_vs_VFR_Y.png" class="img-fluid figure-img"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_1_residuals_vs_VFR_Z.png" class="img-fluid figure-img"></p>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;10.1: Parity and Residuals Plots.</figcaption><p></p>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>By all criteria, the rate expression appears to be very accurate. The coefficient of determination is close to 1.0, the upper and lower limits of the 95% confidence interval for <span class="math inline">\(k\)</span> are very close to the value of <span class="math inline">\(k\)</span>, the points in the parity plot are all very close to the diagonal line, and in each of the residuals plots the scatter is random with no apparent trends.</p>
+<p>If the reaction was functionally dependent on the partial pressure of Y or Z, I wuld expect to see some systematic trends in the Y and Z parity plots. There does not appear to be any trends in those plots.</p>
+</div>
+</div>
+</div>
+<p><strong>Assessment</strong></p>
+<p>When the rate coefficient in <a href="#tbl-example_10_1_results">Table&nbsp;<span>10.3</span></a> is used in the proposed rate expression, it is acceptably accurate. The data do not indicate any functional dependence of the rate upon the paritial pressures of Y or Z.</p>
+<hr>
+</section>
+<section id="sec-example_10_2" class="level3" data-number="10.5.2">
+<h3 data-number="10.5.2" class="anchored" data-anchor-id="sec-example_10_2"><span class="header-section-number">10.5.2</span> Power-Law Kinetics of a Heterogeneous Catalytic Reaction</h3>
+<p>Reversible, gas-phase reaction (1) was studied in a PFR at 1 atm and several temperatures. In all experiments the same amount of catalyst, 3.0 g, was present in the reactor, forming a small packed bed. The apparent density of the catalyst bed was constant, and pressure drop across the catalyst bed was negligible. The inlet volumetric flow rate was also the same in all experiments and equal to 0.85 L min<sup>-1</sup> at standard temperature and pressure. The inlet mole fractions of A, B, Y, and Z were varied in the experiments and the partial pressure of A at the reactor outlet was recorded. Use the data for a block of experiments at 400 °C presented below to assess the accuracy of the power-law rate expression shown in equation (2). The equilibrium constant, <span class="math inline">\(K\)</span>, in equation (2) can be calculated from available thermodynamic data. At 400 °C the value of <span class="math inline">\(K\)</span> is 12.2.</p>
+<p><span class="math display">\[
+A + B \rightarrow Y + Z \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+r = kP_{A}^{\alpha_A}P_{B}^{\alpha_B}P_{Y}^{\alpha_Y}P_{Z}^{\alpha_Z}\left( 1 - \frac{P_YP_Z}{KP_AP_B} \right) \tag{2}
+\]</span></p>
+<p>The first few data points are shown in <a href="#tbl-example_10_2_data">Table&nbsp;<span>10.4</span></a>; the full data set are available in the file, <a href="./Data/reb_10_2_data.csv">reb_10_2_data.csv</a>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-example_10_2_data" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;10.4: First 8 of the 64 experimentally generated data.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;">y<sub>A,in</sub></th>
+<th style="text-align: center;">y<sub>B,in</sub></th>
+<th style="text-align: center;">y<sub>Y,in</sub></th>
+<th style="text-align: center;">y<sub>Z,in</sub></th>
+<th style="text-align: center;">P<sub>A,out</sub> (atm)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.231</td>
+<td style="text-align: center;">0.155</td>
+<td style="text-align: center;">0.314</td>
+<td style="text-align: center;">0.266</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.231</td>
+<td style="text-align: center;">0.234</td>
+<td style="text-align: center;">0.234</td>
+<td style="text-align: center;">0.265</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.231</td>
+<td style="text-align: center;">0.310</td>
+<td style="text-align: center;">0.159</td>
+<td style="text-align: center;">0.278</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.350</td>
+<td style="text-align: center;">0.115</td>
+<td style="text-align: center;">0.234</td>
+<td style="text-align: center;">0.244</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.350</td>
+<td style="text-align: center;">0.175</td>
+<td style="text-align: center;">0.175</td>
+<td style="text-align: center;">0.252</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.350</td>
+<td style="text-align: center;">0.231</td>
+<td style="text-align: center;">0.119</td>
+<td style="text-align: center;">0.267</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.462</td>
+<td style="text-align: center;">0.079</td>
+<td style="text-align: center;">0.159</td>
+<td style="text-align: center;">0.227</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.462</td>
+<td style="text-align: center;">0.119</td>
+<td style="text-align: center;">0.119</td>
+<td style="text-align: center;">0.242</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This is a kinetics data analysis problem. I will begin by listing the reactor type, known constants, inputs that were adjusted during the experiments, response that was measured in the experiments, and rate expression parameters that need to be estimated.</p>
+</div>
+</div>
+</div>
+<p><strong>Reactor</strong>: PFR</p>
+<p><strong>Given</strong>: <span class="math inline">\(P=1\text{ atm}\)</span>, <span class="math inline">\(m_{\text{cat}}=3\text{ g}\)</span>, <span class="math inline">\(\dot{V}_{in}=0.85\text{ L min}^{-1}\)</span>, <span class="math inline">\(T=400\text{ °C}\)</span>, and <span class="math inline">\(K = 12.2\)</span>.</p>
+<p><strong>Adjusted Inputs</strong>: <span class="math inline">\(\underline{y}_{A,in}\)</span>, <span class="math inline">\(\underline{y}_{B,in}\)</span>, <span class="math inline">\(\underline{y}_{Y,in}\)</span>, and <span class="math inline">\(\underline{y}_{Z,in}\)</span>.</p>
+<p><strong>Experimental Response</strong>: <span class="math inline">\(\underline{P}_A\)</span>.</p>
+<p><strong>Rate Expression Parameters</strong>: <span class="math inline">\(k\)</span>, <span class="math inline">\(\alpha_A\)</span>, <span class="math inline">\(\alpha_B\)</span>, <span class="math inline">\(\alpha_Y\)</span>, and <span class="math inline">\(\alpha_Z\)</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The first step in solving a kinetics data analysis problem is to create a response function. The response function solves the reactor design equations for the experimental reactor and uses the results to calculate a predicted value for each measured response. Thus, the first thing I need to do is to write the reactor design equations for the experimental reactor. Since the reactor is isobaric and isothermal, and its temperature is known, I can model it using only mole balances on the reagents A, B, Y, and Z. The reaction is catalytic and the size of the reactor is not provided. The mass of catalyst is provided, so I will use a form of the PFR mole balance where the catalyst mass is the independent variable, <a href="#eq-pfr_mole_bal_one_rxn_using_m">Equation&nbsp;<span>10.7</span></a>, and the rate is normalized by the catalyst mass. The stoichiometric coefficients of A, B, Y, and Z are -1, -1, 1, and 1, respectively.</p>
+<p><span class="math display">\[
+\frac{d \dot n_i}{dm} =\nu_{i} r
+\]</span></p>
+<p>The design equations are IVODEs, so initial values and a stopping criterion are needed in order to solve them. At the inlet to the reactor, the catalyst mass is equal to zero, <span class="math inline">\(m=0\)</span>, and at the end of the reactor it is equal to <span class="math inline">\(m_{\text{cat}}\)</span>. Letting <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, <span class="math inline">\(\dot{n}_{Y,in}\)</span>, and <span class="math inline">\(\dot{n}_{Z,in}\)</span> represent the molar flow rates at the reactor inlet then leads to the initial values and stopping criterion shown in <a href="#tbl-example_10_2_initial_values">Table&nbsp;<span>10.5</span></a>.</p>
+</div>
+</div>
+</div>
+<p><strong>Reactor Model</strong></p>
+<p>Mole balances on A, B, Y, and Z, are presented in equations (3) through (6), and the corresponding initial values and stopping criterion are shown in <a href="#tbl-example_10_2_initial_values">Table&nbsp;<span>10.5</span></a>.</p>
+<p><span class="math display">\[
+\frac{d\dot{n}_A}{dm} = -r \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_B}{dm} = -r \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Y}{dm} = r \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Z}{dm} = r \tag{6}
+\]</span></p>
+<div id="tbl-example_10_2_initial_values" class="anchored">
+<table class="table">
+<caption>Table&nbsp;10.5: Initial values and stopping criterion for solving the design equations, equations (3) through (6).</caption>
+<colgroup>
+<col style="width: 20%">
+<col style="width: 40%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(m\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(m_{\text{cat}}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_B\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{B,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_Y\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Y,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Since the mole balances are IVODEs, I will need to express every quantity that appears in them or is substituted into them in terms of known constants, the independent variable, <span class="math inline">\(m\)</span>, and the dependent variables, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, and <span class="math inline">\(\dot{n}_Z\)</span> before I can solve them. When the rate expression is substituted into equations (3) through (6) it will introduce the partial pressures of each of the reagents. These can be related to the molar flow rates using <a href="section_1_intro_and_defs.html#eq-partial_pressure_open">Equation&nbsp;<span>1.19</span></a>.</p>
+<p><span class="math display">\[
+P_i = y_iP = \frac{\dot n_iRT}{\dot V} = C_iRT
+\]</span></p>
+<p>The rate expression parameters and the adjusted inputs will be available in the response function, so no other expression need to be substituted into the design equations. However, the initial values are not known and must be calculated. Letting <span class="math inline">\(\hat{V}_{STP}\)</span> represent the <em>standard</em> molar volume of an ideal gas, 22.4 mol L<sup>-1</sup>, the inlet volumetric flow rate divided by the standard molar volume yields the molar flow rate. Multiplying that by the inlet mole fraction yields the needed inlet molar flow rates.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations</strong></p>
+<p><span class="math display">\[
+P_A = \frac{\dot{n}_A}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+P_B = \frac{\dot{n}_B}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+P_Y = \frac{\dot{n}_Y}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{9}
+\]</span></p>
+<p><span class="math display">\[
+P_Z = \frac{\dot{n}_Z}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{10}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_A\Big\vert_{m=0} = \dot{n}_{A,in} = y_{A,in}\frac{\dot{V}_{in}}{\hat{V}_{STP}} \tag{11}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_B\Big\vert_{m=0} = \dot{n}_{B,in} = y_{B,in}\frac{\dot{V}_{in}}{\hat{V}_{STP}} \tag{12}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_Y\Big\vert_{m=0} = \dot{n}_{Y,in} = y_{Y,in}\frac{\dot{V}_{in}}{\hat{V}_{STP}} \tag{13}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_Z\Big\vert_{m=0} = \dot{n}_{Z,in} = y_{Z,in}\frac{\dot{V}_{in}}{\hat{V}_{STP}} \tag{14}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>With the information just provided, the mole balances can be solved within the response function to find the outlet molar flow rates of A, B, Y, and Z. The response in this problem is the partial pressure of A. Therefore, the model-predicted response can be calculated using equation (7).</p>
+</div>
+</div>
+</div>
+<p><strong>Response Calculation</strong></p>
+<p>The predicted value of the measured response can be calculated using equation (7).</p>
+<p><strong>Response Function</strong></p>
+<p>The response function is created with the following structure:</p>
+<ul>
+<li>The adjusted inputs, <span class="math inline">\(\underline{y}_{A,in}\)</span>, <span class="math inline">\(\underline{y}_{B,in}\)</span>, <span class="math inline">\(\underline{y}_{Y,in}\)</span>, and <span class="math inline">\(\underline{y}_{Z,in}\)</span>, and the rate expression parameters, <span class="math inline">\(k\)</span>, <span class="math inline">\(\alpha_A\)</span>, <span class="math inline">\(\alpha_B\)</span>, <span class="math inline">\(\alpha_Y\)</span>, and <span class="math inline">\(\alpha_Z\)</span>, are passed to it as arguments.</li>
+<li>Variables are defined and assigned the values of all known and given quantities: <span class="math inline">\(P=1\text{ atm}\)</span>, <span class="math inline">\(m_{\text{cat}}=3\text{ g}\)</span>, <span class="math inline">\(\dot{V}_{in}=0.85\text{ L min}^{-1}\)</span>, <span class="math inline">\(T=400\text{ °C}\)</span>, and <span class="math inline">\(K = 12.2\)</span>.</li>
+<li>A function that evaluates the derivatives in the design equations given values of the independent variable, <span class="math inline">\(m\)</span>, and the dependent variables, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, and <span class="math inline">\(\dot{n}_Z\)</span>, is defined. It
+<ul>
+<li>Calculates <span class="math inline">\(P_A\)</span>, <span class="math inline">\(P_B\)</span>, <span class="math inline">\(P_Y\)</span>, and <span class="math inline">\(P_Z\)</span> using equations (7) through (10).</li>
+<li>Calculates <span class="math inline">\(r\)</span> using equation (2).</li>
+<li>Evaluates and returns the values of the derivatives, equations (3) through (6).</li>
+</ul></li>
+<li>For each experiment, the response function
+<ul>
+<li>Calculates <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, <span class="math inline">\(\dot{n}_{Y,in}\)</span>, and <span class="math inline">\(\dot{n}_{Z,in}\)</span> using equations (11) through (14).</li>
+<li>Solves the design equations using the initial values and stopping criterion in <a href="#tbl-example_10_2_initial_values">Table&nbsp;<span>10.5</span></a> to find <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, and <span class="math inline">\(\dot{n}_Z\)</span> at the reactor outlet where <span class="math inline">\(m = m_{\text{cat}}\)</span>.</li>
+<li>Calculates <span class="math inline">\(P_A\)</span> using equation (7).</li>
+</ul></li>
+<li>The predicted values of <span class="math inline">\(P_A\)</span> for all of the experiments are returned.</li>
+</ul>
+<p><strong>Calculations</strong></p>
+<ol type="1">
+<li>Pass the response function, the adjusted inputs, and the experimental responses to parameter estimation software to find <span class="math inline">\(k\)</span>, <span class="math inline">\(\alpha_A\)</span>, <span class="math inline">\(\alpha_B\)</span>, <span class="math inline">\(\alpha_Y\)</span>, and <span class="math inline">\(\alpha_Z\)</span>,, the uncertainty in <span class="math inline">\(k\)</span>, <span class="math inline">\(\alpha_A\)</span>, <span class="math inline">\(\alpha_B\)</span>, <span class="math inline">\(\alpha_Y\)</span>, and <span class="math inline">\(\alpha_Z\)</span>,, and the coefficient of determination, <span class="math inline">\(R^2\)</span>.</li>
+<li>Use the resulting values of <span class="math inline">\(k\)</span>, <span class="math inline">\(\alpha_A\)</span>, <span class="math inline">\(\alpha_B\)</span>, <span class="math inline">\(\alpha_Y\)</span>, and <span class="math inline">\(\alpha_Z\)</span>, to create a parity plot (<span class="math inline">\(P_{A,\text{ expt}}\)</span> <em>vs</em>. <span class="math inline">\(P_{A,\text{ model}}\)</span>) and residuals plots (<span class="math inline">\(P_{A,\text{ expt}} - P_{A,\text{ model}}\)</span> <em>vs</em>. <span class="math inline">\(y_{A,in}\)</span>, <em>vs</em>. <span class="math inline">\(y_{B,in}\)</span>, <em>vs</em>. <span class="math inline">\(y_{Y,in}\)</span>, and <em>vs</em>. <span class="math inline">\(y_{Z,in}\)</span>,)</li>
+</ol>
+<p><strong>Results</strong></p>
+<p>The calculations were performed as described above. The resulting values of the rate expression parameters, their 95% confidence intervals, and the coefficient of determination, <span class="math inline">\(R^2\)</span>, are shown in <a href="#tbl-example_10_2_results">Table&nbsp;<span>10.6</span></a>. The parity plot is shown in <a href="#fig-example_10_2_parity">Figure&nbsp;<span>10.2</span></a>, and the residuals plots are shown in <a href="#fig-example_10_2_residuals_plots">Figure&nbsp;<span>10.3</span></a>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-example_10_2_results" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;10.6: Parameter estimation results</caption>
+<colgroup>
+<col style="width: 8%">
+<col style="width: 92%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">5 x 10<sup>-4</sup> mol L<sup>-1</sup> min<sup>-1</sup>, 95% CI [1.68 x 10<sup>-4</sup>, 1.49 x 10<sup>-3</sup>]</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">α<sub>A</sub></td>
+<td style="text-align: center;">0.803 , 95% CI [0.424, 1.18]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">α<sub>B</sub></td>
+<td style="text-align: center;">0.2 , 95% CI [4.47 x 10<sup>-2</sup>, 0.356]</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">α<sub>Y</sub></td>
+<td style="text-align: center;">-0.746 , 95% CI [-0.937, -0.554]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">α<sub>Z</sub></td>
+<td style="text-align: center;">-9.4 x 10<sup>-2</sup> , 95% CI [-0.268, 7.97 x 10<sup>-2</sup>]</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">R<sup>2</sup></td>
+<td style="text-align: center;">0.998</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="fig-example_10_2_parity" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./Graphics/reb_10_2_parity.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;10.2: Parity Plot.</figcaption>
+</figure>
+</div>
+<div id="fig-example_10_2_residuals_plots" class="quarto-layout-panel">
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_2_residuals_vs_yAin.png" class="img-fluid figure-img"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_2_residuals_vs_yBin.png" class="img-fluid figure-img"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_2_residuals_vs_yYin.png" class="img-fluid figure-img"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_2_residuals_vs_yZin.png" class="img-fluid figure-img"></p>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;10.3: Residuals Plots.</figcaption><p></p>
+</figure>
+</div>
+<p><strong>Assessment</strong></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The coefficient of determination is close to 1.0, the points on the parity plot lie close to the diagonal line, and the points in the residuals plots scatter randomly about zero. This suggests an accurate rate expression. However, the upper and lower limits of the 95% confidence intervals for the parameters are significant compated to the parameter values. This suggests some inaccuracy in the model.</p>
+</div>
+</div>
+</div>
+<p>Based upon the parity plot, residuals plots and coefficient of determination, the rate expression in equation (2) accurately predicts the experimental results when the parameters have the values shown in <a href="#tbl-example_10_2_results">Table&nbsp;<span>10.6</span></a>. The confidence intervals are not narrow relative to the parameters’ values, but they are acceptable. It is possible that additional experiments at different conditions would tighten the confidence intervals for the parameters.</p>
+<hr>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Suppose similar blocks of experimental data had been generated at several other temperatures and that equation (2) had been found to be accurate at those temperatures. The next step would be to assess how well the rate expression captures the temperature dependence of the rate. For the rate coefficient, <span class="math inline">\(k\)</span>, this would be done by fitting the Arrhenius expression to the set of values of <span class="math inline">\(k\)</span> from each of the data blocks.</p>
+<p>However, there isn’t any theoretical or empirical basis for assuming that <span class="math inline">\(\alpha_A\)</span>, <span class="math inline">\(\alpha_B\)</span>, <span class="math inline">\(\alpha_Y\)</span>, and <span class="math inline">\(\alpha_Z\)</span> obey the Arrhenius expression. In fact, it isn’t known how these parameters might vary with temperature. This is a disadvantage of using an empirical power-law rate expression.</p>
+<p>If the estimated value of <span class="math inline">\(\alpha_A\)</span> was effectively the same at every temperature and the same was true for <span class="math inline">\(\alpha_B\)</span>, <span class="math inline">\(\alpha_Y\)</span>, and <span class="math inline">\(\alpha_Z\)</span>, then they could be taken to be constant and the accuracy of the rate expression could be assessed by fitting the Arrhenius expression to the <span class="math inline">\(k\)</span> values. In other words, the only temperature-dependent kinetics parameter would be <span class="math inline">\(k\)</span>. If it was accurate, equation (2) would be useful as a rate expression.</p>
+<p>However, if the estimated values of <span class="math inline">\(\alpha_A\)</span>, <span class="math inline">\(\alpha_B\)</span>, <span class="math inline">\(\alpha_Y\)</span>, and <span class="math inline">\(\alpha_Z\)</span> vary with temperature it would necessary to (a) find expressions that predict their variation with temperature and (b) assess the accuracy of those expressions.</p>
+<p>If expressions for the temperature dependence of <span class="math inline">\(\alpha_A\)</span>, <span class="math inline">\(\alpha_B\)</span>, <span class="math inline">\(\alpha_Y\)</span>, and <span class="math inline">\(\alpha_Z\)</span> could not be found, then in order to use the rate expression in equation (2) a table of their values <em>vs</em>. temperature would be necessary. Interpolation would need to be used for temperatures not in the table. In this scenario, equation (2) would not be very useful, even if it was very accurate in representing the individual data blocks.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="sec-example_10_3" class="level3" data-number="10.5.3">
+<h3 data-number="10.5.3" class="anchored" data-anchor-id="sec-example_10_3"><span class="header-section-number">10.5.3</span> Mechanistic Kinetics of a Heterogeneous Catalytic Reaction</h3>
+<p>In <a href="#sec-example_10_2">Example&nbsp;<span>10.5.2</span></a>, kinetics data for reaction (1) that had been generated in a steady-state, isothermal PFR were used to assess the accuracy of a power-law rate expression. In those experiments the same amount of catalyst, 3.0 g, was present in the reactor, forming a small packed bed. The apparent density of the catalyst bed was constant, and pressure drop across the catalyst bed was negligible. The inlet volumetric flow rate was also the same in all experiments and equal to 0.85 L min<sup>-1</sup> at standard temperature and pressure. The inlet mole fractions of A, B, Y, and Z were varied in the experiments and the partial pressure of A at the reactor outlet was recorded. Use the data for a block of experiments at 400 °C presented in that example to assess the accuracy of the mechanistic rate expression shown in equation (2). The equilibrium constant, <span class="math inline">\(K_1\)</span>, in equation (2) can be calculated from available thermodynamic data. At 400 °C the value of <span class="math inline">\(K_1\)</span> is 12.2.</p>
+<p><span class="math display">\[
+A + B \rightarrow Y + Z \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+r = \frac{kP_{A}P_{B}}{1 + K_AP_A + K_BP_B + K_YP_Y + K_ZP_Z }\left( 1 - \frac{P_YP_Z}{K_1P_AP_B} \right) \tag{2}
+\]</span></p>
+<p>The first few data points are shown in <a href="#tbl-example_10_3_data">Table&nbsp;<span>10.7</span></a>; the full data set are available in the file, <a href="./Data/reb_10_2_data.csv">reb_10_2_data.csv</a>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-example_10_3_data" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;10.7: First 8 of the 64 experimentally generated data.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;">y<sub>A,in</sub></th>
+<th style="text-align: center;">y<sub>B,in</sub></th>
+<th style="text-align: center;">y<sub>Y,in</sub></th>
+<th style="text-align: center;">y<sub>Z,in</sub></th>
+<th style="text-align: center;">P<sub>A,out</sub> (atm)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.231</td>
+<td style="text-align: center;">0.155</td>
+<td style="text-align: center;">0.314</td>
+<td style="text-align: center;">0.266</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.231</td>
+<td style="text-align: center;">0.234</td>
+<td style="text-align: center;">0.234</td>
+<td style="text-align: center;">0.265</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.231</td>
+<td style="text-align: center;">0.310</td>
+<td style="text-align: center;">0.159</td>
+<td style="text-align: center;">0.278</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.350</td>
+<td style="text-align: center;">0.115</td>
+<td style="text-align: center;">0.234</td>
+<td style="text-align: center;">0.244</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.350</td>
+<td style="text-align: center;">0.175</td>
+<td style="text-align: center;">0.175</td>
+<td style="text-align: center;">0.252</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.350</td>
+<td style="text-align: center;">0.231</td>
+<td style="text-align: center;">0.119</td>
+<td style="text-align: center;">0.267</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.462</td>
+<td style="text-align: center;">0.079</td>
+<td style="text-align: center;">0.159</td>
+<td style="text-align: center;">0.227</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.3</td>
+<td style="text-align: center;">0.462</td>
+<td style="text-align: center;">0.119</td>
+<td style="text-align: center;">0.119</td>
+<td style="text-align: center;">0.242</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The only difference in this assignment from <a href="#sec-example_10_2">Example&nbsp;<span>10.5.2</span></a> is the rate expression to be assessed. As a consequence, the rate expression parameters to be estimated in this assignment are different.</p>
+</div>
+</div>
+</div>
+<p><strong>Reactor</strong>: PFR</p>
+<p><strong>Given</strong>: <span class="math inline">\(P=1\text{ atm}\)</span>, <span class="math inline">\(m_{\text{cat}}=3\text{ g}\)</span>, <span class="math inline">\(\dot{V}_{in}=0.85\text{ L min}^{-1}\)</span>, <span class="math inline">\(T=400\text{ °C}\)</span>, and <span class="math inline">\(K = 12.2\)</span>.</p>
+<p><strong>Adjusted Inputs</strong>: <span class="math inline">\(\underline{y}_{A,in}\)</span>, <span class="math inline">\(\underline{y}_{B,in}\)</span>, <span class="math inline">\(\underline{y}_{Y,in}\)</span>, and <span class="math inline">\(\underline{y}_{Z,in}\)</span>.</p>
+<p><strong>Experimental Response</strong>: <span class="math inline">\(\underline{P}_A\)</span>.</p>
+<p><strong>Rate Expression Parameters</strong>: <span class="math inline">\(k\)</span>, <span class="math inline">\(K_A\)</span>, <span class="math inline">\(K_B\)</span>, <span class="math inline">\(K_Y\)</span>, and <span class="math inline">\(K_Z\)</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The reactor model, initial values, stopping criterion, ancillary equations, response function, and calculations are all the same as in <a href="#sec-example_10_2"><span>Section&nbsp;10.5.2</span></a>.</p>
+</div>
+</div>
+</div>
+<p><strong>Reactor Model</strong></p>
+<p>Mole balances on A, B, Y, and Z, are presented in equations (3) through (6), and the corresponding initial values and stopping criterion are shown in <a href="#tbl-example_10_3_initial_values">Table&nbsp;<span>10.8</span></a>.</p>
+<p><span class="math display">\[
+\frac{d\dot{n}_A}{dm} = -r \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_B}{dm} = -r \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Y}{dm} = r \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Z}{dm} = r \tag{6}
+\]</span></p>
+<div id="tbl-example_10_3_initial_values" class="anchored">
+<table class="table">
+<caption>Table&nbsp;10.8: Initial values and stopping criterion for solving the design equations, equations (3) through (6).</caption>
+<colgroup>
+<col style="width: 20%">
+<col style="width: 40%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(m\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(m_{\text{cat}}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_B\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{B,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_Y\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Y,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Ancillary Equations</strong></p>
+<p><span class="math display">\[
+P_A = \frac{\dot{n}_A}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+P_B = \frac{\dot{n}_B}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+P_Y = \frac{\dot{n}_Y}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{9}
+\]</span></p>
+<p><span class="math display">\[
+P_Z = \frac{\dot{n}_Z}{\dot{n}_A++\dot{n}_B+\dot{n}_Y+\dot{n}_Z}P \tag{10}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_A\Big\vert_{m=0} = \dot{n}_{A,in} = y_{A,in}\frac{\dot{V}_{in}}{\hat{V}_{STP}} \tag{11}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_B\Big\vert_{m=0} = \dot{n}_{B,in} = y_{B,in}\frac{\dot{V}_{in}}{\hat{V}_{STP}} \tag{12}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_Y\Big\vert_{m=0} = \dot{n}_{Y,in} = y_{Y,in}\frac{\dot{V}_{in}}{\hat{V}_{STP}} \tag{13}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_Z\Big\vert_{m=0} = \dot{n}_{Z,in} = y_{Z,in}\frac{\dot{V}_{in}}{\hat{V}_{STP}} \tag{14}
+\]</span></p>
+<p><strong>Response Calculation</strong></p>
+<p>The predicted value of the measured response can be calculated using equation (7).</p>
+<p><strong>Response Function</strong></p>
+<p>The response function is created with the following structure:</p>
+<ul>
+<li>The adjusted inputs, <span class="math inline">\(\underline{y}_{A,in}\)</span>, <span class="math inline">\(\underline{y}_{B,in}\)</span>, <span class="math inline">\(\underline{y}_{Y,in}\)</span>, and <span class="math inline">\(\underline{y}_{Z,in}\)</span>, and the rate expression parameters, <span class="math inline">\(k\)</span>, <span class="math inline">\(K_A\)</span>, <span class="math inline">\(K_B\)</span>, <span class="math inline">\(K_Y\)</span>, and <span class="math inline">\(K_Z\)</span>, are passed to it as arguments.</li>
+<li>Variables are defined and assigned the values of all known and given quantities: <span class="math inline">\(P=1\text{ atm}\)</span>, <span class="math inline">\(m_{\text{cat}}=3\text{ g}\)</span>, <span class="math inline">\(\dot{V}_{in}=0.85\text{ L min}^{-1}\)</span>, <span class="math inline">\(T=400\text{ °C}\)</span>, and <span class="math inline">\(K = 12.2\)</span>.</li>
+<li>A function that evaluates the derivatives in the design equations given values of the independent variable, <span class="math inline">\(m\)</span>, and the dependent variables, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, and <span class="math inline">\(\dot{n}_Z\)</span>, is defined. It
+<ul>
+<li>Calculates <span class="math inline">\(P_A\)</span>, <span class="math inline">\(P_B\)</span>, <span class="math inline">\(P_Y\)</span>, and <span class="math inline">\(P_Z\)</span> using equations (7) through (10).</li>
+<li>Calculates <span class="math inline">\(r\)</span> using equation (2).</li>
+<li>Evaluates and returns the values of the derivatives, equations (3) through (6).</li>
+</ul></li>
+<li>For each experiment, the response function
+<ul>
+<li>Calculates <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, <span class="math inline">\(\dot{n}_{Y,in}\)</span>, and <span class="math inline">\(\dot{n}_{Z,in}\)</span> using equations (11) through (14).</li>
+<li>Solves the design equations using the initial values and stopping criterion in <a href="#tbl-example_10_2_initial_values">Table&nbsp;<span>10.5</span></a> to find <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, and <span class="math inline">\(\dot{n}_Z\)</span> at the reactor outlet where <span class="math inline">\(m = m_{\text{cat}}\)</span>.</li>
+<li>Calculates <span class="math inline">\(P_A\)</span> using equation (7).</li>
+</ul></li>
+<li>The values of <span class="math inline">\(P_A\)</span> for all of the experiments are returned.</li>
+</ul>
+<p><strong>Calculations</strong></p>
+<ol type="1">
+<li>Pass the response function, the adjusted inputs, and the experimental responses to parameter estimation software to find <span class="math inline">\(k\)</span>, <span class="math inline">\(K_A\)</span>, <span class="math inline">\(K_B\)</span>, <span class="math inline">\(K_Y\)</span>, and <span class="math inline">\(K_Z\)</span>, the uncertainty in <span class="math inline">\(k\)</span>, <span class="math inline">\(K_A\)</span>, <span class="math inline">\(K_B\)</span>, <span class="math inline">\(K_Y\)</span>, and <span class="math inline">\(K_Z\)</span>, and the coefficient of determination, <span class="math inline">\(R^2\)</span>.</li>
+<li>Use the resulting value of <span class="math inline">\(k\)</span>, <span class="math inline">\(K_A\)</span>, <span class="math inline">\(K_B\)</span>, <span class="math inline">\(K_Y\)</span>, and <span class="math inline">\(K_Z\)</span> to create a parity plot (<span class="math inline">\(P_{A,\text{ expt}}\)</span> <em>vs</em>. <span class="math inline">\(P_{A,\text{ model}}\)</span>) and residuals plots (<span class="math inline">\(P_{A,\text{ expt}} - P_{A,\text{ model}}\)</span> <em>vs</em>. <span class="math inline">\(y_{A,in}\)</span>, <em>vs</em>. <span class="math inline">\(y_{B,in}\)</span>, <em>vs</em>. <span class="math inline">\(y_{Y,in}\)</span>, and <em>vs</em>. <span class="math inline">\(y_{Z,in}\)</span>,)</li>
+</ol>
+<p><strong>Results</strong></p>
+<p>The calculations were performed as described above. The resulting values of the rate expression parameters, their 95% confidence intervals, and the coefficient of determination, <span class="math inline">\(R^2\)</span>, are shown in <a href="#tbl-example_10_3_results">Table&nbsp;<span>10.9</span></a>. The parity plot is shown in <a href="#fig-example_10_3_parity">Figure&nbsp;<span>10.4</span></a>, and the residuals plots are shown in <a href="#fig-example_10_3_residuals_plots">Figure&nbsp;<span>10.5</span></a>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-example_10_3_results" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;10.9: Parameter estimation results</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">k</td>
+<td style="text-align: center;">1.49 x 10<sup>6</sup> mol L<sup>-1</sup> min<sup>-1</sup>, 95% CI [0 x 10<sup>0</sup>, Inf]</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">K<sub>A</sub></td>
+<td style="text-align: center;">2.04 x 10<sup>-3</sup> , 95% CI [2.04 x 10<sup>-3</sup>, 2.04 x 10<sup>-3</sup>]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">K<sub>B</sub></td>
+<td style="text-align: center;">4.6 x 10<sup>8</sup> , 95% CI [0 x 10<sup>0</sup>, Inf]</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">K<sub>Y</sub></td>
+<td style="text-align: center;">2.78 x 10<sup>8</sup> , 95% CI [0 x 10<sup>0</sup>, Inf]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">K<sub>Z</sub></td>
+<td style="text-align: center;">0.0805 , 95% CI [0 x 10<sup>0</sup>, Inf]</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">R<sup>2</sup></td>
+<td style="text-align: center;">0.995</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="fig-example_10_3_parity" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./Graphics/reb_10_3_parity.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;10.4: Parity Plot.</figcaption>
+</figure>
+</div>
+<div id="fig-example_10_3_residuals_plots" class="quarto-layout-panel">
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_3_residuals_vs_yAin.png" class="img-fluid figure-img"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_3_residuals_vs_yBin.png" class="img-fluid figure-img"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_3_residuals_vs_yYin.png" class="img-fluid figure-img"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_3_residuals_vs_yZin.png" class="img-fluid figure-img"></p>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;10.5: Residuals Plots.</figcaption><p></p>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Looking at the parity plot and <span class="math inline">\(R^2\)</span>, the model appears to be accurate, but there is a problem. For several of the parameters the confidence interval ranges from 0 to infinity. Based on my experience (a novice would not be expected to know this) I know that this can mean that some of the kinetics parameters are kinetically insignificant or coupled. Here, <span class="math inline">\(K_B\)</span> and <span class="math inline">\(K_Y\)</span> are of the order of 10<sup>7</sup>. The total pressure is 1 atm, so the partial pressures will be of the order of 0.1 atm. With this information, looking at the denominator in equation (2) it is apparent that the terms containg <span class="math inline">\(K_B\)</span> and <span class="math inline">\(K_Y\)</span> will be much greater than the other terms (<span class="math inline">\(K_A\)</span> ~ 10<sup>-4</sup> and <span class="math inline">\(K_Z\)</span> ~ 10<sup>-2</sup>), so the other terms can be eliminated.</p>
+<p><span class="math display">\[
+r = \frac{kP_{A}P_{B}}{\cancelto{0}{1} + \cancelto{0}{K_AP_A} + K_BP_B + K_YP_Y + \cancelto{0}{K_ZP_Z} }\left( 1 - \frac{P_YP_Z}{K_1P_AP_B} \right)
+\]</span></p>
+<p>There is still a problem with the remaining rate expression. Specifically there cannot be a unique set of values of <span class="math inline">\(k\)</span>, <span class="math inline">\(K_B\)</span>, and <span class="math inline">\(K_Y\)</span> that will minimize the sum of the squares of the residuals. Multiplying the numerator and denominator by any constant, <span class="math inline">\(\alpha\)</span>, does not change the rate. Therefore the rate will be the same if the parameters equal <span class="math inline">\(k\)</span>, <span class="math inline">\(K_B\)</span>, and <span class="math inline">\(K_Y\)</span> or if they equal <span class="math inline">\(\alpha k\)</span>, <span class="math inline">\(\alpha K_B\)</span>, and <span class="math inline">\(\alpha K_Y\)</span>. In other words, the remaining parameters are coupled. This problem can be eliminated by dividing the numerator and denominator by <span class="math inline">\(K_Y\)</span> and defining two new kinetics parameters.</p>
+<p><span class="math display">\[
+k^\prime = \frac{k}{K_Y}
+\]</span></p>
+<p><span class="math display">\[
+K_B^\prime = \frac{K_B}{K_Y}
+\]</span></p>
+<p><span class="math display">\[
+r = \frac{k^\prime P_{A}P_{B}}{K_B^\prime P _B + P_Y}\left( 1 - \frac{P_YP_Z}{K_1P_AP_B} \right)
+\]</span></p>
+</div>
+</div>
+</div>
+<p><strong>Assessment</strong></p>
+<p>The uncertainty in the kinetics parameters is unacceptable. Some of the parameters in equation (2) may be kinetically insignificant or coupled. It is recommended to repeat the analysis using the rate expression shown in equation (15).</p>
+<p><span class="math display">\[
+r = \frac{k^\prime P_{A}P_{B}}{K_B^\prime P _B + P_Y}\left( 1 - \frac{P_YP_Z}{K_1P_AP_B} \right) \tag{15}
+\]</span></p>
+<p><strong>Follow-up</strong></p>
+<p>The analysis was repeated a third time using equation (15) as the rate expression. The parameter estimation results are shown in <a href="#tbl-example_10_3_results_2_par">Table&nbsp;<span>10.10</span></a>. The parity plot is shown in <a href="#fig-example_10_3_parity_two_par">Figure&nbsp;<span>10.6</span></a> and the residuals plots are shown in <a href="#fig-example_10_3_residuals_plots_two_par">Figure&nbsp;<span>10.7</span></a>.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tbl-example_10_3_results_2_par" class="anchored">
+<table class="table table-sm table-striped small">
+<caption>Table&nbsp;10.10: Parameter estimation results for equation (15)</caption>
+<colgroup>
+<col style="width: 8%">
+<col style="width: 91%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">k’</td>
+<td style="text-align: center;">5.36 x 10<sup>-3</sup> mol L<sup>-1</sup> min<sup>-1</sup> atm<sup>-1</sup>, 95% CI [3.97 x 10<sup>-3</sup>, 7.23 x 10<sup>-3</sup>]</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">K<sub>B</sub>’</td>
+<td style="text-align: center;">1.65 , 95% CI [1.07, 2.56]</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">R<sup>2</sup></td>
+<td style="text-align: center;">0.995</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="fig-example_10_3_parity_two_par" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./Graphics/reb_10_3_2_par_parity.png" class="img-fluid figure-img" style="width:80.0%"></p>
+<figcaption class="figure-caption">Figure&nbsp;10.6: Parity Plot for Rate Expression (3).</figcaption>
+</figure>
+</div>
+<div id="fig-example_10_3_residuals_plots_two_par" class="quarto-layout-panel">
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_3_2_par_residuals_vs_yAin.png" class="img-fluid figure-img"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_3_2_par_residuals_vs_yBin.png" class="img-fluid figure-img"></p>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_3_2_par_residuals_vs_yYin.png" class="img-fluid figure-img"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./Graphics/reb_10_3_2_par_residuals_vs_yZin.png" class="img-fluid figure-img"></p>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;10.7: Residuals for Rate Expression (15).</figcaption><p></p>
+</figure>
+</div>
+<p><strong>Final Assessment</strong></p>
+<p>Based upon the parity plot, residuals plots, and coefficient of determination, the rate expression in equation (15) is just as accurate as that in equation (2). In addition, for rate expression (15), there are fewer parameters and their confidence intervals are narrow relative to their values. The rate expression in equation (15) is preferred over the rate expression in equation (2).</p>
+<hr>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Suppose the rate expression in equation (2) had been found to be acceptable, that similar blocks of experimental data had been generated at several other temperatures and that equation (2) had been found to be accurate at those temperatures, too. The next step would be to assess how well the rate expression captures the temperature dependence of the rate. Unlike <a href="#sec-example_10_2">Example&nbsp;<span>10.5.2</span></a>, all of the kinetics parameters in this rate expression would be expected to display Arrhenius-like temperature dependence, making it straightforward to assess the accuracy of the rate expression with respect to temperature. Mechanistic types of rate expressions have an advantage over power-law types of rate expressions in this regard. With mechanistic types of rate expressions one knows how all of the parameters should vary with temperature, while with power-law rate expressions one does not know how the power-law exponents should vary.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="symbols-used-in-sec-4_pfr_data_analysis" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="symbols-used-in-sec-4_pfr_data_analysis"><span class="header-section-number">10.6</span> Symbols Used in <a href="#sec-4_pfr_data_analysis"><span>Chapter&nbsp;10</span></a></h2>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(i\)</span></td>
+<td style="text-align: left;">index denoting a reagent.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(k_0\)</span></td>
+<td style="text-align: left;">Pre-exponential factor in the Arrhenius expression.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_i\)</span></td>
+<td style="text-align: left;">Molar flow rate of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(m\)</span></td>
+<td style="text-align: left;">Mass of catalyst.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(r\)</span></td>
+<td style="text-align: left;">Net rate of reaction (per unit fluid volume or per catalyst mass, depending on context).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(r_p\)</span></td>
+<td style="text-align: left;">Catalyst particle radius.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(v\)</span></td>
+<td style="text-align: left;">Fluid velocity.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(y_i\)</span></td>
+<td style="text-align: left;">Mole fraction of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: left;">Axial distance from the reactor inlet.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(C_i\)</span></td>
+<td style="text-align: left;">Concentration of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(D\)</span></td>
+<td style="text-align: left;">Reactor diameter.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(D_{\text{eff}}\)</span></td>
+<td style="text-align: left;">Effective diffusion coefficient.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(E\)</span></td>
+<td style="text-align: left;">Activation energy in the Arrhenius expression.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(N_{Re}\)</span></td>
+<td style="text-align: left;">Reynolds number.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(P\)</span></td>
+<td style="text-align: left;">Pressure.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(P_i\)</span></td>
+<td style="text-align: left;">Partial pressure of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(R\)</span></td>
+<td style="text-align: left;">Ideal gas constant.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(R^2\)</span></td>
+<td style="text-align: left;">Coefficient of determination.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: left;">Absolute temperature.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: left;">Volume.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{V}\)</span></td>
+<td style="text-align: left;">Volumetric flow rate.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\mu\)</span></td>
+<td style="text-align: left;">Fluid viscosity.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\nu_i\)</span></td>
+<td style="text-align: left;">Stoichiometric coefficient of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\rho\)</span></td>
+<td style="text-align: left;">Fluid density.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\rho_{\text{bed}}\)</span></td>
+<td style="text-align: left;">Apparent catalyst bed density.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\phi_s\)</span></td>
+<td style="text-align: left;">Internal concentration gradient metric.</td>
+</tr>
+</tbody>
+</table>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-chambers_lack_1966" class="csl-entry" role="listitem">
+Chambers, Robert P., and Michel Boudart. 1966. <span>“Lack of Dependence of Conversion on Flow Rate in Catalytic Studies.”</span> <em>Journal of Catalysis</em> 6 (1): 141–45. <a href="https://doi.org/10.1016/0021-9517(66)90118-7">https://doi.org/10.1016/0021-9517(66)90118-7</a>.
+</div>
+<div id="ref-koros_diagnostic_1967" class="csl-entry" role="listitem">
+Koros, R. M., and E. J. Nowak. 1967. <span>“A Diagnostic Test of the Kinetic Regime in a Packed Bed Reactor.”</span> <em>Chemical Engineering Science</em> 22 (3): 470. <a href="https://doi.org/10.1016/0009-2509(67)80134-9">https://doi.org/10.1016/0009-2509(67)80134-9</a>.
+</div>
+<div id="ref-madon_experimental_1982" class="csl-entry" role="listitem">
+Madon, Rostam J., and Michel Boudart. 1982. <span>“Experimental Criterion for the Absence of Artifacts in the Measurement of Rates of Heterogeneous Catalytic Reactions.”</span> <em>Industrial &amp; Engineering Chemistry Fundamentals</em> 21 (4): 438–47. <a href="https://doi.org/10.1021/i100008a022">https://doi.org/10.1021/i100008a022</a>.
+</div>
+<div id="ref-mears_tests_1971" class="csl-entry" role="listitem">
+Mears, D. E. 1971. <span>“Tests for <span>Transport</span> <span>Limitations</span> in <span>Experimental</span> <span>Catalytic</span> <span>Reactors</span>.”</span> <em>Industrial &amp; Engineering Chemistry Process Design and Development</em> 10 (4): 541–47. <a href="https://doi.org/10.1021/i260040a020">https://doi.org/10.1021/i260040a020</a>.
+</div>
+<div id="ref-satterfield_heterogeneous_1980" class="csl-entry" role="listitem">
+Satterfield, Charles N. 1980. <em>Heterogeneous Catalysis in Practice</em>. New York: McGraw-Hill.
+</div>
+<div id="ref-wheeler_reaction_1951" class="csl-entry" role="listitem">
+Wheeler, Ahlborn. 1951. <span>“Reaction <span>Rates</span> and <span>Selectivity</span> in <span>Catalyst</span> <span>Pores</span>.”</span> In <em>Advances in <span>Catalysis</span></em>, edited by W. G. Frankenburg, V. I. Komarewsky, E. K. Rideal, P. H. Emmett, and H. S. Taylor, 3:249–327. Academic Press. <a href="https://doi.org/10.1016/S0360-0564(08)60109-1">https://doi.org/10.1016/S0360-0564(08)60109-1</a>.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./section_4_bstr_data_analysis.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./section_4_cstr_data_analysis.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

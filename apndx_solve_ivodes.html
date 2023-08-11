@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Reaction Engineering Basics - Appendix I — Solving Initial-Value ODEs</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./apndx_estimate_parameters.html" rel="next">
+<link href="./apndx_solve_ates.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
+    <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/total_ps.html" rel="" target="">
+ <span class="menu-text">ToTaL PS</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page">
+ <span class="menu-text">Reaction Engineering Basics</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools ms-auto">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_prereq_knowledge.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_ivodes.html"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_1_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Basic Information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_intro_and_defs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Reactions, Reactors, and Reaction Engineering</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_safety_and_ethics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Reaction Engineering Ethics and Safety</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_reaction_progress.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Measures of Reaction Progress</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_2_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rate Expressions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_2_rates_and_expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Reaction Rates and Rate Expressions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_2_mechanisms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reaction Mechanisms and Mechanistic Rate Expressions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Reactor Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_3_design_equations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reactor Design Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_3_response_function.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Response Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kinetics Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_data_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Design of Non-continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Thermally Back-mixed PFRs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_7_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Non-Ideal Reactors</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_axial_dispersion_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Axial Dispersion Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_segregated_flow_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Segregated Flow Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_zoned_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Zoned Reactor Models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Notation and Sign Conventions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-nature-of-a-numerical-solution-of-an-initial-value-ode" id="toc-the-nature-of-a-numerical-solution-of-an-initial-value-ode" class="nav-link active" data-scroll-target="#the-nature-of-a-numerical-solution-of-an-initial-value-ode"><span class="header-section-number">I.1</span> The Nature of a Numerical Solution of an Initial-Value ODE</a></li>
+  <li><a href="#writing-ivodes-as-matrix-and-vector-equations" id="toc-writing-ivodes-as-matrix-and-vector-equations" class="nav-link" data-scroll-target="#writing-ivodes-as-matrix-and-vector-equations"><span class="header-section-number">I.2</span> Writing IVODEs as Matrix and Vector Equations</a></li>
+  <li><a href="#preparing-the-ivodes-for-solution." id="toc-preparing-the-ivodes-for-solution." class="nav-link" data-scroll-target="#preparing-the-ivodes-for-solution."><span class="header-section-number">I.3</span> Preparing the IVODEs for Solution.</a></li>
+  <li><a href="#items-that-must-be-provided-to-the-solver" id="toc-items-that-must-be-provided-to-the-solver" class="nav-link" data-scroll-target="#items-that-must-be-provided-to-the-solver"><span class="header-section-number">I.4</span> Items that must be Provided to the Solver</a></li>
+  <li><a href="#an-oversimplified-description-of-how-the-ivodes-are-solved" id="toc-an-oversimplified-description-of-how-the-ivodes-are-solved" class="nav-link" data-scroll-target="#an-oversimplified-description-of-how-the-ivodes-are-solved"><span class="header-section-number">I.5</span> An Oversimplified Description of How the IVODEs are Solved</a></li>
+  <li><a href="#cautions-related-to-numerical-solutions" id="toc-cautions-related-to-numerical-solutions" class="nav-link" data-scroll-target="#cautions-related-to-numerical-solutions"><span class="header-section-number">I.6</span> Cautions Related to Numerical Solutions</a></li>
+  <li><a href="#symbols-used-in-this-appendix" id="toc-symbols-used-in-this-appendix" class="nav-link" data-scroll-target="#symbols-used-in-this-appendix"><span class="header-section-number">I.7</span> Symbols Used in this Appendix</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-apndx_solve_ivodes" class="quarto-section-identifier">Appendix I — Solving Initial-Value ODEs</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<p>This appendix provides a simplified introduction to numerical solution of sets of coupled, initial-value ordinary differential equations (IVODEs). It is not specific to any one computer program or language. Students seeking a more complete understanding should consult a numerical methods textbook or take a course on numerical methods.</p>
+<section id="the-nature-of-a-numerical-solution-of-an-initial-value-ode" class="level2" data-number="I.1">
+<h2 data-number="I.1" class="anchored" data-anchor-id="the-nature-of-a-numerical-solution-of-an-initial-value-ode"><span class="header-section-number">I.1</span> The Nature of a Numerical Solution of an Initial-Value ODE</h2>
+<p>When an IVODE is solved <em>analytically</em>, the solution is a function that describes how the dependent variable varies as a function of the independent variable. For example, the solution of the IVODE shown in <a href="#eq-ivode">Equation&nbsp;<span>I.1</span></a>, with the initial values of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> given in <a href="#eq-initial-value">Equation&nbsp;<span>I.2</span></a>, is <a href="#eq-ivode-soln">Equation&nbsp;<span>I.3</span></a>.</p>
+<p><span id="eq-ivode"><span class="math display">\[
+\frac{dy}{dx} = 2x
+\tag{I.1}\]</span></span></p>
+<p><span id="eq-initial-value"><span class="math display">\[
+y \Bigr\rvert_{x=3} = 10
+\tag{I.2}\]</span></span></p>
+<p><span id="eq-ivode-soln"><span class="math display">\[
+y = x^2 + 1
+\tag{I.3}\]</span></span></p>
+<p>When an IVODE is solved <em>numerically</em>, there are two significant differences. First, <strong>the solution is not an analytical function</strong>, it is a set of values of <span class="math inline">\(x\)</span>, starting at the initial value, along with a second set of the corresponding values of <span class="math inline">\(y\)</span>. A numerical solution of <a href="#eq-ivode">Equation&nbsp;<span>I.1</span></a>, with the initial values given in <a href="#eq-initial-value">Equation&nbsp;<span>I.2</span></a> is shown in <a href="#tbl-ivode-num-soln">Table&nbsp;<span>I.1</span></a>.</p>
+<div id="tbl-ivode-num-soln" class="anchored">
+<table class="table">
+<caption>Table&nbsp;I.1: Numerical solution of <a href="#eq-ivode">Equation&nbsp;<span>I.1</span></a> for the initial values given in <a href="#eq-initial-value">Equation&nbsp;<span>I.2</span></a>.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;">x</th>
+<th style="text-align: center;">y</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">3.0</td>
+<td style="text-align: center;">10.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3.1</td>
+<td style="text-align: center;">10.61</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3.3</td>
+<td style="text-align: center;">11.89</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3.4</td>
+<td style="text-align: center;">12.56</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3.6</td>
+<td style="text-align: center;">13.96</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3.7</td>
+<td style="text-align: center;">14.69</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">4.0</td>
+<td style="text-align: center;">17.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4.5</td>
+<td style="text-align: center;">21.25</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The second significant difference is that <strong>the numerical solution spans a finite range of <span class="math inline">\(x\)</span> values</strong>. For example, the numerical solution shown in <a href="#tbl-ivode-num-soln">Table&nbsp;<span>I.1</span></a> spans the range from <span class="math inline">\(x=3\)</span> to <span class="math inline">\(x=4.5\)</span>, or equivalently, the range from <span class="math inline">\(y=10.00\)</span> to <span class="math inline">\(y=21.25\)</span>. In contrast, the analytical solution in <a href="#eq-ivode-soln">Equation&nbsp;<span>I.3</span></a> yields the value of <span class="math inline">\(y\)</span> for <em>any</em> value of <span class="math inline">\(x\)</span>.</p>
+</section>
+<section id="writing-ivodes-as-matrix-and-vector-equations" class="level2" data-number="I.2">
+<h2 data-number="I.2" class="anchored" data-anchor-id="writing-ivodes-as-matrix-and-vector-equations"><span class="header-section-number">I.2</span> Writing IVODEs as Matrix and Vector Equations</h2>
+<p>The sets IVODEs that will be solved in <em>Reaction Engineering Basics</em> will be first-order differential equations, and there will be no products, quotients or powers of the derivatives. Equations <a href="#eq-typical-ode-1"><span>I.4</span></a>, <a href="#eq-typical-ode-2"><span>I.5</span></a>, <a href="#eq-typical-ode-3"><span>I.6</span></a> and <a href="#eq-typical-ode-4"><span>I.7</span></a> are an example of a set of IVODEs that might need to be solved to find the values of <span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span>, <span class="math inline">\(\dot V\)</span> and <span class="math inline">\(T\)</span> at times between <span class="math inline">\(t=0\)</span> and some later time, <span class="math inline">\(t_f\)</span>.</p>
+<p><span id="eq-typical-ode-1"><span class="math display">\[
+\frac{V}{\dot V}\frac{d\dot n_A}{dt} - \frac{\dot n_A V}{\dot V^2}\frac{d\dot V}{dt} = \dot n_{A,in} - \dot n_A - Vr
+\tag{I.4}\]</span></span></p>
+<p><span id="eq-typical-ode-2"><span class="math display">\[
+\frac{V}{\dot V}\frac{d\dot n_Z}{dt} - \frac{\dot n_Z V}{\dot V^2}\frac{d\dot V}{dt} = \dot n_{Z,in} - \dot n_Z + Vr
+\tag{I.5}\]</span></span></p>
+<p><span id="eq-typical-ode-3"><span class="math display">\[
+RT\frac{d\dot n_A}{dt} + RT\frac{d\dot n_Z}{dt} - P\frac{d\dot V}{dt} + \left(\dot n_A + \dot n_Z\right)R\frac{dT}{dt} = 0
+\tag{I.6}\]</span></span></p>
+<p><span id="eq-typical-ode-4"><span class="math display">\[
+\frac{V\left(\dot{n}_A \hat{C}_{p,A} + \dot{n}_Z \hat{C}_{p,Z}\right)}{\dot{V}}  \frac{dT}{dt} = - \left(  \dot{n}_{A,in} \hat{C}_{p,A} + \dot{n}_{Z,in} \hat{C}_{p,Z} \right)\left(T - T_{in}\right) - V r \Delta H
+\tag{I.7}\]</span></span></p>
+<p>Notice that the IVODEs have been written with all of the derivatives on one side of the equation and the remaining terms on the other side. The set of reactions presented in Equations <a href="#eq-example-ode-1"><span>I.8</span></a>, <a href="#eq-example-ode-2"><span>I.9</span></a>, <a href="#eq-example-ode-3"><span>I.10</span></a>, and <a href="#eq-example-ode-4"><span>I.11</span></a> are a generalization of the sets of IVODEs that must be solved in <em>Reaction Engineering Basics</em>. In those equations, <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span>, <span class="math inline">\(y_3\)</span>, and <span class="math inline">\(y_4\)</span> are called the <em>dependent variables</em>; they are each functionally dependent upon only <span class="math inline">\(x\)</span>, which is called the <em>independent variable</em>. The coefficients, <span class="math inline">\(m_{1,1}\)</span>, <span class="math inline">\(m_{1,2}\)</span>, etc., as well as <span class="math inline">\(g_1\)</span>, <span class="math inline">\(g_2\)</span>, <span class="math inline">\(g_3\)</span>, and <span class="math inline">\(g_4\)</span> each may be a function of <span class="math inline">\(x\)</span>, <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span>, <span class="math inline">\(y_3\)</span>, and <span class="math inline">\(y_4\)</span>.</p>
+<p><span id="eq-example-ode-1"><span class="math display">\[
+m_{1,1}\frac{dy_1}{dx} + m_{1,2}\frac{dy_2}{dx} + m_{1,3}\frac{dy_3}{dx} + m_{1,4}\frac{dy_4}{dx} = g_1
+\tag{I.8}\]</span></span></p>
+<p><span id="eq-example-ode-2"><span class="math display">\[
+m_{2,1}\frac{dy_1}{dx} + m_{2,2}\frac{dy_2}{dx} + m_{2,3}\frac{dy_3}{dx} + m_{2,4}\frac{dy_4}{dx} = g_2
+\tag{I.9}\]</span></span></p>
+<p><span id="eq-example-ode-3"><span class="math display">\[
+m_{3,1}\frac{dy_1}{dx} + m_{3,2}\frac{dy_2}{dx} + m_{3,3}\frac{dy_3}{dx} + m_{3,4}\frac{dy_4}{dx} = g_3
+\tag{I.10}\]</span></span></p>
+<p><span id="eq-example-ode-4"><span class="math display">\[
+m_{4,1}\frac{dy_1}{dx} + m_{4,2}\frac{dy_2}{dx} + m_{4,3}\frac{dy_3}{dx}  + m_{4,4}\frac{dy_4}{dx} = g_4
+\tag{I.11}\]</span></span></p>
+<p>While four equations are being used here for illustration purposes, there can be any number of mathematically independent IVODE’s in the set as long as <strong>the number of IVODEs is equal to the number of dependent variables</strong> and there is <strong>only one independent variable</strong>. Through algebraic manipulation, the equations can be re-written in the form shown in Equations <a href="#eq-example-vector-ode-1"><span>I.12</span></a>, <a href="#eq-example-vector-ode-2"><span>I.13</span></a>, <a href="#eq-example-vector-ode-3"><span>I.14</span></a> and <a href="#eq-example-vector-ode-4"><span>I.15</span></a> where the <span class="math inline">\(f_1\)</span>, <span class="math inline">\(f_2\)</span>, <span class="math inline">\(f_3\)</span>, and <span class="math inline">\(f_4\)</span> each may be a function of <span class="math inline">\(x\)</span>, <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span>, <span class="math inline">\(y_3\)</span>, and <span class="math inline">\(y_4\)</span>.</p>
+<p><span id="eq-example-vector-ode-1"><span class="math display">\[
+\frac{dy_1}{dx}  = f_1
+\tag{I.12}\]</span></span></p>
+<p><span id="eq-example-vector-ode-2"><span class="math display">\[
+\frac{dy_2}{dx} = f_2
+\tag{I.13}\]</span></span></p>
+<p><span id="eq-example-vector-ode-3"><span class="math display">\[
+\frac{dy_3}{dx} = f_3
+\tag{I.14}\]</span></span></p>
+<p><span id="eq-example-vector-ode-4"><span class="math display">\[
+\frac{dy_4}{dx} = f_4
+\tag{I.15}\]</span></span></p>
+<p>The qualifier, “initial-value,” indicates that there is one value of the independent variable, <span class="math inline">\(x\)</span>, at which the values of <em>all</em> of the dependent variables are known. That set of values becomes the starting point for solving the set of IVODEs. While they are called “initial values,” and the value of <span class="math inline">\(x\)</span> at which the values of all of the dependent variables are known is often <span class="math inline">\(x=0\)</span>, this is not a requirement. The values of all of the dependent variables might be known at some value of <span class="math inline">\(x\)</span> other than 0, as was the case in <a href="#eq-initial-value">Equation&nbsp;<span>I.2</span></a>.</p>
+<p>Referring to Equations <a href="#eq-example-ode-1"><span>I.8</span></a>, <a href="#eq-example-ode-2"><span>I.9</span></a>, <a href="#eq-example-ode-3"><span>I.10</span></a>, and <a href="#eq-example-ode-4"><span>I.11</span></a> the coefficients, <span class="math inline">\(m_{1,1}\)</span>, <span class="math inline">\(m_{1,2}\)</span>, etc., can be used to construct a matrix, <span class="math inline">\(\boldsymbol{M}\)</span>, as shown in <a href="#eq-mass-matrix">Equation&nbsp;<span>I.16</span></a>. The dependent variables can be used to construct a column vector, <span class="math inline">\(\underline{y}\)</span>, as in equation <a href="#eq-dependent-var-vector">Equation&nbsp;<span>I.17</span></a>, and the functions, <span class="math inline">\(g_1\)</span>, <span class="math inline">\(g_2\)</span>, <span class="math inline">\(g_3\)</span>, and <span class="math inline">\(g_4\)</span>, can be used to construct a column vector, <span class="math inline">\(\underline{g}\)</span>, as in equation <a href="#eq-function-vector">Equation&nbsp;<span>I.18</span></a>.</p>
+<p><span id="eq-mass-matrix"><span class="math display">\[
+\boldsymbol{M} = \begin{bmatrix} m_{1,1} \ m_{1,2} \ m_{1,3} \ m_{1,4} \\m_{2,1} \ m_{2,2} \ m_{2,3} \ m_{2,4} \\m_{3,1} \ m_{3,2} \ m_{3,3} \ m_{3,4} \\ m_{4,1} \ m_{4,2} \ m_{4,3} \ m_{4,4}  \end{bmatrix}
+\tag{I.16}\]</span></span></p>
+<p><span id="eq-dependent-var-vector"><span class="math display">\[
+\underline{y} = \begin{bmatrix} y_1 \\ y_2 \\ y_3 \\ y_4 \end{bmatrix}
+\tag{I.17}\]</span></span></p>
+<p><span id="eq-function-vector"><span class="math display">\[
+\underline{g} = \begin{bmatrix} g_1 \\ g_2 \\ g_3 \\ g_4 \end{bmatrix}
+\tag{I.18}\]</span></span></p>
+<p>Defining <span class="math inline">\(\boldsymbol{M}\)</span>, <span class="math inline">\(\underline{y}\)</span> and <span class="math inline">\(\underline{f}\)</span> in that way allows Equations <a href="#eq-example-ode-1"><span>I.8</span></a>, <a href="#eq-example-ode-2"><span>I.9</span></a>, <a href="#eq-example-ode-3"><span>I.10</span></a>, and <a href="#eq-example-ode-4"><span>I.11</span></a> to be written as a single matrix equation.</p>
+<p><span id="eq-matrix-form-ivode"><span class="math display">\[
+\boldsymbol{M}\frac{d}{dt}\underline{y} = \underline{g}
+\tag{I.19}\]</span></span></p>
+<p>The matrix equation equivalent of Equations <a href="#eq-example-vector-ode-1"><span>I.12</span></a>, <a href="#eq-example-vector-ode-2"><span>I.13</span></a>, <a href="#eq-example-vector-ode-3"><span>I.14</span></a>, and <a href="#eq-example-vector-ode-4"><span>I.15</span></a> then is given by <a href="#eq-matrix-form-of-vector-ivodes">Equation&nbsp;<span>I.20</span></a>.</p>
+<p><span id="eq-matrix-form-of-vector-ivodes"><span class="math display">\[
+\frac{d}{dt}\underline{y} = \boldsymbol{M}^{-1} \underline{g}
+\tag{I.20}\]</span></span></p>
+<p>Comparing <a href="#eq-matrix-form-of-vector-ivodes">Equation&nbsp;<span>I.20</span></a> to Equations <a href="#eq-example-vector-ode-1"><span>I.12</span></a>, <a href="#eq-example-vector-ode-2"><span>I.13</span></a>, <a href="#eq-example-vector-ode-3"><span>I.14</span></a>, and <a href="#eq-example-vector-ode-4"><span>I.15</span></a>, the relationship between <span class="math inline">\(g_1\)</span>, <span class="math inline">\(g_2\)</span>, <span class="math inline">\(g_3\)</span>, and <span class="math inline">\(g_4\)</span> and <span class="math inline">\(f_1\)</span>, <span class="math inline">\(f_2\)</span>, <span class="math inline">\(f_3\)</span>, and <span class="math inline">\(f_4\)</span> becomes apparent.</p>
+<p><span id="eq-g-in-terms-of-f"><span class="math display">\[
+\begin{bmatrix} f_1 \\ f_2 \\ f_3 \\ f_4 \end{bmatrix} = \underline{f} = \boldsymbol{M}^{-1} \underline{g}
+\tag{I.21}\]</span></span></p>
+<p>Matrix representation provides a compact way writing large sets of IVODEs.</p>
+</section>
+<section id="preparing-the-ivodes-for-solution." class="level2" data-number="I.3">
+<h2 data-number="I.3" class="anchored" data-anchor-id="preparing-the-ivodes-for-solution."><span class="header-section-number">I.3</span> Preparing the IVODEs for Solution.</h2>
+<p>It has already been noted that the number of IVODEs must equal the number of dependent variables and there must be only one independent variable. So the first step in preparing to solve the equations is to verify that this condition is satisfied. Doing so identifies the <span class="math inline">\(N\)</span> IVODEs being solved and the <span class="math inline">\(N\)</span> dependent variables whose values will be found over a range of values of the independent variable. Using Equations <a href="#eq-typical-ode-1"><span>I.4</span></a>, <a href="#eq-typical-ode-2"><span>I.5</span></a>, <a href="#eq-typical-ode-3"><span>I.6</span></a>, and <a href="#eq-typical-ode-4"><span>I.7</span></a> as an example, there are 4 IVODEs, 4 dependent variables (<span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span>, <span class="math inline">\(\dot V\)</span>, and <span class="math inline">\(T\)</span>) and 1 independent variable, <span class="math inline">\(t\)</span>.</p>
+<p>The next step in preparing to solve the IVODEs is to <strong>express every other quantity appearing in the equations in terms of known constants, the independent variable, and the <span class="math inline">\(N\)</span> dependent variables</strong>. In the present example, that means that <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot V\)</span>, <span class="math inline">\(\dot n_{A,in}\)</span>, <span class="math inline">\(r\)</span>, <span class="math inline">\(\dot n_{Z,in}\)</span>, <span class="math inline">\(R\)</span>, <span class="math inline">\(P\)</span>, <span class="math inline">\(\hat{C}_{p,A}\)</span>, <span class="math inline">\(\hat{C}_{p,Z}\)</span> <span class="math inline">\(T_{in}\)</span>, and <span class="math inline">\(\Delta H\)</span> must be expressed in terms of known constants, <span class="math inline">\(t\)</span>, <span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span>, <span class="math inline">\(\dot V\)</span>, and <span class="math inline">\(T\)</span>.</p>
+<p>Recall that the numerical solution of IVODEs spans a finite range of values of each variable. For each variable, that range begins at its <em>intial value</em>. The third step in preparing to solve the IVODEs is to <strong>specify the “initial value” of the independent variable and the corresponding initial values of the dependent variables</strong>. In the example being used here, this might entail defining <span class="math inline">\(t=0\)</span> as the initial value of the independent variables and then listing the corresponding values of <span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span>, <span class="math inline">\(\dot V\)</span>, and <span class="math inline">\(T\)</span> at <span class="math inline">\(t=0\)</span>.</p>
+<p>The last step in praparing to solve the IVODEs is to <strong>specify the other end of the range over which the equations will be solved</strong>. This is sometimes referred to as providing a <em>stopping criterion</em> (also known as the final value or the ending value). (The reason for calling it the “stopping criterion” should be apparent after reading the description, below, of how the IVODEs are solved.) The stopping criterion can be defined explicitly, by setting the value of the independent variable, or implicitly, by setting the value of <strong>one</strong> of the dependent variables at the end of the range over which the equations will be solved. In the present example an explicit stopping criterion might be that the equations will be solved in the range from <span class="math inline">\(t=0\)</span> to <span class="math inline">\(t=30 \text{ min}\)</span>. An implicit stopping criterion might be that the equations will be solved in the range from <span class="math inline">\(t=0\)</span> to the time when <span class="math inline">\(n_A = 0.05n_{A,in}\)</span> (i. e. the time when the conversion reaches 95%).</p>
+</section>
+<section id="items-that-must-be-provided-to-the-solver" class="level2" data-number="I.4">
+<h2 data-number="I.4" class="anchored" data-anchor-id="items-that-must-be-provided-to-the-solver"><span class="header-section-number">I.4</span> Items that must be Provided to the Solver</h2>
+<p>In this appendix, the term “solver” is used to refer to the computer program or function that numerically solves a set of IVODEs. There are many different IVODE solvers available, and each has specific instructions on how to use it. This appendix makes no attempt to explain the details of using any of the available solvers.</p>
+<p>However, no matter which specific solver one uses, there are three things that must be provided to the solver. The first of these are the initial values as described in the preceding section. The second thing that must be provided to the solver is the stopping criterion as described above. The stopping criterion must identify <em>both</em> the variable that is being used to define the end of the range <em>and</em> it’s value at the end of that range.</p>
+<p>Finally, a means of calculating the value of each of the derivatives in the IVODEs, given values of the dependent variables and the independent variable, must be provided to the solver. Quite commonly, this is done by providing the name of a function or subroutine to the solver. That subroutine receives values of the dependent variables and the independent variable as arguments. It then uses Equations <a href="#eq-example-vector-ode-1"><span>I.12</span></a>, <a href="#eq-example-vector-ode-2"><span>I.13</span></a>, <a href="#eq-example-vector-ode-3"><span>I.14</span></a>, and <a href="#eq-example-vector-ode-4"><span>I.15</span></a> to evaluate the functions, <span class="math inline">\(f_1\)</span> through <span class="math inline">\(f_N\)</span>, and returns the resulting values (which are equal to the values of the derivatives). Some solvers alternatively can use Equations <a href="#eq-example-ode-1"><span>I.8</span></a>, <a href="#eq-example-ode-2"><span>I.9</span></a>, <a href="#eq-example-ode-3"><span>I.10</span></a>, and <a href="#eq-example-ode-4"><span>I.11</span></a> to evaluate the matrix, <span class="math inline">\(\boldsymbol{M}\)</span>, and the functions, <span class="math inline">\(g_1\)</span> through <span class="math inline">\(g_N\)</span>, and then use <a href="#eq-g-in-terms-of-f">Equation&nbsp;<span>I.21</span></a> to evaluate and return the values of <span class="math inline">\(f_1\)</span> through <span class="math inline">\(f_N\)</span>.</p>
+</section>
+<section id="an-oversimplified-description-of-how-the-ivodes-are-solved" class="level2" data-number="I.5">
+<h2 data-number="I.5" class="anchored" data-anchor-id="an-oversimplified-description-of-how-the-ivodes-are-solved"><span class="header-section-number">I.5</span> An Oversimplified Description of How the IVODEs are Solved</h2>
+<p>The description presented here of how the solver works is overly simplified, but hopefully it provides sense of how the solution is generated. At the start, the solver has a set of values of the dependent variables at a known value of the independent variable, i. e. it has the initial values. This is illustrated graphically in part (a) of <a href="#fig-ivode-integration-step">Figure&nbsp;<span>I.1</span></a> for any one of the dependent variables.</p>
+<div id="fig-ivode-integration-step" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="./Graphics/IVODE_Integration_Step.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;I.1: Graphical Representation of an IVODE Integration Step. (a) The initial value. (b) Using the slope to approximate y(x). (c) Incrementally increasing x and approximating the corresponding y.</figcaption>
+</figure>
+</div>
+<p>It isn’t possible to plot <span class="math inline">\(y\)</span> <em>vs.</em> <span class="math inline">\(x\)</span> at that point because <span class="math inline">\(y\left(x\right)\)</span> is not known. (Indeed, <span class="math inline">\(y\left(x\right)\)</span> is the solution to the IVODE.) Instead, the solver calculates the values of the derivatives of the dependent variables at that initial point, represented in the figure as the point at <span class="math inline">\(\left(x_0,y_0\right)\)</span>. The derivative, <span class="math inline">\(\frac{dy}{dx}\)</span> at that point is the slope of the unknown function, <span class="math inline">\(y\left(x\right)\)</span>. This is shown graphically in part (b) of <a href="#fig-ivode-integration-step">Figure&nbsp;<span>I.1</span></a>.</p>
+<p>Starting from the known point, <span class="math inline">\(\left(x_0,y_0\right)\)</span>, the solver increases <span class="math inline">\(x\)</span> by a small amount, <span class="math inline">\(\Delta x\)</span>, which is known as the <em>step-size</em>. It then calculates the corresponding change in <span class="math inline">\(y\)</span>, <span class="math inline">\(\Delta y\)</span>, using the slope. The resulting point, <span class="math inline">\(\left(x_1,y_1\right)\)</span>, is shown in part (c) of <a href="#fig-ivode-integration-step">Figure&nbsp;<span>I.1</span></a>. This process is sometimes referred to as taking an integration step. Effectively, the solver uses the small straight line seqment between <span class="math inline">\(\left(x_0,y_0\right)\)</span> and <span class="math inline">\(\left(x_1,y_1\right)\)</span> to approximate the true solution, <span class="math inline">\(y\left(x\right)\)</span>, in that interval. The accuracy of this approximation increases as <span class="math inline">\(\Delta x\)</span> decreases, so typically the solver uses a large number of very small steps.</p>
+<p>Once the step has been completed and the value of every dependent variable is known at <span class="math inline">\(x=x_1\)</span> , the solver checks to determine whether making that step resulted in the stopping criterion being satisfied. In other words, if the stopping criterion is that <span class="math inline">\(y_3\)</span> should equal some value, <span class="math inline">\(y_{3,f}\)</span>, the solver would check to see whether <span class="math inline">\(y_3\)</span> did, in fact, reach or surpass <span class="math inline">\(y_{3,f}\)</span> after making the step. If so, the numerical solution is complete and the solver returns the values of the dependent variables and the independent variable for each of the steps it took. If the stopping criterion has <em>not</em> been satisfied after taking a step, another step is taken, this time starting from the point <span class="math inline">\(\left(x_1,y_1\right)\)</span>.</p>
+</section>
+<section id="cautions-related-to-numerical-solutions" class="level2" data-number="I.6">
+<h2 data-number="I.6" class="anchored" data-anchor-id="cautions-related-to-numerical-solutions"><span class="header-section-number">I.6</span> Cautions Related to Numerical Solutions</h2>
+<p><em>When the stopping criterion is a value of one of the</em> <strong>dependent</strong> <em>variables</em>, many solvers require that you provide <em>both</em> a final value of the independent variable <em>and</em> a final value of that dependent variable. The solver then takes steps as described above, and after each step it checks to see whether the dependent variable has reached the value you specified. The problem is that if you specify a final value of the <em>independent</em> variable that is too small, the solver may reach that value first and stop. The stopping criterion you specified for the dependent variable will not have been reached, and the result that is returned is not the result you are seeking. Therefore <strong>it is important to check that the dependent variable reached the stopping criterion you specified</strong>.</p>
+<p>To avoid having the solver stop because it reached the stopping criterion for the <em>independent</em> variable, it is common to specify a very large final value for the independent variable stopping criterion. The problem with doing this is that it may cause the solver to use a step size that is too large, and that may result in an inaccurate solution. Therefore, <strong>it is important to check that the step size was not too large</strong>. The solution that is returned will include the final value of the independent variable. The stopping criterion for the independent variable can be set to a value slightly larger than that and the equations can be solved a second time. Assuming the second solution reaches the desired stopping criterion for the dependent variable, the second solution can then be taken as the desired result.</p>
+<p>A second possible problem arises when solving sets of IVODEs where one of the dependent variables changes very abruptly over a very small range of the independent variable, and the changes in that dependent variable significantly affect the changes in the other dependent variables over a much larger range of the independent variable. Equations like this are called <em>stiff ODEs</em>, and they require special treatment of the step size. Therefore, when solving sets of ODEs, one should pay attention to whether any of the dependent variables change very abruptly as the independent variable changes. If they do, it is advisable to <strong>repeat the solution using a solver that is specifically tailored to stiff ODEs</strong>.</p>
+</section>
+<section id="symbols-used-in-this-appendix" class="level2" data-number="I.7">
+<h2 data-number="I.7" class="anchored" data-anchor-id="symbols-used-in-this-appendix"><span class="header-section-number">I.7</span> Symbols Used in this Appendix</h2>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(f_i\)</span></td>
+<td style="text-align: left;">Function of the independent and dependent variables in the <span class="math inline">\(i^{th}\)</span> differential equation when the ODEs are written in vector form without a matrix.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\underline f\)</span></td>
+<td style="text-align: left;">Column vector formed from a set of functions.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(g_i\)</span></td>
+<td style="text-align: left;">Function of the independent and dependent variables in the <span class="math inline">\(i^{th}\)</span> differential equation when the ODEs are written using a matrix.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\underline g\)</span></td>
+<td style="text-align: left;">Column vector formed from a set of functions.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(m_{i,j}\)</span></td>
+<td style="text-align: left;">Coefficient that multiplies the derivative of dependent variable <span class="math inline">\(j\)</span> in the <span class="math inline">\(i^{th}\)</span> differential equation.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot n_i\)</span></td>
+<td style="text-align: left;">Molar flow rate of reagent <span class="math inline">\(i\)</span>; and additional subscripted <span class="math inline">\(in\)</span> denotes an <em>inlet</em> molar flow rate.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(r\)</span></td>
+<td style="text-align: left;">Reaction rate per unit volume.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(t\)</span></td>
+<td style="text-align: left;">Time; a subscripted <span class="math inline">\(f\)</span> indicates the <em>final</em> time.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(x\)</span></td>
+<td style="text-align: left;">Generic independent variable.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(y\)</span></td>
+<td style="text-align: left;">Generic dependent variable; a numerical subscript denotes one specific dependent variable out of the vector <span class="math inline">\(\underline y\)</span>; an additional subscripted <span class="math inline">\(f\)</span> indicates the <em>final</em> value.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\underline y\)</span></td>
+<td style="text-align: left;">Column vector formed from the dependent variables in a set of ODEs.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\left(x_i,y_i\right)\)</span></td>
+<td style="text-align: left;">Cartesion coordinates of the <span class="math inline">\(i^{th}\)</span> point.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\hat C_{p,i}\)</span></td>
+<td style="text-align: left;">Molar heat capacity of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\boldsymbol{M}\)</span></td>
+<td style="text-align: left;">Matrix of coefficients that multiplies a column vector of derivatives when the ODEs are written using a matrix.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(P\)</span></td>
+<td style="text-align: left;">Pressure.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(R\)</span></td>
+<td style="text-align: left;">Ideal gas constant.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: left;">Temperature; a subscripted <span class="math inline">\(in\)</span> denotes the <em>inlet</em> temperature.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: left;">Volume of fluid.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot V\)</span></td>
+<td style="text-align: left;">Volumetric flow rate.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\Delta x\)</span></td>
+<td style="text-align: left;">Change in the value of the independent variable.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\Delta y\)</span></td>
+<td style="text-align: left;">Change in the value of the dependent variable.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\Delta H\)</span></td>
+<td style="text-align: left;">Heat of reaction.</td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./apndx_solve_ates.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./apndx_estimate_parameters.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>
