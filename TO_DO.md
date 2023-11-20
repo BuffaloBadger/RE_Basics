@@ -1,3 +1,8 @@
+
+Appendix I: when the corresponding SCoRE appendices are available, add links to the videos and to Matlab and Python functions for solving the example ATEs.
+
+
+
 General
 
 * add underlined variable symbols as vectors and bold symbols as matrices to nomenclature
