@@ -1,4 +1,4 @@
-# Analysis of Kinetics Data from a BSTR {#sec-4_bstr_data_analysis}
+# Analysis of Kinetics Data from a BSTR {#sec-6_bstr_data_analysis}
 
 ```{r}
 #| echo: false
@@ -9,7 +9,7 @@ library(kableExtra)
 source('./Code/fmt_tibble_col.R')
 ```
 
-@sec-4_kin_data_gen presented an overview of the design of kinetics experiments and the generation and analysis of kinetics data. This chapter focuses specifically on using reactors for those activities that conform to the assumptions of the ideal BSTR model described in @sec-3_design_eqns and [Appendix -@sec-apndx_ideal_reactor_models]. The most critical aspect of the ideal BSTR model is the assumption of perfect mixing, so the chapter begins with a few examples of devices that can be modeled as ideal BSTRs.
+@sec-6_kin_data_gen presented an overview of the design of kinetics experiments and the generation and analysis of kinetics data. This chapter focuses specifically on using reactors for those activities that conform to the assumptions of the ideal BSTR model described in @sec-3_design_eqns and [Appendix -@sec-apndx_ideal_reactor_models]. The most critical aspect of the ideal BSTR model is the assumption of perfect mixing, so the chapter begins with a few examples of devices that can be modeled as ideal BSTRs.
 
 ## Laboratory BSTRs
 
@@ -41,9 +41,9 @@ In any of these situations, **as soon as the reactor is charged and has stabiliz
 
 ## Design of BSTR Experiments
 
-The design of kinetics experiments was considered in @sec-4_kin_data_gen and won't be repeated here. It was recommended that reactors being used to generate kinetics data should operate isothermally and that experiments should be performed in blocks where all of the experiments in any one block occur at the same temperature. In *Reaction Engineering Basics* it is always assumed that kinetics data have been generated using an isothermal reactor wherein only one reaction is occurring.
+The design of kinetics experiments was considered in @sec-6_kin_data_gen and won't be repeated here. It was recommended that reactors being used to generate kinetics data should operate isothermally and that experiments should be performed in blocks where all of the experiments in any one block occur at the same temperature. In *Reaction Engineering Basics* it is always assumed that kinetics data have been generated using an isothermal reactor wherein only one reaction is occurring.
 
-Briefly, the purpose of kinetics experiments is to generate kinetics data that can be used to develop a rate expression. Generally there will be a critical range of temperatures and critical ranges of the concentration of each reagent within which the rate expression needs to be as accurate as possible. The experiments should be designed so that the temperature and each concentration (or partial pressure) spans its critical range. A factorial design like that described in @sec-4_kin_data_gen and illustrated in [Example -@sec-example_8_1] can be used.
+Briefly, the purpose of kinetics experiments is to generate kinetics data that can be used to develop a rate expression. Generally there will be a critical range of temperatures and critical ranges of the concentration of each reagent within which the rate expression needs to be as accurate as possible. The experiments should be designed so that the temperature and each concentration (or partial pressure) spans its critical range. A factorial design like that described in @sec-6_kin_data_gen and illustrated in [Example -@sec-example_18_1] can be used.
 
 ### Adjusted Experimental Inputs
 
@@ -65,9 +65,9 @@ One other possibility for the measured response from BSTR kinetics experiments i
 
 ## BSTR Data Analysis
 
-Two-stage analysis of kinetics data that were generated using blocks of experiments was described in @sec-4_kin_data_gen. The first stage involves the estimation of rate expression parameters, and the second stage involves the estimation of rate coefficient parameters. The present section focuses on **applying the first stage analysis to BSTR kinetics data** to estimate the values of the rate expression parameters at each temperature level that was studied experimentally.
+Two-stage analysis of kinetics data that were generated using blocks of experiments was described in @sec-6_kin_data_gen. The first stage involves the estimation of rate expression parameters, and the second stage involves the estimation of rate coefficient parameters. The present section focuses on **applying the first stage analysis to BSTR kinetics data** to estimate the values of the rate expression parameters at each temperature level that was studied experimentally.
 
-The second stage of analysis involves fitting the Arrhenius expression to rate coefficient data from the first stage of analysis. As such, the second stage is unaffected by the type of reactor used. The second stage of analysis will be included in the first two examples that accompany this chapter, but estimation of pre-exponential factors and activation energies does not depend upon the reactor type and since it has already been described in @sec-2_rates_rate_express and illustrated in [Example -@sec-example_4_4] it will not be discussed here. Similarly, assessing the accuracy of the resulting rate expression was described in @sec-4_kin_data_gen and will not be repeated here.
+The second stage of analysis involves fitting the Arrhenius expression to rate coefficient data from the first stage of analysis. As such, the second stage is unaffected by the type of reactor used. The second stage of analysis will be included in the first two examples that accompany this chapter, but estimation of pre-exponential factors and activation energies does not depend upon the reactor type and since it has already been described in @sec-2_rates_rate_express and illustrated in [Example -@sec-example_4_4] it will not be discussed here. Similarly, assessing the accuracy of the resulting rate expression was described in @sec-6_kin_data_gen and will not be repeated here.
 
 BSTR kinetics experiment are isothermal, and the reaction temperature is known. Under these circumstances the ideal BSTR mole balance, @eq-bstr_mole_balance, is the only design equation needed to model the composition of the reacting fluid. Since only one reaction is taking place, it is not necessary to use an index for the reaction.
 
@@ -77,11 +77,11 @@ $$ {#eq-bstr_mole_bal_one_reaction}
 
 ### Parameter Estimation Using a Response Function
 
-The rate expression parameters in a proposed rate expression can *always* be estimated using a response function. As described in @sec-4_kin_data_gen, a response function must be created that is consistent with the parameter estimation software to be used. The response function should contain all of the quantities that appear in the design equations that are *known and constant*. It should be passed the values of the adjusted inputs and the rate expression parameters being estimated as arguments. Using that information it should solve the design equations numerically. Then it should calculate the model-predicted value of the measured response and return it.
+The rate expression parameters in a proposed rate expression can *always* be estimated using a response function. As described in @sec-6_kin_data_gen, a response function must be created that is consistent with the parameter estimation software to be used. The response function should contain all of the quantities that appear in the design equations that are *known and constant*. It should be passed the values of the adjusted inputs and the rate expression parameters being estimated as arguments. Using that information it should solve the design equations numerically. Then it should calculate the model-predicted value of the measured response and return it.
 
 For a single reaction studied in an isothermal BSTR, the design equations that are solved within the response function consist of @eq-bstr_mole_bal_one_reaction written for each of the reagents present in the system. This gives a set of initial-value ordinary differential equations (IVODEs). This is the only aspect of the response function that is unique to BSTR kinetics data. (As noted in @sec-3_design_eqns, it is possible to use just one mole balance to model the system if the apparent extent of reaction is used to calculate the amounts of all other reactants and products.)
 
-The response function is then used exactly as described in @sec-4_kin_data_gen. One writes a computer code that calls the parameter estimation software, typically passing as arguments the response function, the adjusted inputs, the experimentally measured responses, and a guess for the rate expression parameters to be estimated. The parameter estimation software then returns the estimated values of those parameters.
+The response function is then used exactly as described in @sec-6_kin_data_gen. One writes a computer code that calls the parameter estimation software, typically passing as arguments the response function, the adjusted inputs, the experimentally measured responses, and a guess for the rate expression parameters to be estimated. The parameter estimation software then returns the estimated values of those parameters.
 
 ### Parameter Estimation Using a Linearized Model
 
@@ -99,7 +99,7 @@ $$
 
 The kinetics parameters cannot appear in the defining equation for the new variables, $y$ and the $x_i$. Additionally, the definition of each slope, $m_i$, and the intercept, $b$, must contain a unique combination of the rate expression parameters; it may not contain any adjusted inputs or the response, and it cannot be a known constant. With those restrictions, the total number of slopes and intercepts must equal the number of rate expression parameters.
 
-At this point, the analysis proceeds as described in @sec-4_kin_data_gen. The primary advantage of this approach is that the linearized model can be fit to the new $y$ and $x$ data using linear least squares. It is not necessary to write a response function, nor to use general parameter estimation software. As noted in @sec-4_kin_data_gen, if there are only one or two kinetics parameters in the rate expression, the linearized model, $y=mx$ or $y=mx+b$, also can be fit to the $x$ - $y$ data using a spreadsheet.
+At this point, the analysis proceeds as described in @sec-6_kin_data_gen. The primary advantage of this approach is that the linearized model can be fit to the new $y$ and $x$ data using linear least squares. It is not necessary to write a response function, nor to use general parameter estimation software. As noted in @sec-6_kin_data_gen, if there are only one or two kinetics parameters in the rate expression, the linearized model, $y=mx$ or $y=mx+b$, also can be fit to the $x$ - $y$ data using a spreadsheet.
 
 ### Parameter Estimation Using an Approximate Reactor Model
 
@@ -139,9 +139,9 @@ $$ {#eq-half_life_other_order}
 
 @eq-half_life_first_order and @eq-half_life_other_order suggest that the reaction order, $\alpha$, can be determined by measuring the half-life in a series of experiments using different initial concentrations of A. If the half-life is the same for all initial concentrations, the reaction is first order. Otherwise, a log-log plot of the half-life *vs*. the initial concentration should yield a straight line, and the slope should equal $1-\alpha$ as can be seen by taking the logs of each side of equation @eq-half_life_other_order. Note that $k$ and $\alpha$ were treated as constants in this analysis, so each block of experiments at a single temperature must be evaluated separately.
 
-## Examples {#sec-examples_into_9}
+## Examples {#sec-examples_intro_19}
 
-All of the examples in [Chapters -@sec-4_bstr_data_analysis], [-@sec-4_cstr_data_analysis], and [-@sec-4_pfr_data_analysis] involve using experimental data to estimate the rate expression parameters in a proposed rate expression and then assess its accuracy. Here in @sec-4_bstr_data_analysis the experimental data have been generated using an ideal BSTR. This type of assignment can be summarized as "kinetics data analysis." When a reaction engineer is given an assignment, one of the first things they need to do is to identify what type of analysis it requires. Instead of repeating how an expert would identify the type of analysis required in each of the following examples, a single expert thinking callout is provided here. Readers should mentally insert this callout at the start of every example in this chapter.
+All of the examples in [Chapters -@sec-6_bstr_data_analysis], [-@sec-6_cstr_data_analysis], and [-@sec-6_pfr_data_analysis] involve using experimental data to estimate the rate expression parameters in a proposed rate expression and then assess its accuracy. Here in @sec-6_bstr_data_analysis the experimental data have been generated using an ideal BSTR. This type of assignment can be summarized as "kinetics data analysis." When a reaction engineer is given an assignment, one of the first things they need to do is to identify what type of analysis it requires. Instead of repeating how an expert would identify the type of analysis required in each of the following examples, a single expert thinking callout is provided here. Readers should mentally insert this callout at the start of every example in this chapter.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking after Reading each Problem Statement in this Chapter
@@ -163,35 +163,35 @@ Thus, to begin this assignment I need to do the following things.
 
 :::
 
-Kinetics data analysis using a response function is preferred in *Reaction Engineering Basics* because it can always be used, and it does not introduce any inaccuracy. For this reason every example in this chapter illustrates kinetics data analysis using a response function. [Example -@sec-example_9_1] additionally illustrates kinetics data analysis using an approximate reactor model (differential data analysis). [Example -@sec-example_9_2] additionally illustrates kinetics data analysis using a linearized model.
+Kinetics data analysis using a response function is preferred in *Reaction Engineering Basics* because it can always be used, and it does not introduce any inaccuracy. For this reason every example in this chapter illustrates kinetics data analysis using a response function. [Example -@sec-example_19_1] additionally illustrates kinetics data analysis using an approximate reactor model (differential data analysis). [Example -@sec-example_19_2] additionally illustrates kinetics data analysis using a linearized model.
 
 Additionally, the first two examples in this chapter provides data that can be divided into same-temperature blocks, and they show how the results from analyzing each of those blocks are subsequently used to estimate rate coefficient parameters like the Arrhenius pre-exponential factor and activation energy that are associated with the temperature dependence of the rate expression parameters.
 
-### Differential Analysis of BSTR Kinetics Data {#sec-example_9_1}
+### Differential Analysis of BSTR Kinetics Data {#sec-example_19_1}
 
 ```{r}
 #| echo: false
 #| output: false
 path_to_data <- './Data/'
-path_to_results <- '../RE_Basics_Examples/reb_9_1/Results/'
+path_to_results <- '../RE_Basics_Examples/reb_19_1/Results/'
 path_to_figures <- './Graphics/'
 ```
 
-{{< include ../RE_Basics_Examples/reb_9_1/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_19_1/problem_statement.qmd >}}
 
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_data,'reb_9_1_data.csv'))
+d <- read.csv(paste0(path_to_data,'reb_19_1_data.csv'))
 # Experiment, T, CA0, t, CA
 ```
 
-Note that these data were generated using the experimental design from [Example -@sec-example_8_1]. and the initial conditions from @tbl-example_8_1. The first few data points are shown in @tbl-example_9_1_data. The full data set is available in the .csv file [reb_9_1_data.csv](`r paste0(path_to_data,'reb_9_1_data.csv')`)
+Note that these data were generated using the experimental design from [Example -@sec-example_18_1]. and the initial conditions from @tbl-example_18_1. The first few data points are shown in @tbl-example_19_1_data. The full data set is available in the .csv file [reb_19_1_data.csv](`r paste0(path_to_data,'reb_19_1_data.csv')`)
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_9_1_data
+#| label: tbl-example_19_1_data
 #| tbl-cap: First 8 experimental data points.
 kbl(d[1:8,], format = "markdown", align = "cc", col.names = c('Experiment','T (째C)',
     'C~A,0~ (M)', 't~rxn~ (min)', 'C~A~ (M)'))
@@ -202,7 +202,7 @@ kbl(d[1:8,], format = "markdown", align = "cc", col.names = c('Experiment','T (�
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The callout in the introduction to the Examples section, @sec-examples_into_9, describes how I determined that this is a kinetics data analysis assignment and, by knowing that, listed the general approach to use to complete it. I find it helpful to begin any assignment by summarizing the information provided in the problem statement.
+The callout in the introduction to the Examples section, @sec-examples_intro_19, describes how I determined that this is a kinetics data analysis assignment and, by knowing that, listed the general approach to use to complete it. I find it helpful to begin any assignment by summarizing the information provided in the problem statement.
 
 :::
 
@@ -245,7 +245,7 @@ $$
 | $n_A$ | $n_{A,0}$ |  |
 | $n_Z$ | $0$ | |
 
-: Initial values and stopping criterion for solving the design equations, equations (3) and (4). {#tbl-example_9_1_initial_values tbl-colwidths="[20, 40, 40]"}
+: Initial values and stopping criterion for solving the design equations, equations (3) and (4). {#tbl-example_19_1_initial_values tbl-colwidths="[20, 40, 40]"}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See Where That Came From
@@ -304,7 +304,7 @@ The response function is created with the following structure:
     * Evaluates and returns the derivatives, equations (3) and (4).
 * For each experiment the response function
     * Calculates $n_{A,0}$ using equation (6).
-    * Solves the design equations using the initial values and stopping criterion in @tbl-example_9_1_initial_values to find $n_A$ at $t_{rxn}$.
+    * Solves the design equations using the initial values and stopping criterion in @tbl-example_19_1_initial_values to find $n_A$ at $t_{rxn}$.
     * Calculates $C_A$ at $t_{rxn}$ using equation (5).
 * The values of $C_A$ for all of the experiments are returned.
 
@@ -313,7 +313,7 @@ The response function is created with the following structure:
 
 Having created the response function, I can now use it to estimate the rate expression parameter, $k$, at each of the experimental temperature levels. To do so I will use parameter estimation software of my choosing. I will write a simple program that passes the adjusted inputs, the measured responses, and a guess for the rate expression parameter to that parameter estimation software. I will exectute this program using each of the same-temperature data blocks, and it will return the best estimate for $k$, some measure of the uncertainty in $k$, and the coefficient of determination, $R^2$, for each experimental temperature level.
 
-Using the resulting value of $k$ for each data block, I then can calculate the model-predicted response and the residual (difference between the measured response and the model-predicted response) for each experiment. Then, as described in @sec-4_kin_data_gen, a parity plot and residuals plots can be created.
+Using the resulting value of $k$ for each data block, I then can calculate the model-predicted response and the residual (difference between the measured response and the model-predicted response) for each experiment. Then, as described in @sec-6_kin_data_gen, a parity plot and residuals plots can be created.
 
 To complete the analysis, I will fit the Arrhenius expression to the resulting $k$ *vs*. $T$ data. (see [Example -@sec-example_4_4])
 
@@ -331,58 +331,58 @@ To complete the analysis, I will fit the Arrhenius expression to the resulting $
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results, 'reb_9_1_resp_fcn_params.csv'))
+d <- read.csv(paste0(path_to_results, 'reb_19_1_resp_fcn_params.csv'))
 # T, k, k_ll, k_ul, R_sq_
 d <- fmt_tibble_col(d, 2:5, 3, 2, 2)
 d$k_full = paste0(d$k,' min^-1^, 95% CI [',d$k_ll,', ',d$k_ul,']')
 ```
 
-The parameter estimation results are listed in @tbl-example_9_1_k_resp_fcn. @fig-example_9_1_parity shows the parity plots, @fig-example_9_1_residual_1 shows the residuals plots for $C_{A,0}$, and  @fig-example_9_1_residual_2 shows the residuals plots for $t_{rxn}$.
+The parameter estimation results are listed in @tbl-example_19_1_k_resp_fcn. @fig-example_19_1_parity shows the parity plots, @fig-example_19_1_residual_1 shows the residuals plots for $C_{A,0}$, and  @fig-example_19_1_residual_2 shows the residuals plots for $t_{rxn}$.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_9_1_k_resp_fcn
+#| label: tbl-example_19_1_k_resp_fcn
 #| tbl-cap: Parameter estimation results using the response function.
 d <- d %>% select(T, k_full, R_sq)
 kbl(d, format = "markdown", align = "cc", col.names = c("T (째C)", "k", "R^2^"))
 ```
 
-::: {#fig-example_9_1_parity layout-ncol=2}
+::: {#fig-example_19_1_parity layout-ncol=2}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_parity_65.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_parity_65.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_parity_73.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_parity_73.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_parity_82.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_parity_82.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_parity_90.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_parity_90.png')`){width=60%}
 
 Parity plots from parameter estimation using a response function.
 :::
 
-::: {#fig-example_9_1_residual_1 layout-ncol=2}
+::: {#fig-example_19_1_residual_1 layout-ncol=2}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_residual_CA0_65.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_residual_CA0_65.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_residual_CA0_73.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_residual_CA0_73.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_residual_CA0_82.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_residual_CA0_82.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_residual_CA0_90.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_residual_CA0_90.png')`){width=60%}
 
 Residuals plots for $C_{A,0}$ from parameter estimation using a response function.
 :::
 
-::: {#fig-example_9_1_residual_2 layout-ncol=2}
+::: {#fig-example_19_1_residual_2 layout-ncol=2}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_residual_t_rxn_65.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_residual_t_rxn_65.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_residual_t_rxn_73.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_residual_t_rxn_73.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_residual_t_rxn_82.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_residual_t_rxn_82.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_resp_fcn_residual_t_rxn_90.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_resp_fcn_residual_t_rxn_90.png')`){width=60%}
 
 Residuals plots for $t_{rxn}$ from parameter estimation using a response function.
 :::
@@ -390,27 +390,27 @@ Residuals plots for $t_{rxn}$ from parameter estimation using a response functio
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results,"reb_9_1_Arrhenius_resp_fcn.csv"))
+d <- read.csv(paste0(path_to_results,"reb_19_1_Arrhenius_resp_fcn.csv"))
 d <- fmt_tibble_col(d, 2, 3, 2, 2)
 # item, value, units
 ```
 
-The Arrhenius expression was fit to the rate coefficients shown in @tbl-example_9_1_k_resp_fcn with the following results.
+The Arrhenius expression was fit to the rate coefficients shown in @tbl-example_19_1_k_resp_fcn with the following results.
 
 k~0~: `r d$value[1]` `r d$units[1]`, 95% CI [`r d$value[2]`, `r d$value[3]`]  
 E: `r d$value[4]` `r d$units[4]`, 95% CI [`r d$value[5]`, `r d$value[6]`]  
 R^2^: `r d$value[7]`
 
-The Arrhenius plot is shown in @fig-example_9_1_Arr_resp_fcn.
+The Arrhenius plot is shown in @fig-example_19_1_Arr_resp_fcn.
 
-![Arrhenius plot for rate coefficients estimated using the response function.](`r paste0(path_to_figures,'reb_9_1_Arrhenius_resp_fcn.png')`){#fig-example_9_1_Arr_resp_fcn width='60%'}
+![Arrhenius plot for rate coefficients estimated using the response function.](`r paste0(path_to_figures,'reb_19_1_Arrhenius_resp_fcn.png')`){#fig-example_19_1_Arr_resp_fcn width='60%'}
 
 **Assessment**
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-In assessing the accuracy I need to consider the fit of the model to the data for each of the experimental temperature levels and the fit of the Arrhenius expression to the resulting $k$ *vs*. $T$ data. The coefficient of determination, $R^2$, is extremely close to 1.0 in all cases, indicating high accuracy. In the four parity plots, @fig-example_9_1_parity, and in the Arrhenius plot, @fig-example_9_1_Arr_resp_fcn, the experimental data points are all close to the line representing the model, again indicating an accurate model. In the residuals plots, @fig-example_9_1_residual_1 and @fig-example_9_1_residual_2, and the Arrhenius plot, @fig-example_9_1_Arr_resp_fcn, the experimental data points scatter randomly about the line representing the model with no apparent systematic trends in the deviations. This, too, suggests an accurate model. Finally, for each estimated parameter, the upper and lower limits of the 95% confidence intervals are very close in value to the estimated parameter. That is, the uncertainty in the estimated parameters is small, yet again indicative of an accurate model.
+In assessing the accuracy I need to consider the fit of the model to the data for each of the experimental temperature levels and the fit of the Arrhenius expression to the resulting $k$ *vs*. $T$ data. The coefficient of determination, $R^2$, is extremely close to 1.0 in all cases, indicating high accuracy. In the four parity plots, @fig-example_19_1_parity, and in the Arrhenius plot, @fig-example_19_1_Arr_resp_fcn, the experimental data points are all close to the line representing the model, again indicating an accurate model. In the residuals plots, @fig-example_19_1_residual_1 and @fig-example_19_1_residual_2, and the Arrhenius plot, @fig-example_19_1_Arr_resp_fcn, the experimental data points scatter randomly about the line representing the model with no apparent systematic trends in the deviations. This, too, suggests an accurate model. Finally, for each estimated parameter, the upper and lower limits of the 95% confidence intervals are very close in value to the estimated parameter. That is, the uncertainty in the estimated parameters is small, yet again indicative of an accurate model.
 
 :::
 
@@ -496,32 +496,32 @@ $$
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results, "reb_9_1_diff_params.csv"))
+d <- read.csv(paste0(path_to_results, "reb_19_1_diff_params.csv"))
 # T, k, k_ll, k_ul, R_sq_
 d <- fmt_tibble_col(d, 2:5, 3, 2, 2)
 d$k_full = paste0(d$k,' min^-1^, 95% CI [',d$k_ll,', ',d$k_ul,']')
 ```
 
-The parameter estimation results are listed in @tbl-example_9_1_k_diff. @fig-example_9_1_model shows the model plots.
+The parameter estimation results are listed in @tbl-example_19_1_k_diff. @fig-example_19_1_model shows the model plots.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_9_1_k_diff
+#| label: tbl-example_19_1_k_diff
 #| tbl-cap: Parameter estimation results from differential analysis.
 d <- d %>% select(T, k_full, R_sq)
 kbl(d, format = "markdown", align = "cc", col.names = c("T (째C)", "k", "R^2^"))
 ```
 
-::: {#fig-example_9_1_model layout-ncol=2}
+::: {#fig-example_19_1_model layout-ncol=2}
 
-![](`r paste0(path_to_figures,'reb_9_1_model_65.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_model_65.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_model_73.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_model_73.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_model_82.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_model_82.png')`){width=60%}
 
-![](`r paste0(path_to_figures,'reb_9_1_model_90.png')`){width=60%}
+![](`r paste0(path_to_figures,'reb_19_1_model_90.png')`){width=60%}
 
 Model plots from parameter estimation using differential analysis.
 :::
@@ -529,20 +529,20 @@ Model plots from parameter estimation using differential analysis.
 ```{r}
 #| echo: false
 #| output: false
-dd <- read.csv(paste0(path_to_results,"reb_9_1_Arrhenius_diff.csv"))
+dd <- read.csv(paste0(path_to_results,"reb_19_1_Arrhenius_diff.csv"))
 dd <- fmt_tibble_col(dd, 2, 3, 2, 2)
 # item, value, units
 ```
 
-The Arrhenius expression was fit to the rate coefficients shown in @tbl-example_9_1_k_diff with the following results.
+The Arrhenius expression was fit to the rate coefficients shown in @tbl-example_19_1_k_diff with the following results.
 
 k~0~: `r dd$value[1]` `r dd$units[1]`, 95% CI [`r dd$value[2]`, `r dd$value[3]`]  
 E: `r dd$value[4]` `r dd$units[4]`, 95% CI [`r dd$value[5]`, `r dd$value[6]`]  
 R^2^: `r dd$value[7]`
 
-The Arrhenius plot is shown in @fig-example_9_1_Arr_diff.
+The Arrhenius plot is shown in @fig-example_19_1_Arr_diff.
 
-![Arrhenius plot for rate coefficients estimated using differential analysis.](`r paste0(path_to_figures,'reb_9_1_Arrhenius_diff.png')`){#fig-example_9_1_Arr_diff width='60%'}
+![Arrhenius plot for rate coefficients estimated using differential analysis.](`r paste0(path_to_figures,'reb_19_1_Arrhenius_diff.png')`){#fig-example_19_1_Arr_diff width='60%'}
 
 **Assessment**
 
@@ -552,7 +552,7 @@ The Arrhenius plot is shown in @fig-example_9_1_Arr_diff.
 As was the case for the analysis using a response function, every assessment criterion indicates that the rate expression is accurate.
 
 * The coefficient of determination, $R^2$, is close to 1.0 in all cases. 
-* In the four model plots, @fig-example_9_1_model, and in the Arrhenius plot, @fig-example_9_1_Arr_diff, the experimental data points are all close to the line representing the model and the experimental data points scatter randomly about the line representing the model, with no apparent systematic trends in the deviations from the line.
+* In the four model plots, @fig-example_19_1_model, and in the Arrhenius plot, @fig-example_19_1_Arr_diff, the experimental data points are all close to the line representing the model and the experimental data points scatter randomly about the line representing the model, with no apparent systematic trends in the deviations from the line.
 * For each estimated parameter, other than $k_0$, the upper and lower limits of the 95% confidence intervals are close in value to the estimated parameter. That is, the uncertainty in the estimated parameters is small. It is not uncommon for the uncertainty in pre-exponential factors to be relatively large.
 
 :::
@@ -565,31 +565,31 @@ The accuracy criteria suggested that the model obtained using differential analy
 
 The same data and the same rate expression were used in both analyses. They differed in the reactor models used. Not surprisingly, the results with the greater uncertainty were obtained using an *approximate* reactor model. In general, analysis should be performed using the true reactor model (i. e. using a response function) to avoid the additional uncertainty resulting from the use of an approximate model. 
 
-### Analysis Using a Linearized Reactor Model {#sec-example_9_2}
+### Analysis Using a Linearized Reactor Model {#sec-example_19_2}
 
 ```{r}
 #| echo: false
 #| output: false
 path_to_data <- './Data/'
-path_to_results <- '../RE_Basics_Examples/reb_9_2/Results/'
+path_to_results <- '../RE_Basics_Examples/reb_19_2/Results/'
 path_to_figures <- './Graphics/'
 ```
 
-{{< include ../RE_Basics_Examples/reb_9_2/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_19_2/problem_statement.qmd >}}
 
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_data, "reb_9_2_data.csv"))
+d <- read.csv(paste0(path_to_data, "reb_19_2_data.csv"))
 # T, PA0, PB0, t, fA
 ```
 
-The first few data points are shown in @tbl-example_9_2_data. The full data set is available in the file [reb_9_2_data.csv](`r paste0(path_to_data,'reb_9_2_data.csv')`).
+The first few data points are shown in @tbl-example_19_2_data. The full data set is available in the file [reb_19_2_data.csv](`r paste0(path_to_data,'reb_19_2_data.csv')`).
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_9_2_data
+#| label: tbl-example_19_2_data
 #| tbl-cap: First 5 of the 189 experimentally generated data.
 kbl(d[1:5,], format = "markdown", align = "cc", 
   col.names = c('T (째C)', 'P~A,0~ (atm)', 'P~B,0~ (atm)', 't~rxn~ (min)', 
@@ -630,7 +630,7 @@ The assignment asks me to perform the data analysis twice. The information above
 
 **Reactor Model**
 
-Mole balance design equations for reagents A, B, Y, and Z are presented in equations (3) through (6). The initial values and stopping criterion needed to solve them are listed in @tbl-example_9_2_initial_values.
+Mole balance design equations for reagents A, B, Y, and Z are presented in equations (3) through (6). The initial values and stopping criterion needed to solve them are listed in @tbl-example_19_2_initial_values.
 
 $$
 \frac{dn_A}{dt} = -Vr \tag{3}
@@ -656,7 +656,7 @@ $$
 | $n_Y$ | $0$ | |
 | $n_Z$ | $0$ | |
 
-: Initial values and stopping criterion for solving the design equations, equations (3) through (6). {#tbl-example_9_2_initial_values tbl-colwidths="[20, 40, 40]"}
+: Initial values and stopping criterion for solving the design equations, equations (3) through (6). {#tbl-example_19_2_initial_values tbl-colwidths="[20, 40, 40]"}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See Where That Came From
@@ -736,7 +736,7 @@ The response function is created with the following structure:
     * Evaluates and returns the derivatives, equations (3) through (6).
 * For each experiment the response function
     * Calculates $n_{A,0}$ and $n_{B,0}$ using equations (9) and (10).
-    * Solves the design equations using the initial values and stopping criterion in @tbl-example_9_2_initial_values to find $n_A$, $n_B$, $n_Y$, and $n_Z$ at $t_{rxn}$.
+    * Solves the design equations using the initial values and stopping criterion in @tbl-example_19_2_initial_values to find $n_A$, $n_B$, $n_Y$, and $n_Z$ at $t_{rxn}$.
     * Calculates $f_A$ at $t_{rxn}$ using equation (11).
 * The values of $f_A$ for all of the experiments are returned.
 
@@ -745,7 +745,7 @@ The response function is created with the following structure:
 
 Having created the response function, I can now use it to estimate the rate expression parameter, $k$, at each of the experimental temperature levels. To do so I will use parameter estimation software of my choosing. I will write a simple program that passes the adjusted inputs, the measured responses, and a guess for the rate expression parameter to that parameter estimation software. I will exectute this program using each of the same-temperature data blocks, and it will return the best estimate for $k$, some measure of the uncertainty in $k$, and the coefficient of determination, $R^2$, for each experimental temperature level.
 
-Using the resulting value of $k$ for each data block, I then can calculate the model-predicted response and the residual (difference between the measured response and the model-predicted response) for each eperiment. Additionally, as described in @sec-4_kin_data_gen, a parity plot and residuals plots can be created.
+Using the resulting value of $k$ for each data block, I then can calculate the model-predicted response and the residual (difference between the measured response and the model-predicted response) for each eperiment. Additionally, as described in @sec-6_kin_data_gen, a parity plot and residuals plots can be created.
 
 To complete the analysis, I will fit the Arrhenius expression to the resulting $k$ *vs*. $T$ data. (see [Example -@sec-example_4_4])
 
@@ -763,63 +763,63 @@ To complete the analysis, I will fit the Arrhenius expression to the resulting $
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results, 'reb_9_2_resp_fcn_params.csv'))
+d <- read.csv(paste0(path_to_results, 'reb_19_2_resp_fcn_params.csv'))
 # T, k, k_ll, k_ul, R_sq_
 d <- fmt_tibble_col(d, 2:5, 3, 2, 2)
 d$k_full = paste0(d$k,' min^-1^, 95% CI [',d$k_ll,', ',d$k_ul,']')
 ```
 
-The parameter estimation results are listed in @tbl-example_9_2_k_resp_fcn. @fig-example_9_2_parity shows the parity plots, @fig-example_9_2_residual_A shows the residuals plots for $P_{A,0}$, @fig-example_9_2_residual_B shows the residuals plots for $P_{B,0}$, and  @fig-example_9_2_residual_t shows the residuals plots for $t_{rxn}$.
+The parameter estimation results are listed in @tbl-example_19_2_k_resp_fcn. @fig-example_19_2_parity shows the parity plots, @fig-example_19_2_residual_A shows the residuals plots for $P_{A,0}$, @fig-example_19_2_residual_B shows the residuals plots for $P_{B,0}$, and  @fig-example_19_2_residual_t shows the residuals plots for $t_{rxn}$.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_9_2_k_resp_fcn
+#| label: tbl-example_19_2_k_resp_fcn
 #| tbl-cap: Parameter estimation results using the response function.
 d <- d %>% select(T, k_full, R_sq)
 kbl(d, format = "markdown", align = "cc", col.names = c("T (째C)", "k", "R^2^"))
 ```
 
-::: {#fig-example_9_2_parity layout-ncol=3}
+::: {#fig-example_19_2_parity layout-ncol=3}
 
-![](`r paste0(path_to_figures,'reb_9_2_parity_475.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_parity_475.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_2_parity_500.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_parity_500.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_2_parity_525.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_parity_525.png')`)
 
 Parity plots from parameter estimation using a response function.
 :::
 
-::: {#fig-example_9_2_residual_A layout-ncol=3}
+::: {#fig-example_19_2_residual_A layout-ncol=3}
 
-![](`r paste0(path_to_figures,'reb_9_2_residual_PA0_475.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_residual_PA0_475.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_2_residual_PA0_500.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_residual_PA0_500.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_2_residual_PA0_525.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_residual_PA0_525.png')`)
 
 Residuals plots for $P_{A,0}$ from parameter estimation using a response function.
 :::
 
-::: {#fig-example_9_2_residual_B layout-ncol=3}
+::: {#fig-example_19_2_residual_B layout-ncol=3}
 
-![](`r paste0(path_to_figures,'reb_9_2_residual_PB0_475.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_residual_PB0_475.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_2_residual_PB0_500.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_residual_PB0_500.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_2_residual_PB0_525.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_residual_PB0_525.png')`)
 
 Residuals plots for $P_{B,0}$ from parameter estimation using a response function.
 :::
 
-::: {#fig-example_9_2_residual_t layout-ncol=3}
+::: {#fig-example_19_2_residual_t layout-ncol=3}
 
-![](`r paste0(path_to_figures,'reb_9_2_residual_t_rxn_475.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_residual_t_rxn_475.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_2_residual_t_rxn_500.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_residual_t_rxn_500.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_2_residual_t_rxn_525.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_residual_t_rxn_525.png')`)
 
 Residuals plots for $t_{rxn}$ from parameter estimation using a response function.
 :::
@@ -827,20 +827,20 @@ Residuals plots for $t_{rxn}$ from parameter estimation using a response functio
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results,"reb_9_2_Arrhenius_resp_fcn.csv"))
+d <- read.csv(paste0(path_to_results,"reb_19_2_Arrhenius_resp_fcn.csv"))
 d <- fmt_tibble_col(d, 2, 3, 2, 2)
 # item, value, units
 ```
 
-The Arrhenius expression was fit to the rate coefficients shown in @tbl-example_9_2_k_resp_fcn with the following results.
+The Arrhenius expression was fit to the rate coefficients shown in @tbl-example_19_2_k_resp_fcn with the following results.
 
 k~0~: `r d$value[1]` `r d$units[1]`, 95% CI [`r d$value[2]`, `r d$value[3]`]  
 E: `r d$value[4]` `r d$units[4]`, 95% CI [`r d$value[5]`, `r d$value[6]`]  
 R^2^: `r d$value[7]`
 
-The Arrhenius plot is shown in @fig-example_9_2_Arr_resp_fcn.
+The Arrhenius plot is shown in @fig-example_19_2_Arr_resp_fcn.
 
-![Arrhenius plot for rate coefficients estimated using the response function.](`r paste0(path_to_figures,'reb_9_2_Arrhenius_resp_fcn.png')`){#fig-example_9_2_Arr_resp_fcn width='60%'}
+![Arrhenius plot for rate coefficients estimated using the response function.](`r paste0(path_to_figures,'reb_19_2_Arrhenius_resp_fcn.png')`){#fig-example_19_2_Arr_resp_fcn width='60%'}
 
 **Assessment**
 
@@ -1048,30 +1048,30 @@ $$
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results, "reb_9_2_lin_params.csv"))
+d <- read.csv(paste0(path_to_results, "reb_19_2_lin_params.csv"))
 # T, k, k_ll, k_ul, R_sq_
 d <- fmt_tibble_col(d, 2:5, 3, 2, 2)
 d$k_full = paste0(d$k,' min^-1^, 95% CI [',d$k_ll,', ',d$k_ul,']')
 ```
 
-The parameter estimation results are listed in @tbl-example_9_2_k_lin. @fig-example_9_2_model shows the model plots.
+The parameter estimation results are listed in @tbl-example_19_2_k_lin. @fig-example_19_2_model shows the model plots.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_9_2_k_lin
+#| label: tbl-example_19_2_k_lin
 #| tbl-cap: Parameter estimation results using the linearized model.
 d <- d %>% select(T, k_full, R_sq)
 kbl(d, format = "markdown", align = "cc", col.names = c("T (째C)", "k", "R^2^"))
 ```
 
-::: {#fig-example_9_2_model layout-ncol=3}
+::: {#fig-example_19_2_model layout-ncol=3}
 
-![](`r paste0(path_to_figures,'reb_9_2_model_475.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_model_475.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_2_model_500.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_model_500.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_2_model_525.png')`)
+![](`r paste0(path_to_figures,'reb_19_2_model_525.png')`)
 
 Model plots from parameter estimation using the linearized model.
 :::
@@ -1079,20 +1079,20 @@ Model plots from parameter estimation using the linearized model.
 ```{r}
 #| echo: false
 #| output: false
-dd <- read.csv(paste0(path_to_results,"reb_9_2_Arrhenius_lin.csv"))
+dd <- read.csv(paste0(path_to_results,"reb_19_2_Arrhenius_lin.csv"))
 dd <- fmt_tibble_col(dd, 2, 3, 2, 2)
 # item, value, units
 ```
 
-The Arrhenius expression was fit to the rate coefficients shown in @tbl-example_9_2_k_lin with the following results.
+The Arrhenius expression was fit to the rate coefficients shown in @tbl-example_19_2_k_lin with the following results.
 
 k~0~: `r dd$value[1]` `r dd$units[1]`, 95% CI [`r dd$value[2]`, `r dd$value[3]`]  
 E: `r dd$value[4]` `r dd$units[4]`, 95% CI [`r dd$value[5]`, `r dd$value[6]`]  
 R^2^: `r dd$value[7]`
 
-The Arrhenius plot is shown in @fig-example_9_2_Arr_lin.
+The Arrhenius plot is shown in @fig-example_19_2_Arr_lin.
 
-![Arrhenius plot for rate coefficients estimated using the linearized model.](`r paste0(path_to_figures,'reb_9_2_Arrhenius_lin.png')`){#fig-example_9_2_Arr_lin width='60%'}
+![Arrhenius plot for rate coefficients estimated using the linearized model.](`r paste0(path_to_figures,'reb_19_2_Arrhenius_lin.png')`){#fig-example_19_2_Arr_lin width='60%'}
 
 **Assessment**
 
@@ -1112,35 +1112,35 @@ The rate expression in equation (2) is accurate when the Arrhenius expression is
 
 #### Comparision of the Two Analyses
 
-The two analyses produce virtually identical results. This is expected because the same data set and rate expression were used, and neither of the reactor models introduces any approximations. Recall, when a differential analysis was used in [Example -@sec-example_9_1], there was greater uncertainty in the parameters obtained by differential analysis because differential data analysis uses an appeoximate mole balance equation.
+The two analyses produce virtually identical results. This is expected because the same data set and rate expression were used, and neither of the reactor models introduces any approximations. Recall, when a differential analysis was used in [Example -@sec-example_19_1], there was greater uncertainty in the parameters obtained by differential analysis because differential data analysis uses an appeoximate mole balance equation.
 
 Analysis using a linearized model, as in this example, is just as accurate as analysis using a response function. The only issues associated with using a linearized model are that for some rate expressions it may not be possible to solve the mole balance design equation analytically, and when it can be solved analytically, it may not be possible to linearize it. Analysis using a response function can always be used.
 
-### A Gas-Phase Reaction With Total Pressure as the Response {#sec-example_9_3}
+### A Gas-Phase Reaction With Total Pressure as the Response {#sec-example_19_3}
 
 ```{r}
 #| echo: false
 #| output: false
 path_to_data <- './Data/'
-path_to_results <- '../RE_Basics_Examples/reb_9_3/Results/'
+path_to_results <- '../RE_Basics_Examples/reb_19_3/Results/'
 path_to_figures <- './Graphics/'
 ```
 
-{{< include ../RE_Basics_Examples/reb_9_3/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_19_3/problem_statement.qmd >}}
 
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_data, "reb_9_3_data.csv"))
+d <- read.csv(paste0(path_to_data, "reb_19_3_data.csv"))
  # PA0,t,P
 ```
 
-The first few data points are shown in @tbl-example_9_3_data. The full data set is available in the file [reb_9_3_data.csv](`r paste0(path_to_data,'reb_9_3_data.csv')`).
+The first few data points are shown in @tbl-example_19_3_data. The full data set is available in the file [reb_19_3_data.csv](`r paste0(path_to_data,'reb_19_3_data.csv')`).
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_9_3_data
+#| label: tbl-example_19_3_data
 #| tbl-cap: First 5 experimental data points.
 kbl(d[1:5,], format = "markdown", align = "ccc", col.names = c('P~A,0~ (atm)', 
   't~rxn~ (min)', 'P (atm)'))
@@ -1180,7 +1180,7 @@ This system has 3 reagents, A, B, and Z, and their stoichiometric coefficients a
 
 **Reactor Model**
 
-Mole balance design equations for A, B, and Z are presented in equations (3), (4), and (5). The initial values and stopping criterion needed for solving them are given in @tbl-example_9_3_initial_values.
+Mole balance design equations for A, B, and Z are presented in equations (3), (4), and (5). The initial values and stopping criterion needed for solving them are given in @tbl-example_19_3_initial_values.
 
 $$
 \frac{dn_A}{dt} = -rV \tag{3}
@@ -1201,7 +1201,7 @@ $$
 | $n_B$ | $n_{B,0}$ |  |
 | $n_Z$ | $0$ | |
 
-: Initial values and stopping criterion for solving equations (3) through (5). {#tbl-example_9_3_initial_values tbl-colwidths="[20, 40, 40]"}
+: Initial values and stopping criterion for solving equations (3) through (5). {#tbl-example_19_3_initial_values tbl-colwidths="[20, 40, 40]"}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -1263,7 +1263,7 @@ The response function is created with the following structure:
     * Evaluates and returns the derivatives, equations (3) through (5).
 * For each experiment the response function
     * Calculates $n_{A,0}$ and $n_{B,0}$ using equations (8) through (10).
-    * Solves the design equations using the initial values and stopping criterion in @tbl-example_9_3_initial_values to find $n_A$, $n_B$, and $n_Z$ at $t_{rxn}$.
+    * Solves the design equations using the initial values and stopping criterion in @tbl-example_19_3_initial_values to find $n_A$, $n_B$, and $n_Z$ at $t_{rxn}$.
     * Calculates $P$ at $t_{rxn}$ using equation (11).
 * The values of $P$ for all of the experiments are returned.
 
@@ -1272,7 +1272,7 @@ The response function is created with the following structure:
 
 Having created the response function, I can now use it to estimate the rate expression parameter, $k$, at the experimental temperature, 275 째C. To do so I will use parameter estimation software of my choosing. I will write a simple program that passes the adjusted inputs, the measured responses, and a guess for the rate expression parameter to that parameter estimation software. It will return the best estimate for $k$, some measure of the uncertainty in $k$, and the coefficient of determination, $R^2$.
 
-Using the resulting value of $k$, I can calculate the model-predicted responses for all of the experiments using the response function. Then, knowing the model-predicted responses I can calculate the residual (difference between the measured response and the model-predicted response) for each eperiment. Finally, as described in @sec-4_kin_data_gen, I can create a parity plot and residuals plots.
+Using the resulting value of $k$, I can calculate the model-predicted responses for all of the experiments using the response function. Then, knowing the model-predicted responses I can calculate the residual (difference between the measured response and the model-predicted response) for each eperiment. Finally, as described in @sec-6_kin_data_gen, I can create a parity plot and residuals plots.
 
 :::
 
@@ -1286,7 +1286,7 @@ Using the resulting value of $k$, I can calculate the model-predicted responses 
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results,'reb_9_3_results.csv'))
+d <- read.csv(paste0(path_to_results,'reb_19_3_results.csv'))
 d <- fmt_tibble_col(d, 2, 3, 2, 2)
 a <- c('k','R^2^')
 b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
@@ -1295,27 +1295,27 @@ b <- c(b1,d$value[4])
 d <- data.frame(a,b)
 ```
 
-To estimate the kinetics parameters, the response function described above was passed to parameter estimation software along with the adjusted experimental inputs, the experimental responses and a guess for the kinetics parameters. The results returned by that software are shown in @tbl-example_9_3_results.
+To estimate the kinetics parameters, the response function described above was passed to parameter estimation software along with the adjusted experimental inputs, the experimental responses and a guess for the kinetics parameters. The results returned by that software are shown in @tbl-example_19_3_results.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_9_3_results
+#| label: tbl-example_19_3_results
 #| tbl-cap: Parameter estimation results
 library(kableExtra)
 library(knitr)
 kbl(d, format = "markdown", align = "cc", col.names = NULL)
 ```
 
-A parity plot of the measured responses *vs*. the model-predicated responses is presented in @fig-example_9_3_parity, and residuals plots showing the difference between the measured and predicted responses *vs*. the initial partial pressure of A and *vs*. the reaction time are shown in @fig-example_9_3_residual.
+A parity plot of the measured responses *vs*. the model-predicated responses is presented in @fig-example_19_3_parity, and residuals plots showing the difference between the measured and predicted responses *vs*. the initial partial pressure of A and *vs*. the reaction time are shown in @fig-example_19_3_residual.
 
-![Parity plot showing the measured experimental responses and the responses predicted by the proposed rate expression.](`r paste0(path_to_figures,'reb_9_3_parity.png')`){#fig-example_9_3_parity width="60%"}
+![Parity plot showing the measured experimental responses and the responses predicted by the proposed rate expression.](`r paste0(path_to_figures,'reb_19_3_parity.png')`){#fig-example_19_3_parity width="60%"}
 
-::: {#fig-example_9_3_residual layout-ncol=2}
+::: {#fig-example_19_3_residual layout-ncol=2}
 
-![](`r paste0(path_to_figures,'reb_9_3_PA0_residuals.png')`)
+![](`r paste0(path_to_figures,'reb_19_3_PA0_residuals.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_3_t_residuals.png')`)
+![](`r paste0(path_to_figures,'reb_19_3_t_residuals.png')`)
 
 Residuals plots showing the difference between the measured and predicted responses with respect to each of the adjusted experimental inputs, $P_{A,0}$ and $t_{rxn}$.
 :::
@@ -1330,40 +1330,40 @@ The proposed model is quite accurate. Looking at the parity plot, the deviations
 
 **Assessment**
 
-When the rate coefficient shown in @tbl-example_9_3_results is used in the proposed rate expression, equation (2), the rate expression is acceptably accurate.
+When the rate coefficient shown in @tbl-example_19_3_results is used in the proposed rate expression, equation (2), the rate expression is acceptably accurate.
 
 :::{.callout-note collapse="false"}
 ## Note
 
-In this example, data from a single same-temperature data block were analyzed. In a real-world situation, similar data blocks for other temperatures would be analyzed in the same way. The Arrhenius expression would then be fit to the resulting data. Fitting the Arrhenius expression to $k$ *vs*. $T$ data was illustrated in the first two examples in this chapter. The process here would be exactly the same as in [Examples -@sec-example_9_1] and [-@sec-example_9_2].
+In this example, data from a single same-temperature data block were analyzed. In a real-world situation, similar data blocks for other temperatures would be analyzed in the same way. The Arrhenius expression would then be fit to the resulting data. Fitting the Arrhenius expression to $k$ *vs*. $T$ data was illustrated in the first two examples in this chapter. The process here would be exactly the same as in [Examples -@sec-example_19_1] and [-@sec-example_19_2].
 
 :::
 
-### Assessing a Michaelis-Menten Rate Expression {#sec-example_9_4}
+### Assessing a Michaelis-Menten Rate Expression {#sec-example_19_4}
 
 ```{r}
 #| echo: false
 #| output: false
 path_to_data <- './Data/'
-path_to_results <- '../RE_Basics_Examples/reb_9_4/Results/'
+path_to_results <- '../RE_Basics_Examples/reb_19_4/Results/'
 path_to_figures <- './Graphics/'
 ```
 
-{{< include ../RE_Basics_Examples/reb_9_4/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_19_4/problem_statement.qmd >}}
 
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_data,'reb_9_4_data.csv'))
+d <- read.csv(paste0(path_to_data,'reb_19_4_data.csv'))
  # CS0, t, CP
 ```
 
-The first few data points are shown in @tbl-example_9_4_data. The full data set is available in the file [reb_9_4_data.csv](`r paste0(path_to_data,'reb_9_4_data.csv')`).
+The first few data points are shown in @tbl-example_19_4_data. The full data set is available in the file [reb_19_4_data.csv](`r paste0(path_to_data,'reb_19_4_data.csv')`).
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_9_4_data
+#| label: tbl-example_19_4_data
 #| tbl-cap: First five experimental data points.
 kbl(d[1:5,], format = "markdown", align = "cc", col.names = c('C~S,0~ (mmol L^-1^)', 't~rxn~ (min)', 'C~P~ (mmol L^-1^)'))
 ```
@@ -1404,7 +1404,7 @@ Those mole balances are IVODEs, so I need initial values and a stopping criterio
 
 **Reactor Model**
 
-Mole balances on the substrate S and the product P are presented in equations (3) and (4). The associated initial values and stopping criterion are listed in @tbl-example_9_4_initial_values.
+Mole balances on the substrate S and the product P are presented in equations (3) and (4). The associated initial values and stopping criterion are listed in @tbl-example_19_4_initial_values.
 
 $$
 \frac{dn_S}{dt} = -rV \tag{3}
@@ -1420,7 +1420,7 @@ $$
 | $n_S$ | $n_{S,0}$ | |
 | $n_P$ | $0$ | |
   
-: Initial values and stopping criterion for solving the design equations, equations (3) and (4). {#tbl-example_9_4_initial_values tbl-colwidths="[20, 40, 40]"}
+: Initial values and stopping criterion for solving the design equations, equations (3) and (4). {#tbl-example_19_4_initial_values tbl-colwidths="[20, 40, 40]"}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -1470,7 +1470,7 @@ The response function is created with the following structure:
     * Evaluates and returns the derivatives, equations (3) and (4).
 * For each experiment the response function
     * Calculates $n_{S,0}$ using equations (6).
-    * Solves the design equations using the initial values and stopping criterion in @tbl-example_9_4_initial_values to find $n_S$ and $n_P$ at $t_{rxn}$.
+    * Solves the design equations using the initial values and stopping criterion in @tbl-example_19_4_initial_values to find $n_S$ and $n_P$ at $t_{rxn}$.
     * Calculates $C_P$ at $t_{rxn}$ using equation (7).
 * The values of $C_P$ for all of the experiments are returned.
 
@@ -1479,7 +1479,7 @@ The response function is created with the following structure:
 
 Having created the response function, I can now use it to estimate the rate expression parameters, $V_{max}$, and $K_m$. To do so I will use parameter estimation software of my choosing. I will write a simple program that passes the adjusted inputs, the measured responses, and a guess for the rate expression parameters to that parameter estimation software. It will return the best estimates for $V_{max}$, and $K_m$, some measure of the uncertainty in $V_{max}$, and $K_m$, and the coefficient of determination, $R^2$.
 
-Using the resulting values of $V_{max}$, and $K_m$, I can calculate the model-predicted responses for all of the experiments using the response function. Then, knowing the model-predicted responses I can calculate the residual (difference between the measured response and the model-predicted response) for each eperiment. Finally, as described in @sec-4_kin_data_gen, I can create a parity plot and residuals plots.
+Using the resulting values of $V_{max}$, and $K_m$, I can calculate the model-predicted responses for all of the experiments using the response function. Then, knowing the model-predicted responses I can calculate the residual (difference between the measured response and the model-predicted response) for each eperiment. Finally, as described in @sec-6_kin_data_gen, I can create a parity plot and residuals plots.
 
 :::
 
@@ -1493,7 +1493,7 @@ Using the resulting values of $V_{max}$, and $K_m$, I can calculate the model-pr
 ```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results, 'reb_9_4_results.csv'))
+d <- read.csv(paste0(path_to_results, 'reb_19_4_results.csv'))
 d <- fmt_tibble_col(d, 2, 3, 2, 2)
 a <- c('V~max~','K~m~','R^2^')
 b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
@@ -1503,25 +1503,25 @@ b <- c(b1,b2,d$value[7])
 d <- data.frame(a,b)
 ```
 
-To estimate the kinetics parameters, the response function described above was passed to parameter estimation software along with the adjusted experimental inputs, the experimental responses and a guess for the kinetics parameters. The results returned by that software are shown in @tbl-example_9_4_results.
+To estimate the kinetics parameters, the response function described above was passed to parameter estimation software along with the adjusted experimental inputs, the experimental responses and a guess for the kinetics parameters. The results returned by that software are shown in @tbl-example_19_4_results.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_9_4_results
+#| label: tbl-example_19_4_results
 #| tbl-cap: Parameter estimation results
 kbl(d, format = "markdown", align = "cc", col.names = NULL)
 ```
 
-A parity plot of the measured responses *vs*. the model-predicated responses is presented in @fig-example_9_4_parity, and residuals plots showing the difference between the measured and predicted responses *vs*. the initial concentration of S and *vs*. the reaction time are shown in @fig-example_9_4_residual.
+A parity plot of the measured responses *vs*. the model-predicated responses is presented in @fig-example_19_4_parity, and residuals plots showing the difference between the measured and predicted responses *vs*. the initial concentration of S and *vs*. the reaction time are shown in @fig-example_19_4_residual.
 
-![Parity plot showing the measured experimental responses and the responses predicted by the proposed rate expression.](`r paste0(path_to_figures,'reb_9_4_parity.png')`){#fig-example_9_4_parity width="60%"}
+![Parity plot showing the measured experimental responses and the responses predicted by the proposed rate expression.](`r paste0(path_to_figures,'reb_19_4_parity.png')`){#fig-example_19_4_parity width="60%"}
 
-::: {#fig-example_9_4_residual layout-ncol=2}
+::: {#fig-example_19_4_residual layout-ncol=2}
 
-![](`r paste0(path_to_figures,'reb_9_4_residuals_vs_CS0.png')`)
+![](`r paste0(path_to_figures,'reb_19_4_residuals_vs_CS0.png')`)
 
-![](`r paste0(path_to_figures,'reb_9_4_residuals_vs_t.png')`)
+![](`r paste0(path_to_figures,'reb_19_4_residuals_vs_t.png')`)
 
 Residuals plots showing the difference between the measured and predicted responses with respect to each of the adjusted experimental inputs, $C_{S,0}$ and $t_{rxn}$.
 :::
@@ -1535,7 +1535,7 @@ The proposed model is quite accurate. Looking at the parity plot, the deviations
 
 **Assessment**
 
-When the $V_{max}$ and $K_m$ shown in @tbl-example_9_4_results are used in the proposed rate expression, equation (2), the rate expression is acceptably accurate.
+When the $V_{max}$ and $K_m$ shown in @tbl-example_19_4_results are used in the proposed rate expression, equation (2), the rate expression is acceptably accurate.
 
 :::{.callout-note collapse="false"}
 ## Note
@@ -1546,7 +1546,7 @@ Had there been data for other temperatures, the analysis presented above would h
 
 ---
 
-## Symbols Used in @sec-4_bstr_data_analysis
+## Symbols Used in @sec-6_bstr_data_analysis
 
 | Symbol | Meaning |
 |:-------|:--------|
