@@ -1,6 +1,6 @@
 # Solving Algebraic/Transcendental Equations {#sec-apndx_solve_ates}
 
-This appendix examines the numerical solution of sets of algebraic/transcendental equations (ATEs). In *Reaction Engineering Basics*, example assignments that entail numerical calculations are presented in three steps (see @sec-3_response_func): (1) the solution of the equations is formulated mathematically, (2) the numerical implementation of that solution is described (but not illustrated), and (3) the solution is presented and discussed. The numerical implementation is not illustrated because there are numerous software packages that include an ATE solver (function that solves a set of ATEs numerically). Assuming not all readers will want to use the same software, the examples in *Reaction Engineering Basics* describe numerical implementation generally.
+This appendix examines the numerical solution of sets of algebraic/transcendental equations (ATEs). In *Reaction Engineering Basics*, example assignments that entail numerical calculations are presented in three steps (see @sec-3_response_func): (1) the solution of the equations is formulated mathematically, (2) the general features of the numerical implementation of that solution are described, and (3) the solution is presented and discussed. The details of numerical implementation are not illustrated because there are numerous software packages that include an ATE solver (function that solves a set of ATEs numerically) and could be used. Assuming not all readers will want to use the same software, the examples in *Reaction Engineering Basics* describe numerical implementation generally.
 
 While the details of using ATE solvers differ from one software package to another, the vast majority of ATE solvers require the same input and use it the same way. In order to follow *Reaction Engineering Basics* example assignments wherein sets of ATEs ae solved, and in order to implement them using an ATE solver of one's choosing, a general understanding of how ATE solvers work and the input that must be provided to them is needed. The intent of this appendix is to provide that necessary understanding.
 
@@ -10,11 +10,11 @@ In *Reaction Engineering Basics*, **almost any equation that does not contain an
 
 ## Writing ATEs as Residuals Functions
 
-When solving a set of ATEs numerically, it is useful to re-write them as *residuals functions*. To do that, each equation is rearranged so there is a zero on one side of the equation. The non-zero side of the resulting equation is then used as the definition of a residual function. Doing this for each of a set of $N$ ATEs yields a set of $N$ residuals functions. A guess for the solution of the set of ATEs can be tested by using it to calculate the values of the corresponding residuals functions. If the residuals functions all equal zero, then the guess is a solution of the original ATEs.
+When solving a set of ATEs numerically, it is useful to re-write them as *residuals functions*. To do that, each equation is rearranged so there is a zero on one side of the equation. At the same time, some sources of singularity can be removed as described below in @sec-ate_solver_issues The non-zero side of the resulting equation is then used as the definition of a residual function. Doing this for each of a set of $N$ ATEs yields a set of $N$ residuals functions. A guess for the solution of the set of ATEs can be tested by using it to calculate the values of the corresponding residuals functions. If the residuals functions all equal zero, then the guess is a solution of the original ATEs.
 
 ## Formulating the Solution of a Set of ATEs Mathematically {#sec-apndx_math_formulation_ates}
 
-In general, a set of $N$ ATEs can contain any number of known, constant quantities. (More precisely, it must be known that the values of these quantities are not dependent upon the values of the unknowns.) In addition, it must contain at least $N$ unknown quantities (unknowns). Very often a set of $N$ ATEs initially will contain more than $N$ unknowns. Mathematically formulating the solution of a set of $N$ ATEs is straightforward.
+In general, a set of $N$ ATEs can contain any number of known, constant quantities. (More precisely, the values of these quantities must be known, and they must not depend on the values of the unknowns.) In addition, the set of ATEs must contain at least $N$ unknown quantities (unknowns). Very often when completing reaction engineering assignments, a set of $N$ ATEs initially will contain more than $N$ unknowns. Mathematically formulating the solution of a set of $N$ ATEs is straightforward.
 
 * Identify the $N$ ATEs to be solved.
 * Identify the $N$ unknowns to be found by solving them. 
@@ -31,17 +31,17 @@ Effectively, an ATE solver finds the solution of a set of ATEs by trial and erro
 * If the initial guess is not a solution of the ATEs, the ATE solver generates an improved guess and tests that.
     * In most cases, the improved guess will **not** be an exact solution, but it will be closer to the solution than the previous guess. 
 * The ATE solver keeps generating improved guesses and testing them until no further improvement is possible.
-* It then returns the final improved guess as the best solution of the ATEs.
+* It then returns the final, most-improved guess as the best solution of the ATEs.
 
 So, the numerical solution of a set of ATEs is an iterative process, and ideally, the values of the residuals should get closer and closer to zero with each iteration. This is called **convergence** to a solution. Typically, the solution returned by the solver will not be exact, but it will be "very close" to the exact solution.
 
-### Solver Issues
+### Solver Issues {#sec-ate_solver_issues}
 
 Sometimes the solver is unable to converge to the point where the residuals are "very close" to zero. In this situation, the solver eventually has to quit without finding the solution. Typically it will print an error message or return a flag variable, and that variable will indicate whether or not a converged solution was obtained.
 
-When the ATE solver is not able to converge to a solution, it is often because the guess provided to the solver wasn't close enough to the solution or because of a singularity in one or more of the residual functions. For example, fractions that contain one or more unknowns in the denominator may appear in the ATEs. If a guess for the solution causes such a denominator to equal zero, the residual becomes infinite. It is advisable to remove as many of those denominators as possible by multiplying both sides of the equation by each denominator before trying to solve the equations numerically. When the solver does not converge, the residuals functions should be re-written to remove as many singularities as possible, and the solver should be called using a different initial guess.
+When the ATE solver is not able to converge to a solution, it is often because the guess provided to the solver wasn't close enough to the solution or because of a singularity in one or more of the residuals functions. For example, fractions that contain one or more unknowns in the denominator may appear in the ATEs and, if not eliminated, in the residuals functions. If a guess for the solution causes such a denominator to equal zero, the residual becomes infinite. It is advisable to remove as many of those denominators as possible by multiplying both sides of the equation by each denominator before trying to solve the equations numerically. When the solver does not converge, the residuals functions should be re-written to remove as many singularities as possible, and the solver should be called using a different initial guess.
 
-Sets of nonlinear equations can have more than one solution. For example, a quadratic polynomial has two solutions. **If a set of ATEs has multiple solutions, most ATE solvers will only find one solution**. To find other solutions, the solver should be re-started using a different initial guess.
+Additionally, sets of nonlinear equations can have more than one solution. For example, a quadratic polynomial has two solutions. **If a set of ATEs has multiple solutions, most ATE solvers will only find one solution**. To find other solutions, the solver should be re-started using a different initial guess.
 
 ## Implementing the Solution of a Set of ATEs Numerically {#sec-apndx_numeric_formulation_ates}
 
@@ -52,6 +52,7 @@ The mathematical formulation of the solution of a set of ATES described in @sec-
 3. Write a computer function that calculates and returns the values of the residuals functions given a guess for the solution.
 4. Call an ATE solver passing to it, the guess from step 2 and the function from step 3.
 5. Check that the solver returned a converged solution.
+6. If additional solutions are possible, define an initial guess that is different from those used previously, and repeat steps 4 through 6.
 
 ## Example: Solving 3 ATEs to Find 3 Unknowns
 
@@ -102,7 +103,7 @@ Equations (4), (5), and (6), will be solved numerically to find $\dot{n}_A$, $\d
 
 As noted in @sec-apndx_math_formulation_ates, before they can be solved I must go through each of the $N$ ATEs, and express **every** quantity that appears in them in terms of known constants and the $N$ unknowns.
 
-In this example, the only quantity that appears in the ATEs that isn't one of the unknowns or a known constant is $r$, so I will write an expression for $r$ in terms of the unknowns and known constants. (As mentioned in the problem statement, it is assumed here that the problem statement gave the rate expression used in equation (7).)
+In this example, the only quantity that appears in the ATEs that isn't one of the unknowns or a known constant is $r$, so I will write an expression for $r$ in terms of the unknowns and known constants. (As mentioned in the problem statement, it is assumed here that the engineer knows the rate expression used in equation (7) below.)
 
 Writing the ancillary equation for $r$ introduces $C_A$, and $C_A$  is not one of the unknowns, nor is it a known constant, so an expression is needed for $C_A$, too.
 
@@ -130,10 +131,11 @@ At this point all quantities appearing in the ATEs have been expressed in terms 
     c. Calculate $\epsilon_1$, $\epsilon_2$, and $\epsilon_3$ using equations (4), (5), and (6).
 4. Call an ATE solver passing to it, the guess from step 1 and the function from step 2.
 5. Check that the solver returned a converged solution.
+6. If additional solutions are possible, define an initial guess that is different from those used previously, and repeat steps 4 through 6.
 
 ### Results
 
-The calculations were performed as described above and it was found that $\dot{n}_A$ = `r df$value[1]` `r df$units[1]`, $\dot{n}_Z$ = `r df$value[2]` `r df$units[2]`, and $T$ = `r df$value[3]` `r df$units[3]`.
+For this particular system, the ATEs have only one solution. The calculations were performed as described above and it was found that $\dot{n}_A$ = `r df$value[1]` `r df$units[1]`, $\dot{n}_Z$ = `r df$value[2]` `r df$units[2]`, and $T$ = `r df$value[3]` `r df$units[3]`.
 
 ## Symbols Used in this Appendix {#sec-apndx_symbols_soln_of_ates}
 
