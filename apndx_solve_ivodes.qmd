@@ -1,6 +1,20 @@
 # Solving Initial-Value ODEs {#sec-apndx_solve_ivodes}
 
-This appendix provides a simplified introduction to numerical solution of sets of coupled, initial-value ordinary differential equations (IVODEs). It is not specific to any one computer program or language. Students seeking a more complete understanding should consult a numerical methods textbook or take a course on numerical methods.
+As explained in @sec-3_response_func, in *Reaction Engineering Basics*, reactor modeling calculations are performed in three steps. First the mathematical solution of the equations is formulated, then the solution is implemented numerically, and finally the results are presented and discussed. This appendix examines the numerical implementation of the solution when the equations are a set of coupled, initial-value ordinary differential equations (IVODEs).
+
+There are many different software packages that can be used to accomplish this task. Different readers may choose to use different software when solving IVODEs, so here, the implementation is described in general terms. Students seeking a more complete understanding should consult a numerical methods textbook, take a course on numerical methods, or read the documentation for the software they are using.
+
+An IVODE solver is a computer function that solves a set of IVODEs numerically, While there are many software packages that include IVODE solvers and they will differ to some extent from package to package, all IVODE solvers require certain specific inputs and return the same basic results. In order to follow *Reaction Engineering Basics* example assignments wherein sets of IVODEs ae solved, and in order to implement them using an IVODE solver of one's choosing, a general understanding of how IVODE solvers work and the input that must be provided to them is needed. The intent of this appendix is to provide that necessary understanding.
+
+## Identifying IVODEs
+
+A differential equation contains at least one derivative. A distinguishing feature of a set of **ordinary** differential equations is that every derivative that appears in the equations has the same independent variable. In *Reaction Engineering Basics*, the independent variables is almost always either the elapsed time, $t$, or the axial position measured from the reactor inlet, $z$. Put differently, there are no partial derivatives in a set of ordinary differential equations.
+
+Solving a set of ordinary differential equations involves finding the functional relationship between each of the dependent variables and the independent variable. In order to solve a set of $N$ ODEs, $N$ must equal the number of different dependent variables appearing in the set. For example, if the derivatives of three different dependent variables are present then to find how each of them depends upon the independent variable, there must be three ODEs in the set.
+
+In order solve a set of ODEs, the value of each dependent variable must be known at one or more values of the independent variable. In particular, if all of the derivatives in a set of ODEs are first derivatives, then to solve the ODEs, the value of each dependent variable must be known at one value of the independent variable. In that situation, if the value of *every* dependent variable is known at *the same* value of the independent variable, the equations are known as **initial value ordinary equations**. In reaction engineering, the values of the dependent variables are *typically* known at the start of the process ($t=0$) or at the inlet to the reactor ($z=0$).
+
+To summarize, a set of $N$ IVODEs contains ordinary derivatives of $N$ different dependent variables with respect to the same independent variable. In *Reaction Engineering Basics*, the independent variable is usually $t$ or $z$. In addition, the value of *every* dependent variable in the set is known at the *same* value of the independent variable. Typically the value of every dependent variable is known when the independent variable is equal to zero, hence the name *initial* value ODE.
 
 ## The Nature of a Numerical Solution of an Initial-Value ODE
 
@@ -18,7 +32,7 @@ $$
 y = x^2 + 1
 $$ {#eq-ivode-soln}
 
-When an IVODE is solved *numerically*, there are two significant differences. First, **the solution is not an analytical function**, it is a set of values of $x$, starting at the initial value, along with a second set of the corresponding values of $y$. A numerical solution of @eq-ivode, with the initial values given in @eq-initial-value is shown in @tbl-ivode-num-soln.
+When an IVODE is solved *numerically*, there are two significant differences. First, **the solution is not an analytical function**, it is a set of values of the independent variable, $x$ in the example above, starting at its initial value, along with a set of the corresponding values of each dependent variable, $y$ in the example above. A numerical solution of @eq-ivode, with the initial values given in @eq-initial-value is shown in @tbl-ivode-num-soln.
 
 |  x  |   y   |
 |:---:|:-----:|
@@ -37,7 +51,7 @@ The second significant difference is that **the numerical solution spans a finit
 
 ## Writing IVODEs as Matrix and Vector Equations
 
-The sets IVODEs that will be solved in *Reaction Engineering Basics* will be first-order differential equations, and there will be no products, quotients or powers of the derivatives. Equations [-@eq-typical-ode-1], [-@eq-typical-ode-2], [-@eq-typical-ode-3] and [-@eq-typical-ode-4] are an example of a set of IVODEs that might need to be solved to find the values of $\dot n_A$, $\dot n_Z$, $\dot V$ and $T$ at times between $t=0$ and some later time, $t_f$. 
+The sets IVODEs that will be solved in *Reaction Engineering Basics* will be linear first-order differential equations; there will be no products, quotients or powers of the derivatives. Equations [-@eq-typical-ode-1], [-@eq-typical-ode-2], [-@eq-typical-ode-3] and [-@eq-typical-ode-4] are an example of a set of IVODEs that might need to be solved to find the values of $\dot n_A$, $\dot n_Z$, $\dot V$ and $T$ at times between $t=0$ and some later time, $t_f$. 
 
 $$
 \frac{V}{\dot V}\frac{d\dot n_A}{dt} - \frac{\dot n_A V}{\dot V^2}\frac{d\dot V}{dt} = \dot n_{A,in} - \dot n_A - Vr
@@ -55,7 +69,7 @@ $$
 \frac{V\left(\dot{n}_A \hat{C}_{p,A} + \dot{n}_Z \hat{C}_{p,Z}\right)}{\dot{V}}  \frac{dT}{dt} = - \left(  \dot{n}_{A,in} \hat{C}_{p,A} + \dot{n}_{Z,in} \hat{C}_{p,Z} \right)\left(T - T_{in}\right) - V r \Delta H 
 $$ {#eq-typical-ode-4}
 
-Notice that the IVODEs have been written with all of the derivatives on one side of the equation and the remaining terms on the other side. The set of reactions presented in Equations [-@eq-example-ode-1], [-@eq-example-ode-2], [-@eq-example-ode-3], and [-@eq-example-ode-4] are a generalization of the sets of IVODEs that must be solved in *Reaction Engineering Basics*. In those equations, $y_1$, $y_2$, $y_3$, and $y_4$ are called the *dependent variables*; they are each functionally dependent upon only $x$, which is called the *independent variable*. The coefficients, $m_{1,1}$, $m_{1,2}$, etc., as well as $g_1$, $g_2$, $g_3$, and $g_4$ each may be a function of $x$, $y_1$, $y_2$, $y_3$, and $y_4$.
+Notice that the IVODEs have been written with all of the derivatives on one side of the equation and the remaining terms on the other side. The set of reactions presented in Equations [-@eq-example-ode-1], [-@eq-example-ode-2], [-@eq-example-ode-3], and [-@eq-example-ode-4] are a generalization of the sets of IVODEs that must be solved in *Reaction Engineering Basics*. In those equations, $y_1$, $y_2$, $y_3$, and $y_4$ are the dependent variables; they are each functionally dependent upon only $x$, the independent variable. The coefficients, $m_{1,1}$, $m_{1,2}$, etc., as well as $g_1$, $g_2$, $g_3$, and $g_4$ each may be a function of $x$, $y_1$, $y_2$, $y_3$, and $y_4$.
 
 $$
 m_{1,1}\frac{dy_1}{dx} + m_{1,2}\frac{dy_2}{dx} + m_{1,3}\frac{dy_3}{dx} + m_{1,4}\frac{dy_4}{dx} = g_1 
@@ -110,13 +124,13 @@ $$ {#eq-function-vector}
 Defining $\boldsymbol{M}$, $\underline{y}$ and $\underline{f}$ in that way allows Equations [-@eq-example-ode-1], [-@eq-example-ode-2], [-@eq-example-ode-3], and [-@eq-example-ode-4] to be written as a single matrix equation.
 
 $$
-\boldsymbol{M}\frac{d}{dt}\underline{y} = \underline{g}
+\boldsymbol{M}\frac{d}{dx}\underline{y} = \underline{g}
 $$ {#eq-matrix-form-ivode}
 
 The matrix equation equivalent of Equations [-@eq-example-vector-ode-1], [-@eq-example-vector-ode-2], [-@eq-example-vector-ode-3], and [-@eq-example-vector-ode-4] then is given by @eq-matrix-form-of-vector-ivodes.
 
 $$
-\frac{d}{dt}\underline{y} = \boldsymbol{M}^{-1} \underline{g}
+\frac{d}{dx}\underline{y} = \boldsymbol{M}^{-1} \underline{g}
 $$ {#eq-matrix-form-of-vector-ivodes}
 
 Comparing @eq-matrix-form-of-vector-ivodes to Equations [-@eq-example-vector-ode-1], [-@eq-example-vector-ode-2], [-@eq-example-vector-ode-3], and [-@eq-example-vector-ode-4], the relationship between $g_1$, $g_2$, $g_3$, and $g_4$ and $f_1$, $f_2$, $f_3$, and $f_4$ becomes apparent.
@@ -127,7 +141,13 @@ $$ {#eq-g-in-terms-of-f}
 
 Matrix representation provides a compact way writing large sets of IVODEs.
 
-## Preparing the IVODEs for Solution.
+## Formulating the Solution of a Set of IVODEs Mathematically
+
+## IVODE Solvers
+
+## Implementing the Solution of a Set of IVODEs Numerically
+
+## Example: Solving a Set of 3 IVODEs
 
 It has already been noted that the number of IVODEs must equal the number of dependent variables and there must be only one independent variable. So the first step in preparing to solve the equations is to verify that this condition is satisfied. Doing so identifies the $N$ IVODEs being solved and the $N$ dependent variables whose values will be found over a range of values of the independent variable. Using Equations [-@eq-typical-ode-1], [-@eq-typical-ode-2], [-@eq-typical-ode-3], and [-@eq-typical-ode-4] as an example, there are 4 IVODEs, 4 dependent variables ($\dot n_A$, $\dot n_Z$, $\dot V$, and $T$) and 1 independent variable, $t$.
 
