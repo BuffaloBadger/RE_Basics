@@ -2,7 +2,7 @@
 
 This appendix examines the numerical solution of sets of initial value ordinary differential equations (IVODEs). As described later in the appendix, two scenarios are possible when solving IVODEs numerically. This appendix only considers the scenario where the initial values are known and all quantities appearing in the IVODEs are known constants or can be expressed in terms of the independent and dependent variables. The other scenario is considered in Appendix [-@sec-apndx_solve_daes]. In that scenario the IVODEs are being solved to find an initial value or an unknown constant appearing in the IVODEs.
 
-There are many software packages that include an IVODE solver (a function that can be used to solve sets of IVODEs). So that readers can choose whichever IVODE solver they prefer to use, the discussion in this appendix is general. Nonetheless it provides sufficient information for readers to follow *Reaction Engineering Basics* example assignments wherein sets of IVODEs ae solved, and to implement them using the IVODE solver they prefer. Of course it will be necessary to consult the documentation for the chosen solver to learn the details for using it. Readers seeking a more complete understanding of how IVODE solvers work should consult a numerical methods textbook or take a course on numerical methods.
+There are many software packages that include an IVODE solver (a function that can be used to solve sets of IVODEs). Under the assumption that different readers will choose to use different software packaged, the discussion in this appendix is general. Nonetheless it provides sufficient information for readers to follow *Reaction Engineering Basics* example assignments wherein sets of IVODEs ae solved, and to implement them using the IVODE solver they prefer. Of course it will be necessary to consult the documentation for the chosen solver to learn the details for using it. Readers seeking a more complete understanding of how IVODE solvers work should consult a numerical methods textbook or take a course on numerical methods.
 
 ## Identifying IVODEs
 
@@ -26,7 +26,7 @@ $$
 m_{4,1}\frac{dy_1}{dx} + m_{4,2}\frac{dy_2}{dx} + m_{4,3}\frac{dy_3}{dx}  + m_{4,4}\frac{dy_4}{dx} = g_4 
 $$ {#eq-example-ode-4}
 
-While four equations are being used here for illustration purposes, there can be any number of ordinary differential equations in the set as long as the number of ordinary differential equations is equal to the number of dependent variables and there is only one independent variable. In *Reaction Engineering Basics*, the independent variable is almost always either the elapsed time, $t$, or the axial position measured from the reactor inlet, $z$.
+While four equations are being used here for illustration purposes, there can be any number of ordinary differential equations in the set as long as the number of ordinary differential equations is equal to the number of dependent variables, and there is only one independent variable. In *Reaction Engineering Basics*, the independent variable is almost always either the elapsed time, $t$, or the axial position measured from the reactor inlet, $z$.
 
 In order solve a set of linear, first-order ODEs, the value of each dependent variable must be known at some value of the independent variable. If the value of *every* dependent variable is known at *the same* value of the independent variable, they are called *initial values* and the equations are known as *initial* value ordinary differential equations.
 
@@ -46,7 +46,7 @@ $$
 y = \frac{a}{2}\left(x^2 - x_0^2\right) + y_0
 $$ {#eq-ivode-soln}
 
-Three aspects of the analytical solution are important. First, the solution is an analytical function, @eq-ivode-soln. Second, the initial values do not need to be specified; they can be represented by unspecified constants ($x_0$ and $y_0$). Third, quantities other than the independent and dependent variables do not need to be known, as long as they do not depend functionally upon the independent or dependent variables, they can be represented as unspecified constants ($a$).
+Three aspects of the analytical solution are important. First, the solution is an analytical function, @eq-ivode-soln. Second, the initial values do not need to be specified; they can be represented by unspecified constants ($x_0$ and $y_0$). Third, constant quantities that appear in the IVODEs (such as $a$, here) do not need to be known.
 
 In contrast, in order to solve @eq-ivode numerically, the numeric values of $x_0$, $y_0$, and $a$ must be known. In addition, either the *final* value of the independent variable, $x_f$, or the *final* value of the dependent variable, $y_f$, must be known. The other difference is that the solution is not an analytical function; it is a table with one column containing values of the independent variable, starting at its initial value, and with additional columns corresponding values of each dependent variable, starting at their initial values. Thus, when $x_0=3$, $y_0=10$, $a=2$, and $x_f=4.5$ (or $y_f=21.25$) the numerical solution of @eq-ivode, is the table of values of $x$ and $y$, as shown in @tbl-ivode-num-soln.
 
@@ -69,14 +69,9 @@ For both analytical and numerical solution, quantities that *are* functionally d
 
 When a reaction engineer first generates a set of IVODEs that needs to be solved, the equations may contain known constants, the independent variable, the dependent variables (i. e. the variables appearing in the derivatives), and other unknown variables that are neither the independent variable nor one of the dependent variables. Assuming the set of IVODEs is going to be solved numerically, mathematical formulation of the solution proceeds as follows.
 
-* Add IVODEs or eliminate dependent variables until the number of IVODEs, $N$, equals the number of dependent variables.
-* Identify known constants, the independent variable, the $N$ dependent variables, and any other unknown variables appearing in the set of $N$ IVODEs.
-* Express every unknown variable in terms of known constants, the independent variable, and the $N$ dependent variables.
-* Specify the initial value of the independent variable and the corresponding initial values of the dependent variables.
-* Specify the final value of *either* the independent variable *or* one of the dependent variables. (This is called the stopping criterion.)
-* Solve the set of $N$ IVODEs to find the values of the independent and dependent variables starting at the initial values and ending when the stopping criterion is met.
+{{< include Includes/_math_form_ivodes_soln.qmd >}}
 
-There is a scenario where this formulation cannot be used. Using @eq-ivode for illustration, either the constant, $a$, or the initial value of the dependent variable, $y_0$, might not be known, and @eq-ivode would need to be solved to find its value. This is easy when the IVODEs are solved analytically to obtain @eq-ivode-soln. Substitution of the final value and the known quantities leaves one equation with one unknown ($a$ or $y_0$). That equation can be solved for the unknown. This scenario is a bit trickier to implement numerically and is considered in Appendix [-@sec-apndx_solve_daes].
+Note that this formulation can only be used when the values of *all* constants and initial values are known. There is a related scenario involving IVODEs where it *cannot* be used. That scenario occurs when either an initial value or a constant appearing in the IVODEs is unknown, and the desired solution is the value of that unknown that results in the specified stopping criterion. In that scenario the numerical solution must be formulated and implemented differently, as described in Appendix [-@sec-apndx_solve_daes].
 
 ## IVODE Solvers
 
@@ -86,15 +81,15 @@ The inner workings of IVODE solvers are beyond the scope of *Reaction Engineerin
 
 Starting from the known point, $\left(x_0,y_0\right)$, the solver increases $x$ by a small amount, $\Delta x$, which is known as the *step-size*. It then calculates the corresponding change in $y$, $\Delta y$, using the slope. The resulting point, $\left(x_1,y_1\right)$, is shown in part (c) of @fig-ivode-integration-step. This process is sometimes referred to as taking an integration step. Effectively, the solver uses the small straight line segment between $\left(x_0,y_0\right)$ and $\left(x_1,y_1\right)$ to approximate the true solution, $y\left(x\right)$, in that interval. The accuracy of this approximation increases as $\Delta x$ decreases, so typically the solver uses a large number of very small steps.
 
-Of course, the solver eventually must stop taking integration steps. After completing each step, the solver checks to determine whether making that step resulted in the stopping criterion being satisfied. If not, the solver takes another integration step. As an example, suppose the stopping criterion is that $y_3$ should equal some value, $y_{3,f}$, the solver would check to see whether $y_3$ did, in fact, reach or surpass $y_{3,f}$ after making the step. In most cases the stopping criterion will have been surpassed by some small amount, in which case the solver interpolates to find final values that exactly satisfy the stopping criterion. It then typically returns the values of the dependent variables and the independent variable for all of the steps it took while solving the IVODEs, including those final interpolated values.
+Of course, the solver eventually must stop taking integration steps. After completing each step, the solver checks to determine whether making that step resulted in the stopping criterion being satisfied. If not, the solver takes another integration step. As an example, suppose the stopping criterion is that $y_3$ should equal some value, $y_{3,f}$, the solver would check to see whether $y_3$ did, in fact, reach or surpass $y_{3,f}$ after making the step. In most cases the stopping criterion will have been surpassed by some small amount, in which case the solver interpolates to find final values that exactly satisfy the stopping criterion. It then returns the values of the dependent variables and the independent variable for all of the steps it took while solving the IVODEs, including those final interpolated values.
 
 ### Cautions Related to Numerical Solution of IVODEs
 
-*When the stopping criterion is a value of one of the dependent variables*, many solvers require that you provide *both* a final value of the independent variable *and* a final value of that dependent variable. The solver then takes steps as described above, and after each step it checks to see whether the either variable has reached its specified final value. The problem is that if you specify a final value of the *independent* variable that is too small, the solver may reach that value first and stop. The stopping criterion you specified for the dependent variable will not have been reached, and the result that is returned is not the result you are seeking. Therefore **it is important to check that the dependent variable reached the stopping criterion you specified**.
+*When the stopping criterion is a value of one of the dependent variables*, many solvers require that you provide *both* a final value of the independent variable *and* the known final value of that dependent variable. The solver then takes steps as described above, and after each step it checks to see whether the either variable has reached its specified final value. The problem is that if you specify a final value of the *independent* variable that is too small, the solver may reach that value first and stop. The stopping criterion you specified for the dependent variable will not have been reached, and the result that is returned is not the result you are seeking. Therefore **it is important to check that the dependent variable reached the stopping criterion you specified**.
 
 To avoid having the solver stop because it reached the stopping criterion for the *independent* variable, it is tempting to specify a very large final value for the independent variable stopping criterion. The problem with doing this is that it may cause the solver to use a step size that is too large, resulting in an inaccurate solution. Therefore, **it is important to check that the step size was not too large**. The solution that is returned will include the final value of the independent variable. The stopping criterion for the independent variable can be set to a value slightly larger than that and the equations can be solved a second time. Assuming the second solution reaches the desired stopping criterion for the dependent variable, the second solution should be accurate.
 
-A second possible problem arises when solving sets of IVODEs where one of the dependent variables changes very abruptly over a very small range of the independent variable, and the changes in that dependent variable significantly affect the changes in the other dependent variables over a much larger range of the independent variable. Equations like this are called *stiff ODEs*, and they require special treatment of the step size. Therefore, when solving sets of ODEs, one should pay attention to whether any of the dependent variables change very abruptly as the independent variable changes. If they do, it is advisable to **repeat the solution using a solver that is specifically tailored to stiff ODEs**.
+A second possible problem arises when solving sets of IVODEs where one of the dependent variables changes very abruptly over a very small range of the independent variable. The abrupt changes in that dependent variable may significantly affect the other dependent variables over a much broader range of the independent variable. Equations like this are called *stiff ODEs*, and they require special treatment of the step size. Therefore, when solving sets of ODEs, one should pay attention to whether any of the dependent variables change very abruptly as the independent variable changes. If they do, it is advisable to **repeat the solution using a solver that is specifically tailored to stiff ODEs**.
 
 ## Derivative Expressions and the Derivatives Function
 
@@ -150,11 +145,7 @@ Matrix representation provides a compact way of writing large sets of IVODEs. Mo
 
 The mathematical formulation of the solution of a set of IVODEs as described in @sec-math_form_ivodes (a) identifies the $N$ IVODEs to be solved, the independent variable, the $N$ dependent variables, known constants appearing in the IVODEs, and unknown variables appearing in the IVODEs, (b) generates ancillary equations that express the unknown variables in terms of the independent and dependent variables, (c) specifies the initial values of the independent and dependent variables, and (d) specifies the stopping criterion. That information can be used to implement the numerical solution of the set of IVODEs.
 
-1. Make given and known constants available for use in all equations.
-2. Define a derivatives function that calculates the values of the derivatives given values of the independent and dependent variables.
-3. Define the initial values of the independent and dependent variables.
-4. Specify the stopping criterion.
-5. Call the IVODE solver, passing the derivatives function, initial values and stopping criterion to it as arguments.
+{{< include ./Includes/_num_impl_ivodes_soln.qmd >}}
 
 ## Example: Solving a Set of IVODEs
 
@@ -167,12 +158,7 @@ The mathematical formulation of the solution of a set of IVODEs as described in 
 
 The mathematical formulation of the solution of a set of IVODEs is outlined in @sec-math_form_ivodes.
 
-* Add IVODEs or eliminate dependent variables until the number of IVODEs, $N$, equals the number of dependent variables.
-* Identify known constants, the independent variable, the $N$ dependent variables, and any other unknown variables appearing in the set of $N$ IVODEs.
-* Express every unknown variable in terms of known constants, the independent variable, and the $N$ dependent variables.
-* Specify the initial value of the independent variable and the corresponding initial values of the dependent variables.
-* Specify the final value of *either* the independent variable *or* one of the dependent variables. (This is called the stopping criterion.)
-* Solve the set of $N$ IVODEs to find the values of the independent and dependent variables starting at the initial values and ending when the stopping criterion is met.
+{{< include ./Includes/_math_form_ivodes_soln.qmd >}}
 
 Here, the number of IVODE (6) is equal to the number of dependent variables (6: $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$). The known constants were identified in the problem statement, and the independent variable is the time, $t$.
 
@@ -182,7 +168,7 @@ Here, the number of IVODE (6) is equal to the number of dependent variables (6: 
  
 **Quantities of Interest**: $n_A\left(t\right)$, $n_B\left(t\right)$, $n_Y\left(t\right)$, $n_Z\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$.
 
-Equations (1) through (6) will be solved with the initial values and stopping criterion in @tbl-initial_values to find the quantities of interest.
+**Model Equations**: Equations (1) through (6) will be solved with the initial values and stopping criterion in @tbl-initial_values to find the quantities of interest.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -274,7 +260,7 @@ $$
 \frac{dT}{dt} = \frac{-Vr_1 \Delta H_1}{n_A \left(\hat{C}_{p,A} - R\right) + n_B \left(\hat{C}_{p,B} - R\right) + n_Y \left(\hat{C}_{p,Y} - R\right) + n_Z \left(\hat{C}_{p,Z} - R\right)} \tag{14}
 $$
 
-Rearrangement of equation (13) and substitution of equation (14) for $\frac{dT}{dt}$ yields the derivative expression in equation (15).
+Rearrangement of equation (6) and substitution of equation (14) for $\frac{dT}{dt}$ yields the derivative expression in equation (15).
 
 $$
 \frac{dP}{dt} = \frac{R\left(n_A + n_B + n_Y + n_Z\right)}{V}\frac{dT}{dt}
@@ -316,6 +302,10 @@ library(kableExtra)
 library(knitr)
 kbl(df, format = "markdown", align = "cc")
 ```
+
+---
+
+Note that each of the variables in @tbl-ivode_results starts (in the first row) at its initial value, and the final value of $t$ is 2 h, as specified in the problem statement. As noted in earlier in the appendix, the numerical solution of a set of IVODEs does not produce analytical expressions for $n_A\left(t\right)$, $n_B\left(t\right)$, $n_Y\left(t\right)$, $n_Z\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$. Instead it yields $n_A$ *vs*. $t$, $n_B$ *vs*. $t$, etc., in the form of a table that spans the range from the initial values to the values where the stopping criterion is satisfied.
 
 ## Symbols Used in this Appendix
 
