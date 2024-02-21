@@ -1,38 +1,30 @@
 # Reactor Design Equations {#sec-3_design_eqns}
 
-Reactor models are essential for reaction engineering analyses.  In *Reaction Engineering Basics*, every assignment that involves a reactor, including the analysis of kinetics data for the purpose of validating a proposed rate expression, is completed in five basic steps.
-
-1. Summarize the information provided in the assignment.
-2. Formulate the solution mathematically.
-3. Implement the solution numerically.
-4. Execute the solution.
-5. Report and comment upon the results. 
-
-The mathematical formulation of a solution requires a model for the reactor. A reactor model is a set of equations that relates what goes into a reactor to what comes out. Other parameters that affect the relationship between what goes in and what come out appear within the model. In very many real-world cases the model equations cannot be solved analytically, making numerical solution necessary. For this reason, *Reaction Engineering Basics* assumes that the reactor model equations will always be solved numerically. This chapter describes and discusses the variables needed to model a reactor, the equations that constitute a reactor model, and some aspects of the numerical solution of those equations.
+Reactor models are essential for reaction engineering analyses. A reactor model is a set of equations that relates what goes into a reactor to what comes out. Other parameters that affect the relationship between what goes in and what come out appear within the model. This chapter describes and discusses the variables needed to model a reactor and the equations that constitute a reactor model.
 
 ## A Generic Reactor
 
-The four types of ideal reactors used in *Reaction Engineering Basics*, batch stirred-tank reactors (BSTRs), semi-batch stirred-tank reactors (SBSTRs), continuous stirred-tank reactors (CSTRs), and plug flow reactors (PFRs), were briefly introduced in @sec-1_intro_and_defs. Schematic diagrams of stirred tanks, @fig-closed_stirred_tank_reactor, and tubular reactors, @fig-pfr, were also presented. Each of these will be discussed in detail later in this chapter. To begin, however, a generic reactor (one that could be any one of those four ideal reactor types) is considered. Doing so helps identify the different kinds of variables needed to model a reactor as well as the equations that are used to describe the relationships between those variables.
+The four types of ideal reactors were briefly considered in @sec-1_intro_and_defs where schematic diagrams of stirred tanks, @fig-closed_stirred_tank_reactor, and tubular reactors, @fig-pfr, were presented. Specifically, batch stirred-tank reactors (BSTRs), semi-batch stirred-tank reactors (SBSTRs), continuous stirred-tank reactors (CSTRs), and plug flow reactors (PFRs) were introduced.  The modeling of each of these will be discussed in detail later in this chapter. To begin, however, a generic reactor (one that could be any one of those four ideal reactor types) is considered. Doing so helps identify the different kinds of variables needed to model a reactor as well as the equations that are used to describe the relationships between those variables.
 
 ### Variables Used When Modeling a Reactor
 
-Briefly, every ideal reactor has a compartment that contains reacting fluid. If the reacting fluid needs to be heated or cooled using a heat exchange fluid, the reactor will have a second compartment, as described in [Appendix -@sec-apndx_heat_exch]. Depending on the specific physical structure of the reactor, the second compartment is sometimes referred to as the reactor shell or jacket, and the heat exchange fluid will be flowing through it. For short, it is called the exchange fluid because its purpose is to exchange heat with the reacting fluid. The exchange fluid is physically separated from the reacting fluid by a solid wall that prevents the two fluids from mixing. Heat is transferred through the wall separating the two reactor compartments. 
+Briefly, every ideal reactor has a compartment that contains reacting fluid. The reacting fluid in most reactors needs to be heated or cooled. There are many ways to do that, but as discussed in [Appendix -@sec-apndx_heat_exch], only one form of heat exchange is considered in *Reaction Engineering Basics*. If the reacting fluid needs to be heated or cooled, the reactor will have a second compartment. Depending on the specific physical structure of the reactor, the second compartment is sometimes referred to as the reactor shell or jacket, and a fluid will be flowing through it. That fluid is called the exchange fluid because its purpose is to exchange heat with the reacting fluid. The exchange fluid is physically separated from the reacting fluid by a solid wall that prevents the two fluids from mixing. Heat is transferred through the wall separating the two reactor compartments. 
 
 Note that the word "reactor" sometimes refers to the entire piece of equipment including both the compartment containing the reacting fluid and the shell. Other times "reactor" refers only to the compartment containing the reacting fluid. This is not likely to cause confusion; the meaning is usually clear from the context of the statement. The physico-chemical properties of the reacting fluid and the exchange fluid, that is their densities, heat capacities, etc., are needed when modeling a reactor. Consequently, **fluid properties** are one of the groups of variables that appear in the equations used to model a reactor.
 
 Reactor input and reactor output were defined above as what goes into the reactor and what comes out of the reactor. These definitions work fine for the continuous flow reactors (CSTRs and PFRs) because they have fluid flowing into and out of them as they operate. It also works for the exchange fluid, if present, because it, too, is flowing into and out of the reactor as the reactor operates. However, for BSTRs and SBSTRs the meaning of reactor input and reactor output requires additional refinement. For BSTRs the reactor input refers to what is present within the reaction compartment just before the reactions begin, and BSTR output refers to what is present within the reaction compartment right after the reactions end. The same meanings for input and output apply to SBSTRs, but SBSTR input additionally includes fluid that flows into the reaction compartment while the reactions are taking place. *Reaction Engineering Basics* does not consider SBSTRs where reacting fluid flows out of the reactor while reactions are occurring.
 
-The **reactor input variables** are related to the fluid present within the reactor just before reaction begins and/or the fluid flowing into the reactor as the reaction is occurring. The specific reactor input variables include the molar amount (or molar flow rate) of every reagent (including "inert" reagents that do not participate in reactions) in that fluid, the temperature, and the pressure of that fluid. In addition, the reactor input variables include the mass flow rate of the exchange fluid, and the inlet temperature of the exchange fluid. 
+The **reactor input variables** are related to the fluid present within the reactor just before reaction begins and/or the fluid flowing into the reactor as the reaction is occurring. They include the molar amount (or molar flow rate) of every reagent, the temperature, and the pressure of that fluid. In addition, the reactor input variables include the mass flow rate of the exchange fluid, and the inlet temperature of the exchange fluid. 
 
 The output molar amount (or molar flow rates) of every reagent, output temperature and pressure of the reacting fluid, outlet temperature of the exchange fluid, and the rate at which work is done by the reacting system on its surroundings make up the **reactor output variables**. There are two differences when compared to the reactor input variables. First, *Reaction Engineering Basics* assumes there is never accumulation of exchange fluid within the reactor. Consequently the outlet mass flow rate of the exchange fluid is always equal to its inlet mass flow rate. Since the exchange fluid mass flow rate is included among the reactor input variables, it is *not* included among the reactor output variables.
 
 The other difference is work done by the reacting system on its surroundings. If the reactor has a moving boundary, such as a pistion, it is possible for the reactor to perform mechanical work on its surroundings. That work is included among the reactor output variables. This is important, for example, if the combustion chamber in an automobile engine is modeled as a chemical reactor. The reactors considered in *Reaction Engineering Basics* are typically vessels located in a chemical processing facility or laboratory. The only moving boundaries associated with those reactors is usually a shaft connected to an agitator that is used to mix the reagents. In all cases in *Reaction Engineering Basics*, the work associated with agitation of the fluid in a stirred tank is considered to be negligible.
 
-**Reactor parameters** appear in the reactor model equations. They include the dimensions of the reactor (volume for stirred tanks or diameter and length for PFRs), the shell volume, the heat transfer area, the heat transfer coefficient, and some measure of the reaction time. If there is a packed bed of catalyst particles in the reactor, the bed porosity is also included with these parameters.
+**Reactor/process parameters** appear in the reactor model equations. They include the dimensions of the reactor (volume for stirred tanks or diameter and length for PFRs), the shell volume, the heat transfer area, the heat transfer coefficient, and some measure of the reaction time. If there is a packed bed of catalyst particles in the reactor, the bed porosity is also included with these parameters.
 
 The reaction time can be characterized in different ways. For closed systems (BSTRs and SBSTRs) the reaction time variable is measured using clock time. It is the difference between the clock time when the reaction started and the clock time when it ended. It is customary to define an elapsed time, $t$, as being equal to zero when the reaction starts, in which case the reaction time is equal to the elapsed time when the reaction stops.
 
-In an open system (CSTRs and PFRs), reaction starts when the fliud enters the reactor and it ends when the fluid leaves the reactor. The reaction time then is equal to the amount of time the fluid spends in the reactor. On average, a fluid flowing into a reactor of volume, $V$, at a volumetric flow rate of $\dot V_{in}$, is within the reactor for an amount of time, $\tau$, given by @eq-space_time. In reaction engineering, $\tau$ is given a special name; it is called the **space time**. The reciprocal of $\tau$ is called the **space velocity**. For open systems the space time can be used as a measure of the reaction time.
+In an open system (CSTRs and PFRs), reaction starts when the fliud enters the reactor and it ends when the fluid leaves the reactor. The reaction time then is equal to the amount of time the fluid spends in the reactor. On average, a fluid flowing into a reactor of volume, $V$, at a volumetric flow rate of $\dot V_{in}$, is within the reactor for an amount of time, $\tau$, given by @eq-space_time. In reaction engineering, $\tau$ is given a special name; it is called the **space time**. The reciprocal of $\tau$ is called the **space velocity**. For open, steady-state systems the space time can be used as a measure of the reaction time.
 
 $$
 \tau = \frac{V}{\dot V_{in}}
@@ -46,7 +38,7 @@ Finally, **reaction properties** include kinetics parameters and heats of reacti
 |:-------|:--------|
 | Reactor Input | Input molar amounts (or molar flow rates) of every reagent present in the system, input temperature and pressure of the reacting fluid, mass flow rate of the exchange fluid (if there is one), and inlet temperature of the exchange fluid, if there is one. |
 | Reactor Output | Output molar amounts (or molar flow rates) of every reagent present in the system, output temperature and pressure of the reacting fluid, rate at which the reactor does mechanical work on its surroundings, and outlet temperature of the exchange fluid, if there is one. |
-| Reactor Parameters | Reactor dimensions (typically volume or diameter and length), shell/jacket volume, heat transfer area, heat transfer coefficient, packed bed porosity, and some measure of reaction time. |
+| Reactor/Process Parameters | Reactor dimensions (typically volume or diameter and length), shell/jacket volume, heat transfer area, heat transfer coefficient, packed bed porosity, and some measure of reaction time. |
 | Fluid Properties | Heat capacity of the reacting fluid or heat capacities of each reagent present in the system, heat capacity of the exchange fluid, reacting fluid density, exchange fluid density, reacting fluid viscosity. |
 | Reaction Properties | Kinetics parameters for rate expressions, heat of reaction data. |
 
@@ -60,9 +52,9 @@ The groups of variables that are needed to describe an ideal reactor were identi
 
 A **momentum balance** must sometimes be included in a reactor model for a PFR. When it is included, the momentum balance relates the outlet pressure of the reacting fluid to the reactor inputs. Momentum balances are not needed with any of the stirred tank reactors. The momentum balance accounts for the conversion of kinetic energy associated with the flow of the reacting fluid to thermal energy. While this energy is negligible with respect to the energy balance, it can have a significant effect upon the pressure of the reacting fluid as it flows through a PFR. For the stirred tank reactors, and for a PFR where the momentum balance is not needed, the outlet pressure can be calculated from the other *output* variables using the equation of state (i. e. using the ideal gas law or assuming liquids to have constant density).
 
-Collectively, the mole balances, energy balances, and momentum balance (when needed) are commonly referred to as the **design equations** for the reactor. The words **"transient" and "steady state"** are used to differentiate two modes of reactor operation. When a reactor operates at steady state, one can watch any one point in the reactor and the conditions (temperature, pressure, composition, flow rate, etc.) will not change over time. At a different point in the reactor, the conditions may be different, but they, too, will be constant over time. Putting it another way, when a reactor operates at steady state, the conditions may vary spatially, but they won't vary temporally (i. e. over time). In a transient reactor one will observe changes in the conditions over time when watching any one point within the reactor. That is, within a transient reactor the conditions *will* vary temporally (and possibly spatially, too). Note that BSTRs and SBSTR are always transient while CSTR and PFR operating modes can be either steady state or transient. The most general form of the design equations are those for transient operation. As described in subsequent sections, the design equations for steady-state operation represent a simplification of the transient design equations.
+Collectively, the mole balances, energy balances, and momentum balance (when needed) are commonly referred to as the **design equations** for the reactor. The words **"transient" and "steady state"** are used to differentiate two modes of reactor operation. When a reactor operates at steady state, one can watch any one point in the reactor and the conditions (temperature, pressure, composition, flow rate, etc.) will not change over time. At a different point in the reactor, the conditions may be different, but they, too, will be constant over time. Putting it another way, when a reactor operates at steady state, the conditions may vary spatially, but they won't vary temporally (i. e. over time). In a transient reactor one will observe changes in the conditions over time when watching any one point within the reactor. That is, within a transient reactor the conditions *will* vary temporally (and possibly spatially, too). Note that BSTRs and SBSTRs are always transient while CSTRs and PFRs can operate in either steady state or transient modes. The most general form of the design equations are those for transient operation. As described in subsequent sections, the design equations for steady-state operation represent a simplification of the transient design equations.
 
-In addition to the reactor design equations **rate expressions for every reaction** taking place it the system are *always* needed when modeling a reactor. Assuming Arrhenius temperature dependence, the associated pre-exponential factors and activation energies, along with any other parameters appearing in the rate epxressions are included among the reaction properties in @tbl-reactor_variables. As noted above, physico-chemical properties that appear in the design equations may be functions of temperature, pressure, and/or composition. If so, equations for calculating them are needed, and any parameters appearing in them is included among the fluid properties in @tbl-reactor_variables. 
+In addition to the reactor design equations **rate expressions for every reaction** taking place it the system are *always* needed when modeling a reactor. Assuming Arrhenius temperature dependence, the associated pre-exponential factors and activation energies, along with any other parameters appearing in the rate epxressions, are included among the reaction properties in @tbl-reactor_variables. As noted above, physico-chemical properties that appear in the design equations may be functions of temperature, pressure, and/or composition. If so, equations for calculating them are needed, and any parameters appearing in them are included among the fluid properties in @tbl-reactor_variables. 
 
 @tbl-reactor_equations summarizes the equations used to model a generic ideal reactor.
 
@@ -76,25 +68,27 @@ In addition to the reactor design equations **rate expressions for every reactio
 
 ## Determining Which of the Reactor Design Equations are Needed {#sec-necessary_equations}
 
-It is not *always* necessary to use all of the reactor modeling equations listed in @tbl-reactor_equations. For example, mole balances do not need to be written for *every* reagent in the system because the amounts of the reactants and products in the reactions are related through stoichiometry. The amount of an inert reagent is not related to the amount of any other reagent through stoichiometry. If $N_{ind}$ is the number of mathematically independent reactions taking place in the system, then $N_{ind}$ mole balances are needed to relate the input amounts of reactants and products to the output amounts. Consequently, the **minimum number of mole balances** is equal to $N_{ind}$ plus one mole balance for each inert reagent. [Example -@sec-example_6_1] illustrates writing, simplifying and solving reactor design equations using the minimum number of mole balances.
+It is not *always* necessary to use all of the reactor modeling equations listed in @tbl-reactor_equations. For example, in closed and steady-state systems, mole balances do not need to be written for *every* reagent in the system because the amounts of the reactants and products in the reactions are related through stoichiometry. The amount of an inert reagent is not related to the amount of any other reagent through stoichiometry. If $N_{ind}$ is the number of mathematically independent reactions taking place in the system, then $N_{ind}$ mole balances are needed to relate the input amounts of reactants and products to the output amounts. Consequently, the **minimum number of mole balances** is equal to $N_{ind}$ plus one mole balance for each inert reagent. [Example -@sec-example_6_8_1] provides an example of this.
 
-Liquid-phase systems often consist of a solvent that contains the reagents as solutes. In systems of this type, sensible heat terms are usually written in terms of the mass-specific or volume-specific heat capacity of the entire reacting fluid. Generally, **a mole balance on the liquid-phase solvent is not needed** for such systems. If, for some reason, the sensible heat terms are written in terms of molar heat capacities of the individual reagents, then the solvent must be included among those reagents and a mole balance on the solvent would need to be included among the reactor design equations. [Example -@sec-example_6_4] illustrates writing, simplifying and solving reactor design equations for a system involving a liquid-phase solution.
+Liquid-phase systems often consist of a solvent that contains the reagents as solutes. In systems of this type, sensible heat terms are usually written in terms of the mass-specific or volume-specific heat capacity of the entire reacting fluid. Generally, **a mole balance on the liquid-phase solvent is not needed** for such systems. If, for some reason, the sensible heat terms are written in terms of molar heat capacities of the individual reagents, then the solvent must be included among those reagents and a mole balance on the solvent would need to be included among the reactor design equations. [Example -@sec-example_6_8_4] illustrates a system involving a liquid-phase solution.
 
 **A momentum balance is only needed when the reactor is a PFR**. Even then, some PFR problems indicate that pressure drop is negligible, in which case the momentum balance is not needed.
 
-**If a reactor operates adiabatically** there will not be an exchange fluid, and consequently an energy balance on the exchange fluid cannot be included among the design equations. [Example -@sec-example_6_2] illustrates the formulation of a reactor model for an adiabatic reactor. For historical reasons it is worth noting that for adiabatic systems, the energy balance on the reacting fluid can be *replaced* by an equation for the adiabatic temperature (see [Appendix -@sec-apndx_reaction_thermo] and particularly @eq-adiabatic_temperature). Before computers became commonplace, doing this sometimes made it easier to solve the design equations analytically. It isn't as important now that powerful personal computers that can solve multiple ODEs are ubiquitous.
+**If a reactor operates adiabatically** there will not be an exchange fluid, and consequently an energy balance on the exchange fluid cannot be included among the design equations. [Example -@sec-example_6_8_2] illustrates the formulation of a reactor model for an adiabatic reactor. For historical reasons it is worth noting that for adiabatic systems, the energy balance on the reacting fluid can be *replaced* by an equation for the adiabatic temperature (see [Appendix -@sec-apndx_reaction_thermo] and particularly @eq-adiabatic_temperature). Before computers became commonplace, doing this sometimes made it easier to solve the design equations analytically. It isn't as important now that powerful personal computers that can solve multiple ODEs are ubiquitous.
 
-**If a reactor operates isothermally**, the mole balance equations and the energy balance equations are not coupled. The mole balance equations can be solved separately from the two energy balance equations. True isothermal operation of an industrial reactor is not very common, but laboratory reactors that are used to generate kinetics data normally operate isothermally. The energy balances may needed when modeling isothermal reactors, but if the reacting fluid temperature is known, *the mole balances can be solved separately from the energy balances*, and *vice versa*. [Example -@sec-example_6_1] illustrates writing, simplifying and solving reactor design equations for an isothermal reactor.
+**If a reactor operates isothermally**, the mole balance equations and the energy balance equations are not coupled. The mole balance equations can be solved separately from the two energy balance equations. True isothermal operation of an industrial reactor is not very common, but laboratory reactors that are used to generate kinetics data normally operate isothermally. The energy balances may needed when modeling isothermal reactors, but if the reacting fluid temperature is known, *the mole balances can be solved separately from the energy balances*, and *vice versa*. [Example -@sec-example_6_8_1] illustrates writing reactor design equations for an isothermal reactor.
 
-**If the outlet temperature of the exchange fluid is known and constant**, the other reactor design equations can be solved independently from the energy balance on the exchange fluid. There are two situations where this can happen. The first is when the exchange fluid exchange undergoes a phase change and exchanges the associated latent heat. Phase changes occur at constant temperature, so, for example, if condensation of saturated steam at 1 atm is being used to supply heat to the reacting fluid, the temperature of the exchange fluid will be constant and equal to 100 °C. Knowing this, all the other reactor design equations can be solved separately from the energy balance on the exchange fluid. (Note that this is only true because *Reaction Engineering Basics* always assumes that the exchange fluid undergoes either a phase change or a temperature change, but *not both*.) In this case, the energy balance on the exchange fluid can be solved separately, for example, to calculate the minimum exchange fluid flow rate needed to provide the required amount of energy to the reacting fluid. [Example -@sec-example_6_4] illustrates writing, simplifying and solving reactor design equations for a system where the exchange fluid phase changes.
+**If the outlet temperature of the exchange fluid is known and constant**, the other reactor design equations can be solved independently from the energy balance on the exchange fluid. There are two situations where this can happen. The first is when the exchange fluid undergoes a phase change and exchanges the associated latent heat. Phase changes occur at constant temperature, so, for example, if condensation of saturated steam at 1 atm is being used to supply heat to the reacting fluid, the temperature of the exchange fluid will be constant and equal to 100 °C. Knowing this, all the other reactor design equations can be solved separately from the energy balance on the exchange fluid. In this case, the energy balance on the exchange fluid can be solved separately, for example, to calculate the minimum exchange fluid flow rate needed to provide the required amount of energy to the reacting fluid. [Example -@sec-example_6_8_4] illustrates writing, simplifying and solving reactor design equations for a system where the exchange fluid phase changes.
 
-The other situation where all the other reactor design equations can be solved separately from the energy balance on the exchange fluid occurs in problems for reaction engineering courses. It is not uncommon for a problem to provide only the temperature of the exchange fluid, but not its flow rate or its inlet temperature. In this case the other design equations can be solved independently from the energy balance on the exchange fluid, while the energy balance on the exchange fluid cannot be used because the problem does not provide sufficient information to use it.
+The other situation where all the other reactor design equations can be solved separately from the energy balance on the exchange fluid occurs in problems from reaction engineering courses or books. It is not uncommon for a problem to provide only the temperature of the exchange fluid, but not its flow rate or its inlet temperature. In this case the other design equations can be solved independently from the energy balance on the exchange fluid, while the energy balance on the exchange fluid cannot be used because the problem does not provide sufficient information to use it.
+
+**The differential form of the ideal gas law** is included among the reactor design equations in @tbl-reactor_equations. In some cases where the mole and energy balances for a stirred tank reactor are ODEs, there can be one more dependent variables than the number of ODEs. In this situation, the differential form of the ideal gas law is included among the reactor design equations, as indicated in the sections on each of the ideal stirred-tank reactors that follow.
 
 ## Exchange Fluid Energy Balance
 
 An energy balance on the exchange fluid is one of the design equations for every one of the non-adiabatic ideal reactors, so it is considered first here. *Reaction Engineering Basics* assumes that the exchange fluid continually flows through the shell/jacket, and that within the shell/jacket, it is perfectly mixed. The exchange fluid is further assumed to be a pure fluid that either undergoes phase change or temperature change, but not both. The associated latent or sensible heat is transferred to or from the reacting fluid through a common wall that separates them.
 
-As discussed in [Appendix -@sec-apndx_heat_exch], there are two forms of the energy balance on the exchange fluid: one is used when the temperature of exchange fluid changes, and the other is used when the exchange fluid changes phase. Examples [-@sec-example_6_3] and [-@sec-example_6_5] illustrate writing, simplifying and solving reactor design equations where the exchange fluid temperature changes and [Example -@sec-example_6_4] illustrates writing, simplifying and solving reactor design equations where the exchange fluid undergoes a phase change.
+As discussed in [Appendix -@sec-apndx_heat_exch], there are two forms of the energy balance on the exchange fluid: one is used when the temperature of exchange fluid changes, and the other is used when the exchange fluid changes phase. Examples [-@sec-example_6_8_3] and [-@sec-example_6_8_5] illustrate sensible heat is exchanged, i. e. exchange fluid temperature changes, and [Example -@sec-example_6_8_4] illustrates a system where latent heat is exchanged, i. e. the exchange fluid undergoes a phase change.
 
 ### Exchange of Sensible Heat
 
@@ -134,13 +128,13 @@ $$
 0 = - \dot Q - \gamma \dot m_{ex} \frac{\Delta H_{\text{latent},ex}^0}{M_{ex}}
 $$ {#eq-exchange_energy_bal_latent_ss}
 
-## Ideal BSTR Design Equations
+## Ideal BSTR Design Equations {#sec-ideal_bstr_eqns}
 
 From the perspective of the reacting fluid, a BSTR is a closed system. Reacting fluid neither enters nor leaves the reactor while it is operating. This is apparent in the schematic BSTR diagram, @fig-bstr_ch6_schematic. The reacting fluid is shown in blue in that figure, with no reacting fluid entering or leaving. If the reactor has a one, the shell/jacket is an *open* system; heat exchange fluid continually flows through it. @fig-bstr_ch6_schematic depicts a BSTR with a shell/jacket; the exchange fluid within it is shown in yellow. The two agitators in the figure are reminders that the reacting fluid within the reaction compartment and the exchange fluid within the shell are each perfectly mixed. An *adiabatic* BSTR would not have a shell/jacket. 
 
 ![Schematic Representation of a Batch Stirred Tank Reactor](./Graphics/bstr_non_adiabatic.png){#fig-bstr_ch6_schematic fig-align="center" width="40%"}
 
-The most **important assumptions when modeling an ideal BSTR** are (i) the reaction zone is a closed system, (ii) within the reactor, the reacting fluid is perfectly mixed, (iii) the reaction rates are normalized per unit volume of reacting fluid, (iv) the reacting fluid is an ideal mixture and (v) the reacting fluid does not undergo a phase change while the reactor is operating. A complete listing of the assumptions and a detailed derivation of the mole and energy balances on the reacting fluid are presented in [Appendix -@sec-apndx_ideal_reactor_models]. Examples [-@sec-example_6_1] and [-@sec-example_6_2] illustrate writing, simplifying and solving reactor design equations for BSTRs.
+The most **important assumptions when modeling an ideal BSTR** are (i) the reaction zone is a closed system, (ii) within the reactor, the reacting fluid is perfectly mixed, (iii) the reaction rates are normalized per unit volume of reacting fluid, (iv) the reacting fluid is an ideal mixture and (v) the reacting fluid does not undergo a phase change while the reactor is operating. A complete listing of the assumptions and a detailed derivation of the mole and energy balances on the reacting fluid are presented in [Appendix -@sec-apndx_ideal_reactor_models]. Examples [-@sec-example_6_8_1] and [-@sec-example_6_8_2] illustrate writing reactor design equations for BSTRs.
 
 The **mole balance** on any one reagent, $i$, in an ideal BSTR is presented in @eq-bstr_mole_balance. It has only two terms: the term on the left side of the equation represents the rate of accumulation of reagent $i$ and the term on the right side represents its net rate of generation. The summation in the generation term includes *all* reactions occurring in the system.
 
@@ -160,7 +154,20 @@ $$
 \left(\sum_i n_i \hat C_{p,i} \right) \frac{dT}{dt}\ \Leftrightarrow\ \rho V \tilde C_p \frac{dT}{dt}\ \Leftrightarrow\ V \breve C_p \frac{dT}{dt}
 $$ {#eq-bstr_equivalent_sens_heat_terms}
 
-The second and third terms on the left side of @eq-bstr_energy_balance represent accumulation of energy associated with expansion or contraction of the reacting fluid. On the right side of the equation, $\dot Q$ represents the rate of heat input into the reacting fluid. This term is the rate at which heat passes from the yellow exchange fluid in @fig-bstr_ch6_schematic through the red internal wall and into the blue reacting fluid. If the exchange fluid is being used to heat the reacting fluid, $\dot Q$ is positive; if the exchange fluid is being used to cool the reacting fluid, $\dot Q$ is negative.
+The second and third terms on the left side of @eq-bstr_energy_balance represent accumulation of energy associated with work done during expansion or contraction of the reacting fluid.
+
+:::{.callout-note collapse="false"}
+## Note
+
+It is likely that the second and third terms in @eq-bstr_energy_balance will have units of pressure times volume per time while the other terms will have units of energy per time. It is critical to remember to convert all terms to consistent units. An easy way to do this is to multiply the second and third terms by the ratio of the ideal gas constant in energy units, $R_e$, to the ideal gas constant in pressure-volume units, $R_w$.
+
+$$
+- V\frac{dP}{dt}  - P  \frac{dV}{dt} \Rightarrow -\frac{R_e}{R_w} \left( V\frac{dP}{dt}  + P  \frac{dV}{dt} \right)
+$$
+
+:::
+
+On the right side of @eq-bstr_energy_balance, $\dot Q$ represents the rate of heat input into the reacting fluid. This term is the rate at which heat passes from the yellow exchange fluid in @fig-bstr_ch6_schematic through the red internal wall and into the blue reacting fluid. If the exchange fluid is being used to heat the reacting fluid, $\dot Q$ is positive; if the exchange fluid is being used to cool the reacting fluid, $\dot Q$ is negative.
 
 In @eq-bstr_energy_balance, $\dot W$ represents the rate at which the reacting fluid is doing mechanical work on the surroundings. In most cases, the only mechanical work associated with the reacting fluid is work of the agitator as it mixes the reacting fluid. In this case, $\dot W$ is the agitator power delivered to the reacting fluid, and since it is added to the reacting fluid, $\dot W$ is negative. If the reacting fluid is able to expand and cause movement of a reactor wall, for example if it caused a piston to move, $\dot W$ would be positive and equal to the work needed to move the piston.
 
@@ -169,7 +176,7 @@ The final term in @eq-bstr_energy_balance represents the energy associated with 
 The design equations for a BSTR are initial-value, ordinary differential equations (IVODEs). In order to solve them, the number of dependent variables must equal the number of IVODEs. The **differential form of the ideal gas law** presented in @eq-differential_ideal_gas_law is used when the number of dependent variables exceeds the number of IVODEs.
 
 $$
-P \frac{dV}{dt} + V \frac{dP}{dt} - R \left( T \sum_i \frac{dn_i}{dt} + \left( \sum_i n_i \right) \frac{dT}{dt} \right) = 0
+R_w \left( T \left( \sum_i \frac{dn_i}{dt} \right) + \left( \sum_i n_i \right) \frac{dT}{dt} \right) -  P \frac{dV}{dt} - V \frac{dP}{dt} = 0
 $$ {#eq-differential_ideal_gas_law}
 
 ### Common Simplifications of the BSTR Design Equations
@@ -180,7 +187,7 @@ $$
 \frac{dV}{dt} = 0
 $$ {#eq-bstr_const_volume}
 
-In all of the stirred tank models, the pressure change due to hydrostatic head is assumed to be negligible. That is, at all depths below the liquid surface the pressure is assumed to be the same. Because **liquid-phase reacting fluids** are assumed to be incompressible ideal mixtures, the pressure will be constant as the temperature and composition change. Since the pressure is constant, its time derivative will equal zero, equation @eq-bstr_liq_const_pressure.
+In all of the stirred tank models, the pressure change due to hydrostatic head is assumed to be negligible. That is, at all depths below the liquid surface the pressure is assumed to be the same. Because **liquid-phase reacting fluids** are assumed to be incompressible ideal mixtures, the pressure will be constant as the temperature and composition change. Since the pressure is constant, its time derivative will equal zero, equation @eq-bstr_liq_const_pressure, for liquid-phase systems.
 
 $$
 \frac{dP}{dt} = 0
@@ -192,7 +199,7 @@ $$
 \dot W = 0
 $$ {#eq-bstr_work_negligible}
 
-It has already been noted that **if the reactor operates adiabatically**, there will not be an exchange fluid in the reactor. By definition, the rate of heat input is equal to zero for an adiabatic process, @eq-bstr_adiabatic.
+It has already been noted that **if the reactor operates adiabatically**, there will not be an exchange fluid in the reactor, so it is not possible to write an energy balance on it. By definition, in the energy balance for the reacting fluid, the rate of heat input is equal to zero for an adiabatic process, @eq-bstr_adiabatic.
 
 $$
 \dot Q = 0
@@ -200,7 +207,7 @@ $$ {#eq-bstr_adiabatic}
 
 ### Ancillary Equations
 
-As previously noted, the design equations for a BSTR are initial-value, ordinary differential equations (IVODEs). In order to solve a set of IVODEs, every quantity appearing in the IVODEs must be expressed in terms of known constants, the independent variable and the dependent variables. The independent variable in the BSTR balance equations is time. Depending upon the specific reactor system, the dependent variables may include the molar amounts of the reagents, the temperature of the reacting fluid, the pressure of the reacting fluid, and the exchange fluid temperature.
+As previously noted, the design equations for a BSTR are initial-value, ordinary differential equations (IVODEs). As detailed in [Appendix -@sec-apndx_solve_ivodes], in order to solve a set of IVODEs, every quantity appearing in the IVODEs must be expressed in terms of known constants, the independent variable and the dependent variables. The independent variable in the BSTR balance equations is time. Depending upon the specific reactor system, the dependent variables may include the molar amounts of the reagents, the temperature of the reacting fluid, the pressure of the reacting fluid, the volume of the reacting fluid, and the exchange fluid temperature.
 
 When rate expressions are substituted into the mole and energy balances, they will introduce concentrations or partial pressures (for gases), of some reagents. Those **concentrations or partial pressures** must be expressed in terms of the dependent variables in the IVODEs. This is accomplished using the defining equations for concentration and partial pressure, @eq-bstr_concentration and @eq-bstr_partial_pressure.
 
@@ -226,7 +233,7 @@ The only difference between an ideal BSTR and an ideal SBSTR is that fluid flows
 
 ![Schematic Representation of a Semi-Batch Stirred Tank Reactor](./Graphics/sbstr_non_adiabatic.png){#fig-sbstr_ch6_schematic fig-align="center" width="60%"}
 
-The **most important assumptions when modeling an ideal SBSTR** are (i) fluid flows into the reactor, but not out, (ii) the fluid does not change phase upon entering the reactor or within it (iii) within the reactor the reacting fluid is perfectly mixed, (iv) the reaction rates are normalized per unit volume of reacting fluid, and (v) the reacting fluid is an ideal mixture. A complete listing of the assumptions and a detailed derivation of the mole and energy balances on the reacting fluid are presented in [Appendix -@sec-apndx_ideal_reactor_models]. [Example -@sec-example_6_3] illustrates writing, simplifying and solving the reactor design equations for an ideal SBSTR.
+The **most important assumptions when modeling an ideal SBSTR** are (i) fluid flows into the reactor, but not out, (ii) the fluid does not change phase upon entering the reactor or within it (iii) within the reactor the reacting fluid is perfectly mixed, (iv) the reaction rates are normalized per unit volume of reacting fluid, and (v) the reacting fluid is an ideal mixture. A complete listing of the assumptions and a detailed derivation of the mole and energy balances on the reacting fluid are presented in [Appendix -@sec-apndx_ideal_reactor_models]. [Example -@sec-example_6_8_3] illustrates writing the reactor design equations for an ideal SBSTR.
 
 Not surprisingly, the mole and energy balances for an SBSTR are similar to those for a BSTR, but with additional terms associated with the fluid stream flowing into the reactor. The **ideal SBSTR mole balance** is shown in @eq-sbstr_mol_balance. The first and last terms are the same as in the BSTR mole balance. The added term represents the molar flow rate of reagent $i$ into the reactor.
 
@@ -274,7 +281,7 @@ An ideal CSTR is similar to an ideal BSTR and an ideal SBSTR, with the primary d
 
 ![Schematic Representation of a Continuous Stirred Tank Reactor](./Graphics/cstr_non_adiabatic.png){#fig-cstr_ch6_schematic fig-align="center" width="70%"}
 
-The **most important assumptions of the ideal CSTR model** are (i) the reactor is an open system with fluid continually flowing in *and* out, (ii) within the reactor the reacting fluid is perfectly mixed, (iii) the reaction rates are normalized per unit volume of reacting fluid, (iv) no phase changes occur upon entering or within the reactor, and (v) the reacting fluid is an ideal mixture. A complete listing of the assumptions and a detailed derivation of the mole and energy balances on the reacting fluid are presented in [Appendix -@sec-apndx_ideal_reactor_models]. [Example -@sec-example_6_4] illustrates writing, simplifying and solving the reactor design equations for an ideal CSTR.
+The **most important assumptions of the ideal CSTR model** are (i) the reactor is an open system with fluid continually flowing in *and* out, (ii) within the reactor the reacting fluid is perfectly mixed, (iii) the reaction rates are normalized per unit volume of reacting fluid, (iv) no phase changes occur upon entering or within the reactor, and (v) the reacting fluid is an ideal mixture. A complete listing of the assumptions and a detailed derivation of the mole and energy balances on the reacting fluid are presented in [Appendix -@sec-apndx_ideal_reactor_models]. [Example -@sec-example_6_8_4] illustrates writing the reactor design equations for an ideal CSTR.
 
 A **mole balance** on reagent $i$ in a CSTR is presented in @eq-cstr_mol_balance. In contrast to the BSTR and SBSTR balances, the CSTR mole and energy balances are written in terms of the molar flow rates of the reagents, $\dot n_i$, not the molar amounts, $n_i$. The three terms on the left side of @eq-cstr_mol_balance represent the accumulation of reagent $i$ in the reacting fluid. The first term is accumulation due to a changing outlet molar flow rate of reagent $i$. The second term represents accumulation due to the volume of the reacting fluid changing and the third represents accumulation due to changes in the outlet volumetric flow rate.  The first term on the right side of the equation is clearly the molar flow rate of reagent $i$ into the reactor and the second term on the right side is its molar flow out of the reactor. The last term represents the moles of reagent $i$ that are generated by the reactions taking place within the reactor.
 
@@ -282,7 +289,7 @@ $$
 \frac{V}{\dot V}\frac{d \dot n_i}{dt} + \frac{\dot n_i}{\dot V}\frac{dV}{dt} - \frac{\dot n_iV}{\dot V^2}\frac{d \dot V}{dt} = \dot n_{i,in} - \dot n_i + V \sum_j \nu_{i,j}r_j
 $$ {#eq-cstr_mol_balance}
 
-The **energy balance** on the reacting fluid within an ideal CSTR is presented in @eq-cstr_energy_balance. The terms in that equation have a one-to-one correspondence with the terms in the SBSTR energy balance, @eq-sbstr_energy_balance, representing sensible heat accumulation, two components of the accumulation of energy associated with mechanical work done by the reacting fluid, the rate of heat input into the reacting fluid, the rate at which the reacting fluid does work on the surroundings, the heat required to raise or lower the entering fluid from its feed temperature to the temperature of the reacting fluid, and the energy associated with the reactions taking place within the reactor, respectively. The first term looks different because the ideal CSTR balances are written in terms of molar flow rates and not molar amounts.
+The **energy balance** on the reacting fluid within an ideal CSTR is presented in @eq-cstr_energy_balance. The terms in that equation have a one-to-one correspondence with the terms in the SBSTR energy balance, @eq-sbstr_energy_balance, representing sensible heat accumulation, two components of the accumulation of energy associated with mechanical work done of expanding or contracting reacting fluid, the rate of heat input into the reacting fluid, the rate at which the reacting fluid does work on the surroundings, the heat required to raise or lower the entering fluid from its feed temperature to the temperature of the reacting fluid, and the energy associated with the reactions taking place within the reactor, respectively. The first term looks different because the ideal CSTR balances are written in terms of molar flow rates and not molar amounts.
 
 $$
 \begin{split}
@@ -296,11 +303,11 @@ $$
 \frac{V}{\dot V}\sum_i \left( \dot n_i \hat C_{p,i}  \right) \frac{dT}{dt}\ \Leftarrow\ \rho V \tilde C_p \frac{dT}{dt}\ \Leftarrow\ V \breve C_p \frac{dT}{dt}
 $$ {#eq-cstr_equivalent_sens_heat_terms}
 
-As discussed below, both the volume and the pressure are constant in a gas-phase CSTR. For that reason, a differential form of the ideal gas law is not needed for CSTRs.
+As noted below, when the reacting fluid in a CSTR is a gas, both the volume and the pressure are constant, so a differential form of the ideal gas law is not needed.
 
 ### Common Simplifications of the CSTR Design Equations
 
-When the CSTR **walls are rigid** a gas-phase reacting fluid will always occupy the complete physical volume of the reactor. That means that the volume in the mole and energy balances will be constant and the time-derivative of the volume will equal zero, @eq-bstr_const_volume. Very often this is also true for a liquid-phase reacting fluid. However it is possible for the reacting fluid volume to increase or decrease, along with an equal but opposite change in the headspace. When the liquid is assumed to be an incompressibe, ideal mixture, this only happens if the inlet and outlet volumetric flow rates are not equal.
+When the CSTR **walls are rigid** a gas-phase reacting fluid will always occupy the complete physical volume of the reactor. That means that the volume in the mole and energy balances will be constant and the time-derivative of the volume will equal zero, @eq-bstr_const_volume. Very often this is also true for a liquid-phase reacting fluid. However, during transient operation, it is possible for the reacting liquid volume to increase or decrease, along with an equal but opposite change in the headspace. When the liquid is assumed to be an incompressibe, ideal mixture, this only happens if the inlet and outlet volumetric flow rates are not equal.
 
 Ideal CSTRs are almost always assumed to **operate at constant pressure**. As a consequence, the time derivative of the pressure is then equal to zero, @eq-bstr_liq_const_pressure. Unlike BSTRs and SBSTRs where this was only true for liquid-phase reacting fluids, for CSTRs this is true for *both* liquid-phase and gas-phase reacting fluids.
 
@@ -310,7 +317,7 @@ Finally, continuous reactors like CSTRs can operate at steady state. In fact CST
 
 ### Ancillary Equations
 
-When rate expressions are substituted into the CSTR design equations, they introduce **concentrations or partial pressures**. Before the design equations can be solved, the concentrations or partial pressures must be expressed in terms of the independent and dependent variables. This can be done using their defining equations for open systems, Equations [-@eq-cstr_concentration] and [-@eq-cstr_partial_pressure]. In these equations the molar flow rates and volumetric flow rates are the *outlet* values. The rate needs to be evaluated at the conditions *within* the reactor, but because a CSTR is perfectly mixed, the outlet concentration, partial pressure, and temperature are equal to the concentration, partial pressure, and temperature within the reactor.
+When rate expressions are substituted into the CSTR design equations, they introduce **concentrations or partial pressures**. Before the design equations can be solved, the concentrations or partial pressures must be expressed in terms of the independent and dependent variables. This can be done using their defining equations for open systems, [Equations -@eq-cstr_concentration] and [-@eq-cstr_partial_pressure]. In these equations the molar flow rates and volumetric flow rates are the *outlet* values. The rate needs to be evaluated at the conditions *within* the reactor, but because a CSTR is perfectly mixed, the outlet concentration, partial pressure, and temperature are equal to the concentration, partial pressure, and temperature within the reactor.
 
 $$
 C_i = \frac{\dot n_i}{\dot V}
@@ -320,11 +327,15 @@ $$
 P_i = \frac{ \dot n_i}{\displaystyle \sum_i \dot n_i}P
 $$ {#eq-cstr_partial_pressure}
 
-It important to remember that **the volumetric flow rate for gas phase systems can change**. The ideal gas law, @eq-cstr_vol_flow_rate, can be used to express the volumetric flow rate in terms of the dependent variables. The **rate of heat transfer** can be expressed in terms of a heat transfer coefficient as was done for the other stirred tank reactors, @eq-bstr_heat_transfer. Equations also are needed for heat capacities, heats of reaction, kinetics parameters, etc. if they are not constant.
+It important to remember that **the volumetric flow rate for gas phase systems can change**. The ideal gas law, @eq-cstr_vol_flow_rate, can be used to express the volumetric flow rate in terms of the dependent variables. Substitution of @eq-cstr_vol_flow_rate into @eq-cstr_concentration yields the expression for gas phase concentration in @eq-cstr_gas_concentration. The **rate of heat transfer** can be expressed in terms of a heat transfer coefficient as was done for the other stirred tank reactors, @eq-bstr_heat_transfer. Equations also are needed for heat capacities, heats of reaction, kinetics parameters, etc. if they are not constant.
 
 $$
 \dot V = \frac{\displaystyle RT \sum_i \dot n_i}{P}
 $$ {#eq-cstr_vol_flow_rate}
+
+$$
+C_i = \frac{\dot{n}_i}{\displaystyle \sum_i \dot n_i}\frac{P}{RT}
+$$ {#eq-cstr_gas_concentration}
 
 ### Steady-State CSTR Design Equations
 
@@ -350,7 +361,7 @@ In addition, the PFR model assumes that at any one axial position, the reacting 
 
 ![Schematic Representation of a Plug Flow Reactor](./Graphics/pfr_non_adiabatic.png){#fig-pfr_ch6_schematic fig-align="center" width="70%"}
 
-The **most important assumptions of the ideal PFR model** are (i) the reactor is cylindrical with a constant diameter, (ii) the reacting fluid is in plug flow, (iii) there is perfect mixing of the reacting flow in the radial direction and no mixing in the axial direction, (iv) the reaction rates are normalized per unit volume of reacting fluid, and (v) no phase changes occur upon entering or within the reactor. A complete listing of the assumptions and a detailed derivation of the mole and energy balances on the reacting fluid are presented in [Appendix -@sec-apndx_ideal_reactor_models]. [Example -@sec-example_6_5] illustrates writing, simplifying and solving the reactor design equations for an ideal PFR.
+The **most important assumptions of the ideal PFR model** are (i) the reactor is cylindrical with a constant diameter, (ii) the reacting fluid is in plug flow, (iii) there is perfect mixing of the reacting flow in the radial direction and no mixing in the axial direction, (iv) the reaction rates are normalized per unit volume of reacting fluid, and (v) no phase changes occur upon entering or within the reactor. A complete listing of the assumptions and a detailed derivation of the mole and energy balances on the reacting fluid are presented in [Appendix -@sec-apndx_ideal_reactor_models]. [Example -@sec-example_6_8_5] illustrates writing the reactor design equations for an ideal PFR.
 
 A **mole balance** on any one reagent, $i$ in an ideal PFR is presented in @eq-pfr_mol_balance. The first term on the left side of the reactor represents the change in the molar flow rate of reagent $i$ along the length of the reactor. The second term represents the accumulation of reagent $i$ at any point in the reactor due to change in its molar flow rate while the third term represents the accumulation of reagent $i$ at any point due to change in the volumetric flow rate of the reacting fluid. The term on the right side of @eq-pfr_mol_balance represents the generation of reagent $i$ due to the reactions that are taking place within the reactor.
 
@@ -382,11 +393,7 @@ $$
 \frac{\partial \dot V}{\partial t} + \frac{4 \dot V}{\pi D^2} \frac{\partial \dot V}{\partial z} + \frac{\pi D^2}{4 \rho} \frac{\partial P}{\partial z} = - \frac{2 f \dot V^2}{\pi D^3}
 $$ {#eq-pfr_transient_momentum_balance}
 
-The differential form of the ideal gas law for a PFR is expressed in terms of flow variables, @eq-flow_diff_eqn_of_state.
-
-$$
-P \frac{d \dot{V}}{dt} + \dot{V} \frac{dP}{dt} - R \left( T \sum_i \frac{d\dot{n}_i}{dt} + \left( \sum_i \dot{n}_i \right) \frac{dT}{dt} \right) = 0
-$$ {#eq-flow_diff_eqn_of_state}
+Transient PFRs are not analyzed in *Reaction Engineering Basics*, and for steady-state PFRs, a differential form of the ideal gas law is not needed.
 
 ### Common Simplifications of the PFR Design Equations
 
@@ -395,12 +402,6 @@ $$ {#eq-flow_diff_eqn_of_state}
 $$
 \pi D U\left( T_{ex} - T  \right) = 0
 $$ {#eq-pfr_adiabatic}
-
-For liquid phase systems that are assumed to be incompressible ideal mixtures the derivative of the volumetric flow rate with respect to axial position is equal to zero, @eq-pfr_liquid_diff_eqn_of_state. 
-
-$$
-\frac{\partial \dot V}{\partial z} = 0
-$$ {#eq-pfr_liquid_diff_eqn_of_state}
 
 Like CSTRs, PFRs typically are designed to **operate at steady state**. In the mole, energy, and momentum balance equations for an ideal steady-state PFR, all of the time derivatives are equal to zero. Steady-state operation is considered separately below.
 
@@ -430,59 +431,24 @@ $$
 \frac{{dP}}{{dz}} =  - \frac{{1 - \varepsilon }}{{{\varepsilon ^3}}}\frac{{{G^2}}}{{\rho {\Phi _s}{D_p}}}\left[ {\frac{{150\left( {1 - \varepsilon } \right)\mu }}{{{\Phi _s}{D_p}G}} + 1.75} \right]
 $$ {#eq-pfr_ergun_eqn}
 
-## Numerical Solution of the Reactor Design Equations{#sec-soln_of_design_equations}
-
-In *Reaction Engineering Basics*, the transient PFR reactor design equations are not used in any analyses. Consequently, in all but two cases, the reactor design equations are a set of coupled, initial-value ordinary differential equations (IVODEs). The numerical solution of sets of IVODEs is discussed in [Appendix -@sec-apndx_solve_ivodes]. For present purposes, the following points are important.
-
-* The number of IVODEs must equal the number of dependent variables appearing in them.
-* To solve a set of IVODEs numerically, equations must be written to calculate every quantity appearing in them from known constants, the independent variable, and the dependent variables.
-* The solution of IVODEs begins at a value of the independent variable where the value of every dependent variable is known. These "initial values" must be specified when solving the IVODEs.
-* IVODEs are solved by increasing the independent variable in small increments and calculating the values of the dependent variables each time the independent variable is incremented. When solving IVODEs, a "stopping" criterion must be specified to indicate when to stop incrementing the independent variable. The stopping criterion is a value for *one* of the dependent variables or for the independent variable. When that value is reached the solution is complete and the solver stops incrementing the independent variable.
-* The numerical solution of a set of IVODEs is a set of values of the independent variables and each of the dependent variables spanning the range from the initial values to the point where the stopping criterion was satisifed.
-
-One of the two cases where the reactor design equations are *not* a set of IVODEs occurs when a steady-state PFR is heated or cooled using sensible heat of the exchange fluid and the outlet temperature of the exchange fluid is not known. In this case the design equations are a set of differential algebraic equations (DAEs), specifically a set IVODEs coupled to one algebraic-transcendental equation (ATE). The numerical solution of DAEs is discussed in [Appendix -@sec-apndx_solve_daes]. In this case, the important points with respect to numerical solution of the reactor design equations are almost the same. The differences are (i) that in addition to solving the IVODEs as above, the one additional unknown quantity from the ATE is found and (ii) the equations in the second bullet above can use the unknown in the ATE in addition to constants, the independent variable and the dependent variables.
-
-The other case where the reactor design equations are *not* a set of IVODEs occurs when the reactor is a steady-state CSTR. In this case, the reactor design equations are a set of ATEs. The numerical solution of sets of ATEs is discussed in [Appendix -@sec-apndx_solve_ates]. The important points with respect to numerical solution of a set of ATEs are as follow.
-
-* A set of $N$ ATEs can be solved to find the values of $N$ unknown quantities appearing in them.
-* The $N$ unknowns to be found by solving the ATEs must be specified.
-* To solve the set of ATEs numerically, equations must be written to calculate every quantity appearing in them from known constants and the $N$ unknowns.
-
-*Reaction Engineering Basics* assumes that the reactor design equations will be solved numerically. There are many, many software packages that can be used to do this. Because different readers will uses different software packages, *Reaction Engineering Basics* does not present computer code that performs the calculations. It does, however, fully formulate the calculations in a manner that the reader can use to write the necessary computer code for their software of choice.
-
-While there are instances where doing so isn't necessary, **in *Reaction Engineering Basics* the design equations are always solved numerically to find the reactor output variables** (see @tbl-reactor_variables). That is, when formulating the solution of the design equations, it is always assumed that the reactor inputs, reactor parameters, fluid properties, and reaction properties are known. The reasons for this won't be discussed here, but it can be noted that in all cases except for steady-state CSTRs (where the design equations are ATEs), this is necessary for numerical solution.
-
-Additional calculations that use the results from solving the design equations are often required to complete an analysis. In *Reaction Engineering Basics*, this is accomplished by solving the design equations within a reactor response function as described in @sec-3_response_func. The response function is a computer function or subroutine. Later chapters will show how missing reactor inputs or reactor parameters can be passed to the response function so that the design equations then can be solved for the reactor outputs. Once the design equations have been solved within the response function, any other quantities that depend upon the reactor outputs can be calculated and returned by the response function.
-
 ## Examples
 
-The examples in this chapter illustrate choosing those design equations that are needed to model the reactors described in the example. In doing so, all summations and continuous products are expanded and any terms that are negligible or equal to zero are eliminated. Solving the design equations presented in these examples would require additional ancillary equations. The solution of the design equations and the ancillary equations needed for doing so will be described and discussed in subsequent chapters.
+The examples in this chapter illustrate choosing those design equations that are needed to model the reactors described in the example. In doing so, all summations and continuous products are expanded and any terms that are negligible or equal to zero are eliminated. Solving the design equations presented in these examples would require additional ancillary equations. When the design equations are IVODEs, initial values and a stopping criterion would also be needed. The specification of initial values and a stopping criterion, the generation of the necessary ancillary equations, and the solution of the design equations will be described and discussed in subsequent chapters.
 
-### Modeling an Isothermal BSTR using the Minimum Number of Mole Balances {#sec-example_6_1}
+### Modeling an Isothermal BSTR using the Minimum Number of Mole Balances {#sec-example_6_8_1}
 
-{{< include ../RE_Basics_Examples/reb_6_1/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_6_8_1/problem_statement.qmd >}}
 
 ---
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-This problem doesn't ask me to calculate anything. It asks me to write the minimum number of design equations for the system. The design equations always include mole balances for each of the inert reagents, so I'll need a mole balance for reagent I. The minimum number of additional mole balances equals the number of mathematically independent reactions that are taking place. In this case only one reaction is occurring, so I will need one additional mole balance on one of the reactants or products. I'll write it for reactant A.
-
-The problem also states that the reactor operates isothermally and the temperature is known. That means the mole balances can be solved separately from the energy balances. Momentum balances are not used with stirred tanks. Solving the mole balances will yield the molar amounts *vs*. time, so the minimum set of design equations consists of a mole balance on I and a mole balance on A (or B, or Y, or Z).
-
-:::
-
-**Reactor Design Equations**
-
-Equation (3) shows a mole balance on the inert reagent, I, and equation (4) presents a mole balance on reagent A.
+Mole balances are always needed when modeling a reactor. Here the *minimum* number of design equations are to be used. There is one reaction taking place and there is an inert present in the system, so the minimum number of mole balances is two. A mole balance on the inert is required. The other mole balance can be for A, B, Y, or Z. Choosing to write the second mole balance on reagent A results in equations (2) and (3).
 
 $$
-\frac{dn_I}{dt} = 0 \quad \Rightarrow \quad n_I = n_{I,0} \tag{3}
+\frac{dn_I}{dt} = 0 \tag{2}
 $$
 
 $$
-\frac{dn_A}{dt} = -r_1V \tag{4}
+\frac{dn_A}{dt} = -r_1V \tag{3}
 $$
 
 :::{.callout-tip collapse="true"}
@@ -508,75 +474,44 @@ $$
 
 :::
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The design equation that needs to be solved, equation (4), is an IVODE, and as the problem implies, initial values and a stopping criterion are needed in order to solve it. The instant that the reaction begins can be defined as $t=0$ and used as the initial value of the independent variable. To solve equation (4), the corresponding initial value of the dependent variable $n_A$ must be specified. In this problem the initial molar amount of A, $n_{A,0}$, is known.
-
-A stopping criterion is also needed. Here the problem statement says that the length of time that the reaction proceeded is known. Having defined $t=0$ as the time when the reaction started, the stopping criterion is that the time equals that known length of time, $t_f$.
-
-:::
-
-**Initial Values and Stopping Criterion**
-
-
-| Variable | Initial Value | Stopping Criterion |
-|:-------|:-------:|:-------:|
-| $t$ | $0$ | $t_f$ |
-| $n_A$ | $n_{A,0}$ | |
-
-: Initial values and stopping criterion for solving the design equation, equation (4). {#tbl-example_6_1 tbl-colwidths="[20, 40, 40]"}
+The reactor operates isothermally, and its temperature is known. Consequently the mole balance equations above can be solved independently of any other reactor design equations. Here the equations are needed to model the only the composition of the system, so equations (2) and (3) are the only reactor design equations needed.
 
 :::{.callout-note collapse="false"}
-## Note
+## Notes
 
-Prior to the widespread availability of computers it was quite common to formulate reactor modeling equations using the minimum number of mole balances. In a problem like this one where the reactor is isothermal, doing so often makes it possible to solve the IVODE design equation analytically.
+1. Solving the design equations above will yield the molar amounts of A and I over time. The amounts of the other reagents can be calculated using the stoichiometry of the reaction and the initial amounts of the reagents, @eq-moles_apparent_extent. (It also may be necessary to use this relationship to solve the design equations.)
 
-It should also be noted that energy balances were not needed here because the problem specifically stated that the composition of the reactor over time was to be modeled. For an isothermal system where the temperature is known, the mole balances can be solved independently of the energy balances. An alternative assignment might have provided additional information and asked the coolant flow rate as a function of time that would be necessary to operate the reactor isothermally. For that assignment the energy balances would be needed, even though the mole balances still could be solved independently of them.
+2. It should also be noted that energy balances were not needed here because the problem specifically stated that the composition of the reactor over time was to be modeled. For an isothermal system where the temperature is known, the mole balances can be solved independently of the energy balances. An alternative assignment might have provided additional information and asked for the coolant flow rate as a function of time that would be necessary to operate the reactor isothermally. For that assignment energy balances on the reacting and exchange fluids would be needed, even though the mole balances still could be solved independently of them.
 
 :::
 
-### Modeling an Adiabatic BSTR {#sec-example_6_2}
+### Modeling an Adiabatic BSTR {#sec-example_6_8_2}
 
-{{< include ../RE_Basics_Examples/reb_6_2/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_6_8_2/problem_statement.qmd >}}
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I'm asked here to write and simplify the design equations, but not to solve them. In most assignments, the design equations will be solved numerically, and when that is true, I prefer to include a mole balance for every reagent present in the system. Here the only reagents are A and B, so mole balances will be written for each of them. An energy balance on the reacting fluid will also be included in the design equations. Since the reactor is adiabatic, there isn't an exchange fluid, meaning an energy balance on the exchange fluid will not be included among the design equations. Momentum balances are not used with stirred tanks, so the complete set of design equations will consist of a mole balance on reagent A, a mole balance on reagent B, and an energy balance on the reacting fluid.
+Unlike the previous example, this example does not stipulate that the minimum number of design equations be used. Using the minimum number of design equations is important if they are going to be solved analytically. Nonetheless, even if the minimum number of design equations is used, they often cannot be solved analytically, making a numerical solution necessary. I prefer to I prefer to include a mole balance for every reagent present in the system and solve the equations numerically. Here the only reagents are A and Z, so @eq-bstr_mole_balance will be written for each of them. There is only one reaction taking place, so the summation in @eq-bstr_mole_balance becomes a single term, and the stoichiometric coefficients of A and Z are -1 and 1, respectively.
 
 :::
 
 **Reactor Design Equations**
 
-Mole balances on reagents A and B are shown in equations (3) and (4), respectively.
+Mole balances on reagents A and Z are shown in equations (2) and (3), respectively. An energy balance on the reacting fluid is presented in equation (4). The reactor is adiabatic, so there isn't an exchange fluid to write an energy balance for, and momentum balances are not used with stirred tank reactors.
 
 $$
-\frac{dn_A}{dt} = - r_1 V \tag{3}
+\frac{dn_A}{dt} = - r_1 V \tag{2}
 $$
 
 $$
-\frac{dn_B}{dt} =  r_1 V \tag{4}
+\frac{dn_Z}{dt} =  r_1 V \tag{3}
 $$
 
-:::{.callout-tip collapse="true"}
-## Click Here to See Where That Came From
-
-Start with @eq-bstr_mole_balance and expand the summation. Here there is only one reaction, so the summation reduces to a single term.
 $$
-\frac{dn_i}{dt} = V \sum_j \nu_{i,j}r_j \quad \Rightarrow \quad \frac{dn_i}{dt} = V \nu_{i,1}r_1
-$$
-
-The stoichiometric coefficient of A is -1 and that of B is 1. Substitution of those values leads to equations (3) and (4).
-
-:::
-
-An energy balance on the reacting fluid is presented in equation (5).
-
-$$
-\left( n_A \hat C_{p,A} + n_B \hat C_{p,B} \right) \frac{dT}{dt} - V\frac{dP}{dt} = - V r_1 \Delta H_1 \tag{5}
+\left( n_A \hat C_{p,A} + n_Z \hat C_{p,Z} \right) \frac{dT}{dt} - V\frac{dP}{dt} = - V r_1 \Delta H_1 \tag{4}
 $$
 
 :::{.callout-tip collapse="true"}
@@ -587,78 +522,60 @@ $$
 \left(\sum_i n_i \hat C_{p,i} \right) \frac{dT}{dt} - V\frac{dP}{dt}  - P  \frac{dV}{dt}  = \dot Q - \dot W - V \sum_j \left(r_j \Delta H_j \right)
 $$
 
-There are two reagents in the system, A and B, so the first summation expands to two terms. There is only one reaction occurring, so the last summation reduces to a single term. The volume of a BSTR is constant, so the time derivative of the volume is equal to zero. The reactor is adiabatic, so $\dot Q$ is equal to zero, and the reacting fluid does no work, so $\dot W$ is equal to zero (assuming the power associated with agitation is negligible).
+There are two reagents in the system, A and Z, so the first summation expands to two terms. There is only one reaction occurring, so the last summation reduces to a single term. The volume of a BSTR is constant, so the time derivative of the volume is equal to zero. The reactor is adiabatic, so $\dot Q$ is equal to zero, and the reacting fluid does no work, so $\dot W$ is equal to zero (assuming the power associated with agitation is negligible).
 
 $$
-\left( n_A \hat C_{p,A} + n_B \hat C_{p,B} \right) \frac{dT}{dt} - V\frac{dP}{dt}  - P  \cancelto{0}{\frac{dV}{dt}}  = \cancelto{0}{\dot Q} - \cancelto{0}{\dot W} -V r_1 \Delta H_1 
+\left( n_A \hat C_{p,A} + n_Z \hat C_{p,Z} \right) \frac{dT}{dt} - V\frac{dP}{dt}  - P  \cancelto{0}{\frac{dV}{dt}}  = \cancelto{0}{\dot Q} - \cancelto{0}{\dot W} -V r_1 \Delta H_1 
 $$
 
 The pressure in this system is not constant because the temperature will change as the reaction proceeds, and for an ideal gas at constant volume, the pressure will change as the temperature changes.
 
 :::
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
+At present there are 3 reactor design equations, but they contain 4 dependent variables ($n_A$, $n_B$, $T$, and $P$). As noted in [Appendix -@sec-apndx_solve_ivodes], the number of IVODEs must equal the number of dependent variables, so as described in @sec-ideal_bstr_eqns, the differential version of the ideal gas law, @eq-differential_ideal_gas_law, is added to the design equations, setting the time derivative of the volume equal to zero.
 
-The design equations are IVODEs, so initial values and a stopping criterion must be specified.
-
-The instant that the reaction begins can be defined as $t=0$ and used as the initial value of the independent variable. The problem states that initially the reactor contains only reagent A, and $n_{A,0}$ can be used to represent its molar amount. The initial molar amount of B then is zero. The problem states that the initial temperature is $T_0$.
-
-The problem states that the reaction proceeds until a temperature of $T_f$ is reached, so the stopping criterion for this assignment is that $T=T_f$.
-
-:::
-
-**Initial Values and Stopping Criterion**
-
-| Variable | Initial Value | Stopping Criterion |
-|:-------|:-------:|:-------:|
-| $t$ | $0$ |  |
-| $n_A$ | $n_{A,0}$ | |
-| $n_B$ | $0$ | |
-| $T$ | $T_0$ | $T_f$ |
-| $P$ | $P_0$ | |
-
-: Initial values and stopping criterion for solving the design equations, equations (3), (4) and (5). {#tbl-example_6_2 tbl-colwidths="[20, 40, 40]"}
+$$
+R_w \left( T \left( \sum_i \frac{dn_i}{dt} \right) + \left( \sum_i n_i \right) \frac{dT}{dt} \right) - V \frac{dP}{dt} = 0 \tag{5}
+$$
 
 :::{.callout-note collapse="false"}
-## Notes
+## Note
 
-1. The volume was assumed to be constant when writing the design equations for this assignment. In chemical processing equipment there are almost never moving reactor walls. As a consequence, when the reacting fluid is an ideal gas or an ideal liquid solution, the reactor volume can always be assumed to be fixed, meaning its time derivative may always be assumed to be zero. In *Reaction Engineering Basics*, the assignment would explicity say so if this was not true.
-2. The three design equations written here **cannot be solved as written**. There are 3 IVODEs, but they contain 4 dependent variables ($n_A$, $n_B$, $T$, and $P$). An additional, ancillary ODE is needed that contains at least one of these dependent variables and that does not introduce additional dependent variables. Typically a differential form of the ideal gas law would be used for this purpose.
+In this example, the volume was assumed to be constant when writing both the energy balance and the differential form of the ideal gas law. In chemical processing equipment there are almost never moving reactor walls. As a consequence, when the reacting fluid is an ideal gas or an ideal liquid solution, the reactor volume of a BSTR can always be assumed to be fixed, meaning its time derivative may always be assumed to be zero. In *Reaction Engineering Basics*, the assignment would explicitly say so if this was not true.
 
 :::
 
-### Modeling a Cooled SBSTR {#sec-example_6_3}
+### Modeling a Cooled SBSTR {#sec-example_6_8_3}
 
-{{< include ../RE_Basics_Examples/reb_6_3/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_6_8_3/problem_statement.qmd >}}
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The reactor design equations always include mole balances. As noted after this problem, using the minimum number of mole balances is tricky when the reactor is an SBSTR, so I will write a mole balance one each of the reagents, A, B, S, and W. The reactor is neither isothermal nor adiabatic, so energy balances on the reacting fluid and on the exchange fluid must also be included among the design equations. A momentum balance is not included because momentum balances are not used with stirred tank reactors.
+The reactor design equations always include mole balances. I will write a mole balance one each of the reagents, A, B, S, and W. The reactor is neither isothermal nor adiabatic, so energy balances on the reacting fluid and on the exchange fluid must also be included among the design equations. A momentum balance is not included because momentum balances are not used with stirred tank reactors.
 
 :::
 
 **Reactor Design Equations**
 
-Mole balances on A, B, S, and W take the form shown in equations (4) through (7).
+Mole balances on A, B, S, and W take the form shown in equations (2) through (5).
 
 $$
-\frac{dn_A}{dt} = \dot n_{A,in} - r_1V \tag{4}
-$$
-
-$$
-\frac{dn_B}{dt} = - r_1V \tag{5}
+\frac{dn_A}{dt} = \dot n_{A,in} - r_1V \tag{2}
 $$
 
 $$
-\frac{dn_S}{dt} = r_1V \tag{6}
+\frac{dn_B}{dt} = - r_1V \tag{3}
 $$
 
 $$
-\frac{dn_W}{dt} = r_1V \tag{7}
+\frac{dn_S}{dt} = r_1V \tag{4}
+$$
+
+$$
+\frac{dn_W}{dt} = r_1V \tag{5}
 $$
 
 :::{.callout-tip collapse="true"}
@@ -675,14 +592,14 @@ $$
 \frac{dn_i}{dt} = \dot n_{i,in} + r_1V
 $$
 
-The stoichiometric coefficient of A is -1, leading to equation (4). The inlet stream contains only A, so the inlet molar flow rates of B, S, and W are equal to zero. The stoichiometric coefficients of B, S, and W are -1, 1 and 1, respectively. Substitution of those values yields equations (5), (6), and (7).
+The stoichiometric coefficient of A is -1, leading to equation (2). The inlet stream contains only A, so the inlet molar flow rates of B, S, and W are equal to zero. The stoichiometric coefficients of B, S, and W are -1, 1 and 1, respectively. Substitution of those values yields equations (3), (4), and (5).
 
 :::
 
-Equation (8) is an energy balance on the reacting fluid.
+Equation (6) is an energy balance on the reacting fluid.
 
 $$
-\breve C_pV \frac{dT}{dt} - P\frac{dV}{dt} = \dot Q - \dot V_{in} \breve C_p \left( T - T_{in} \right)  - r_1  \Delta H_1 \tag{8}
+\breve C_pV \frac{dT}{dt} - P\frac{dV}{dt} = \dot Q - \dot V_{in} \breve C_p \left( T - T_{in} \right)  - r_1  \Delta H_1 \tag{6}
 $$
 
 :::{.callout-tip collapse="true"}
@@ -696,7 +613,7 @@ $$
 \end{align}
 $$
 
-The pressure is constant, so its derivative with respect to time is equal to zero. The only work being done is that associated with agitating the liquid, and that may be assumed to be negligible. The heat capacity is constant, so it can be taken outside of the integral and the integral can be evaluated. Again, there is only one reaction occurring, so the summation reduces to a single term for that reaction.
+The pressure is constant, so its derivative with respect to time is equal to zero. The only work being done is that associated with agitating the liquid, and that may be assumed to be negligible. The heat capacity is constant, so it can be taken outside of the integral and the integral can be evaluated. Again, there is only one reaction occurring, so the summation in the last term reduces to a single term for that reaction.
 
 $$
 \begin{align}
@@ -704,14 +621,14 @@ $$
 \end{align}
 $$
 
-Applying those simplifications results in equation (8).
+Applying those simplifications results in equation (6).
 
 :::
 
-The exchange fluid is removing energy in the form of sensible heat, so an energy balance on that fluid is given by equation (9).
+The exchange fluid is removing energy in the form of sensible heat, so an energy balance on that fluid is given by equation (7).
 
 $$
-\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot Q - \dot m_{ex} \tilde C_{p,ex} \left( T_{ex} - T_{ex,in} \right) \tag{9}
+\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot Q - \dot m_{ex} \tilde C_{p,ex} \left( T_{ex} - T_{ex,in} \right) \tag{7}
 $$
 
 :::{.callout-tip collapse="true"}
@@ -727,69 +644,48 @@ Noting that the heat capacity is constant, it can be taken outside of the integr
 
 :::
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
+At present there are 6 reactor design equations, but they contain 7 dependent variables ($n_A$, $n_B$, $n_S$, $n_W$, $T$, $V$, and $T_{ex}$). The number of IVODEs must equal the number of dependent variables, so another IVODE is needed. This is a liquid-phase system, so the differential form of the ideal gas law does not apply. However, if the liquid is assumed to be an ideal mixture, the rate of change of the reacting fluid volume will equal the inlet volumetric flow rate of the feed stream, @eq-sbstr_expansion_term. With the inclusion of equation (8) there are 7 IVODEs and 7 dependent variables.
 
-The design equations are IVODEs, so initial values and a stopping criterion must be specified. The instant that the solution containing reagent A begins to flow into the system can be defined as $t=0$ and used as the initial value of the independent variable, $t$. To solve equations (4) through (10), the corresponding initial values of the dependent variables, $n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$, must be specified. In doing so it is imperative to recognize that these are the molar amounts *within the reactor*, and **not** the amounts flowing into the reactor.
+$$
+\frac{dV}{dt} = \dot V_{in} \tag{8}
+$$
 
-Initially the reactor contains only reagent B, so the initial molar amounts of reagents A, S, and W are zero. The initial temperatures of the reacting and exchange fluids and the initial volume of the reacting fluid are given. The initial molar amount of reagent B can be denoted here as $n_{B,0}$.
 
-A stopping criterion is also needed. Here the problem statement provides the final time.
-
-:::
-
-**Initial Values and Stopping Criterion**
-
-| Variable | Initial Value | Stopping Criterion |
-|:-------|:-------:|:-------:|
-| $t$ | $0$ | $t_f$ |
-| $n_A$ | $0$ | |
-| $n_B$ | $n_{B,0}$ | |
-| $n_W$ | $0$ | |
-| $n_S$ | $0$ | |
-| $T$ | $T_0$ | |
-| $T_{ex}$ | $T_{ex,0}$ | |
-| $V$ | $V_0$ |  |
-
-: Initial values and stopping criterion for solving the design equations, equations (4) through (9). {#tbl-example_6_3 tbl-colwidths="[20, 40, 40]"}
 
 :::{.callout-note collapse="false"}
-## Notes
+## Note
 
-1. This problem indicates that the reactor initially contained a solution containing B and that the feed was a solution containing A. That implies that there is a solvent in the system, but a mole balance for the solvent was not written. This is quite common for liquid phase reacting fluids. It is possible because the amount of solvent does not change and because the heat capacity of the reacting fluid as a whole was used in the energy balance. 
-2. The three design equations written here **cannot be solved as written**. There are 6 IVODEs, but they contain 7 dependent variables ($n_A$, $n_B$, $n_S$, $n_W$, $T$, $T_{ex}$, and $V$). An additional, ancillary ODE is needed that contains at least one of these dependent variables and that does not introduce additional dependent variables. Typically for fed SBSTRs the additional ODE sets the time derivative of the fluid volume, $V$, equal to zero (for gas phase reacting fluids which always fill the entire volume) or to the inlet volumetric flow rate (for idela liquid phase reacting fluids).
+This problem indicates that the reactor initially contained a solution containing B and that the feed was a solution containing A. That implies that there is a solvent in the system, but a mole balance for the solvent was not written. This is quite common for liquid phase reacting fluids. It is possible because reaction does not change the amount of solvent and because the heat capacity of the reacting fluid as a whole was used in the energy balance.
 
 :::
 
-### Modeling a Steady-State CSTR where the Exchange Fluid Phase Changes {#sec-example_6_4}
+### Modeling a Steady-State CSTR where the Exchange Fluid Phase Changes {#sec-example_6_8_4}
 
-{{< include ../RE_Basics_Examples/reb_6_4/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_6_8_4/problem_statement.qmd >}}
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Mole balances are always included among the design equations, so mole balances for each of the three reagents, A, B, and Z, will be written. The reactor is being heated by the condensation of steam, so an energy balance on the reacting fluid is also necessary.
-
-Because I know the temperature at which the steam condenses, I know the outlet temperature of the exchange fluid. I'm not asked any other questions about the exchange fluid, so I will not need to include an energy balance on the exchange fluid among the design equations. (Knowing the outlet temperature of the exchange fluid, the mole balances and energy balance on the reacting fluid can be solved separately from an energy balance on the exchange fluid.) Neither is a momentum balance needed because this is a CSTR and momentum balances are not used with stirred tank reactors.
+Mole balances are always included among the design equations, so mole balances for each of the three reagents, A, B, and Z, will be written. The reactor is being heated by the condensation of steam, so energy balances on the reacting fluid and the exchange fluid are also necessary. 
 
 :::
 
 **Reactor Design Equations**
 
-Steady-state mole balances on A, B, and Z are shown in equations (3), (4), and (5).
+Steady-state mole balances on A, B, and Z are shown in equations (2), (3), and (4).
 
 $$
-0 = \dot n_{A,in} - \dot n_A - r_1 V \tag{3}
-$$
-
-$$
-0 = \dot n_{B,in} - \dot n_B - r_1 V \tag{4}
+0 = \dot n_{A,in} - \dot n_A - r_1 V \tag{2}
 $$
 
 $$
-0 = - \dot n_Z + r_1 V \tag{5}
+0 = \dot n_{B,in} - \dot n_B - r_1 V \tag{3}
+$$
+
+$$
+0 = - \dot n_Z = \dot{n}_Z + r_1 V \tag{4}
 $$
 
 :::{.callout-tip collapse="true"}
@@ -806,14 +702,14 @@ $$
 0 = \dot n_{i,in} - \dot n_i + \nu_{i,1}r_1 V
 $$
 
-The stoichiometric coefficients of A and B are -1 while that of Z is 1. In addition, reagent Z is not present in the feed, so its inlet molar flow rate is zero. Making these substitutions leads to equations (3) through (5).
+The stoichiometric coefficients of A and B are -1 while that of Z is 1.Making these substitutions leads to equations (2) through (4).
 
 :::
 
-An energy balance on the reacting fluid takes the form shown in equation (6).
+An energy balance on the reacting fluid takes the form shown in equation (5).
 
 $$
-0 = \dot Q - \rho \dot V_{in} \tilde C_p  \left( T - T_{in} \right) - r_1 V \Delta H_1 \tag{6}
+0 = \dot Q - \rho \dot V_{in} \tilde C_p  \left( T - T_{in} \right) - r_1 V \Delta H_1 \tag{5}
 $$
 
 :::{.callout-tip collapse="true"}
@@ -838,35 +734,42 @@ $$
 0 = \dot Q - \rho \dot V_{in} \int_{T_{in}}^T \hat C_{p,i}dT - r_1 V \Delta H_1
 $$
 
-Noting that the heat capacity is constant, it can be taken outside the integral and the integral can be evaluated, leading to equation (6).
+Noting that the heat capacity is constant, it can be taken outside the integral and the integral can be evaluated, leading to equation (5).
 
 :::
+
+An energy balance on the steam in the jacket is given by @eq-exchange_energy_bal_latent. Here the reactor operates at steady-state, so the time derivative is equal to zero, resulting in equation (6).
+
+$$
+0 = - \dot Q - \gamma \dot m_{ex} \frac{\Delta H_{\text{latent},ex}^0}{M_{ex}} \tag{6}
+$$
 
 :::{.callout-note collapse="false"}
-## Notes
+## Note
 
-1. In @sec-soln_of_design_equations it was mentioned that in *Reaction Engineering Basics* the design equations are sets of IVODEs with two exceptions. This is an example of one of those exceptions. The design equations for a steady-state CSTR are ATEs.
-2. ATEs do not have initial values or a stopping criterion. 
+Assuming that the temperature of the saturated steam is known, the mole and energy balances on the reacting fluid, equations (2) through (5), can be solved independently of the energy balance on the exchange fluid, equation (6). In that situation, equation (6) can be used to calculate the mass flow rate of the steam, given the fraction of the steam that condenses, or the fraction of the steam that condenses, given the mass flow rate of the steam.
 
 :::
 
-### Modeling a Steady-State PFR where the Exchange Fluid Temperature Changes {#sec-example_6_5}
+### Modeling a Steady-State PFR where the Exchange Fluid Temperature Changes {#sec-example_6_8_5}
 
-{{< include ../RE_Basics_Examples/reb_6_5/problem_statement.qmd >}}
+{{< include ../RE_Basics_Examples/reb_6_8_5/problem_statement.qmd >}}
+
+---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I am asked to formulate a reactor model for this steady-state PFR system with three reagents and one reaction. The reagents in this system are A, A~2~, and I, so mole balances on each of those reagents must be included among the design equations. Energy balances on the reacting fluid and the exchange fluid must also be included. The problem states that for this particular system, pressure drop is negligible, so a momentum balance will not be added to the design equations.
+The reactor design equations always include mole balances, so mole balances will be written for A, A~2~, and Z. The reacting fluid is being heated or cooled using sensible heat from the exchange fluid, so energy balances are needed for the reacting fluid and the exchange fluid. (I know that senisble heat of the exchange fluid is being used because the exchange fluid enters and leaves as a liquid.) The problem statement says that the reactor operates with negligible pressure drop, so a momentum balance is not needed.
 
 :::
 
 **Reactor Design Equations**
 
-Mole balances on A, A~2~, and I take the forms shown in equations (3), (4), and (5).
+Mole balances on A, A~2~, and Z take the forms shown in equations (3), (4), and (5).
 
 $$
-\frac{d \dot n_A}{dz} = -\frac{\pi D^2}{2}r_1 \tag{3}
+\frac{d \dot n_A}{dz} = \frac{\pi D^2}{4}\left(-2 r_1 - r_2 \right) \tag{3}
 $$
 
 $$
@@ -874,24 +777,24 @@ $$
 $$
 
 $$
-\frac{d \dot n_I}{dz} = 0 \tag{5}
+\frac{d \dot n_Z}{dz} = \frac{\pi D^2}{4}r_2 \tag{5}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See Where That Came From
 
-Start with @eq-pfr_mol_balance.
+Start with @eq-pfr_mol_balance, expanding the summation to two terms, one for each reaction.
 $$
-\frac{\partial \dot n_i}{\partial z} + \frac{\pi D^2}{4\dot V} \frac{\partial\dot n_i}{\partial t} - \frac{\pi D^2\dot n_i}{4\dot V^2} \frac{\partial \dot V}{\partial t}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j
+\frac{\partial \dot n_i}{\partial z} + \frac{\pi D^2}{4\dot V} \frac{\partial\dot n_i}{\partial t} - \frac{\pi D^2\dot n_i}{4\dot V^2} \frac{\partial \dot V}{\partial t}  =\frac{\pi D^2}{4}\left(\nu_{i,1}r_1 + \nu_{i,2}r_2\right)
 $$
 
-The system operates at steady state, so the time derivatives are equal to zero and the derivative with respect to $z$ becomes an ordinary derivative. There is only one reaction occurring, so the summation reduces to a single term for that reaction.
+The system operates at steady state, so the time derivatives are equal to zero and the derivative with respect to $z$ becomes an ordinary derivative.
 
 $$
 \frac{d \dot n_i}{dz} = \frac{\pi D^2}{4} \nu_{i,1}r_1
 $$
 
-The stoichiometric coefficients of A, A~2~, and I are -2, 1 and 0, respectively. Substitution of those values leads to equations (3) through (5).
+The stoichiometric coefficients of A, A~2~, and I are -2, 1 and 0 in reaction (1) and -1, 0, and 1 in reaction (2). Substitution of those values leads to equations (3) through (5).
 
 :::
 
@@ -912,16 +815,16 @@ $$
 \end{split}
 $$
 
-As with the mole balances, the system operates at steady state, so the time derivatives are equal to zero and the derivative with respect to $z$ becomes an ordinary derivative.
+As with the mole balances, the system operates at steady state, so the time derivatives are equal to zero and the derivative with respect to $z$ becomes an ordinary derivative. The summation expands to two terms, one for each reaction.
 
 $$
-\left(\sum_i \dot n_i \hat C_{p,i} \right) \frac{dT}{dz} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+\left(\sum_i \dot n_i \hat C_{p,i} \right) \frac{dT}{dz} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\left( r_1 \Delta H_1 + r_2 \Delta H_2 \right)
 $$
 
-The summation in the sensible heat term must include *all* reagents in the system, so it expands to three terms, one for A, one for A~2~, and one for I. As in the mole balances, there is only one reaction occurring, so the final summation reduces to a single term for that reaction.
+The summation in the sensible heat term must include all reagents in the system, so it expands to three terms, one for A, one for A~2~, and one for Z.
 
 $$
-\left( \dot n_A \hat C_{p,A} + \dot n_{A_2} \hat C_{p,A_2} + \dot n_I \hat C_{p,I} \right) \frac{d T}{dz} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4} r_1 \Delta H_1
+\left( \dot n_A \hat C_{p,A} + \dot n_{A_2} \hat C_{p,A_2} + \dot n_I \hat C_{p,I} \right) \frac{d T}{dz} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\left( r_1 \Delta H_1 + r_2 \Delta H_2 \right)
 $$
 
 :::
@@ -942,36 +845,6 @@ $$
 $$
 
 Again, the system operates at steady state, so the time derivative is equal to zero, leading to equation (7).
-
-:::
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-All but one of the design equations is an IVODE, so initial values and a stopping criterion must be specified. For steady-state PFRs the independent variable is the axial position, $z$, and not the time Hence, the inlet to the reactor, $z=0$, is used as the initial value of the independent variable. To solve equations (3) through (6), the corresponding initial values of the dependent variables, $\dot n_A$, $\dot n_{A_2}$, $\dot n_I$ and $T$, must be specified. 
-
-There isn't any A~2~ present in the feed, so its inlet molar flow rate is zero, and the inlet temperature is given. The inlet molar flow rates of A and I can be calculated using their inlet mole fractions mole fractions and the ideal gas law.
-
-A stopping criterion is also needed. When analyzing a PFR, the IVODEs are solved over the range of $z$ between the inlet and outlet. In this problem the length of the reactor is given, so the stopping criterion is $z=L$.
-
-:::
-
-**Initial Values and Stopping Criterion**
-
-| Variable | Initial Value | Stopping Criterion |
-|:-------|:-------:|:-------:|
-| $z$ | $0$ | $L$ |
-| $\dot n_A$ | $\dot n_{A,in}$ | |
-| $\dot n_{A_2}$ | $0$ | |
-| $\dot n_I$ | $\dot n_{I,in}$ | |
-| $T$ | $T_{in}$ | |
-
-: Initial values and stopping criterion for solving design equations (3) through (6). {#tbl-example_6_5 tbl-colwidths="[20, 40, 40]"}
-
-:::{.callout-note collapse="false"}
-## Note
-
-In @sec-soln_of_design_equations it was mentioned that in *Reaction Engineering Basics* the design equations are sets of IVODEs with two exceptions. [Example -@sec-example_6_4] was one of those exceptions, namely a steady-state CSTR. This is an example of the other exception. When a steady-state PFR is heated or cooled using sensible heat of the exchange fluid, the energy balance on the exchange fluid will be an ATE while the other design equations are IVODES. Consequently, the full set of design equations are differential-algebraic equations (DAEs).
 
 :::
 
@@ -1006,7 +879,7 @@ In @sec-soln_of_design_equations it was mentioned that in *Reaction Engineering 
 | $P$ | Pressure of the reacting fluid; a subscripted "0" denotes the initial value, "in" denotes the inlet value. |
 | $P_i$ | Partial pressure of reagent $i$. |
 | $\dot Q$ | Rate of heat transfer from the exchange fluid to the reacting fluid. |
-| $R$ | Ideal gas constant. |
+| $R$ | Ideal gas constant; an additional subscripted $e$ denotes energy units and an additional subscripted $w$ denotes pressure-volume units. |
 | $T$ | Temperture of the reacting fluid; an additional subscripted "in" denotes the inlet value; an additional subscripted "out" denotes the outlet value. |
 | $T_{ex}$ | Temperature of the exchange fluid within the shell/jacket and at the outlet; an optional subscripted "out" emphasizes it is the outlet value; an additional subscripted "in" denoes the inlet value. |
 | $U$ | Heat transfer coefficient. |
