@@ -2,21 +2,25 @@
 
 Generally, a set of differential-algebraic equations (DAEs) includes two subsets of equations. One subset contains differential equations and the other contains ATEs. In many cases, a special computer function (a DAE solver) is needed to solve them numerically. This is *not* the case in *Reaction Engineering Basics*. **The DAEs encountered in *Reaction Engineering Basics* can be solved by using an IVODE solver within the residuals function passed to an ATE solver**. There are two scenarios where this occurs.
 
-* A set of IVODEs has an unknown initial value or an unknown constant appearing within the equations.
+* An unknown initial value or an unknown constant appearing within a set of IVODEs needs to be found.
 
-* While IVODE initial values and final values both appear in the ATEs, the mathematical solution of the ATEs can be formulated so that only IVODE initial values are treated as unknowns in the ATEs.
+* Unknown quantities in the ATEs are initial or final values for the IVODEs, but they do not appear within the IVODEs.
 
-## IVODEs with an Unknown Initial Value or Containing an Unknown Constant. {#sec-num_impl_unk_init_value}
+## Solving for an Unknown Initial Value or an Unknown Constant in a Set of IVODEs. {#sec-num_impl_unk_init_value}
 
-As noted in @sec-apndx_solve_ivodes, IVODE solvers must be provided with initial values of *all* of the dependent variables and a derivatives function that uses the IVODEs to calculate the values of all of the derivatives. If the initial value of one of the dependent variables is unknown, it isn't possible to provide the necessary initial values. If an unknown constant appears in the IVODEs, it isn't possible to calculate the values of the derivatives.
+The presence of an unknown initial value or an unknown constant within a set of IVODEs does not pose a problem when analytical solution is possible. The IVODEs are simply solved, yielding algebraic equations that contain the unknown quantity. The known value of one of the dependent variables is then substituted into the corresponding algebraic equation which then can be solved to find the unknown constant or initial value.
 
-Thus, if an initial value is unknown or if an unknown constant appears in the IVODEs, it isn't possible to call an IVODE solver to solve them. In both cases, an additional equation is needed in order to calculate the unknown initial value or constant. Whenever this situation arises in *Reaction Engineering Basics*, the final values of the independent variable *and* the final value of one of the dependent variables will be known. The final value of the independent variable will be used as the stopping criterion for solving the IVODEs, and the additional equation needed to find the missing initial value or constant will be an implicit equation involving the final value of the dependent variable.
+That procedure cannot be used when the IVODEs are solved numerically. As noted in @sec-apndx_solve_ivodes, IVODE solvers must be provided with initial values of *all* of the dependent variables and a derivatives function that uses the IVODEs to calculate the values of all of the derivatives. If the initial value of one of the dependent variables is unknown, it isn't possible to provide the necessary initial values. If an unknown constant appears in the IVODEs, it isn't possible to calculate the values of the derivatives.
 
-To illustrate, consider @eq-ivode_w_unk_iv_1 where $f$ is a known function of $x$ and $y$. Let $c$ represent the unknown initial value or constant, $x_0$ the known initial value of the independent variable, $x_f$ its known final value, and $y_f$ the known final value of the dependent variable. As indicated in @eq-unk_ivode_init_value, the unknown initial value or constant then is "the value of $c$ such that the final value of $y$ calculated by solving the IVODEs, $y \big\vert_{x_f}$, equals the known final value, $y_f$." A residual corresponding to the implicit equation for $c$ can be written as shown in @eq-ukn_ivode_init_value_resid. There is only one unknown, $c$, in @eq-ukn_ivode_init_value_resid, so it can be solved for $c$ using an ATE solver.
+Thus, if an initial value is unknown or if an unknown constant appears in the IVODEs, it isn't possible to call an IVODE solver to solve them. In either case, an additional equation is needed in order to calculate the unknown initial value or constant. Whenever this situation arises in *Reaction Engineering Basics*, the final value of the independent variable *and* the final value of one of the dependent variables will be known. As shown below, the final value of the independent variable is used as the stopping criterion for solving the IVODEs, and the known dependent variable final value is used to write an implicit algebraic equation that can be solved to find the unknown initial value or constant.
+
+To illustrate, consider @eq-ivode_w_unk_iv_1 where $f$ is a known function of $x$ and $y$. Let $c$ represent the unknown initial value or constant, $x_0$ the known initial value of the independent variable, $x_f$ its known final value, and $y_f$ the known final value of the dependent variable. The unknown constant, $c$, either appears within the function $f$ or it is the initial value of the dependent variable, $y\big\vert_{x=0}$.
 
 $$
 \frac{dy}{dx} = f
 $$ {#eq-ivode_w_unk_iv_1}
+
+It is found by noting that it is "the value of $c$ such that the final value of $y$ calculated by solving the IVODEs, $y \big\vert_{x_f}$, equals the known final value, $y_f$," @eq-unk_ivode_init_value. A residual corresponding to the implicit equation for $c$ can be written as shown in @eq-ukn_ivode_init_value_resid. There is only one unknown, $c$, in @eq-ukn_ivode_init_value_resid, so it can be solved for $c$ using an ATE solver.
 
 $$
 c : y \big\vert_{x_f} = y_f
@@ -28,17 +32,18 @@ $$ {#eq-ukn_ivode_init_value_resid}
 
 The use of ATE solvers was described in @sec-apndx_solve_ates. The key steps are (a) to write a residuals function that calculates the residuals given a guess for the unknowns, (b) define an initial guess for the unknowns, and (c) call an ATE solver to get the solution. Here, the ATE being solved is @eq-ukn_ivode_init_value_resid and the unknown is $c$. Hence, the residuals function will be passed a guess for $c$. It will have to call an IVODE solver and solve @eq-ivode_w_unk_iv_1 using that guess, to find $y \big\vert_{x_f}$. Once that is done, it can evaluate and return the residual, @eq-ukn_ivode_init_value_resid. 
 
-The ATE solver will return the missing value of $c$. At that point, knowing the value of $c$, the IVODE solver can be used again to find the values of $x$ and $y$ over the range between their initial and final values. While the description here used a single IVODE, this procedure applies equally to sets of IVODEs.
+The ATE solver will return the missing value of $c$, assuming it converges. At that point, knowing the value of $c$, the IVODE solver can be used again to find the values of $x$ and $y$ over the range between their initial and final values. While the description here used a single IVODE, this procedure applies equally to sets of IVODEs.
 
-* When solving the IVODEs in the steps that follow, use the final value of the independent variable as the stopping criterion.
+* When solving the IVODEs in the steps that follow, use the known final value of the independent variable as the stopping criterion.
 * Use the known final value of a dependent variable to write a residual corresponding to the implicit equation for the unknown constant, $c$, as in @eq-ukn_ivode_init_value_resid.
 * Write a residuals function that receives a guess for $c$, uses that value and an IVODE solver to solve the IVODEs for the corresponding calculated value,  $y \big\vert_{x_f}$, and calculates and returns the residual.
+    * If $c$ is an initial value, it will be provided to the IVODE solver as an argument
+    * If $c$ is an unknown constant appearing within the IVODEs, the residuals function must somehow make it available to the derivatives function (see @sec-apndx_solve_ivodes) that is passed to the IVODE solver.
 * Pass that residuals function and an initial guess for $c$ to an ATE solver to find the value of $c$.
-* At this point, knowing the value of $c$, the IVODEs can be solved by calling an IVODE solver directly (see @sec-apndx_solve_ivodes).
 
-The description presented here was brief and may seem abstract. Hopefully the example presented in @sec-example_K_1 will make it easier to understand how to find a missing IVODE initial value numerically.
+The description presented here was brief and may seem abstract. Hopefully the example presented in @sec-example_K_1 will make it easier to understand how to calculate an unknown initial value or constant appearing in a set of IVODEs when those IVODEs must be solved numerically.
 
-## DAEs where the Unknowns in the ATEs are the Initial Values for the IVODEs {#sec-num_impl_daes}
+## DAEs where the Unknowns in the ATEs are Initial and Final Values for the IVODEs {#sec-num_impl_daes}
 
 A situation very similar to that as just described arises in certain reaction engineering analyses involving a set of DAEs. To illustrate, suppose the DAEs consist of two ATEs, Equations [-@eq-ate1_in_daes] and [-@eq-ate2_in_daes], and two IVODEs, Equations [-@eq-ivode1_in_daes] and [-@eq-ivode2_in_daes]. In those equations $y_{1,0}$ and $y_{2,0}$ represent the initial values of the dependent variables in the IVODEs and $y_1\big\vert_{x_f}$ and $y_2\big\vert_{x_f}$ represent the final values of the dependent variables in the IVODEs.
 
@@ -60,21 +65,23 @@ $$ {#eq-ivode2_in_daes}
 
 The initial and final values of the independent variable in the IVODEs, $x_0$ and $x_f$, are known, but the other initial values,$y_{1,0}$ and $y_{2,0}$, are not known, so the IVODEs cannot be solved directly. There are two ATEs, but they contain four unknowns. However, as explained in @sec-apndx_solve_ates, the ATEs can be solved for $y_{1,0}$ and $y_{2,0}$ if $y_1\big\vert_{x_f}$ and $y_2\big\vert_{x_f}$ are expressed in terms of $y_{1,0}$ and $y_{2,0}$. In fact, the IVODEs do exactly that: given values of $y_{1,0}$ and $y_{2,0}$, the IVODEs can be solved to find $y_1\big\vert_{x_f}$ and $y_2\big\vert_{x_f}$.
 
-Thus, the key to solving the DAEs is to formulate the solution of the ATEs using the initial values of the dependent variables in the IVODEs as the unknowns. The numerical implementation of the solution is then relatively straightforward.
+Thus, the key to solving the DAEs is to formulate the solution of the ATEs using the *initial* values of the dependent variables in the IVODEs as the unknowns. The IVODEs then become ancillary equations that express the final values in terms of the initial values. The numerical implementation of the solution is relatively straightforward.
 
-* Choose the initial values of the dependent variables from the IVODEs as the unknowns to be found by solving the ATEs.
+* When solving the IVODEs in the steps that follow, use the known final value of the independent variable as the stopping criterion.
+* Choose the initial values of the dependent variables in the IVODEs as the unknowns to be found by solving the ATEs.
 * Write a residuals function that receives a guess for those initial values and
     * uses that guess to solve the IVODEs numerically for the corresponding final values of the IVODEs,
     * evaluates the residuals corresponding to the ATEs (Equations [-@eq-ate1_in_daes] and [-@eq-ate2_in_daes] here), and
     * returns the values of the residuals
-* Define an initial guess for initial values of the dependent variables from the IVODEs
+* Define an initial guess for the initial values of the dependent variables in the IVODEs
 * Call an ATE solver, passing the residuals function and the initial guess as arguments to find the initial values of the dependent variables from the IVODEs
+* Knowing the initial values of the dependent variables, call an IVODE solver to calculate their final values.
 
-At that point, the IVODEs can be solved directly by calling an IVODE solver as described in @sec-apndx_solve_ivodes. An example of solving a set of DAEs in the manner is presented in @sec-example_K_2.
+An example of solving a set of DAEs in this manner is presented in @sec-example_K_2.
 
 ## Examples
 
-The first example below illustrates solving a set of IVODEs where the initial value of a dependent variable is unknown. The second example illustrates solving a set of DAEs when the solution of the ATEs can be formulated using initial values of the dependent variables in the IVODEs as the unknowns in the ATEs.
+The first example below illustrates solving a set of IVODEs for an unknown initial value. The second example illustrates solving a set of DAEs where the unknowns in the ATEs are initial and final values of the IVODEs.
 
 ### Example of Solving IVODEs where an Initial Value is Unknown {#sec-example_K_1}
 
@@ -95,7 +102,16 @@ The equations to be solved here are IVODEs. The mathematical formulation of the 
 
 **Model Equations**:
 
-In addition to the IVODEs presented in equations (1) through (3), the implicit equation for the final temperature must be satisfied. The corresponding residual is defined in equation (5).
+The IVODEs are given above as equations (1), (2), and (3).
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I cannot call an IVODE solver at this point because I don't know the initial value of $T$. As described in @sec-num_impl_unk_init_value, I instead need to write an implicit ATE using the known final temperature, and solve that to find the unknown initial value.
+
+:::
+
+In addition, the final temperature equal its known final value as expressed in the residual defined in equation (5).
 
 $$
 \epsilon = T\big\vert_{z=L} - T_{out} \tag{5}
@@ -110,7 +126,7 @@ In order to evaluate the residual, equation (5), the IVODEs will need to be solv
 
 :::
 
-Equation (4) expresses $r$ in terms of known constants, the independent variable, $z$, and the dependent variables, $\dot{n}_A$, $\dot{n}_Z$, and $T$.
+Equation (4) expresses $r$ in terms of known constants, the independent variable, $z$, and the dependent variables, $\dot{n}_A$, $\dot{n}_Z$, and $T$. Thus, given the initial values and stopping criterion shown in @tbl-apndx_K_3_1_init_values, the final values of the dependent variables can be calculated.
 
 **Solution Procedure**
 
@@ -127,14 +143,14 @@ Equation (4) expresses $r$ in terms of known constants, the independent variable
 
 :::
 
-Create a model function that will perform the calculations and within that function
+Create a model function that will perform the calculations, and within that function
 
 1. make the given and known constants available for use in all equations,
-2. create a derivatives function that
+2. write a derivatives function that
     a. receives values of $\dot{n}_A$, $\dot{n}_Z$, and $T$,
     b. calculates $r$ using equation (4), and 
     c. calculates and returns the corresponding values of the derivatives using equations (1) - (3).
-3. create a residuals function that
+3. write a residuals function that
     a. receives a guess for $T_{in}$
     b. defines initial values and a stopping criterion using @tbl-apndx_K_3_1_init_values,
     c. calls an IVODE solver passing the derivatives function (step 2), initial values and stopping criterion (step 3b) to get the final value, $T\big\vert_{z=L}$, and
@@ -160,7 +176,7 @@ This example showed how to calculate a missing initial value for a set of IVODEs
 :::{.callout-note collapse="false"}
 ## Note
 
-In this example the initial value of a dependent variable in the IVODEs was calculated. Essentially the same procedure and code could be used if the initial value was known, but a constant appearing in the IVODEs was missing. The biggest difference in that case would be that in step 3 of the numerical implementation above, the residuals function would receive a guess for that constant, and it would need to make that guess available for use in the derivatives function. This is essentially a programming issue, and the way it is accomplished will depend upon the software being used.
+In this example the initial value of a dependent variable in the IVODEs was calculated. Essentially the same procedure and code could be used if the initial value was known, but a constant appearing in the IVODEs, $\dot{V}$ for example, was missing. The biggest difference in that case would be that in step 3 of the numerical implementation above, the residuals function would receive a guess for that $\dot{V}$, and it would need to make that guess available for use in the derivatives function. The way that is accomplished will depend upon the software and programming language being used.
 
 :::
 
@@ -184,7 +200,7 @@ A good place to start is by listing the given and known constants, the quantitie
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The numerical solution of DAEs is detailed in @sec-num_impl_daes, which notes that the key to solving the equations is to mathematically formulated the solution of the ATEs with the initial values of the IVODEs as the unknowns. The solution of the IVODEs will then occur within the soluton of the IVODEs. Therefore, I will indicate the ATES as the model equations and the initial values of the dependent variables in the IVODEs, $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$, as the unknowns.
+The equations to be solved are DAEs, and numerical solution of DAEs is detailed in @sec-num_impl_daes. The key to solving the DAEs is to mathematically formulated the solution of the ATEs with the initial values of the IVODEs as the unknowns. The solution of the IVODEs will will need to occur within the soluton of the ATEs, and then one more time after the ATEs have bee solved. Therefore, I will indicate the ATES as the model equations and the initial values of the dependent variables in the IVODEs, $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$, as the unknowns.
 
 :::
 
@@ -197,7 +213,7 @@ The ATEs, equations (4), (5), and (6) will be solved for $\dot{n}_{A,in}$, $\dot
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The ATEs include 3 quantities ($\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$) in addition to the unknowns to be found by solving the ATEs ($\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$). The former quantities must be expressed in terms of the unknowns. Given the unknowns, the IVODEs, equations (1) - (3) can be solved to find $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$.
+The ATEs include 3 quantities ($\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$) in addition to the unknowns to be found by solving them. The former quantities must be expressed in terms of the unknowns. Given the unknowns, the IVODEs, equations (1) - (3) can be solved to find $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$.
 
 In order to solve the IVODEs, every quantity appearing within them must be expressed in terms of the independent and dependent variables. The only variable quantity in equations (1) through (3), other than the independent ($z$) and dependent variables ($\dot{n}_A$,$\dot{n}_Z$, and $T$) is $r$, which is expressed in terms of the independent and dependent variables in equation (7).
 
@@ -209,7 +225,7 @@ Given the unknowns in the ATEs, $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$
 
 1. Substitute the given and known quantities in all equations.
 2. Substitute equation (7) for $r$ in equations (1), (2), and (3).
-3. Solve equations (1) - (3) using the initial values and stopping criterion in @tbl-apndx_K_3_2_initial_values, and express $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$ in terms of $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$.
+3. Express $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$ in terms of $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$ by solving equations (1) - (3) using the initial values and stopping criterion in @tbl-apndx_K_3_2_initial_values.
 4. Substitute the results from step 3 into the ATEs, equations (4) through (6), and solve for $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$.
 5. Use the results from step 4 and the initial values and stopping criterion in @tbl-apndx_K_3_2_initial_values to solve equations (1) through (3) for $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$.
 
@@ -227,11 +243,11 @@ I will need a guess for the unknowns in the ATEs. I'm simply going to guess that
 Create a model function that will perform the calculations, and within that function
 
 1. make the given and known constants available for use in all equations.
-2. create a derivatives function that
-    a. receives values of $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$ as input,
+2. write a derivatives function that
+    a. receives values of $\dot{n}_{A}$, $\dot{n}_{Z}$, and $T$ as input,
     b. calculates $r$ using equation (7), and
     c. calculates and returns the values of the derivatives using equations (1) through (3).
-3. create a residuals function that
+3. write a residuals function that
     a. receives values of $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$ as input,
     b. defines initial values and a stopping criterion using @tbl-apndx_K_3_2_initial_values,
     c. calls and IVODE solver, passing the derivatives function (step 2), initial values and stopping criterion (step 3b) to get the final values, $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$, and
@@ -278,10 +294,10 @@ As noted in the introduction, the numerical solution of a set of DAEs generally 
 | $x$ | The independent variable in an IVODE; an additional subscripted $0$ denotes the initial value and an additional subscripted $f$ denotes the final value. |
 | $y$ | The dependent variable in an IVODE; an additional subscript is used to index the dependent variables if there are more than one IVODEs; a second subscripted $0$ denotes the initial value and a second subscripted $f$ denotes the final value. |
 | $z$ | Axial distance from the inlet of a PFR. |
-| $E$ | Activation energy; an additional subscript indexes the reaction. |
 | $\hat{C}_p$ | Molar heat capacity; an additional subscript indexes the reagent. |
 | $\breve{C}_p$ | Volumetric heat capacity. |
 | $D$ | PFR diameter. |
+| $E$ | Activation energy; an additional subscript indexes the reaction. |
 | $L$ | Length of a PFR. |
 | $P$ | Pressure. |
 | $R$ | Ideal gas constant. |
