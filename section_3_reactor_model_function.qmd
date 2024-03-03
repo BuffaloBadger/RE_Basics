@@ -18,13 +18,12 @@ To address these challenges, in *Reaction Engineering Basics*, all discussion of
 
 ## Ideal Reactor Analysis
 
-In *Reaction Engineering Basics*, when an assignment involves analysis of an ideal reactor, the assignment is completed using five basic steps. These steps provide a good framework for readers to use when they perform ideal reactor analyses, as well.
+In *Reaction Engineering Basics*, when an assignment involves analysis of an ideal reactor, the assignment is completed using four basic steps. These steps provide a good framework for readers to use when they perform ideal reactor analyses, as well.
 
 1. Summarize the information provided in the assignment.
 2. Formulate the solution mathematically.
 3. Implement the solution numerically.
-4. Execute the solution.
-5. Report and comment upon the results.
+4. Report and comment upon the results.
 
 ### Summarizing the Information Provided in the Assignment {#sec-summarize_info}
 
@@ -38,25 +37,17 @@ The result of this step is a concise summary of the assignment that provides (a)
 
 The mathematical formulation of the solution always begins by generating the reactor design equations need to model the reactor. @sec-3_design_eqns describes how to do this. If the reactor design equations are IVODEs, the necessary initial values and stopping criterion should also be identified at this point.
 
-Knowing that the reactor design equations will be solved numerically, the next step in the mathematical formulation is to write the ancillary equations that are needed in order to solve the reactor design equations. Details are provided in Appendices [-@sec-apndx_solve_ates], [-@sec-apndx_solve_ivodes], [-@sec-apndx_solve_daes], and [-@sec-apndx_solving_bvodes], but basically this involves writing ancillary equations to express each quantity that isn't a known constant nor one of the things to be found by solving the reactor design equations in terms of known constants and the things to be found by solving the reactor design equations. This must be done for each reactor design equation and for the initial values and stopping criterion if the equations are IVODEs.
+In most cases, additional equations are needed in order to solve the reactor design equations. The nature of these ancillary equations depends upon whether the reactor design equations are ATEs, IVODEs, DAEs, or BVODEs. Details are provided in Appendices [-@sec-apndx_solve_ates], [-@sec-apndx_solve_ivodes], [-@sec-apndx_solve_daes], and [-@sec-apndx_solving_bvodes]. The next step when formulating the solution is to write the ancillary equations that are needed in order to solve the reactor design equations.
 
-At this point, the mathematical formulation should indicate that the reactor design equations can be solved and it should list the quantities that will be found by solving them.
+At this point, the mathematical formulation should indicate that the reactor design equations can be solved and it should list the quantities that will be found by solving them. It is quite likely that solving the reactor design equations will not yield all of the quantities of interest directly. If that is the case, ancillary equations needed to calculate the quantities of interest using the results from solving the reactor design equations should be added to the mathematical formulation.
 
-It is quite likely that solving the reactor design equations will not yield all of the quantities of interest directly. The next section of the mathematical formulation should list ancillary equations that can be used to calculate all remaining quantities of interest, making use of the results obtained by solving the reactor design equations.
-
-The final component of the mathematical formulation of the solution should be a step-by-step summary of the necessary calculations for completing the assignment.
-
-A mathematician who knows nothing about chemistry or reaction engineering, but who is an expert at doing the math, should be able to generate the quantities of interest using the assignment summary and the mathematical formulation of the solution.
+The final component of the mathematical formulation of the solution should be a step-by-step summary of the necessary calculations for completing the assignment. Ideally, a mathematician who knows nothing about chemistry or reaction engineering, but who is an expert at doing math, should be able to generate the quantities of interest using the assignment summary and the mathematical formulation of the solution.
 
 ### Implementing the Solution Numerically
 
 Once the solution has been formulated mathematically, the next step is to implement that solution numerically. This involves writing computer code or using mathematics software. The computer code that solves the reactor design equations and calculates all of the quantities of interest will be referred to as the reactor model function. As already noted, *Reaction Engineering Basics* does not show how to write that code because not all readers will be using the same software.
 
-Instead, in *Reaction Engineering Basics* the numerical implementation will describe how to write a reactor model function in general terms. It will assume that the reader is familiar with the appropriate appendix for solving the reactor design equations. It will provide sufficient details so that readers can use it to write the code for the software they choose.
-
-### Executing the Solution
-
-Again, because there are many different software packages that could be used, examples in *Reaction Engineering Basics* will simply state that the calculations were performed as described. It is left to the reader to make sure they can do so using the software of their choice.
+Instead, in *Reaction Engineering Basics* the numerical implementation will describe how to write a reactor model function in general terms. It will assume that the reader is familiar with the appropriate appendix for solving the reactor design equations. It will provide sufficient details so that readers can use it to write the code using the software they choose, and execute that code to calculate the quantities of interest.
 
 ### Reporting the Results and Commenting
 
@@ -64,16 +55,16 @@ The results obtained will then be presented. Any graphs or tables requested in t
 
 ## Reactor Model Functions
 
-As noted above, the reactor model function is computer code that solves the reactor design equations and calculates all of the quantities of interest. The numerical implementation mentiioned above describes how to write the reactor model function in general terms. Most of the details related to its implementation are left to the reader and may depend upon the software that reader is using. Only a few general points are considered here.
+As noted above, the reactor model function is computer code that solves the reactor design equations and calculates all of the quantities of interest. The numerical implementation mentioned above describes how to write the reactor model function in general terms. Most of the details related to its implementation are left to the reader and may depend upon the software that reader is using. Only a few general points are considered here.
 
 In many reactor analyses, the reactor model function can be a stand-alone entity. That is, it need not be called by or provided to any other computer functions, and it need not return anything. However, there are a few situations where other computer functions will need to call the reactor model function. Two common examples are when a quantity of interest must be minimized or maximized with respect to some other quantity, and when the reactor model function is being used in combination with experimental data to estimate the values of rate expression parameters.
 
-In situations like those, other computer functions will need to pass the values of some quantities to the reactor model function as arguments in order to obtain corresponding values of the quantities of interest. Similarly, when the reactor design equations are ATEs and convergence is difficult or multiple solutions are known to be possible (see @sec-apndx_solve_ates), it may be beneficial to pass initial guesses for the solution to the reactor model function. In all of these situations input arguments will be passed to the reactor model function.
+In situations like those, other computer functions will need to pass the values of some quantities to the reactor model function as arguments in order to obtain corresponding values of the quantities of interest. Similarly, when the reactor design equations are ATEs and convergence is difficult or multiple solutions are known to be possible (see @sec-apndx_solve_ates), it may be beneficial to pass initial guesses for the solution to the reactor model function.
 
-When the reactor model function must be passed to, or called by, other computer functions, those other functions will expect the reactor model function to have a specific number and type of arguments in a specific order and to return a specific number and type of results, again in a specific order. In this case, the reactor model function must be written with that number and type of arguments and return values in the orders expected. These kinds of programming details are not described in *Reaction Engineering Basics* because they will vary depending upon the software the reader elects to use.
+When the reactor model function is going to be called by other computer functions, those functions will expect the reactor model function to have a specific number and type of arguments in a specific order and to return a specific number and type of results, again in a specific order. In this case, the reactor model function must be written with that number and type of arguments and return values in the orders expected. These kinds of programming details are not described in *Reaction Engineering Basics* because they will vary depending upon the software the reader elects to use.
 
 To summarize, the general structure of a reactor model function is shown schematically in @fig-response_fcn where the green box shows arguments, if there are any, the blue box shows the body of the function, and the purple box show the return values, if there are any. If there are arguments to the reactor model function, they typically will be treated either as additional known constants, or, in the case of solver guesses, they will be passed to the software that solves the reactor design equations. Within the reactor model function the known constants will first be defined in a way that makes them available to the reactor model. Next, software that solves the reactor design equations will be used. Finally the results of solving the reactor design equations will be used to calculate the quantities of interest. The reactor model function might report results directly and not return anything. However, if the reactor model function will be called by, or passed to, other computer functions, it will return some or all of the quantities of interest.
 
-![Schematic representation of a reactor model function.](./Graphics/reactor_model_function.png){#fig-response_fcn width=80%}
+![Schematic representation of a reactor model function. In many cases, the arguments in the green box and the return value in the purple box may not be present.](./Graphics/reactor_model_function.png){#fig-response_fcn width=80%}
 
 
