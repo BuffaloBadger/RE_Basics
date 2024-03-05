@@ -1,8 +1,6 @@
 # Solving Initial-Value ODEs {#sec-apndx_solve_ivodes}
 
-This appendix examines the numerical solution of sets of initial value ordinary differential equations (IVODEs). As described later in the appendix, two scenarios are possible when solving IVODEs numerically. This appendix only considers the scenario where the initial values are known and all quantities appearing in the IVODEs are known constants or can be expressed in terms of the independent and dependent variables. The other scenario is considered in Appendix [-@sec-apndx_solve_daes]. In that scenario the IVODEs are being solved to find an initial value or an unknown constant appearing in the IVODEs.
-
-There are many software packages that include an IVODE solver (a function that can be used to solve sets of IVODEs). Under the assumption that different readers will choose to use different software packages, the discussion in this appendix is general. Nonetheless it provides sufficient information for readers to follow *Reaction Engineering Basics* example assignments wherein sets of IVODEs ae solved, and to implement them using the IVODE solver they prefer. Of course it will be necessary to consult the documentation for the chosen solver to learn the details for using it. Readers seeking a more complete understanding of how IVODE solvers work should consult a numerical methods textbook or take a course on numerical methods.
+This appendix examines the numerical solution of sets of initial value ordinary differential equations (IVODEs). There are many software packages that include an IVODE solver (a function that can be used to solve sets of IVODEs). Under the assumption that different readers will choose to use different software packages, the discussion in this appendix is general. Nonetheless it provides sufficient information for readers to follow *Reaction Engineering Basics* examples wherein sets of IVODEs ae solved, and to implement them using the IVODE solver they prefer. Of course it will be necessary to consult the documentation for the chosen solver to learn the details for using it. Readers seeking a more complete understanding of how IVODE solvers work should consult a numerical methods textbook or take a course on numerical methods.
 
 ## Identifying IVODEs
 
@@ -26,9 +24,9 @@ $$
 m_{4,1}\frac{dy_1}{dx} + m_{4,2}\frac{dy_2}{dx} + m_{4,3}\frac{dy_3}{dx}  + m_{4,4}\frac{dy_4}{dx} = g_4 
 $$ {#eq-example-ode-4}
 
-While four equations are being used here for illustration purposes, there can be any number of ordinary differential equations in the set as long as the number of ordinary differential equations is equal to the number of dependent variables, and there is only one independent variable. In *Reaction Engineering Basics*, the independent variable is almost always either the elapsed time, $t$, or the axial position measured from the reactor inlet, $z$.
+While four equations are being used here for illustration purposes, there can be any number of ordinary differential equations in the set as long as the number of ordinary differential equations is equal to the number of dependent variables, and there is only one independent variable. In *Reaction Engineering Basics*, the independent variable is either the elapsed time, $t$, or the axial position, $z$, measured from the inlet of a plug flow reactor.
 
-In order solve a set of linear, first-order ODEs, the value of each dependent variable must be known at some value of the independent variable. If the value of *every* dependent variable is known at *the same* value of the independent variable, they are called *initial values* and the equations are known as *initial* value ordinary differential equations.
+In order solve a set of linear, first-order ODEs, the value of each dependent variable must be known at some value of the independent variable. If the value of *every* dependent variable is known at *the same* value of the independent variable, they are called *initial values* and the equations are known as **initial value** ordinary differential equations.
 
 ## Analytical *vs*. Numerical Solutions of IVODEs 
 
@@ -48,7 +46,7 @@ $$ {#eq-ivode-soln}
 
 Three aspects of the analytical solution are important. First, the solution is an analytical function, @eq-ivode-soln. Second, the initial values do not need to be specified; they can be represented by unspecified constants ($x_0$ and $y_0$). Third, constant quantities that appear in the IVODEs (such as $a$, here) do not need to be known.
 
-In contrast, in order to solve @eq-ivode numerically, the numeric values of $x_0$, $y_0$, and $a$ must be known. In addition, either the *final* value of the independent variable, $x_f$, or the *final* value of the dependent variable, $y_f$, must be known. The other difference is that the solution is not an analytical function; it is a table with one column containing values of the independent variable, starting at its initial value, and with additional columns containing corresponding values of each dependent variable, starting at their initial values. Thus, when $x_0=3$, $y_0=10$, $a=2$, and $x_f=4.5$ (or $y_f=21.25$) the numerical solution of @eq-ivode is the table of values of $x$ and $y$, as shown in @tbl-ivode-num-soln. (Different IVODE solvers may generate tables with different numbers of rows, but the first row will always contain the initial values and the last row will always contain the known final value.)
+In contrast, in order to solve @eq-ivode numerically, the numeric values of $x_0$, $y_0$, and $a$ must be known. In addition, either the *final* value of the independent variable, $x_f$, or the *final* value of the dependent variable, $y_f$, must be known. The other difference is that the solution is not an analytical function; it is a table with one column containing values of the independent variable, starting at its initial value, and with additional columns containing corresponding values of each dependent variable, starting at their initial values. Thus, when $x_0=3$, $y_0=10$, $a=2$, and $x_f=4.5$ (or $y_f=21.25$) the numerical solution of @eq-ivode is the table of values of $x$ and $y$ shown in @tbl-ivode-num-soln. (Different IVODE solvers may generate tables with different numbers of rows, but the first row will always contain the initial values and the last row will always contain the known final value.)
 
 |  x  |   y   |
 |:---:|:-----:|
@@ -63,15 +61,11 @@ In contrast, in order to solve @eq-ivode numerically, the numeric values of $x_0
 
 : Numerical solution of @eq-ivode for the initial values given in @eq-initial-value. {#tbl-ivode-num-soln}
 
-For both analytical and numerical solution, quantities that *are* functionally dependent upon the independent and/or dependent variables may appear in the IVODES. When this is so, such quantities must be expressed in terms of the independent and dependent variables before the IVODEs can be solved. 
-
 ## Formulating the Solution of a Set of IVODEs Mathematically {#sec-math_form_ivodes}
 
-When a reaction engineer first generates a set of IVODEs that needs to be solved, the equations may contain known constants, the independent variable, the dependent variables (i. e. the variables appearing in the derivatives), and other unknown variables that are neither the independent variable nor one of the dependent variables. Assuming the set of IVODEs is going to be solved numerically, mathematical formulation of the solution proceeds as follows.
+When a reaction engineer first generates a set of IVODEs, the equations may contain known constants, the independent variable, the dependent variables, and additional variables that are functionally dependent upon the independent and/or dependent variables. Before the IVODEs can be solved, either analytically or numerically, the additional variables must be expressed in terms of the independent and dependent variables. Further, in anticipation of numerical solution, the values of all constants within the equations and the initial and final values must be calculated if they are not known. Mathematical formulation of the solution proceeds as follows.
 
 {{< include Includes/_math_form_ivodes_soln.qmd >}}
-
-Note that this formulation can only be used when the values of *all* constants and initial values are known. There is a related scenario involving IVODEs where it *cannot* be used. That scenario occurs when either an initial value or a constant appearing in the IVODEs is unknown, and the desired solution is the value of that unknown that results in the specified stopping criterion. In that scenario the numerical solution must be formulated and implemented differently, as described in Appendix [-@sec-apndx_solve_daes].
 
 ## IVODE Solvers
 
@@ -85,15 +79,15 @@ Of course, the solver eventually must stop taking integration steps. After compl
 
 ### Cautions Related to Numerical Solution of IVODEs
 
-*When the stopping criterion is a value of one of the dependent variables*, many solvers require that you provide *both* a final value of the independent variable *and* the known final value of that dependent variable. The solver then takes steps as described above, and after each step it checks to see whether either variable has reached its specified final value. The problem is that if you specify a final value of the *independent* variable that is too small, the solver may reach that value first and stop. The stopping criterion you specified for the dependent variable will not have been reached, and the result that is returned is not the result you are seeking. Therefore **it is important to check that the dependent variable reached the stopping criterion you specified**.
+*When the stopping criterion is a value of one of the dependent variables*, many solvers require that you provide *both* a final value of the independent variable *and* the known final value of that dependent variable. The solver then takes steps as described above, and after each step it checks to see whether either variable has reached its specified final value. The problem is that if you specify a final value of the *independent* variable that is too small, the solver may reach that value first and stop. The stopping criterion you specified for the dependent variable will not have been reached, and the result that is returned is not the result you are seeking. Therefore it is important to **check that the dependent variable reached the specified final value**.
 
-To avoid having the solver stop because it reached the stopping criterion for the *independent* variable, it is tempting to specify a very large final value for the independent variable stopping criterion. The problem with doing this is that it may cause the solver to use a step size that is too large, resulting in an inaccurate solution. Therefore, **it is important to check that the step size was not too large**. The solution that is returned will include the final value of the independent variable. The stopping criterion for the independent variable can be set to a value slightly larger than that and the equations can be solved a second time. Assuming the second solution reaches the desired stopping criterion for the dependent variable, the second solution should be accurate.
+To avoid having the solver stop because it reached the stopping criterion for the *independent* variable, it is tempting to specify a very large final value for the independent variable stopping criterion. The problem with doing this is that it may cause the solver to use a step size that is too large, resulting in an inaccurate solution. Therefore, it is important to **check that the step size was not too large**. The solution that is returned will include the final value of the independent variable. The stopping criterion for the independent variable can be set to a value slightly larger than that and the equations can be solved a second time. Assuming the second solution reaches the desired stopping criterion for the dependent variable, the second solution should be accurate.
 
-A second possible problem arises when solving sets of IVODEs where one of the dependent variables changes very abruptly over a very small range of the independent variable. The abrupt changes in that dependent variable may significantly affect the other dependent variables over a much broader range of the independent variable. Equations like this are called *stiff ODEs*, and they require special treatment of the step size. Therefore, when solving sets of ODEs, one should pay attention to whether any of the dependent variables change very abruptly as the independent variable changes. If they do, it is advisable to **repeat the solution using a solver that is specifically tailored to stiff ODEs**.
+A second possible problem arises when solving sets of IVODEs where one of the dependent variables changes very abruptly over a very small range of the independent variable. The abrupt changes in that dependent variable may significantly affect the other dependent variables over a much broader range of the independent variable. Equations like this are called **stiff ODEs**, and they require special treatment of the step size. Therefore, when solving sets of ODEs, one should pay attention to whether any of the dependent variables change very abruptly as the independent variable changes. If they do, it is advisable to repeat the solution using a solver that is specifically tailored to stiff ODEs.
 
-## Derivative Expressions and the Derivatives Function
+## Derivative Expressions and the Derivatives Function  {#sec-mass_matrix}
 
-As noted above, each time the IVODE solver takes an integration step, it needs to use the set of IVODEs to calculate the value of each derivative. To do so, it is useful to convert the IVODEs into a set of expressions for the individual derivatives. For example, Equations [-@eq-example-ode-1] through [-@eq-example-ode-4] need to be converted to derivative expressions of the form shown in Equations [-@eq-example-vector-ode-1] through [-@eq-example-vector-ode-4] where the $f_1$, $f_2$, $f_3$, and $f_4$ each may be a function of $x$, $y_1$, $y_2$, $y_3$, and $y_4$.
+As noted above, each time the IVODE solver takes an integration step, it needs to use the set of IVODEs to calculate the value of each derivative. To do so, it is useful to convert the IVODEs into a set of expressions for the individual derivatives. For example, Equations [-@eq-example-ode-1] through [-@eq-example-ode-4] need to be converted to derivative expressions of the form shown in Equations [-@eq-example-vector-ode-1] through [-@eq-example-vector-ode-4] where $f_1$, $f_2$, $f_3$, and $f_4$ each may be a function of $x$, $y_1$, $y_2$, $y_3$, and $y_4$.
 
 $$
 \frac{dy_1}{dx}  = f_1 
@@ -111,7 +105,7 @@ $$
 \frac{dy_4}{dx} = f_4 
 $$ {#eq-example-vector-ode-4}
 
-Doing so can be accomplished by algebraic manipulation of Equations [-@eq-example-ode-1] through [-@eq-example-ode-4], but it is particularly straightforward if the original IVODEs are written as a matrix equation. The coefficients, $m_{1,1}$, $m_{1,2}$, etc., can be used to construct a matrix, $\boldsymbol{M}$, as shown in @eq-mass-matrix, the dependent variables can be used to construct a column vector, $\underline{y}$, as in equation @eq-dependent-var-vector, and the functions, $g_1$, $g_2$, $g_3$, and $g_4$, can be used to construct a column vector, $\underline{g}$, as in equation @eq-function-vector. The matrix, $\boldsymbol{M}$, is known as the *mass matrix*.
+Doing so can be accomplished by algebraic manipulation of Equations [-@eq-example-ode-1] through [-@eq-example-ode-4], but it is particularly straightforward if the original IVODEs are written as a matrix equation. The coefficients in Equations [-@eq-example-ode-1] through [-@eq-example-ode-4], $m_{1,1}$, $m_{1,2}$, etc., can be used to construct a matrix, $\boldsymbol{M}$, as shown in @eq-mass-matrix, the dependent variables can be used to construct a column vector, $\underline{y}$, as in equation @eq-dependent-var-vector, and the functions, $g_1$, $g_2$, $g_3$, and $g_4$, can be used to construct a column vector, $\underline{g}$, as in equation @eq-function-vector. The matrix, $\boldsymbol{M}$, is known as the *mass matrix*.
 
 $$
 \boldsymbol{M} = \begin{bmatrix} m_{1,1} \ m_{1,2} \ m_{1,3} \ m_{1,4} \\m_{2,1} \ m_{2,2} \ m_{2,3} \ m_{2,4} \\m_{3,1} \ m_{3,2} \ m_{3,3} \ m_{3,4} \\ m_{4,1} \ m_{4,2} \ m_{4,3} \ m_{4,4}  \end{bmatrix}
@@ -143,47 +137,66 @@ Matrix representation provides a compact way of writing large sets of IVODEs. Mo
 
 ## Implementing the Solution of a Set of IVODEs Numerically {#sec-num_impl_ivodes}
 
-The mathematical formulation of the solution of a set of IVODEs as described in @sec-math_form_ivodes (a) identifies the $N$ IVODEs to be solved, the independent variable, the $N$ dependent variables, known constants appearing in the IVODEs, and unknown variables appearing in the IVODEs, (b) generates ancillary equations that express the unknown variables in terms of the independent and dependent variables, (c) specifies the initial values of the independent and dependent variables, and (d) specifies the stopping criterion. That information can be used to implement the numerical solution of the set of IVODEs.
+The numerical implementation of the solution parallels the mathematical formulation as described in @sec-math_form_ivodes. A reactor model function can be written to perform the calculations as follows.
 
 {{< include ./Includes/_num_impl_ivodes_soln.qmd >}}
 
-## Example: Solving a Set of IVODEs
+Most often, steps 3b and 4 above simply involve using the ancillary equations to calculate a value as in [Example -@sec-example_J_7_1]. However, there are two situations where those steps will require solving an ancillary equation using an ATE solver. The first situation is when an unknown constant appears in the IVODEs and the second is when the initial value of one of the dependent variables is unknown. In both of these situations, *two* final values will be known: the final value of the independent variable *and* the final value of one of the dependent variables. In these situations, the final value of the independent variable is used as the stopping criterion and the known final value of a dependent variable is used to write an implicit ancillary equation for calculating the unknown constant or initial value. They are illustrated in [Example -@sec-example_J_7_2] and [Example -@sec-example_J_7_3].
 
-{{< include ../RE_Basics_Examples/reb_J_7/problem_statement.qmd >}}
+## Examples
 
-### Mathematical Formulation of the Solution
+[Example -@sec-example_J_7_1] shows how to solve a set of IVODEs numerically when there are no unknown constants within the equations, all of the initial values are known, and one final value is known. Additionally, it illustrates using the mass matrix to write the derivatives function as described in @sec-mass_matrix. [Example -@sec-example_J_7_2] illustrates the solution of a set of IVODEs when an unknown constant appears in the equations. [Example -@sec-example_J_7_3] uses the same set of IVODEs to illustrate solution when an initial value is unknown.
+
+### Example: Numerical Solution of a Set of IVODEs {#sec-example_J_7_1}
+
+{{< include ../RE_Basics_Examples/reb_J_7_1/problem_statement.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+path_to_results <- '../RE_Basics_Examples/reb_J_7_1/python/results/'
+```
+
+---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The mathematical formulation of the solution of a set of IVODEs is outlined in @sec-math_form_ivodes.
-
-{{< include ./Includes/_math_form_ivodes_soln.qmd >}}
-
-Here, the number of IVODE (6) is equal to the number of dependent variables (6: $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$). The known constants were identified in the problem statement, and the independent variable is the time, $t$.
+In completing this example, I will follow the steps in @sec-reactor_analysis_steps, beginning with a concise summary.  In this example variable symbols have already been assigned to each known constant and the quantities of interest have been identified, so all I need to do is list them.
 
 :::
 
 **Given and Known Constants**: $V$ = 2 m^3^, $\Delta H_1$ = -6870 cal mol^-1^, $\hat{C}_{p,A}$ = 7.5 cal mol^-1^ K^-1^, $\hat{C}_{p,B}$ = 8.5 cal mol^-1^ K^-1^, $\hat{C}_{p,Y}$ =  12.1 cal mol^-1^ K^-1^, $\hat{C}_{p,Z}$ =  5.7 cal mol^-1^ K^-1^, $k_{0,1}$ = 83.0 m^3^ mol^-1^ h^-1^, and $E_1$ = 10.2 kcal mol^-1^.
+
+**Reactor**: Adiabatic BSTR
  
 **Quantities of Interest**: $n_A\left(t\right)$, $n_B\left(t\right)$, $n_Y\left(t\right)$, $n_Z\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$.
 
-**Model Equations**: Equations (1) through (6) will be solved with the initial values and stopping criterion in @tbl-initial_values to find the quantities of interest.
+#### Mathematical Formulation of the Solution
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Having identified the $N$ IVODEs, the independent variable, the dependent variables and the known constants, the next thing I need to do is to go through the IVODEs, identify the unknown variables, and write ancillary equations expressing them in terms of known constants and the independent and dependent variables.
+I will follow the procedure described in @sec-math_form_ivodes to formulate the solution mathematically. In this example, the reactor design equations have already been written, equations (1) through (6). There is one independent variable, $t$, six dependent variables, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$, and six IVODEs, so I do not need to eliminate dependent variables or add IVODEs.
 
-Examining the IVODEs variable by variable shows that $r_1$ is the only unknown variable. As noted in the problem statement, it is assumed here that the engineer knows the rate expression, equation (7), below. However, writing the rate expression introduces two additional unknown quantities, $C_A$ and $C_B$, so ancillary equations are needed for them, too. The necessary equations, (8) and (9), are simply defining equations for concentration that the engineer would know.
+In addition, the initial value of the independent variable was defined and the corresponding initial and final values were identified in @tbl-example_J_7_1_initial_values.
 
 :::
 
-**Ancillary Equations**
+**Model Equations**: Equations (1) through (6) will be solved with the initial values and stopping criterion in @tbl-example_J_7_1_initial_values to find the quantities of interest.
 
-$$
-r_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)} C_AC_B \tag{7}
-$$
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Before the IVODEs can be solved, any unknown constants appearing in them must be calculated and any variables other than the independent variables must be eliminated from them. The only variable appearing in the IVODEs other than the independent and dependent variables is $r$. An equation, (7), for calculating $r$ was provided in the example narrative. However, using the rate expression as an ancillary equation to eliminate $r$ introduces two additional variables, $C_A$ and $C_B$, so I will write ancillary equations for them, too. The necessary equations, (8) and (9), are simply defining equations for concentration in a BSTR. A reaction engineer would know these definitions.
+
+In this example, the initial and final values are all known constants,(@tbl-example_J_7_1_initial_values), so I do not need ancillary equations to calculate their values.
+
+:::
+
+**Ancillary Equations for Calculating the Derivatives**
+
+The rate expression for $r$ is given, equation (7). The concentrations appearing in it can be calculated using equations (8) and (9).
 
 $$
 C_A = \frac{n_A}{V} \tag{8}
@@ -193,19 +206,28 @@ $$
 C_B = \frac{n_B}{V} \tag{9}
 $$
 
-**Solution Procedure**
-
-1. Substitute the known and given constants into all equations.
-2. Substitute equations (8) and (9) for $C_A$ and $C_B$ in equation (7).
-3. Substiture equation (7) for $r_1$ into equations (1) through (6).
-4. Solve equations (1) through (6) using the initial values and stopping criterion in @tbl-initial_values to find the quantities of interest.
-
-### Numerical Implementation of the Solution
+With the information given above, equations (1) through (6) can be solved to find $n_A\left(t\right)$, $n_B\left(t\right)$, $n_Y\left(t\right)$, $n_Z\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The general procedure for numerical implementation of the solution of a set of IVODEs is presented in @sec-num_impl_ivodes. The IVODEs here are not in the form of individual derivative expressions, so in order to proceed I need to generate a set of derivative expressions from equations (1) through (6). I can do that either by algebraic manipulation of equations (1) through (6), or by forming and inverting the mass matrix.
+Typically the reaction engineer would need to calculate other quantities of interest using the results from solving the IVODEs. In this example there are no other quantities of interest, so I do not need to write ancillary equations for calculating them. I can conclude the mathematical formulation by describing how to perform the calculations.
+
+:::
+
+**Solution Procedure**
+
+1. Substitute the known and given constants into all equations.
+2. Substitute equations (8) and (9) for $C_A$ and $C_B$ in equation (7).
+3. Substitute equation (7) for $r_1$ in equations (1) through (6).
+4. Solve equations (1) through (6) using the initial values and stopping criterion in @tbl-example_J_7_1_initial_values to find the quantities of interest.
+
+#### Numerical Implementation of the Solution
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I will follow the general procedure for numerical implementation of the solution of a set of IVODEs presented in @sec-num_impl_ivodes. In this example, the IVODEs are not in the form of individual derivative expressions. In order to proceed I need to generate a set of derivative expressions from equations (1) through (6). I can do that either by algebraic manipulation of equations (1) through (6), or by forming and inverting the mass matrix as described in @sec-mass_matrix. I will use the latter approach to avoid the algebra where I might easily make a mistake.
 
 :::
 
@@ -227,17 +249,18 @@ $$
 
 **Implementation Procedure**
 
-1. Make given and known constants available for use in all equations.
-2. Write a derivatives function that 
+Write a reactor model computer function, and within that function
+
+1. make given and known constants available for use in all equations,
+2. write a derivatives function that 
     a. receives values of the independent variable, $t$, and the dependent variables, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$, as arguments,
     b. calculates $C_A$ and $C_B$ using equations (8) and (9),
     c. calculates $r_1$ using equation (7),
     d. creates $\boldsymbol{M}$ using equation (11),
     e. creates the vector on the right side of equation (10), and
-    f. calculates and returns the derivatives using equation (12).
-3. Define the initial values of the independent and dependent variables, @tbl-initial_values.
-4. Specify the stopping criterion, @tbl-initial_values.
-5. Call the IVODE solver, passing the derivatives function, initial values and stopping criterion to it as arguments.
+    f. calculates and returns the derivatives using equation (12),
+3. set the initial values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$, and the final value of $t$ according to @tbl-example_J_7_1_initial_values.
+4. call an IVODE solver, passing the derivatives function (step 2), initial values and stopping criterion (step 3) to it as arguments, and receiving sets of values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$ spanning the range from their initial values to their final values.
 
 :::{.callout-note collapse="false"}
 ## Note
@@ -254,7 +277,7 @@ $$
 R\left(n_A + n_B + n_Y + n_Z\right)\frac{dT}{dt} - V\frac{dP}{dt} = 0 \tag{13}
 $$
 
-Subtracting equation (13) from equation (5)  and rearrangement yields the derivative expression in equation (14).
+Subtracting equation (13) from equation (5)  and rearranging yields the derivative expression in equation (14).
 
 $$
 \frac{dT}{dt} = \frac{-Vr_1 \Delta H_1}{n_A \left(\hat{C}_{p,A} - R\right) + n_B \left(\hat{C}_{p,B} - R\right) + n_Y \left(\hat{C}_{p,Y} - R\right) + n_Z \left(\hat{C}_{p,Z} - R\right)} \tag{14}
@@ -272,32 +295,32 @@ $$
 
 The second step in the implementation procedure above would then be replaced as follows:
 
-2. Write a derivatives function that 
+2. write a derivatives function that 
     a. receives values of the independent variable, $t$, and the dependent variables, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$, as arguments,
     b. calculates $C_A$ and $C_B$ using equations (8) and (9),
     c. calculates $r_1$ using equation (7), and
-    f. calculates and returns the derivatives using equations (1) - (4), (14), and (15).
+    d. calculates and returns the derivatives using equations (1) - (4), (14), and (15).
 
 :::
 
-### Results
+#### Results and Discussion
 
 ```{r}
 #| echo: false
 #| output: false
 library(tidyverse)
 source("~/Libraries/R/fmt_tibble_col.R")
-df <- read.csv("../RE_Basics_Examples/reb_J_7/python/results/reb_J_7_results.csv")
+df <- read.csv(paste0(path_to_results,"reb_J_7_1_results.csv"))
 df <- fmt_tibble_col(df, 1:7, 3, 3, 1)
 ```
 
-The calculations were performed as described above yielding the results shown in @tbl-ivode_results
+The calculations were performed as described above yielding the results shown in @tbl-example_J_7_1_ivode_results
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-ivode_results
-#| tbl-cap: Solution of equations (1) through (6) using the initial values and stopping criterion in @tbl-initial_values.
+#| label: tbl-example_J_7_1_ivode_results
+#| tbl-cap: Solution of equations (1) through (6) using the initial values and stopping criterion in @tbl-example_J_7_1_initial_values.
 library(kableExtra)
 library(knitr)
 kbl(df, format = "markdown", align = "cc")
@@ -305,7 +328,310 @@ kbl(df, format = "markdown", align = "cc")
 
 ---
 
-Note that each of the variables in @tbl-ivode_results starts (in the first row) at its initial value, and the final value of $t$ is 2 h, as specified in the problem statement. As noted in earlier in the appendix, the numerical solution of a set of IVODEs does not produce analytical expressions for $n_A\left(t\right)$, $n_B\left(t\right)$, $n_Y\left(t\right)$, $n_Z\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$. Instead it yields $n_A$ *vs*. $t$, $n_B$ *vs*. $t$, etc., in the form of a table that spans the range from the initial values to the values where the stopping criterion is satisfied.
+Note that each of the variables in @tbl-example_J_7_1_ivode_results starts (in the first row) at its initial value, and the final value of $t$ is 2 h, as specified in the problem statement. As mentioned earlier in this appendix, the numerical solution of a set of IVODEs does not produce analytical expressions for $n_A\left(t\right)$, $n_B\left(t\right)$, $n_Y\left(t\right)$, $n_Z\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$. Instead it yields $n_A$ *vs*. $t$, $n_B$ *vs*. $t$, etc., in the form of a table that spans the range from the initial values to the values where the stopping criterion is satisfied.
+
+:::{.callout-note collapse="false"}
+## Note
+
+The results shown here have 7 values of each variable spanning the range from their initial values to their final values. In most cases, the IVODE solver determines the number of integration steps needed to accurately solve the equations. As a consequence, if the calculations were performed using a different IVODE solver, there could be fewer or more rows than shown in @tbl-example_J_7_1_ivode_results. However, the values shown in the first and last rows would be the same.
+
+:::
+
+### Example: Numerical Solution of a Set of IVODEs Containing an Unknown Constant{#sec-example_J_7_2}
+
+{{< include ../RE_Basics_Examples/reb_J_7_2/problem_statement.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+path_to_results <- '../RE_Basics_Examples/reb_J_7_2/python/results/'
+```
+
+---
+
+:::{.callout-tip collapse="true"}
+
+## Click Here to See What an Expert Might be Thinking at this Point
+
+To complete the assignment I will follow the steps in @sec-reactor_analysis_steps, beginning with a succinct summary of the assignment. This example sets the variable symbols for most of the known constants. I will use a subscripted "f" to denote the final values. With that notation $T_f$ equals the specified value of 325 K and $\dot{n}_{A,f}$ and $\dot{n}_{Z,f}$ represent two of the quantities of interest.
+
+:::
+
+#### Assignment Summary
+
+**Given and Known Constants**: $T_f$ = 325 K, $D$ = 5 cm, $\Delta H$ = -14,000 cal mol^-1^, $\breve{C}_p$ = 1.3 cal cm^-3^ K^-1^, $\dot{n}_{A,in}$ = 1.0 mol min^-1^, $\dot{n}_{Z,in}$ = 0, $T_{in}$ = 300 K, $L$ = 50 cm, $k_0$ = 4.2 x 10^15^ cm^3^ mol^-1^ min^-1^, and $E$ = 18,000 cal mol^-1^.
+
+**Reactor [System]**: Adiabatic, steady-state PFR with negligible pressure drop.
+
+**Quantities of Interest**: $\dot{V}$, $\dot{n}_{A,f}$ and $\dot{n}_{Z,f}$.
+
+#### Mathematical Formulation of the Solution
+
+:::{.callout-tip collapse="true"}
+
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I will follow the procedure described in @sec-math_form_ivodes to formulate the solution mathematically. In this example, the reactor design equations are provided. There are three design equations. The independent variable is $z$, and the dependent variables are $\dot{n}_A$, $\dot{n}_Z$ and $T$. There are 3 IVODEs and 3 dependent variables, so it isn't necessary to add equations or eliminate dependent variables.
+
+The example statement also defines the initial value of $z$, and sets the variable symbols representing the initial and final values, @tbl-example_J_7_2_initial_values.
+
+:::
+
+**Model Equations**
+
+Equations (1), (2), and (3) are the reactor design equations, and @tbl-example_J_7_2_initial_values lists the initial values and stopping criterion for solving them.
+
+:::{.callout-tip collapse="true"}
+
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Before the IVODEs can be solved, any unknown constants appearing in them must be calculated and any variables other than the independent variables must be eliminated from them. In this example, the rate, $r$, is the only variable that needs to be eliminated, and the example provides the ancillary equation, (4), needed to eliminate it.
+
+The unknown, constant value of $\dot{V}$ also appears in the IVODEs, and it must be calculated before the IVODEs can be solved. To do that I will use the specified value of $T_f$ to write an implicit equation that can be solved to find $\dot{V}$.
+
+:::
+
+**Ancillary Equations for Calculating the Derivatives**
+
+The rate, $r$ appearing in the design equations is given by equation (4).
+
+The volumetric flow rate, $\dot{V}$, appearing in the design equations (and also in the rate expression) can be calculated by noting that it is the value that results in the final temperature being equal to $T_f$ as expressed in equation (5). In that equation, $T_f$ is the specified final value of $T$, 325 K, and $T\big\vert_{z=L}$ is the final value of $T$ that is found by solving equations (1) through (3) using a given value of $\dot{V}$.
+
+$$
+0 = T_f - T\big\vert_{z=L} = \epsilon \tag{5}
+$$
+
+Equation (5) is an implicit equation for $\dot{V}$, written as a residual. It can be solved using an ATE solver (see @sec-apndx_solve_ates) to find the desired value of $\dot{V}$ that causes the residual to equal zero. (Note that equations (1) through (3) will need to be solved within the residuals function provided to the ATE solver.)
+
+:::{.callout-tip collapse="true"}
+
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The initial and final values in @tbl-example_J_7_2_initial_values are all known constants, so no ancillary equations are needed to calculate their values. 
+
+Solving the IVODEs will yield sets of values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ spanning the range from their intial values to their final values. In this example only the final values of $\dot{n}_A$ and $\dot{n}_Z$ are of interest. Two trivial ancillary equations are needed to "calculate" these quantities of interest.
+
+:::
+
+With the information provided above, equations (1), (2), (3), and (5) can be solved to find the quantity of interest, $\dot{V}$, and $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$. 
+
+**Ancillary Equations for Calculating the Other Quantities of Interest**
+
+$$
+\dot{n}_{A,f} = \dot{n}_A\big\vert_{z=L} \tag{6}
+$$
+
+$$
+\dot{n}_{Z,f} = \dot{n}_Z\big\vert_{z=L} \tag{7}
+$$
+
+**Solution Procedure**
+
+1. Substitute the given and known constants into all equations.
+2. Substitute equation (4) for $r$ in equations (1), (2), and (3).
+3. Solve equation (5) for the quantity of interest, $\dot{V}$, and substitute the result in equations (1) through (3).
+4. Solve equations (1) through (3) using the initial values and stopping criterion in @tbl-example_J_7_2_initial_values to find $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$.
+6. Calculate the remaining quantities of interest using equations (6) and (7).
+
+#### Numerical Implementation of the Solution
+
+:::{.callout-tip collapse="true"}
+
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I will follow the general procedure for numerical implementation of the solution of a set of IVODEs presented in @sec-num_impl_ivodes. The IVODEs, equations (1) through (3) are in the form of derivatives expressions and the ATE, equation (5), has been written as a residual. Consequently no additional equations are needed for writing the residuals function or the derivatives function.
+
+The numerical implementation involves both ATEs, as described in @sec-apndx_numeric_implem_ates, and IVODEs, as described in @sec-num_impl_ivodes.
+
+:::
+
+**Implementation Procedure**
+
+Create a model function that will perform the calculations, and within that function
+
+1. make the given and known constants available for use in all equations,
+2. make the variable $\dot{V}$ available for use in all equations,
+3. write a derivatives function that
+    a. receives values of $z$, $\dot{n}_{A}$, $\dot{n}_{Z}$, and $T$ as input,
+    b. calculates $r$ using equation (4), and
+    c. calculates and returns the values of the derivatives using equations (1) through (3).
+4. write a residuals function that
+    a. receives a value of $\dot{V}$ as input and makes it available for use in all equations,
+    b. defines initial values and a stopping criterion using @tbl-example_J_7_2_initial_values,
+    c. calls an IVODE solver, passing the derivatives function (step 3), initial values and stopping criterion (step 4b) to get, among other things, the final value, $T\big\vert_{z=L}$, and
+    d. evaluates and returns the residual, equation (5),
+5. define an initial guess for $\dot{V}$,
+6. call an ATE solver, passing the residuals function (step 4) and the initial guess (step 5) to get the desired value of $\dot{V}$,
+7. define initial values and a stopping criterion using @tbl-example_J_7_2_initial_values,
+8. using the value of $\dot{V}$ (step 6) in the derivatives function, call an IVODE solver, passing the derivatives function (step 2), initial values and stopping criterion (step 7) to get $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$, and
+9. calculate $\dot{n}_{A,f}$ and $\dot{n}_{Z,f}$ using equations (6) and (7).
+
+#### Results and Discussion
+
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+source("~/Libraries/R/fmt_tibble_col.R")
+df <- read.csv(paste0(path_to_results,"reb_J_7_2_results.csv"))
+df <- fmt_tibble_col(df, 2, 3, 3, 1)
+```
+
+The calculations were performed as described above, yielding the results shown in @tbl-example_J_7_2_results.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_J_7_2_results
+#| tbl-cap: Results from solving equations (1), (2), (3), and (5).
+library(kableExtra)
+library(knitr)
+kbl(df, format = "markdown", align = "cc")
+```
+
+:::{.callout-note collapse="false"}
+## Note
+
+Of the three examples presented in this Appendix, [Example -@sec-example_J_7_2] is the only one where a value must be "made available" to the rest of the calculations function as in steps 2 and 4a. The reason for this requirement is that the ATE solver generates the guesses for $\dot{V}$ and passes them to the residuals function. The residuals function will call the IVODE solver, but typically it only passes the name of the derivatives function, the initial values and the stopping criterion to it. Here, however, the derivative function also needs the value of $\dot{V}$ in order to calculate and return the derivatives. As a consequence, the residuals function must "make $\dot{V}$ available within the derivatives function" by some other means. The way this is done will depend upon the specific software being used. 
+
+:::
+
+### Example: Numerical Solution of a Set of IVODEs with an Unknown Initial Value {#sec-example_J_7_3}
+
+{{< include ../RE_Basics_Examples/reb_J_7_3/problem_statement.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+path_to_results <- '../RE_Basics_Examples/reb_J_7_3/python/results/'
+```
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Following the steps in @sec-reactor_analysis_steps, I will begin by summarizing the assignment. In this example, variable symbols have already been assigned to each known constant and the quantities of interest have been identified, so all I need to do is list the information.
+
+:::
+
+**Given and Known Constants**: $D$ = 1 in, $k_0$ = 7.49 x 10^9^ L mol^-1^ min^-1^, $E$ = 15,300 cal mol^-1^, $P$ = 4 atm, $\Delta H$ = -14,500 cal mol^-1^, $\hat{C}_{p,A}$ = 10.9 cal mol^-1^ K^-1^, $\hat{C}_{p,Z}$ = 21.8 cal mol^-1^ K^-1^, $L$ = 100 in, $\dot{n}_{A,in}$ = 1.5 mol min^-1^, $\dot{n}_{Z,in}$ = 0, and $T_{out}$ = 400 K.
+
+**Reactor**: Adiabatic, steady-state PFR with negligible pressure drop.
+ 
+**Quantities of Interest**: $T_{in}$, $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$.
+
+#### Mathematical Formulation of the Solution
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I will follow the procedure described in @sec-math_form_ivodes to formulate the solution mathematically. The example provides the three reactor design equations, (1) through (3). They contain a single independent variable, $z$, and three dependent variables, $\dot{n}_A$, $\dot{n}_Z$, and $T$. The number of IVODEs equals the number of dependent variables, so it is not necessary to add IVODEs or eliminate dependent variables. The example also defines the initial value of $z$, and sets the variables representing the initial and final values, @tbl-example_J_7_3_initial_values.
+
+:::
+
+**Model Equations**: 
+
+The reactor design equations are presented in equations (1) through (3), and @tbl-example_J_7_3_initial_values lists the initial values and stopping criterion for solving them.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Before the IVODEs can be solved, any unknown constants appearing in them must be calculated and any variables other than the independent variables must be eliminated from them.
+
+There aren't any unknown constants in the IVODEs. The only variable in equations (1), (2), and (3) that needs to be eliminated is the rate, $r$. The example provides the ancillary equation, (4), that is needed to do so.
+
+:::
+
+**Ancillary Equations for Calculating the Derivatives**
+
+The rate, $r$, appearing in the IVODEs is given by equation (4).
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The initial and final values must also be known or calculated before the IVODEs can be solved. Looking at @tbl-example_J_7_3_initial_values, $L$, $\dot{n}_{A,in}$, and $\dot{n}_{Z,in}$ are known, but $T_{in}$ is unknown and must be calculated. Knowing $T_{out}$, I can write an implicit equation that can be solved to find $T_{in}$.
+
+:::
+
+**Ancillary Equations for Calculating the Initial and Final Values**
+
+The initial value, $T_{in}$, can be calculated by noting that it is the value that results in the final temperature being equal to $T_{out}$, as expressed in equation (5), where $T\big\vert_{z=L}$ is the final temperature found by solving the IVODEs using a given value of $T_{in}$. Equation (5) is an implicit equation for $T_{in}$. It is written in the form of a residual and can be solved using a ATE solver. (Note that the residuals function provided to the ATE solver will need to solve the IVODEs in order to evaluate the residual).
+
+$$
+0 = T\big\vert_{z=L} - T_{out} = \epsilon \tag{5}
+$$
+
+With the information given above, equations (1), (2), (3), and (5) can be solved to find $T_{in}$, $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Solving the design equations as just described will yield all of the quantities of interest. Thus, no other ancillary equations are needed to calculate other quantities of interest.
+
+:::
+
+**Solution Procedure**
+
+1. Substitute the known and given constants into all equations.
+2. Substitute equation (4) for $r$ in equations (1), (2), and (3).
+3. Solve equation (5) for the quantity of interest, $T_{in}$.
+4. Solve equations (1) through (3) using the initial values and stopping criterion in @tbl-example_J_7_3_initial_values for the remaining quantities of interest, $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$.
+
+#### Numerical Implementation of the Solution
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I will follow the general procedure for numerical implementation of the solution of a set of IVODEs presented in @sec-num_impl_ivodes. In this example, the IVODEs are derivative expressions, so no additional equations are needed.
+
+:::
+
+**Implementation Procedure**
+
+Write a reactor model computer function, and within that function
+
+1. make given and known constants available for use in all equations,
+2. write a derivatives function that 
+    a. receives values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$,
+    b. calculates $r$ using equation (4), and
+    c. calculates and returns the values of the derivatives using equations (1) through (3),
+3. write a residuals function that
+    a. receives a value of $T_{in}$ as input,
+    b. defines initial values and a stopping criterion using @tbl-example_J_7_3_initial_values,
+    c. calls an IVODE solver, passing the derivatives function (step 2), initial values and stopping criterion (step 3b) to get the final values of $T\big\vert_{z=L}$ (along with other results), and
+    d. evaluates and returns the residual, equation (5),
+4. define an initial guess for $T_{in}$,
+5. call an ATE solver, passing the residuals function (step 3) and the initial guess (step 4) to get the desired value of $T_{in}$,
+6. use the result from step 5 to define initial values and a stopping criterion using @tbl-example_J_7_3_initial_values, and
+7. call an IVODE solver, passing the derivatives function (step 2), initial values and stopping criterion (step 6) to get $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$.
+
+#### Results and Discussion
+
+```{r}
+#| echo: false
+#| output: false
+source("~/Libraries/R/fmt_tibble_col.R")
+df <- read.csv(paste0(path_to_results,"reb_J_7_3_Tin_result.csv"))
+df <- fmt_tibble_col(df, 2, 3, 3, 1)
+df1 <- read.csv(paste0(path_to_results,"reb_J_7_3_profile_results.csv"))
+df1 <- fmt_tibble_col(df1, 1:4, 3, 3, 1)
+```
+
+The calculations were performed as described above. The required inlet temperature, $T_{in}$, is `r df$value[1]` `r df$units[1]`.  Using that initial value and solving the IVODEs yields the results shown in @tbl-example_J_7_1_ivode_results
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_J_7_3_ivode_results
+#| tbl-cap: Solution of equations (1) through (3).
+library(kableExtra)
+library(knitr)
+kbl(df1, format = "markdown", align = "cc")
+```
+
+When 334 K was used as the initial value of the temperature, @tbl-example_J_7_3_ivode_results shows that the final temperature did, indeed, equal 400 K. That table additionally shows that the initial values of $z$, $\dot{n}_A$ and $\dot{n}_Z$, and the final value of $z$ all have their specified values. Thus the results are consistent.
 
 ## Symbols Used in @sec-apndx_solve_ivodes
 
