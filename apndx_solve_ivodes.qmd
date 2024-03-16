@@ -48,13 +48,15 @@ To avoid having the solver stop because it reached the stopping criterion for th
 
 A second possible problem arises when solving sets of IVODEs where one of the dependent variables changes very abruptly over a very small range of the independent variable. The abrupt changes in that dependent variable may significantly affect the other dependent variables over a much broader range of the independent variable. Equations like this are called **stiff ODEs**, and they require special treatment of the step size. Therefore, when solving sets of ODEs, one should pay attention to whether any of the dependent variables change very abruptly as the independent variable changes. If they do, it is advisable to repeat the solution using a solver that is specifically tailored to stiff ODEs.
 
-### Input Required by IVODE Solvers
+## Input Required by IVODE Solvers
 
-IVODE solvers need three things in order to solve a set of IVODEs. The first are the initial values from which the solver will take the first integration step. The second required input is a derivatives function as described in the next section. The derivatives function must accept the independent variable and the dependent variables corresponding to the start of an integration step. It must use them to calculate and return the values of the derivatives at the start of the step. The final required input is one final value, either that of the independent variable or that of one of the dependent variables. Identifying the variable *and* its final value is sometimes called specifying the stopping criterion.
+The preceeding discussion shows that IVODE solvers need three things in order to solve a set of IVODEs. The first are the initial values from which the solver will take the first integration step. The second is the name of a function, written by the reaction engineer, that the solver can use to evaluate the derivatives, that is to calculate the numerical values of the derivatives. Herein, this function will be referred to as the derivatives function. The third required input to an IVODE solver is a stopping criterion that the solver can use to decide when to stop taking integration steps. As noted above, a stopping criterion has two parts: the identity of the variable (the independent variable or one of the dependent variables) and its final value.
 
-## Derivative Expressions and the Derivatives Function  {#sec-mass_matrix}
+### Derivative Expressions and the Derivatives Function  {#sec-mass_matrix}
 
-As noted above, each time the IVODE solver takes an integration step, it needs to use the set of IVODEs to calculate the value of each derivative. To do so, it is useful to convert the IVODEs into a set of expressions for the individual derivatives. For example, Equations [-@eq-example-ode-1] through [-@eq-example-ode-4] need to be converted to derivative expressions of the form shown in Equations [-@eq-example-vector-ode-1] through [-@eq-example-vector-ode-4] where $f_1$, $f_2$, $f_3$, and $f_4$ each may be a function of $x$, $y_1$, $y_2$, $y_3$, and $y_4$.
+It was noted above that one input required by an IVODE solver is the name of a function, written by the reaction engineer, that the solver can use to evaluate the derivatives. More specifically, the derivatives function must accept the independent variable and the dependent variables corresponding to the start of an integration step as input arguments, and it must use them to calculate and return the values of the derivatives that appear in the IVODEs.
+
+To do so, it is useful to convert the IVODEs into a set of expressions for the individual derivatives if they aren't already in that form. For example, Equations [-@eq-example-ode-1] through [-@eq-example-ode-4] need to be converted to derivative expressions of the form shown in Equations [-@eq-example-vector-ode-1] through [-@eq-example-vector-ode-4] where $f_1$, $f_2$, $f_3$, and $f_4$ each may be a function of $x$, $y_1$, $y_2$, $y_3$, and $y_4$.
 
 $$
 \frac{dy_1}{dx}  = f_1 
@@ -72,7 +74,7 @@ $$
 \frac{dy_4}{dx} = f_4 
 $$ {#eq-example-vector-ode-4}
 
-Doing so can be accomplished by algebraic manipulation of Equations [-@eq-example-ode-1] through [-@eq-example-ode-4], but it is particularly straightforward if the original IVODEs are written as a matrix equation. The coefficients in Equations [-@eq-example-ode-1] through [-@eq-example-ode-4], $m_{1,1}$, $m_{1,2}$, etc., can be used to construct a matrix, $\boldsymbol{M}$, as shown in @eq-mass-matrix, the dependent variables can be used to construct a column vector, $\underline{y}$, as in equation @eq-dependent-var-vector, and the functions, $g_1$, $g_2$, $g_3$, and $g_4$, can be used to construct a column vector, $\underline{g}$, as in equation @eq-function-vector. The matrix, $\boldsymbol{M}$, is known as the *mass matrix*.
+That can be accomplished by algebraic manipulation of Equations [-@eq-example-ode-1] through [-@eq-example-ode-4], but it is particularly straightforward if the original IVODEs are written as a matrix equation. The coefficients in Equations [-@eq-example-ode-1] through [-@eq-example-ode-4], $m_{1,1}$, $m_{1,2}$, etc., can be used to construct a so-called mass matrix, $\boldsymbol{M}$, as shown in @eq-mass-matrix, the dependent variables can be used to construct a column vector, $\underline{y}$, as in equation @eq-dependent-var-vector, and the functions, $g_1$, $g_2$, $g_3$, and $g_4$, can be used to construct a column vector, $\underline{g}$, as in equation @eq-function-vector.
 
 $$
 \boldsymbol{M} = \begin{bmatrix} m_{1,1} \ m_{1,2} \ m_{1,3} \ m_{1,4} \\m_{2,1} \ m_{2,2} \ m_{2,3} \ m_{2,4} \\m_{3,1} \ m_{3,2} \ m_{3,3} \ m_{3,4} \\ m_{4,1} \ m_{4,2} \ m_{4,3} \ m_{4,4}  \end{bmatrix}
@@ -100,74 +102,71 @@ $$
 \begin{bmatrix} f_1 \\ f_2 \\ f_3 \\ f_4 \end{bmatrix} = \underline{f} = \boldsymbol{M}^{-1} \underline{g}
 $$ {#eq-g-in-terms-of-f}
 
-Matrix representation provides a compact way of writing large sets of IVODEs. More importantly, @eq-matrix-form-of-vector-ivodes facilitates writing a derivatives function that takes the values of the independent and dependent variables as input and returns the values of the derivatives.
+Wring the IVODEs in the form of derivatives expressions, facilitates evaluating the derivatives. The derivatives function will be provided with the independent and dependent variables as arguments. They can be used, along with known constants provided as part of the assignment, to evaluate each of the $f$ functions in Equations [-@eq-example-vector-ode-1] through [-@eq-example-vector-ode-4], or equivalently in @eq-g-in-terms-of-f.
 
-## Formulating the Solution of a Set of IVODEs Mathematically {#sec-math_form_ivodes}
+The $f$ functions may also contain other variables and possibly, an **unknown constant**. The other variables clearly must be calculated in order to evaluate the $f$ functions. This is done using expressions for those other variables in terms of known constants and the independent and dependent variables.
 
-The **initial and final values** are constants. In most instances, if they are not provided as part of an assignment, they can be calculated using other constants that are given in the assignment. As an example, the assignment might give the volume of the system and initial concentrations of reagents from which the initial molar amounts can be calculated.
+If the $f$ functions contain an unknown constant, that, too, must be calculated before the $f$ functions can be evaluated. Here, saying it is unknown means that it cannot be calculated directly using the known constants given as part of the assignment. In the examples presented in *Reaction Engineering Basics* there will be at most one such unknown constant.
 
-There *might* be one initial value that cannot be calculated directly using the constants provided in the assignment. If there is one, this initial value will be referred to as the **missing initial value**. When there is a missing initial value, the assignment will instead provide a second final value. As an example, an assignment might ask what must the initial molar amount of reagent $i$ equal so that the final temperature is some given temperature. When the IVODEs are solved, one final value is used as the stopping criterion and the other final value is used to calculate the missing initial value as described below.
+When the IVODEs, or equivalently the $f$ functions, contain an unknown constant, the assignment will provide two final values. One of the two final values is used to specify the stopping criterion. The other final value is used to calculate the unknown constant. Doing this is described below. The important point here is that **the unknown constant must be calculated before calling the IVODE solver**, and after doing so, its value must be made available to the derivatives function.
 
-In addition to the independent and dependent variables, **other variables** may be present in the IVODEs. These other variables can be calculated from known and given constants, the independent variable and the dependent variables.
+So to summarize, if the IVODEs contain an unknown constant, its value must be calculated before calling the IVODE solver, and it must be made available within the derivatives function. Similarly, the known constants given as part of the assignment must also be available within the derivatives function. When the reaction engineer writes the derivatives function, it should receive the independent and dependent variables as arguments. It should first calculate the values of any variables other than the independent and dependent variables. Then it should evaluate the $f$ functions using Equations [-@eq-example-vector-ode-1] through [-@eq-example-vector-ode-4], or equivalently in @eq-g-in-terms-of-f. Finally it should return the resulting values of the derivatives.
 
-Finally, the IVODEs might contain a **missing constant** that cannot be calculated using the known constants provided in the assignment. As is true for a missing initial value, if there is a missing constant, the assignment will instead provide a second final value. (*Reaction Engineering Basics* examples and assignments will not have *both* a missing constant and a missing initial value.) Again, one final value is used as the stopping criterion and the other final value is used to calculate the missing constant.
+### Initial Values and the Stopping Criterion
 
-Let $a$ represent either the missing initial value, if there is one, or the missing constant, if there is one. Let $y_{i,f}$ represent the second known final value, and let $y_i\big\vert_{x=x_f}$ represent the final value that is found by solving the IVODEs. The missing value of $a$, then, is the value that results in $y_i\big\vert_{x=x_f}$, being equal to $y_{i,f}$, @eq-implicit_initial_value. @eq-implicit_initial_value can be converted to an implicit equations for $a$ and written in the form of a residual, $\epsilon$ as shown in @eq-implicit_initial_value_eqn.
+The initial and final values are constants. If their values are not given as part of the assignment, they must be calculated before the IVODEs can be solved. In most instances, if they are not provided as part of an assignment, they can be calculated using other constants that are given in the assignment. As an example, the assignment might give the volume of the system and initial concentrations of reagents from which the initial molar amounts can be calculated.
 
-$$
-a: y_i\big\vert_{x=x_f} = y_{i,f}
-$$ {#eq-implicit_initial_value}
+There *might* be one initial value that cannot be calculated directly using the constants provided in the assignment. This situation is same as that described above when an unknown constant is present in the IVODEs, and the value of that constant is calculated the same way. If there is an unknown initial value, two final values will be known. One will be used to specify the stopping criterion and the other will be used to calculate the unknown initial value. As before, the value of this unknown constant must be calculated *before* the IVODE solver is called. The only difference is that after it is calculated, it must be made available at the point in the code where the IVODE solver is called. (In the case of an unknown constant appearing in the IVODEs, it must be made available within the derivatives function.) The calculation of an unknown constant is described below.
+
+Specifying the stopping criterion is straightforward. The final value or values are always known or can be calculated from other known constants provided as part of the assignment. Specifying the stopping criterion simply entails identifying which variable's final value is known and providing that value. The initial values and the stopping criterion are passed directly to the IVODE solver when it is called, so as already noted, they must be calculated before the IVODE solver is called.
+
+### Calculating the Unknown Constant
+
+Many of the examples presented in *Reaction Engineering Basics* that require solving a set of IVODEs do not have an unknown constant either in the equations or as an initial value. In examples that do have an unknown constant, there will only be one, either an unknown constant appearing in the IVODEs or an unknown initial value. In both cases, the value of the unknown constant is calculated using a second known final value. (The other known final value is used to specify the stopping criterion.)
+
+To illustrate, let $a$ represent the unknown constant, let $x_f$ represent the first known final value, let $y_{i,f}$ represent the second known final value, and let $y_i\big\vert_{x=x_f}$ represent the final value that is found by solving the IVODEs. The unknown constant, $a$, can be described as the value of $a$ that results in $y_i\big\vert_{x=x_f}$, being equal to $y_{i,f}$, or in mathematical terms as $a: y_i\big\vert_{x=x_f} = y_{i,f}$. This description can be converted to an implicit equation for $a$ shown in @eq-implicit_initial_value_eqn. That equation is written in the form of a residual expression (see @sec-apndx_solve_ates), anticipating that it will be solved numerically using an ATE solver. Put differently @eq-implicit_initial_value_eqn can be treated as an ATE with $a$ as the only unknown.
 
 $$
 0 = y_i\big\vert_{x=x_f} - y_{i,f} = \epsilon
 $$ {#eq-implicit_initial_value_eqn}
 
-@eq-implicit_initial_value_eqn is treated as an ATE with $a$ as the unknown. It can be solved numerically to find $a$, as described in @sec-apndx_solve_ates, by calling an ATE solver and providing an initial guess for $a$ and a residuals function that calculates and returns $\epsilon$. Note that in order to calculate $\epsilon$, the residuals function will need to solve the IVODEs.
+The numerical solution of ATEs like this is described in @sec-apndx_solve_ates. Very briefly, to calculate $a$, an ATE solver is called passing two arguments. The first argument is a guess for $a$ and the second is a residuals function written by the reaction engineer. The residuals functions receives a guess for $a$. It makes it available to the code that needs it, and then calls an IVODE solver to solve the IVODEs. Finally, it uses the results from solving the IVODEs to evaluate and return the residual, @eq-implicit_initial_value_eqn. When the ATE solver returns the value of $a$, it is made available to other code as necessary. At that point, the IVODEs can be solved.
 
-With that understanding, mathematical formulation of the solution of a set of IVODEs can be accomplished as follows.
+## Formulating the Solution of a Set of IVODEs Mathematically {#sec-math_form_ivodes}
 
-* List all given and known constants and their values.
-* Identify the independent variable and the dependent variables and check that the number of dependent variables equals the number of IVODEs.
-* Write the IVODEs in the form of derivative expressions.
-* Write the ancillary equations that are needed in order to calculate the values of the derivatives.
-    * If there is a missing IVODE constant, include the equation for calculating the corresponding residual. 
-* Define the initial value of the independent variable, specify the corresponding values of the dependent variables, and specify the stopping criterion by identifying the variable and its final value.
-* Write the ancillary equations that are needed in order to calculate the initial and final values.
-    * If there is a missing initial value, include the equation for calculating the corresponding residual.
-* Succinctly describe how to calculate
-    * the values of the derivatives using the given and known constants, the independent variable, and the dependent variables,
-    * the initial and final values (other than the missing initial value) using the given and known constants, and
-    * the residual corresponding to a missing initial value or a missing IVODE constant using the given and known constants and a solution of the reactor design equations.
+As discussed above solving a set of IVODEs requires writing code that (a) evaluates the derivatives appearing in the IVODEs and (b) calculates the initial values. In essence, mathematical formulation of the solution entails writing the equations that are needed to perform those calculations and describing how to use those equations to perform the calculations. Starting with a set of $N$ IVODEs that contain $N$ dependent variables, the formulation proceeds as follows.
+
+1. Write the IVODEs in the form of derivative expressions if they aren't already written as such.
+2. Write the equations needed to use the independent and dependent variables to calculate
+    a. variables other than the independent and dependent variables,
+    b. the unknown constant appearing in the IVODEs, if there is one, and
+    c. the values of the derivatives.
+3. Specify the initial values and the stopping criterion.
+4. Write the equations needed to calculate the initial and final values, including the unknown initial value, if there is one.
+5. Describe how to use the equations written in step 2 to evaluate the derivatives.
+6. Describe how to use the equations written in step 4 to calculate the initial and final values.
 
 ## Implementing the Solution of a Set of IVODEs Numerically {#sec-num_impl_ivodes}
 
-Depending on the software being used and personal programming preferences, different structures are possible for the code that solves the IVODEs numerically. The following is one possible numerical implementation.
+Numerical implementation of the solution entails writing code that solves the IVODEs using the equations and information from the mathematical formulation together with an IVODE solver. The specifics of writing the code will depend upon the IVODE solver that is being used. Herein the implementation is presented in general terms that provide sufficient detail so that the solution can be implemented using mathematics software of the reader's choosing.
 
-* Make the given and known constants available to all functions.
-* Write a derivatives function that
-    * accepts the independent variable and the dependent variables for the current integration step,
-    * calculates other variables, and
-    * calculates and returns the values of the derivatives.
-* If there is a missing IVODE constant, define a variable to represent it and make it available to all functions.
-* Write a reactor model function that
-    * sets the initial values and stopping criterion,
-    * calls an IVODE solver to solve the IVODEs, passing the initial values, stopping criterion, and derivatives function as arguments, and
-    * returns the resulting sets of values of the independent variable and the dependent variables.
-* If there is a missing initial value, define a variable to represent it and make it available to all functions.
-* If there is either a missing initial value or a missing IVODE constant, write a residuals function that
-    * accepts a guess for the missing quantity,
-    * sets the variable representing the missing quantity equal to the received guess,
-    * sets the initial values and stopping criterion,
-    * calls an IVODE solver to solve the IVODEs, passing the initial values, stopping criterion, and derivatives function as arguments, and
-    * uses the solution of the IVODEs to calculate and return the residual.
-* Perform the analysis.
-    * If there is a missing initial value or a missing IVODE constant, call an ATE solver to calculate it, passing an initial guess for its value and the residuals function.
-    * Call the reactor model function to get sets of values of the independent variable and the dependent variables.
+The structure of the code will depend upon the mathematics software being used and programmer preference. For any one mathematics software, there may be multiple ways to structure the code. *Reaction Engineering Basics* assumes that the code will be broken into computer functions that each perform a specific task.
 
+reactor model function
+: sets the initial values and stopping criterion, calls the IVODE solver, and returns corresponding sets of values of the independent variable and each of the dependent variables spanning the range from their initial value to their final value.
+
+derivatives function
+: receives the independent and dependent variables, evaluates the derivatives and returns their values.
+
+residuals function
+: receives a guess for the unknown constant, makes it available to the other functions, calls the model function to solve the IVODEs using the guess, uses the results to evaluate the residual corresponding to the unknown constant and return the value of the residual.
+
+top-level code (and/or a master calculations function)
+: establishes a mechanism for making quantities available to all functions, calls an ATE solver to calculate the unknown constant, if there is one, makes the value of the unknown constant available to other functions, and calls the reactor model function to get the solution of the IVODEs.
 
 ## Examples
 
-[Example -@sec-example_J_6_1] shows how to solve a set of IVODEs numerically when there are no unknown constants within the equations, all of the initial values are known, and one final value is known. Additionally, it illustrates using the mass matrix to write the derivatives function as described in @sec-mass_matrix. Examples [-@sec-example_J_6_2] and [-@sec-example_J_6_2] illustrates the solution of a set of IVODEs when an initial value or constant in the IVODEs is "missing," but a second final value is specified. In [Example -@sec-example_J_6_2] an initial value is "missing," and in [Example -@sec-example_J_6_3] a constant appearing in the IVODEs is "missing.
+[Example -@sec-example_J_6_1] shows how to solve a set of IVODEs numerically when there are no unknown constants within the equations, all of the initial values are known, and one final value is known. Additionally, it illustrates using the mass matrix to write the derivatives function as described in @sec-mass_matrix. Examples [-@sec-example_J_6_2] and [-@sec-example_J_6_2] illustrates the solution of a set of IVODEs when an initial value or constant in the IVODEs is unknown but a second final value is specified. In [Example -@sec-example_J_6_2] an initial value is unknown and in [Example -@sec-example_J_6_3] a constant appearing in the IVODEs is unknown.
 
 ### Example: Numerical Solution of a Set of IVODEs {#sec-example_J_6_1}
 
@@ -270,15 +269,16 @@ I have now written all of the equations that are needed to solve the IVODEs. I c
 
 With the information given above, equations (1) through (6) can be solved numerically to find  $n_A\left(t\right)$, $n_B\left(t\right)$, $n_Y\left(t\right)$, $n_Z\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$. To do so it will be necessary to calculate the following items using the indicated information.
 
-**Calculations**
+**Calculations Summary**
 
-* To calculate the **values of the derivatives** using the given and known constants, the independent variable, and the dependent variables:
-    1. Calculate $C_A$ and $C_B$ using equations (8) and (9).
-    2. Calculate $r$ using equation (7).
-    3. Calculate the vector on the right side of equation (10).
-    4. Calculate $\boldsymbol{M}$ using equation (11).
-    5. Calculate the derivatives using equation (12).
-* The **initial and final values** in @tbl-example_J_6_1_initial_values are known constants and do not need to be calculated.
+1. Substitute the given and known constants into all equations.
+2. To calculate $r_1$ knowing $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$
+    a. calculate $C_A$ and $C_B$ using equations (8) and (9) and then
+    b. calculate $r$ using equation (7).
+3. To evaluate the derivatives knowing $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, $P$, and $r_1$
+    a. calculate the vector on the right side of equation (10), 
+    b. calculate $\boldsymbol{M}$ using equation (11), and
+    c. evaluate the derivatives using equation (12).
 
 :::{.callout-note collapse="false"}
 ## Note
@@ -311,12 +311,9 @@ $$
 \frac{dP}{dt} = \frac{-R\left(n_A + n_B + n_Y + n_Z\right)r_1 \Delta H_1}{n_A \left(\hat{C}_{p,A} - R\right) + n_B \left(\hat{C}_{p,B} - R\right) + n_Y \left(\hat{C}_{p,Y} - R\right) + n_Z \left(\hat{C}_{p,Z} - R\right)} \tag{15}
 $$
 
-The first Calculations bullet would then be replaced as follows:
+Step 3 in the Calculations Summary would then be replaced as follows:
 
-* To calculate the **values of the derivatives** using the given and known constants, the independent variable, and the dependent variables:
-    1. Calculate $C_A$ and $C_B$ using equations (8) and (9).
-    2. Calculate $r$ using equation (7).
-    3. Calculate the derivatives using equations (1) - (4), (14), and (15).
+3. To evaluate the derivatives knowing $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, $P$, and $r_1$ use equations (1) - (4), (14), and (15).
 
 :::
 
@@ -329,13 +326,17 @@ I will follow the general procedure for numerical implementation of the solution
 
 :::
 
-Write computer code to perform the analysis. Within that code
-
-1. make the given and known constants available for use in all equations, 
-2. write a derivatives function that calculates the derivatives as described under the Calculations heading above,
-3. write a reactor model function that solves the reactor design equations by
-    a. seting the initial values and stopping criterion as indicated in @tbl-example_J_6_1_initial_values and
-    b. calling an IVODE solver, passing the derivatives function (step 2) and the  initial values and stopping criterion (step 3a) to it as arguments.
+1. Make the given and known constants available for use in all functions, 
+2. Write a derivatives function that
+    a. receives $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$ as arguments,
+    b. calculates $r_1$ as described in step 2 of the calculations summary, and
+    c. evaluates and returns the derivatives as described in step 3 of the calculations summary.
+3. Write a reactor model function that
+    a. calls an IVODE solver using the following arguments
+        i. the initial values and stopping criterion in @tbl-example_J_6_1_initial_values and
+        ii. the name of the derivatives function from step 2,
+    b. checks that the solver successfully solved the IVODEs, and
+    c. returns sets of corresponding values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$ spanning the range from their initial values to their final values.
 4. perform the analysis by calling the reactor model function.
 
 #### Results and Discussion
@@ -383,7 +384,7 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 :::
 -->
 
-### Example: Numerical Solution of a Set of IVODEs with an Unknown Initial Value {#sec-example_J_6_2}
+### Example: Numerical Solution of a Set of IVODEs with a "Missing" Initial Value {#sec-example_J_6_2}
 
 {{< include problem_statements/reb_J_6_2.qmd >}}
 
@@ -455,7 +456,7 @@ The initial values and stopping criterion for solving equations (1) through (3) 
 
 In order to solve the IVODEs, the initial and final values must be calculated. Comparing @tbl-example_J_6_2_initial_values and the given and known constants it can be seen that $L$, $\dot{n}_{A,in}$, and $\dot{n}_{Z,in}$ are known, but $T_{in}$ is unknown and must be calculated. 
 
-$Tin$ cannot be calculated directly from any of the given and known constants. However, a second final value, the outlet temperature, $T_{out}$, is given. Using that second final value, as described in @sec-, I can write an implicit equation that can be solved to find $T_{in}$ as described in @sec-math_form_ivodes.
+$T_{in}$ cannot be calculated directly from any of the given and known constants. However, a second final value, the outlet temperature, $T_{out}$, is given. Using that second final value I can write an implicit equation that can be solved to find $T_{in}$ as described in @sec-math_form_ivodes.
 
 :::
 
@@ -471,17 +472,14 @@ $$
 0 = T\big\vert_{z=L} - T_{out} = \epsilon \tag{6}
 $$
 
-With the information given above, equations (1), (2), (3), and (5) can be solved to find $T_{in}$, $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$. To do so it will be necessary to calculate the following items using the indicated information.
+With the information given above, equations (1), (2), (3), and (5) can be solved to find $T_{in}$, $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$.
 
-**Calculations**
+**Calculations Summary**
 
-* To calculate the **values of the derivatives** using the given and known constants and the independent and dependent variables
-    1. Calculate $r$ using equation (4).
-    2. Calculate the values of the derivatives using equations (1), (2), and (3).
-* To calculate the **residual**, $\epsilon$, corresponding to $T_{in}$ using the given and known constants and a solution of the reactor design equations
-    1. Extract the final value of $T$, $T\big\vert_{z=L}$, from the solution of the reactor design equations.
-    2. Calculate $\epsilon$ using equation (6).
-
+1. Substitute the given and known constants into all equations.
+2. To calculate $r$ knowing $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, use equation (4).
+3. To evaluate the derivatives knowing $z$, $\dot{n}_A$, $\dot{n}_Z$, $T$ and $r$ use equations (1), (2), and (3).
+4. To evaluate $\epsilon$ knowing $T_{in}$, $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$ use equation (6).
 
 #### Numerical Implementation of the Solution
 
@@ -492,25 +490,32 @@ The general procedure for numerical implementation of the solution of a set of I
 
 :::
 
-Write computer code to perform the analysis. Within that code
-
-1. make the given and known constants available for use in all equations,
-2. define a variable representing the current value of $T_{in}$ and make it available to all functions,
-3. write a derivatives function that uses the current value of $T_{in}$ and calculates the derivatives as described under the Calculations heading above,
-4. write a reactor model function that uses the current value of $T_{in}$ to solve the reactor design equations by 
-    a. setting the initial values and stopping criterion as indicated in @tbl-example_J_6_2_initial_values, and
-    b. callling an IVODE solver, passing the derivatives function (step 3) and the initial values and stopping criterion (step 4b) to it as arguments,
-5. write a residuals function that calculates the residual by
-    a. receiving a guess for $T_{in}$
-    b. setting the current value of $T_{in}$ equal to the guess
-    c. solving the reactor design equations by calling the reactor model function (step 4)
-    d. calculating $\epsilon$ as described under the Calculations heading above
+1. Make the given and known constants available for use in all functions,
+2. Define a variable representing $T_{in}$ and make it available to all functions. 
+3. Write a derivatives function that
+    a. receives $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ as arguments,
+    b. calculates $r$ as described in step 2 of the calculations summary, and
+    c. evaluates and returns the derivatives as described in step 3 of the calculations summary.
+4. Write a reactor model function that
+    a. calls an IVODE solver using the following arguments
+        i. the initial values (using the current value of $T_{in}$) and stopping criterion in @tbl-example_J_6_2_initial_values and
+        ii. the name of the derivatives function from step 3,
+    b. checks that the solver successfully solved the IVODEs, and
+    c. returns sets of corresponding values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ spanning the range from their initial values to their final values.
+5. Write a residuals function that
+    a. receives a guess for $T_{in}$ and sets the current value of $T_{in}$ equal to the guess.
+    b. calls the reactor model function from step 4 to get $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$
+    c. calculates and returns $\epsilon$ as described in step 4 of the calculations summary.
 6. perform the analysis by
-    a. setting an initial guess for $T_{in}$.
-    b. calculating $T_{in}$ by calling an ATE solver passing the initial guess (step 6a) and the residuals function (step 4) as arguments.
-    c. solving the reactor design equations by calling the reactor model function (step 4).
+    a. calculating $T_{in}$ by calling an ATE solver using the following arguments
+        i. an initial guess for $T_{in}$ and
+        ii. the neme of the residuals function from step 5,
+    b. setting the current value of $T_{in}$ equal to the result from step 6a, and
+    c. calling the reactor model function from step 4 to get sets of corresponding values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ that span the range from their initial values to their final values.
 
-Notice that $T_{in}$ is first set to an initial guess. When the ATE solver is called in step 6, it will keep improving the guess as described in @sec-apndx_solve_ates. Each time it generates a new guess and passes it to the residuals, $T_{in}$ is set equal to that guess. Thus, when the response function solves the reactor design equation and evaluates $\epsilon$, it uses the current guess for $T_{in}$. When the implicit equation for $T_{in}$ is solved, $T_{in}$ will be set to that value, which then will be used to solve the reactor design equations in step 6c.
+
+
+When the ATE solver is called in step 6, it will generate guesses for $T_{in}$ as described in @sec-apndx_solve_ates. Each time it generates a new guess and passes it to the residuals, the current value of $T_{in}$ is set equal to that guess. Thus, when the reactor model function solves the reactor design equation in step 5b and evaluates $\epsilon$, it uses the current guess for $T_{in}$. When the implicit equation for $T_{in}$ is solved, the current value of $T_{in}$ is set to the result in step 6b, which then will be used to solve the reactor design equations in step 6c.
 
 #### Results and Discussion
 
@@ -524,7 +529,7 @@ df1 <- read.csv("results/reb_J_6_2_profile_results.csv")
 df1 <- fmt_tibble_col(df1, 1:4, 3, 3, 1)
 ```
 
-The calculations were performed as described above. The required inlet temperature, $T_{in}$, is `r df$value[1]` `r df$units[1]`.  Using that initial value and solving the IVODEs yields the results shown in @tbl-example_J_6_1_ivode_results
+The calculations were performed as described above. The required inlet temperature, $T_{in}$, is `r df$value[1]` `r df$units[1]`.  Using that initial value and solving the IVODEs yields the results shown in @tbl-example_J_6_2_ivode_results
 
 ```{r}
 #| echo: false
