@@ -170,20 +170,22 @@ top-level code (and/or a master calculations function)
 
 ### Example: Numerical Solution of a Set of IVODEs {#sec-example_J_6_1}
 
-{{< include problem_statements/reb_J_6_1.qmd >}}
+{{< include examples/reb_J_6_1/narrative.qmd >}}
+
+{{< include examples/reb_J_6_1/equations.qmd >}}
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The narrative for this illustration assigned all of the given quantities to appropriate variable and described the reactor. I can simply copy that information to summarize the assignment.
+The narrative for this example assigned appropriate variable symbols to every quantity it provided. I can see that I'm going to need the ideal gas constant, so I'll add it to the given constant quantities. The narrative doesn't say so, but a subscripted "1" denotes the reaction, "0" denotes values at $t=0$, and "f" denotes final values. It also doesn't say what quantities are of interest to the reaction engineer. The purpose here is to illustrate solving IVODEs, and doing so yields corresponding sets of values of the independent variable and the dependent variables spanning the range from their initial value to their final values. I'll just use $n_A\left(t\right)$, etc. to denote those quantities in my summary.
 
 :::
 
 #### Assignment Summary
 
-**Given and Known Constants**: $n_{A,0}$ = $n_{B,0}$ = 190 mol, $n_{Y,0}$ = $n_{Z,0}$ = 0, $T_0$ = 450 K, $P_0$ = 7 atm, $t_f$ = 2 h, $V$ = 2 m^3^, $\Delta H_1$ = -6870 cal mol^-1^, $\hat{C}_{p,A}$ = 7.5 cal mol^-1^ K^-1^, $\hat{C}_{p,B}$ = 8.5 cal mol^-1^ K^-1^, $\hat{C}_{p,Y}$ =  12.1 cal mol^-1^ K^-1^, $\hat{C}_{p,Z}$ =  5.7 cal mol^-1^ K^-1^, $k_{0,1}$ = 83.0 m^3^ mol^-1^ h^-1^, and $E_1$ = 10.2 kcal mol^-1^.
+**Given and Known Constants**: $n_{A,0}$ = $n_{B,0}$ = 190 mol, $n_{Y,0}$ = $n_{Z,0}$ = 0, $T_0$ = 450 K, $P_0$ = 7 atm, $t_f$ = 2 h, $V$ = 2 m^3^, $\Delta H_1$ = -6870 cal mol^-1^, $\hat{C}_{p,A}$ = 7.5 cal mol^-1^ K^-1^, $\hat{C}_{p,B}$ = 8.5 cal mol^-1^ K^-1^, $\hat{C}_{p,Y}$ =  12.1 cal mol^-1^ K^-1^, $\hat{C}_{p,Z}$ =  5.7 cal mol^-1^ K^-1^, $k_{0,1}$ = 83.0 m^3^ mol^-1^ h^-1^, $E_1$ = 10.2 kcal mol^-1^, and $R$ = 1.987 cal mol^-1^ K^-1^ = 8.206 x 10^-2^ L atm mol^-1^ K^-1^.
 
 **Reactor**: Adiabatic BSTR
  
@@ -194,59 +196,22 @@ The narrative for this illustration assigned all of the given quantities to appr
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The reactor design equations are given in the illustration description, but they are not in the form of derivative expressions. In order to solve the IVODEs I  will need to calculate the values of the derivatives, and to do that the IVODEs need to be re-written in the form of derivative expressions. @sec-mass_matrix describes how to do that using a mass matrix.
+Normally the reactor design equations would need to be generated based on information provided in the narrative, but here they are simply given. The narrative doesn't say so, but equations (1) - (4) are mole balances, equation (5) is an energy balance on the reacting fluid, and equation (6) is a differential form of the ideal gas law.
 
 :::
 
 **Reactor Design Equations**
 
-The IVODEs, equations (1) through (6) can be written as the matrix equation, (10), with the mass matrix defined as shown in equation (11). The IVODEs can then be written, in matrix form, as derivative expressions as shown in equation (12).
-
-$$
-\boldsymbol{M}\frac{d}{dt} \begin{bmatrix} n_A \\ n_B \\ n_Y \\ n_Z \\ T \\ P \end{bmatrix} = \begin{bmatrix} -Vr_1 \\ -Vr_1 \\ Vr_1 \\ Vr_1 \\ -Vr_1\Delta H_1 \\ 0 \end{bmatrix}\tag{10}
-$$
-
-$$
-\boldsymbol{M} = \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & \left(n_A \hat{C}_{p,A} + n_B \hat{C}_{p,B} + n_Y \hat{C}_{p,Y} + n_Z \hat{C}_{p,Z} \right) & -V \\ RT & RT & RT & RT & R\left(n_A + n_B + n_Y + n_Z\right) & -V  \end{bmatrix} \tag{11}
-$$
-
-$$
-\begin{bmatrix} \frac{dn_A}{dt} \\ \frac{n_B}{dt} \\ \frac{n_Y}{dt} \\ \frac{n_Z}{dt} \\ \frac{T}{dt} \\ \frac{P}{dt} \end{bmatrix} = \boldsymbol{M}^{-1} \begin{bmatrix} -Vr_1 \\ -Vr_1 \\ Vr_1 \\ Vr_1 \\ -Vr_1\Delta H_1 \\ 0 \end{bmatrix} \tag{12}
-$$
+Mole balance design equations for A, B, Y, and Z are presented in equations (1) through (4). The energy balance on the reacting fluid is given in equation (5). Equation (6) is the ideal gas law in differential form.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-During the solution I will need to calculate the values of the derivatives, given the independent and dependent variables. Before I can use the derivatives expressions above to do that, I will need to calculate any other variables and any unknown constant that appear in the derivatives expressions.
-
-The only other variable appearing in these IVODEs is $r$. According to the narrative, the engineer knows the rate expression is equation (7), and that can be used to calculate $r_1$. However, using the rate expression as an ancillary equation to calculate $r_1$ introduces two additional variables, $C_A$ and $C_B$, so I need to write ancillary equations for them, too. The necessary equations are simply defining equations for concentration in a BSTR. A reaction engineer would know these definitions.
-
-The constants appearing in the IVODEs and the ancillary equations are all known, so I do not need any additional ancillary equations to evaluate the derivatives.
+The reactor in this illustration is a BSBR. Defining $t=0$ as the instant the reagents were added to the reactor allows specification of the initial and final values.
 
 :::
 
-**Ancillary Equations for Evaluating the Derivatives**
-
-The rate expression for $r_1$ is given, equation (7). The concentrations appearing in it can be calculated using equations (8) and (9).
-
-$$
-C_A = \frac{n_A}{V} \tag{8}
-$$
-
-$$
-C_B = \frac{n_B}{V} \tag{9}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-It is also necessary to specify the initial values and stopping criterion and calculate the initial values before the IVODEs can be solved. The instant the reaction begins can be defined as $t=0$. In this example the assignment provides all of the initial values as well as the final value shown in @tbl-example_J_6_1_initial_values. All of the quantities in that table are known constants, so I do not need any ancillary equations to calculate them.
-
-:::
-
-**Intial Values and Stopping Criterion**
-
-The initial values and stopping criterion for solving equations (1) through (6) are presented in @tbl-example_J_6_1_initial_values.
+**Initial Values and Stopping Criterion**
 
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
@@ -263,21 +228,61 @@ The initial values and stopping criterion for solving equations (1) through (6) 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I have now written all of the equations that are needed to solve the IVODEs. I can finish the mathematical formulation of the solution by summarizing how to use them, as described in @sec-math_form_ivodes.
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_J_6_1_initial_values.
+
+I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. As given in the narrative, the reactor design equations are not in the form of derivative expressions. They need to be re-written in that form, and @sec-mass_matrix describes how to do that using a mass matrix.
+
+I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
+
+The only other variable appearing in these IVODEs is $r_1$. According to the narrative, the engineer knows the rate expression is equation (7), and that can be used to calculate $r_1$. However, using the rate expression as an ancillary equation to calculate $r_1$ introduces two additional variables, $C_A$ and $C_B$, so I need to write ancillary equations for them, too. The necessary equations are simply defining equations for concentration in a BSTR. A reaction engineer would know these definitions.
 
 :::
 
-With the information given above, equations (1) through (6) can be solved numerically to find  $n_A\left(t\right)$, $n_B\left(t\right)$, $n_Y\left(t\right)$, $n_Z\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$. To do so it will be necessary to evaluate the derivatives. The initial and final values are known and don't need to be calculated.
+**Ancillary Equations for Evaluating the Derivatives**
+
+The IVODEs, equations (1) through (6) can be written as the matrix equation, (10), with the mass matrix defined as shown in equation (11). The IVODEs can then be written as derivative expressions as shown in equation (12).
+
+$$
+\boldsymbol{M}\frac{d}{dt} \begin{bmatrix} n_A \\ n_B \\ n_Y \\ n_Z \\ T \\ P \end{bmatrix} = \begin{bmatrix} -Vr_1 \\ -Vr_1 \\ Vr_1 \\ Vr_1 \\ -Vr_1\Delta H_1 \\ 0 \end{bmatrix}\tag{10}
+$$
+
+$$
+\boldsymbol{M} = \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & \left(n_A \hat{C}_{p,A} + n_B \hat{C}_{p,B} + n_Y \hat{C}_{p,Y} + n_Z \hat{C}_{p,Z} \right) & -V \\ RT & RT & RT & RT & R\left(n_A + n_B + n_Y + n_Z\right) & -V  \end{bmatrix} \tag{11}
+$$
+
+$$
+\begin{bmatrix} \frac{dn_A}{dt} \\ \frac{n_B}{dt} \\ \frac{n_Y}{dt} \\ \frac{n_Z}{dt} \\ \frac{T}{dt} \\ \frac{P}{dt} \end{bmatrix} = \boldsymbol{M}^{-1} \begin{bmatrix} -Vr_1 \\ -Vr_1 \\ Vr_1 \\ Vr_1 \\ -Vr_1\Delta H_1 \\ 0 \end{bmatrix} \tag{12}
+$$
+
+The rate expression for $r_1$ is given, equation (7). The concentrations appearing in it can be calculated using equations (8) and (9).
+
+$$
+C_A = \frac{n_A}{V} \tag{8}
+$$
+
+$$
+C_B = \frac{n_B}{V} \tag{9}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_J_6_1_initial_values. In this illustration, they are all given constants, so I don't need equations to calculate any of them.
+
+Solving the IVODEs will yield all of the quantities of interest, so no additional equations are needed. I can conclude the numerical formulation with a summary of how to use the equations I've written.
+
+:::
 
 **Calculations Summary**
 
-1. Substitute the given and known constants into all equations.
-2. To evaluate the derivatives knowing $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$
-    a. calculate $C_A$ and $C_B$ using equations (8) and (9),
-    b. calculate $r_1$ using equation (7),
-    c. calculate the vector on the right side of equation (10), 
-    d. calculate $\boldsymbol{M}$ using equation (11), and
-    e. calculate the values of the derivatives using equation (12).
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the derivatives
+	a. $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$ will be available.
+	b. Calculate $C_A$ and $C_B$ using equations (8) and (9).
+    c. Calculate $r_1$ using equation (7).
+    d. Calculate the vector on the right side of equation (10).
+    e. Calculate $\boldsymbol{M}$ using equation (11).
+    f. Calculate the values of the derivatives using equation (12).
 
 :::{.callout-note collapse="false"}
 ## Note
@@ -312,32 +317,27 @@ $$
 
 Step 2 in the Calculations Summary would then be replaced as follows:
 
-2. To evaluate the derivatives knowing $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$
-    a. calculate $C_A$ and $C_B$ using equations (8) and (9),
-    b. calculate $r_1$ using equation (7), and 
-    c. calculate the values of the derivatives using equations (1) - (4), (14), and (15).
+2. When it is necessary to evaluate the derivatives
+	a. $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$ will be available.
+	b. Calculate $C_A$ and $C_B$ using equations (8) and (9).
+    c. Calculate $r_1$ using equation (7).
+    d. Calculate the values of the derivatives using equations (1) - (4), (14) and (15).
 
 :::
 
 #### Numerical Implementation of the Solution
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-In this illustration there isn't a missing initial value or IVODE constant, so the numerical implementation is straightforward.
-
-:::
-
 1. Make the given and known constants available for use in all functions, 
 2. Write a derivatives function that
-    a. receives $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$ as arguments,
-    b. evaluates the derivatives as described in step 2 of the calculations summary, and returns their values.
+    a. receives the independent and dependent variables, $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$, as arguments,
+    b. evaluates the derivatives as described in step 2 of the calculations summary, and 
+    c. returns their values.
 3. Write a reactor model function that
-    a. calls an IVODE solver using the following arguments
-        i. the initial values and stopping criterion in @tbl-example_J_6_1_initial_values and
-        ii. the name of the derivatives function from step 2,
+    a. gets corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example_J_6_1_initial_values and
+		ii. the name of the derivatives function from step 3 above,
     b. checks that the solver successfully solved the IVODEs, and
-    c. returns sets of corresponding values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, $T$, and $P$ spanning the range from their initial values to their final values.
+    c. returns the values returned by the IVODE solver.
 4. Solve the IVODEs by calling the reactor model function.
 
 #### Results and Discussion
@@ -347,7 +347,7 @@ In this illustration there isn't a missing initial value or IVODE constant, so t
 #| output: false
 library(tidyverse)
 source("~/Libraries/R/fmt_tibble_col.R")
-df <- read.csv("./results/reb_J_6_1_results.csv")
+df <- read.csv("./examples/reb_J_6_1/results.csv")
 df <- fmt_tibble_col(df, 1:7, 3, 3, 1)
 ```
 
