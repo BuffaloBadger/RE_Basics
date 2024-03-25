@@ -406,7 +406,7 @@ The problem statement assigns appropriate variables to represent all of the know
 
 **Reactor**: Adiabatic, steady-state PFR with negligible pressure drop.
  
-**Quantities of Interest**: $T_{in}$, $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$.
+**Quantities of Interest**: $T_{in} : T\big\vert_{z=L} = T_{out}$, $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$.
 
 #### Mathematical Formulation of the Solution
 
@@ -572,7 +572,9 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 
 ### Example: Numerical Solution of a Set of IVODEs Containing an Unknown Constant{#sec-example_J_6_3}
 
-{{< include problem_statements/reb_J_6_3.qmd >}}
+{{< include examples/reb_J_6_3/narrative.qmd >}}
+
+{{< include examples/reb_J_6_3/equations.qmd >}}
 
 ---
 
@@ -580,17 +582,17 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Everything I need to summarize the assignment is provided, so I can simply copy the information.
+The narrative assigns variables to the known constants. It uses a subscripted "in" to denote initial values. I'll use $T_{out}$ to denote the final (outlet) value of the temperature; the narrative uses $L$ as the final value of $z$. I can see I'll need to use the gas constant, so I'll add it to the given constants.
 
 :::
 
 #### Assignment Summary
 
-**Given and Known Constants**: $T_{out}$ = 325 K, $D$ = 5 cm, $\Delta H$ = -14,000 cal mol^-1^, $\breve{C}_p$ = 1.3 cal cm^-3^ K^-1^, $C_{A,in}$ = 0.0025 mol cm^3^, $C_{Z,in}$ = 0, $T_{in}$ = 300 K, $L$ = 50 cm, $k_0$ = 4.2 x 10^15^ cm^3^ mol^-1^ min^-1^, and $E$ = 18,000 cal mol^-1^.
+**Given and Known Constants**: $T_{out}$ = 325 K, $D$ = 5 cm, $\Delta H$ = -14,000 cal mol^-1^, $\breve{C}_p$ = 1.3 cal cm^-3^ K^-1^, $C_{A,in}$ = 0.0025 mol cm^3^, $C_{Z,in}$ = 0, $T_{in}$ = 300 K, $L$ = 50 cm, $k_0$ = 4.2 x 10^15^ cm^3^ mol^-1^ min^-1^, $E$ = 18,000 cal mol^-1^, and $R$ = 1.987 cal mol^-1^ K^-1^.
 
 **Reactor**: Adiabatic, steady-state PFR with negligible pressure drop.
 
-**Quantities of Interest**: $\dot{V}$, $\dot{n}_{A,f}$ and $\dot{n}_{Z,f}$.
+**Quantities of Interest**: $\dot{V}: T\big\vert_{z=L} = T_{out}$, $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$.
 
 #### Mathematical Formulation of the Solution
 
@@ -598,45 +600,23 @@ Everything I need to summarize the assignment is provided, so I can simply copy 
 
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The reactor design equations are provided. I do not need to convert them to derivative expressions because they are already in that form.
+The reactor design equations are provided. Equations (1) and (2) are mole balances and equation (3) is an energy balance on the reacting fluid.
 
 :::
 
 **Reactor Design Equations**
 
-Equations (1), (2), and (3) are the reactor design equations.
+Mole balance design equations for A and Z are presented in equations (1) and (2). The energy balance on the reacting fluid is given in equation (3).
 
 :::{.callout-tip collapse="true"}
 
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-When solving the IVODE reactor design equations, it will be necessary to evaluate the derivatives using given values of the independent and dependent variables. Before that can be done, every variable other than the independent and dependent variables and any unknown constant appearing in the IVODEs must be calculated.
-
-In this example, the rate, $r$, is the only variable that needs to be calculated, and the example provides the ancillary equation, (4), needed to so.
-
-The unknown, constant value of $\dot{V} : T\big\vert_{z=L} = T_{out}$ also appears in the IVODEs, and it must be calculated, too. It cannot be calculated directly from the other given constants. However since a second final value, $T_{out}$, is given, an implicit equation for calculating it can be written as described in @sec-unk_ivode_const_eqn. Knowing that I will be solving that equation numerically, I'll write it in the form of a residual (see @sec-apndx_solve_ates).
-
-:::
-
-**Ancillary Equations for Evaluating the Derivatives**
-
-The rate, $r$ appearing in the design equations is given by equation (4). The volumetric flow rate, $\dot{V} : T\big\vert_{z=L} = T_{out}$, can be calculated by using an ATE solver to solve the implicit equation, (5), for the value of  $\dot{V}$ that results in $T\big\vert_{z=L}$ being equal to $T_{out}$.
-
-$$
-0 = T\big\vert_{z=L} - T_{out} = \epsilon \tag{5}
-$$
-
-:::{.callout-tip collapse="true"}
-
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The inlet to the reactor can be defined as $z=0$, in which case the initial values of the dependent variables are just their values at the reactor inlet. The assignment provides two final values: $z=L$ and $T=T_{out}$. The latter was used to write equation (5), so the former will be used as the stopping criterion.
+The inlet to the reactor can be defined as $z=0$, in which case the initial values of the dependent variables are just their values at the reactor inlet. The assignment provides two final values: $z=L$ and $T=T_{out}$. I'll use the former as the stopping criterion.
 
 :::
 
 **Intial Values and Stopping Criterion**
-
-The initial values and stopping criterion for solving equations (1) through (3) are listed in @tbl-example_J_6_3_initial_values.
 
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
@@ -651,7 +631,31 @@ The initial values and stopping criterion for solving equations (1) through (3) 
 
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Before the IVODEs can be solved, the initial and final values must be calculated. Looking at @tbl-example_J_6_3_initial_values, the inlet temperature and the length of the reactor are known constants, but the inlet molar flow rates of A and Z, $n_{A,in}$ and $n_{Z,in}$, must be calculated. The inlet concentrations are known, so the definiting equation for concentration in a flow reactor can be used to calculate the inlet molar flow rates. Of course, the volumetric flow rate will need to be calculated first.
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_J_6_3_initial_values.
+
+I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. The design equations are written in the form of deivative expressions, so no further manipulation of them is necessary.
+
+I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions. Using the assignment summary, I can see that the only quantities that need to be calculated are the rate, $r$, and the volumetric flow rate, $\dot{V}$.
+
+The rate is a variable that depends upon $\dot_{n}_A$ and $T$. The rate expression for calculating it is provided. That equation does not introduce any additional unknown quantities, but it does include the volumetric flow rate, $\dot{V}$.
+
+The unknown quantity, $\dot{V} : T\big\vert_{z=L} = T_{out}$, is a constant. It cannot be calculated directly from the other given constants. However since a second final value, $T_{out}$, is given, an implicit equation for calculating it can be written as described in @sec-unk_ivode_const_eqn. Knowing that I will be solving that equation numerically, I'll write it in the form of a residual (see @sec-apndx_solve_ates).
+
+:::
+
+**Ancillary Equations for Evaluating the Derivatives**
+
+The rate, $r$ appearing in the design equations is given by equation (4). The volumetric flow rate, $\dot{V} : T\big\vert_{z=L} = T_{out}$, can be calculated by using an ATE solver to solve equation, (5), for the value of  $\dot{V}$ that results in $T\big\vert_{z=L}$ being equal to $T_{out}$.
+
+$$
+0 = T\big\vert_{z=L} - T_{out} = \epsilon \tag{5}
+$$
+
+:::{.callout-tip collapse="true"}
+
+## Click Here to See What an Expert Might be Thinking at this Point
+
+When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_J_6_3_initial_values. The inlet temperature and the length of the reactor are known constants, but the inlet molar flow rates of A and Z, $n_{A,in}$ and $n_{Z,in}$, must be calculated. The inlet concentrations are known, so the definiting equation for concentration in a flow reactor can be used to calculate the inlet molar flow rates. Of course, the volumetric flow rate will need to be calculated first.
 
 :::
 
@@ -672,20 +676,26 @@ With the information provided above the reactor design equations can be solved n
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-When I implement the solution numerically I will need to use the equations I've written to do three things: evaluate the derivatives, calculate the initial and final values, and evaluate the residual. To complete the mathematical formulation of the solution, I need to describe how to use the equations to do those things.
+Solving equation (5) and the IVODEs will yield all of the quantities of interest, so no additional equations are needed.
+
+When I implement the solution numerically I will need to use the equations I've written to do three things: evaluate the derivatives, calculate the initial and final values, and evaluate the residual. To complete the mathematical formulation of the solution, I'll' describe how to use the equations to do those things.
 
 :::
 
 **Calculations Summary**
 
-1. Substitute the given and known constants into all equations.
-2. To evaluate the derivatives knowing $\dot{V}$, $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$
-    a. Calculate $r$ using equation (4)
-    b. Calculate the values of the derivatives using equations (1), (2), and (3).
-3. To calculate $\dot{n}_{A,in}$ and $\dot{n}_{Z,in}$ knowing $\dot{V}$, use equations (6) and (7).
-4. To calculate $\epsilon$ knowing $\dot{V}$
-    a. calculate $T\big\vert_{z=L}$ by solving the IVODEs, equations (1) - (3) using the initial values and stopping criterion in @tbl-example_J_6_3_initial_values
-    b. calculate $\epsilon$ using equation (5).
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the derivatives
+	a. $\dot{V}$, $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ will be available.
+	b. Calculate $r$ using equation (4)
+    c. Calculate the values of the derivatives using equations (1), (2), and (3).
+3. When it is necessary to calculate the initial and final values in @tbl-example_J_6_3_initial_values
+	a. $\dot{V}$ will be available.
+	b. Calculate $n_{A,in}$ and $n_{Z,in}$ using equations (6) and (7).
+4. When it is necessary to evaluate the residual, $\epsilon$
+    a. A guess for $\dot{V}$ will be available for use in all equations.
+    b. Solve equations (1) through (3) using that guess and extract $T\big\vert_{z=L}$ from the results.
+    c. Evaluate $\epsilon$ using equation (5).
 
 #### Numerical Implementation of the Solution
 
@@ -693,34 +703,32 @@ When I implement the solution numerically I will need to use the equations I've 
 
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The  missing constant, $\dot{V}$, in the IVODEs complicates the numerical implementation slightly. The code must be written so that while the ATE solver is testing guesses for $\dot{V}$, those guesses are used to calculate the initial values and evaluate the derivatives, and then, after $\dot{V}$ has been found, the resulting value must be used when the IVODEs are solved.
+The  missing constant, $\dot{V}$, in the IVODEs complicates the numerical implementation slightly. It must be calculated first and then used when solving the IVODEs. The complication arises because the IVODEs must be solved in order to calculate $\dot{V}$. The code must be written so that while the ATE solver is testing guesses for $\dot{V}$, those guesses are used in the solution of the IVODEs. Then, after $\dot{V}$ has been found, the resulting value must be used when the IVODEs are solved to find the other quantities of interest.
 
 :::
 
 1. Make the given and known constants available for use in all functions.
-2. Define a variable to hold the current value of $\dot{V}$ and make it available to all functions.
+2. Define a variable to hold $\dot{V}$ and make it available to all functions.
 3. Write a derivatives function that
-    a. receives $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$
-    b. uses the current value of $\dot{V}$ to evaluate and return the values of the derivatives as described step 2 of the calculations summary.
-4. Write a reactor model function that
-    a. calculates $n_{A,in}$ and $n_{Z,in}$ using the current value of $\dot{V}$ as described in step 3 of the calculations summary
-    b. calls an IVODE solver
-        i. passing the initial values, stopping criterion, and the name of the derivatives function as arguments
-        ii. receiving corresponding sets of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ spanning the range from their initial values to their final values
-    c. checks that the solver successfully solved the IVODEs, and
-    d. returns the results from step 4b.
-5. Write a residuals function that
-    a. receives a guess for $\dot{V}$,
-    b. sets the current value of $\dot{V}$ equal to the guess,
-    b. calls the reactor model function from step 4 to get $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$
-    c. calculates and returns $\epsilon$ as described in step 4 of the calculations summary.
-6. perform the analysis by
-    a. calculating $\dot{V}$ by calling an ATE solver passing an initial guess for $\dot{V}$ and the neme of the residuals function from step 5 as arguments.
+	a. receives the independent and dependent variables, $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, as arguments,
+	b. evaluates the derivatives as described in step 2 of the calculations summary, and 
+	c. returns the values of the derivatives.
+4. Write a residuals function that
+	a. receives a guess for $\dot{V}$ and makes it available to all functions,
+	b. evaluates the residual as described in step 4 of the calculations summary, and
+	c. returns the value of $\epsilon$.
+5. Write a reactor model function that
+	a. calculates the initial and final values in @tbl-example_J_6_3_initial_values as described in step 3 of the calculations summary,
+	c. gets corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example_J_6_3_initial_values and
+		ii. the name of the derivatives function from step 3 above,
+	d, checks that the solver successfully solved the IVODEs, and
+	e. returns the values returned by the IVODE solver.
+6. Perform the analysis by
+	a. calculating $\dot{V}$ by calling an ATE solver passing an initial guess for $\dot{V}$ and the neme of the residuals function from step 5 as arguments.
     b. checking that the ATE solver converged
-    c. setting the current value of $\dot{V}$ equal to the result from step 6a, and
-    d. calling the reactor model function from step 4 to get sets of corresponding values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ that span the range from their initial values to their final values.
-
-As was the case in @sec-example_J_6_2, the key feature of the numerical implementation is creating a variable to hold the current value of $\dot{V}$ and making it available throughout the code. By doing so, each time the ATE solver tests a guess it has generated, the IVODEs are solved using that guess. Then, once $\dot{V}$ has been found, the IVODEs are solved using the result.
+    c. making the resulting value of $\dot{V}$ available to all functions, and
+	b. gets corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, spanning the range from their initial values to their final values by calling the reactor model function from step 5 above.
 
 #### Results and Discussion
 
@@ -728,13 +736,13 @@ As was the case in @sec-example_J_6_2, the key feature of the numerical implemen
 #| echo: false
 #| output: false
 source("~/Libraries/R/fmt_tibble_col.R")
-df <- read.csv("results/reb_J_6_3_Vdot_results.csv")
+df <- read.csv("examples/reb_J_6_3/Vdot_results.csv")
 df <- fmt_tibble_col(df, 2, 3, 3, 1)
-df1 <- read.csv("results/reb_J_6_3_profile_results.csv")
-df1 <- fmt_tibble_col(df1, 1:4, 3, 3, 1)
+df1 <- read.csv("examples/reb_J_6_3/profile_results.csv")
+df1 <- fmt_tibble_col(df1, 1:4, 3, 3, 3)
 ```
 
-The calculations were performed as described above. The required volumetric flow rate, $\dot{V}$, is `r df$value[1]` `r df$units[1]`.  Using that initial value and solving the IVODEs yields the results shown in @tbl-example_J_6_3_ivode_results
+The calculations were performed as described above. The required volumetric flow rate, $\dot{V}$, is `r df$value[1]` `r df$units[1]`.  Using that flow rate and solving the IVODEs yields the results shown in @tbl-example_J_6_3_ivode_results
 
 ```{r}
 #| echo: false
@@ -745,6 +753,10 @@ library(kableExtra)
 library(knitr)
 kbl(df1, format = "markdown", align = "cc", col.names=c('$z$ (cm)','$\\dot{n}_A$ (mol min^-1^)','$\\dot{n}_Z$ (mol min^-1^)','$T$ (K)'))
 ```
+
+As was the case in @sec-example_J_6_2, the key feature of the numerical implementation is creating a variable to hold the current value of $\dot{V}$ and making it available throughout the code. By doing so, each time the ATE solver tests a guess it has generated, the IVODEs are solved using that guess. Then, once $\dot{V}$ has been found, the IVODEs are solved using the result.
+
+The initial and final values of $z$ and $T$ in @tbl-example_J_6_3_ivode_results are as specified in the description of the assignment. The initial value of $\dot{n}_Z$ is also as expected because $C_{Z,in}$ is equal to zero. However, if the volumetric flow rate is `r df$value[1]` `r df$units[1]` and the feed concentration of A is 0.0025 mol cm^3^, the inlet molar flow rate of A should equal 1.0, not 0.999 as shown in @tbl-example_J_6_3_ivode_results. The reason for this discrepancy is that the actual value of $\dot{V}$ found by solving equation (5) using an ATE solver was 399.5065292240422 cm^3^ min^-1^. Recall (see @sec-apndx_solve_ates) that numerical solution of ATEs does not yield an exact solution, but one that is "very close."  Clearly that number of significant figures is not warranted, so the value was reported above as 400 cm^3^ min^-1^.
 
 <!--
 :::{.callout-note appearance="simple"}
