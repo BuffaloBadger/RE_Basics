@@ -406,14 +406,16 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 
 ### Parallel Reaction Selectivity in a Cooled BSTR with an Unknown Initial Temperature {#sec-example_9_6_2}
 
-{{< include problem_statements/reb_9_6_2.qmd >}}
+{{< include examples/reb_9_6_2/narrative.qmd >}}
+
+{{< include examples/reb_9_6_2/equations.qmd >}}
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This is an isolated reactor modeling assignment: the system consists of only a reactor, it's operation is described, the rate expressions are known and it asks about reactor inputs and outputs. I'll begin by summarizing the assignment. I'll use appropriate variable symbols to represent the given constants. For initial values I'll add a subscripted "0" and for final values a subscripted "f". I'll denote the temperature of the cooling water in the jacked as $T_{ex}$. Thus, $T_{ex,0}$ is the initial temperature of the cooling water in the jacket. Unlike the reactants, cooling water flows into the jacket continuously, so I'll use $T_{ex,in}$ to represent the temperature of the cooling water entering the jacket.
+This is an isolated reactor modeling assignment: the system consists of only a reactor, it's operation is described, the rate expressions are known and it asks about reactor inputs and outputs. I'll begin by summarizing the assignment. I'll use appropriate variable symbols to represent the given constants. For initial values I'll add a subscripted "0" and for final values a subscripted "f". I'll denote the temperature of the cooling water in the jacked as $T_{ex}$. Thus, $T_{ex,0}$ is the initial temperature of the cooling water in the jacket. Unlike the reactants, cooling water flows into the jacket continuously, so I'll use $T_{ex,in}$ to represent the temperature of the cooling water entering the jacket. I will add the ideal gas constant to the given constants.
 
 :::
 
@@ -458,7 +460,7 @@ $$
 \dot m_{ex}\int_{T_{ex,in}}^{T_{ex}} \tilde C_{p,ex}dT \Rightarrow \dot m_{ex}\tilde C_{p,ex}\left( T_{ex} - T_{ex,in} \right)
 $$
 
-Momentum balances are not used with BSTRS so the full set of design equations consists of mole balances on each of the reagents, A, B, X, Y, and Z, an energy balance on the reacting fluid, and an energy balance on the exchange fluid.
+Momentum balances are not used with BSTRS so the full set of design equations consists of mole balances on each of the reagents, A, B, X, Y, and Z, an energy balance on the reacting fluid, and an energy balance on the exchange fluid. They consist of seven IVODEs containing seven dependent variables, so it isn't necessary to add an IVODE or eliminate a dependent variable.
 
 :::
 
@@ -497,9 +499,33 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The reactor design equations are a set of seven IVODEs. The independent variable is $t$ and the dependent variables are $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$. There are seven IVODEs and seven dependent variables, so it is not necessary to add an IVODE or eliminate a dependent variable.
+Initial values and a stopping ctierion are needed when solving IVODEs numerically. The instant the fluids are mixed in the reactor can be defined as $t=0$. The molar amounts of A, B, X, Y, and Z, the reacting fluid temperature, and the exhhange fluid temperature at that moment are then the initial values. The solutions charged to the reactor did not contain X, Y, or Z, so their initial values are zero. The assignment provides two final values, $f_{A,f}$ and $t_f$. I will use $t_f$ to define the stopping criterion.
 
-The reactor design equations will be solved numerically. In order to do that, it will be necessary to calculate the values of the derivatives at the start of each integration step. At the start of each step $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ will all be available as will the known and given constants listed in the assignment summary.
+:::
+
+**Intial Values and Stopping Criterion**
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $t$ | $0$ | $t_f$ |
+| $n_A$ | $n_{A,0}$ | |
+| $n_B$ | $n_{B,0}$ | |
+| $n_X$ | $0$ | |
+| $n_Y$ | $0$ | |
+| $n_Z$ | $0$ | |
+| $T$ | $T_0$ | |
+| $T_{ex}$ | $T_{ex,0}$ | |
+  
+: Initial values and stopping criterion for solving design equations, (5) through (11). {#tbl-example_9_6_2_initial_values}
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_9_6_2_initial_values.
+
+I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. The design equations are in the form of derivatives expressions, so it is not necessary to modify them.
+
+I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
 
 The only other variables that appear in the design equations are $r_1$, $r_2$, and $\dot{Q}$. The two rates, $r_1$ and $r_2$ can be calculated using the rate expressions, equation (3) and (4). The rate expressions contains four additional variables that will need to be calculated, $k_1$, $k_2$, $C_A$ and $C_B$. The rate coefficients can be calculated using the Arrhenius expression, @eq-arrhenius. The concentrations can be calculated using the defining equation for concentration in a closed system, @eq-concentration_closed.
 
@@ -532,31 +558,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Initial values and a stopping ctierion are needed when solving IVODEs numerically. The instant the fluids are mixed in the reactor can be defined as $t=0$. The molar amounts of A, B, X, Y, and Z, the reacting fluid temperature, and the exhhange fluid temperature at that moment are then the initial values. The solutions charged to the reactor did not contain X, Y, or Z, so their initial values are zero. The assignment provides two final values, $f_{A,f}$ and $t_f$. I will use $t_f$ to define the stopping criterion.
-
-:::
-
-**Intial Values and Stopping Criterion**
-
-The initial values and stopping criterion needed for solving the design equations are given in @tbl-example_9_6_2_initial_values.
-
-| Variable | Initial Value | Stopping Criterion |
-|:------:|:-------:|:-------:|
-| $t$ | $0$ | $t_f$ |
-| $n_A$ | $n_{A,0}$ | |
-| $n_B$ | $n_{B,0}$ | |
-| $n_X$ | $0$ | |
-| $n_Y$ | $0$ | |
-| $n_Z$ | $0$ | |
-| $T$ | $T_0$ | |
-| $T_{ex}$ | $T_{ex,0}$ | |
-  
-: Initial values and stopping criterion for solving design equations, (5) through (11). {#tbl-example_9_6_2_initial_values}
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The initial and final values in @tbl-example_9_6_2_initial_values must be calculated before the IVODEs can be solved. The initial molar amounts of A and B can be calculated using their given initial concentrations and the reacting fluid volume. The final value, $t_f$, is a given constant. However, the initial value of the temperature is not known and it can't be calculated directly from the other given constants.
+When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_9_6_2_initial_values. The initial molar amounts of A and B can be calculated using their given initial concentrations and the reacting fluid volume. The final value, $t_f$, is a given constant. However, the initial value of the temperature is not known and it can't be calculated directly from the other given constants.
 
 The other given final value, $f_{A,f}$, can be used to write an implicit equation for $T_0 : f_A \big \vert_{t=tf} = f_{A,f}$ (see @sec-apndx_solve_ivodes). The conversion in a closed system is defined by @eq-conversion_def_closed. Rearranging that equation gives an expression for the final molar amount of A. 
 
@@ -564,13 +566,13 @@ $$
 n_{A,f} = n_{A,0} \left( 1 - f_{A,f} \right)
 $$
 
-The final molar amount of A found by solving the design equations, $n_A \big \vert_{t=t_f}$ will only equal $n_{A,f}$ when the design equations are solved using the desired initial temperature, $T_0$. This can be expressed as an implicit equation for $T_0$, and written in the form of a residual expression (see @sec-apndx_solve_ivodes).
+The final molar amount of A found by solving the design equations, $n_A \big \vert_{t=t_f}$, will only equal $n_{A,f}$ when the design equations are solved using the desired initial temperature, $T_0$. This can be expressed as an implicit equation for $T_0$, and written in the form of a residual expression (see @sec-apndx_solve_ivodes).
 
 :::
 
 **Ancillary Equations for Calculating the Initial and Final Values**
 
-The initial molar amounts of A and B in @tbl-example_9_6_2_initial_values can be calculated using equations (17) and (18). The final molar amount of A can be calculated using equation (19). The initial value of the temperature can be found by solving the implicit equation (20), where $T_0$ is the unknown. Equation (20) can be solved numerically using an ATE solver (see @sec-apndx_solve_ates).
+Equations (17) - (19) can be used to calculate the initial molar amounts. Equation (20) is an implicit equations that can be solved to find the initial value of the temperature. In that equation, $n_A \big \vert_{t=t_f}$ is the final molar amount of A predicted by the design equations and $n_{A,f}$ is the specified final molar amount of A calculated using equation (19).
 
 $$
 n_{A,0} = C_{A,0}V \tag{17}
@@ -591,13 +593,13 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-At this point the reactor design equations together with equation (19) can be solved to find $T_0$, and corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ that span the range from their initial values their final values. $T_0$ is one of the quantities of interest. The others can be found or calculated using the results from solving the IVODEs and the defining equation for selectivity, @eq-selectivity_def_closed.
+At this point, equation (20) and the reactor design equations can be solved. Doing so will yield $T_0$, and corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ that span the range from their initial values their final values. $T_0$ is one of the quantities of interest. The others can be found or calculated using the results from solving the IVODEs and the defining equation for selectivity, @eq-selectivity_def_closed.
 
 :::
 
 **Ancillary Equations for Calculating Other Quantities of Interest**
 
-With the information given above, equations (5) through (11), together with equation (19), can be solved for $T_0$, and corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ that span the range from their initial values their final values. The values at $t=t_f$ can be used to calculate the other quantities of interest.
+The results from solving the reactor design equations can be used to calculate the final temperature, exchange fluid temperature and selectivity as shown in equations (21), (22), and (23).
 
 $$
 T_f = T\big\vert_{t=t_f} \tag{21}
@@ -611,19 +613,34 @@ $$
 S_{X/Z,f} = \frac{n_X \Big\vert_{t=t_{rxn}}}{n_Z \Big\vert_{t=t_{rxn}}} \tag{23}
 $$
 
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I have written all of the equations needed to complete the assignment. I will conclude the formulation by summarizing how to use those equations in the numerical implementation of the solution.
+
+As I implement the solution numerically, I'll make all of the given and known constants available throughout the calculations. As described in @sec-apndx_solve_ivodes, I'll similarly need to make the current value of $T_0$ available. As I perform the numerical solutions I'll need to evaluate the derivatives, calculate the initial and final values, and calculate quantities of interest that aren't found directly by solving the reactor design equations. One thing to note is that I won't calculate $T_0$ directly when I'm calculating the other initial and final values. It will be found separately using an ATE solver, so instead of needing to calculate it, I will need to evaluate the residual for equation (20).
+
+:::
+
 **Calculations Summary**
 
 1. Substitute given and known constants into all equations.
-2. To evaluate the derivatives knowing $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$,
-	a. calculate $\dot{Q}$ using equation (16),
-	b. calculate $k_1$, $k_2$, $C_A$, and $C_B$ using equations (12) - (15),
-	c. calculate $r_1$ and $r_2$ using equations (3) and (4),
-	d. and evaluate the derivatives using equations (5) - (11).
-3. To calculate the initial and final values, $n_{A,0}$, $n_{B,0}$, and $n_{A,f}$ use equations (17) - (19).
-4. To calculate $\epsilon$ knowing $T_0$ and $n_{A,f}$,
-    a. calculate $n_A \big \vert_{t=t_f}$ by solving the IVODEs, equations (5) - (11) using the initial values and stopping criterion in @tbl-example_9_6_2_initial_values then
-    b. calculate $\epsilon$ using equation (20).
-5. To calculate the other quantities of interest, $T_f$, $T_{ex,f}$, and $S_{X/Z,f}$, knowing $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$, use equations (21) through (23).
+2. When it is necessary to evaluate the derivatives
+	a. $T_0$, $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ will be available.
+	b. Calculate $\dot{Q}$ using equation (16).
+	b. Calculate $k_1$, $k_2$, $C_A$, and $C_B$ using equations (12) - (15).
+	c. Calculate $r_1$ and $r_2$ using equations (3) and (4).
+	d. Evaluate the derivatives using equations (5) - (11).
+3. When it is necessary to calculate the initial and final values other than $T_0$ in @tbl-example_9_6_2_initial_values
+	a. $t_f$ and $T_{ex,0}$ are known constants.
+	b. Calculate $n_{A,0}$, $n_{B,0}$, and $n_{A,f}$ using equations (17) through (19).
+4. When it is necessary to evaluate the residual, $\epsilon$ [variable]
+    a. A guess for $T_0$ will be available for use in all equations.
+    b. Solve equations (5) through (11) using that guess and the initial values and stopping criterion in @tbl-example_9_6_2_initial_values and extract $n_A \big \vert_{t=t_f}$ from the results.
+	c. Calculate $\epsilon$ using equation (20).
+5. When it is necessary to calculate the quantities of interest, [list]
+	a. Corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$, spanning the range from their initial values to their final values will be available.
+	b. Calculate $T_f$, $T_{ex,f}$, and $S_{X/Z,f}$ using equations (21) through (23).
 
 #### Numerical Implementation of the Solution
 
@@ -636,48 +653,49 @@ The numerical implementation of the solution of IVOES with an unknown initial va
 :::
 
 1. Make the given and known constants available for use in all functions.
-2. Define a variable representing the current value of $T_0$ and make it available to all functions.
-3. Write a derivatives function that 
-    a. receives $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ as arguments, and
-    b. evaluates and returns the derivatives as described in step 2 of the calculations summary.
-4. Write a reactor model function that
-	a. calculates $n_{A,0}$, $n_{B,0}$, and $n_{A,f}$ as described in step 3 in the calculations summary,
-	b. calculates $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ by calling an IVODE solver using the following arguments
-		i. the initial values (including the current value of $T_0$) and the stopping criterion in @tbl-example_9_6_2_initial_values and
-		ii. the name of the derivatives function from step 3,
-	c. checks that the solver sucessfully solved the IVODEs, and
-	d. returns sets of corresponding values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ that span the range from their initial value to their final value.
-5. Write a residuals function that
-	a. receives a guess for $T_0$ and sets the current value of $T_0$ equal to that guess,
-	b. calculates the final value, $n_{A,f}$ as described in step 3 of the calculations summary, 
-	c. calculates $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ by calling the reactor model function from step 4, and 
-	d. calculates and returns $\epsilon$ as described in step 4 of the calculations summary).
-6. Complete the analysis by
+2. Define a variable to hold $T_0$ and make it available to all functions.
+3. Write a derivatives function that
+	a. receives the independent and dependent variables, $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$, as arguments,
+	b. evaluates the derivatives as described in step 2 of the calculations summary, and 
+	c. returns the resulting values of the derivatives.
+4. Write a residuals function that
+	a. receives a guess for $T_0$ and makes it available to all functions,
+	b. evaluates the residual as described in step 4 of the calculations summary, and
+	c. returns the value of $\epsilon$.
+5. Write a reactor model function that
+	a. has access to $T_0$,
+	b. calculates the initial and final values in @tbl-example_9_6_2_initial_values as described in steps 3a and 3b of the calculations summary,
+	c. gets corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example_9_6_2_initial_values and
+		ii. the name of the derivatives function from step 3 above,
+	d, checks that the solver successfully solved the IVODEs, and
+	e. returns the values returned by the IVODE solver.
+6. Perform the analysis by
 	a. calculating $T_0$ by calling an ATE solver using the following arguments
 		i. an initial guess for $T_0$ and
 		ii. the name of the residuals function from step 5,
-	b. setting the current value of $T_0$ equal to the result from step 6a,
-	c. calling the reactor model function from step 4 to get sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$,
-	d. calculating $T_f$, $T_{ex,f}$, $S_{X/Z,f}$ as described instep 5 of the calculations summary.
+	b. making the resulting value of $T_0$ available to all functions,
+	c. getting corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$, spanning the range from their initial values to their final values by calling the reactor model function from step 5 above,
+	d. calculating $T_f$, $T_{ex,f}$, $S_{X/Z,f}$ as described in step 5 of the calculations summary.
 
 #### Results and Discussion
 
 ```{r}
 #| echo: false
 #| output: false
-df <- read.csv("results/reb_9_6_2_results.csv")
+df <- read.csv("examples/reb_9_6_2/results.csv")
 df <- fmt_tibble_col(df, 2, 3, 2, 1)
 ```
 
 The calculations were performed as described above. The initial temperature must be `r df$value[1]` `r df$units[1]` for the conversion to equal 45% after 30 min of reaction. At that time, the temperature of the reacting fluid will be `r df$value[2]` `r df$units[2]`, the exit temperature of the exchange fluid will be `r df$value[3]` `r df$units[3]`, and the selectivity will equal `r df$value[4]` `r df$units[4]`.
 
-Solving the reactor design equations using an initial temperature of `r df$value[1]` `r df$units[1]` also yields the final molar amount of $n_A$. One way to check the results is to use that value to calculate the conversion and make sure that it is equal to 45%. Indeed, when the design equations were solved using an initial temperature of `r df$value[1]` `r df$units[1]`, the resulting conversion of A was `r df$value[5]` `r df$units[5]`.
+Solving the reactor design equations using an initial temperature of `r df$value[1]` `r df$units[1]` also yields the final molar amount of $n_A$. One way to check the results is to use that value to calculate the conversion and make sure that it is equal to 45%. Indeed, when the design equations were solved using an initial temperature of `r df$value[1]` `r df$units[1]`, the resulting conversion of A was 45%.
 
 When two reactions are taking place, it is quite common for the product of one reaction to be desired and the producs of the other reaction to be undesired. That raises the question, "what can a reaction engineer do to change the selectivity?" There isn't a single, universal answer to that question. However, an examination of the rate expressions and perhaps a quick qualitative analysis can suggest answers for a given system. Two primary ways to affect selectivity are by altering the compositon of the system or by altering the temperature. Of course, changing either of these parameters will affect all of the reactor outputs.
 
 Considering the two reactions in this example, the system has an excess of reagent B. The rate of reaction (1) is proportional to both the concentration of reagent A and the concentration of reagent B. With excess B present, the rate will not decrease as rapidly as it would have otherwise. This improves the selectivity for X over Z. An engineer might perform simulations varying the initial concentration of B to see how it affects the selectivity as well as the conversion and selectivity.
 
-The rate expressions show that the activation energy for reaction (2) is greater than that for reaction (1). That means that reaction (2) is more sensitive to temperature than reaction (1). This suggest that another way to increase the selectivity for X over Z would be to lower the temperature. Lowering the temperature will lower both rates. As a consequence, while the selectivity should increase, either the conversion will decrease if the reaction time remains 30 min or the reaction time will increase if the conversion remains 45%. Again, simulation can be used to determine the magnitude of the changes. Here, additional simulation shows that if the intitial temperature is reduced to `r df$value[5]` `r df$units[5]`, keeping the conversion at 45%, the selectivity will increase to `r df$value[6]` `r df$units[6]`, but the reaction time will increase to `r df$value[7]` `r df$units[7]`. Given economic data and other operating constraints, an engineer could optimize the performance of this reactor through simulation of this kind.
+The rate expressions show that the activation energy for reaction (2) is greater than that for reaction (1). That means that reaction (2) is more sensitive to temperature than reaction (1). This suggest that another way to increase the selectivity for X over Z would be to lower the temperature. Lowering the temperature will lower both rates, but being more sensitive to temperature, the rate of reaction (2) will be lowered by more than that of reaction (1). As a consequence, while the selectivity should increase, either the conversion will decrease if the reaction time remains 30 min or the reaction time will increase if the conversion remains 45%. Again, simulation can be used to determine the magnitude of the changes. Here, additional simulation shows that if the intitial temperature is reduced to `r df$value[5]` `r df$units[5]`, keeping the conversion at 45%, the selectivity will increase to `r df$value[6]` `r df$units[6]`, but the reaction time will increase to `r df$value[7]` `r df$units[7]`. Given economic data and other operating constraints, an engineer could optimize the performance of this reactor through simulation of this kind.
 
 :::{.callout-note collapse="false"}
 ## Note
@@ -697,14 +715,16 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 
 ### Maximum Intermediate Yield in Series Reactions {#sec-example_9_6_3}
 
-{{< include problem_statements/reb_9_6_3.qmd >}}
+{{< include examples/reb_9_6_3/narrative.qmd >}}
+
+{{< include examples/reb_9_6_3/equations.qmd >}}
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This assignment describes a single BSTR and no other reactors, heat exchangers, or stream mixing/splitting points. It describes the reactor, its operation, and the reactions taking place, including the rate expressions. It asks me to find a reaction time to maximize yield. From these characteristics, I know that this is an isolated reactor modeling assignment. I'll begin by summarizing the assignment. I'll use appropriate variable symbols to represent the given quantities and the quantities of interest. A batch reactor is being used, so I'll use a subscripted "0" to denote initial values and a subscripted "f" to denote final values.
+This assignment describes a single BSTR and no other reactors, heat exchangers, or stream mixing/splitting points. It describes the reactor, its operation, and the reactions taking place, including the rate expressions. It asks me to find a reaction time to maximize yield. From these characteristics, I know that this is an isolated reactor modeling assignment. I'll begin by summarizing the assignment. I'll use appropriate variable symbols to represent the given quantities and the quantities of interest. A batch reactor is being used, so I'll use a subscripted "0" to denote initial values and a subscripted "f" to denote final values. I'll let $t_{opt}$ denote the reaction time that maximizes the yield.
 
 :::
 
@@ -714,7 +734,7 @@ This assignment describes a single BSTR and no other reactors, heat exchangers, 
 
 **Given and Known Constants**: $P_{A,0}$ = 1 atm, $P_{B,0}$ = 2 atm, $T_0$ = 25 °C, $V$ = 2 L, $A$ = 600 cm^2^, $U$ = 0.6 cal cm^-2^ min^-1^ K^-1^, $T_{ex}$ = 30 °C, $k_{0,1}$ =  3.34 x 10^9^ mol cm^-3^ min^-1^ atm^-2^, $k_{0,2}$ = 4.99 x 10^9^ mol cm^-3^ min^-1^ atm^-2^, $E_1$ = 20.5 kcal mol^-1^, $E_2$ = 21.8 kcal mol^-1^, $\Delta H_1$ = -6,300 cal mol^-1^, $\Delta H_2$ = -6,900 cal mol^-1^, $\hat C_{p,A}$ = 7.4 cal mol^-1^ K^-1^, $\hat C_{p,B}$ = 8.6 cal mol^-1^ K^-1^, $\hat C_{p,D}$ = 10.7 cal mol^-1^ K^-1^, $\hat C_{p,Z}$ = 5.2 cal mol^-1^ K^-1^, $\hat C_{p,U}$ = 10.3 cal mol^-1^ K^-1^, and $R$ = 1.987 cal mol^-1^ K^-1^ = 82.057 cm^3^ atm mol^-1^ K^-1^.
 
-**Quantities of Interest**: $t_f = \underset{t}{\arg\max} \left(Y_{D/A}\right)$,$Y_{D/A}\Big\vert_{t_f}$, and $f_A\Big\vert_{t_f}$.
+**Quantities of Interest**: $t_{opt} = \underset{t}{\arg\max} \left(Y_{D/A}\right)$, $Y_{D/A}\Big\vert_{t_{opt}}$, and $f_A\Big\vert_{t_{opt}}$.
 
 #### Mathematical Formulation of the Solution
 
@@ -801,58 +821,6 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I now have 7 IVODEs with 7 dependent variables. When I solve them numerically I am going to need to calculate the values of each of the derivatives appearing in them. I need to convert them into derivative expressions. I will use the procedure described in @sec-mass_matrix.
-
-:::
-
-The IVODEs, equations (1) through (7) can be written as the matrix equation, (12), with the mass matrix defined as shown in equation (13). The IVODEs can then be written as derivative expressions, equation (14).
-
-$$
-\boldsymbol{M}\frac{d}{dt} \begin{bmatrix} n_A \\ n_B \\ n_D \\ n_Z \\ n_U \\ T \\ P \end{bmatrix} = \begin{bmatrix} -r_1V \\ \left(-r_1 - r_2\right)V \\ \left(r_1 - r_2\right)V \\ \left(r_1 + r_2\right)V \\ r_2V \\ \dot{Q} -\left(r_1\Delta H_1 + r_2 \Delta H_2\right)V \\ 0 \end{bmatrix}\tag{12}
-$$
-
-$$
-\boldsymbol{M} = \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & \displaystyle\sum_i\left(n_i \hat{C}_{p,i} \right) & -V \\ RT & RT & RT & RT & RT & R\displaystyle\sum_i n_i & -V  \end{bmatrix} \tag{13}
-$$
-
-$$
-\begin{bmatrix} \frac{dn_A}{dt} \\ \frac{n_B}{dt} \\ \frac{n_D}{dt} \\ \frac{n_Z}{dt} \\ \frac{dn_U}{dt} \\ \frac{T}{dt} \\ \frac{P}{dt} \end{bmatrix} = \boldsymbol{M}^{-1} \begin{bmatrix} -r_1V \\ \left(-r_1 - r_2\right)V \\ \left(r_1 - r_2\right)V \\ \left(r_1 + r_2\right)V \\ r_2V \\ \dot{Q} -\left(r_1\Delta H_1 + r_2 \Delta H_2\right)V \\ 0 \end{bmatrix} \tag{14}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-Writing the IVODEs in the form of derivative expressions will facilitate evaluating the derivatives given known constants, the independent variable, $t$, and the dependent variables, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$ and $P$. However, before I can evaluate the derivatives, I must calculate any other variables and constants appearing in them. Looking at the column vector on the right side of equation (14), I see that I will need to calculate $r_1$, $r_2$, and $\dot{Q}$.
-
-The rate expressions, equations (3) and (4), can be used to calculate the rates, but those equations introduce the additional variables, $P_A$, $P_B$, and $P_D$. Those partial pressures can be calculated using the ideal gas law.
-
-The rate of heat transfer, $\dot{Q}$, can be calculated using the known heat transfer coefficient and heat transfer area.
-
-:::
-
-**Ancillary Equations for Solving the Reactor Design Equations**
-
-The rates, $r_1$ and $r_2$, can be calculated using equations (3) and (4). The partial pressures appearing in the rate expressions can be calculated using equations (15) through (17), and the rate of heat exchange can be calculted using equation (18)
-
-$$
-P_A = \frac{n_ART}{V} \tag{15}
-$$
-
-$$
-P_B = \frac{n_BRT}{V} \tag{16}
-$$
-
-$$
-P_D = \frac{n_DRT}{V} \tag{17}
-$$
-
-$$
-\dot Q = UA\left( T_{ex} - T \right) \tag{18}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
 The reactor design equations are IVODEs, so initial values and a stopping criterion are needed in order to solve them. I can define $t=0$ to be instant that the A and B are added to the reactor. The other initial values are then the molar amounts of each reagent, the temperature, and the pressure at that time. The assignment states that the BSTR is charged with only A and B, so the initial molar amounts of D, Z, and U are zero.
 
 The final value of the time is the time that maximizes the yield of D from A. I the assignment summary I used $t_f$ to represent that time.
@@ -860,8 +828,6 @@ The final value of the time is the time that maximizes the yield of D from A. I 
 :::
 
 **Initial Values and Stopping Criterion**
-
-The initial values and stopping criterion for solving equations (5) through (11) are presented in @tbl-example_9_6_3_initial_values.
 
 | Variable | Initial Value | Stopping Criterion |
 |:-------|:-------:|:-------:|
@@ -879,120 +845,187 @@ The initial values and stopping criterion for solving equations (5) through (11)
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Before the IVODEs can be solved, the initial and final values need to be calculated. The initial molar amounts of A and B can be calculated from the initial partial pressures, reactor volume, and ideal gas law. The initial total pressure is simply the sum of the initial partial pressures.
+I now have 7 IVODEs with 7 dependent variables. In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_9_6_3_initial_values.
 
-There are a few different ways to calculate $t_f$. I will simply choose a large time. I can then solve the IVODEs for $n_A\left(t\right)$, $n_B\left(t\right)$, $n_D\left(t\right)$, $n_Z\left(t\right)$, $n_U\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$. From those results, I can calculate the yield as a function of time, plot it, and identify the time at which it is maximized.
+I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. To begin, I need to write the IVODEs in the form of derivative expressions. I'll use the procedure described in @sec-mass_matrix.
+
+I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions. That is, I'll need to calculate any other quantities that appear in the vector, $\underline{g}$. Looking at that vector, I see that I will need to calculate $r_1$, $r_2$, and $\dot{Q}$.
+
+The rate expressions, equations (3) and (4), can be used to calculate the rates, but those equations introduce the additional variables, $P_A$, $P_B$, and $P_D$. Those partial pressures can be calculated using the ideal gas law.
+
+The rate of heat transfer, $\dot{Q}$, can be calculated using the known heat transfer coefficient and heat transfer area.
+
+:::
+
+**Ancillary Equations for Solving the Reactor Design Equations**
+
+The IVODEs, equations (1) through (7) can be written as the matrix equation, (12), with the mass matrix defined as shown in equation (13) and with the vector, $\underline{g}$, defined as shown in equation (14). The IVODEs can then be written as derivative expressions, equation (15).
+
+$$
+\boldsymbol{M}\frac{d}{dt} \begin{bmatrix} n_A \\ n_B \\ n_D \\ n_Z \\ n_U \\ T \\ P \end{bmatrix} = \underline{g}\tag{12}
+$$
+
+$$
+\boldsymbol{M} = \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & \displaystyle\sum_i\left(n_i \hat{C}_{p,i} \right) & -V \\ RT & RT & RT & RT & RT & R\displaystyle\sum_i n_i & -V  \end{bmatrix} \tag{13}
+$$
+
+$$
+\underline{g} = \begin{bmatrix} -r_1V \\ \left(-r_1 - r_2\right)V \\ \left(r_1 - r_2\right)V \\ \left(r_1 + r_2\right)V \\ r_2V \\ \dot{Q} -\left(r_1\Delta H_1 + r_2 \Delta H_2\right)V \\ 0 \end{bmatrix}\tag{14}
+$$
+
+$$
+\begin{bmatrix} \frac{dn_A}{dt} \\ \frac{n_B}{dt} \\ \frac{n_D}{dt} \\ \frac{n_Z}{dt} \\ \frac{dn_U}{dt} \\ \frac{T}{dt} \\ \frac{P}{dt} \end{bmatrix} = \boldsymbol{M}^{-1} \underline{g} \tag{15}
+$$
+
+The rates, $r_1$ and $r_2$, can be calculated using equations (3) and (4). The partial pressures appearing in the rate expressions can be calculated using equations (16) through (18), and the rate of heat exchange can be calculted using equation (19)
+
+$$
+P_A = \frac{n_ART}{V} \tag{16}
+$$
+
+$$
+P_B = \frac{n_BRT}{V} \tag{17}
+$$
+
+$$
+P_D = \frac{n_DRT}{V} \tag{18}
+$$
+
+$$
+\dot Q = UA\left( T_{ex} - T \right) \tag{19}
+$$
+
+
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_9_6_3_initial_values. The initial molar amounts of A and B can be calculated from the initial partial pressures, reactor volume, and ideal gas law. The initial total pressure is simply the sum of the initial partial pressures.
+
+There are a few different ways to assign a value to $t_f$. I will simply choose a large time. I can then solve the IVODEs for $n_A\left(t\right)$, $n_B\left(t\right)$, $n_D\left(t\right)$, $n_Z\left(t\right)$, $n_U\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$. From those results, I can calculate the yield as a function of time, plot it, and identify the time at which it is maximized. If the plot doesn't have a maximum, I'll have to solve the design equations again, using a larger value of $t_f$.
 
 :::
 
 **Ancillary Equations for Calculating the Initial and Final Values**
 
-The initial molar amounts of A and B can be calculated using equations (19) and (20), and the initial total pressure can be calculated using equation (21).
+The initial molar amounts of A and B can be calculated using equations (20) and (21), and the initial total pressure can be calculated using equation (22). To facilitate finding $t_{opt}$ as described below, $t_f$ will be varied over a range of values.
 
 $$
-n_{A,0} = \frac{P_{A,0}V}{RT} \tag{19}
-$$
-
-$$
-n_{B,0} = \frac{P_{B,0}V}{RT} \tag{20}
+n_{A,0} = \frac{P_{A,0}V}{RT} \tag{20}
 $$
 
 $$
-P_0 = P_{A,0} + P_{B,0} \tag{21}
+n_{B,0} = \frac{P_{B,0}V}{RT} \tag{21}
 $$
 
-To find $t_f = \underset{t}{\arg\max} \left(Y_{D/A}\right)$, it will initially be set to a large value. Equations (5) through (11) can then be solved numerically to get corresponding sets of values of $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U\$, $T$, and $P$. The yield of D from A can then be calculated at each time using equation (22). The time at which $Y_{D/A}$ is maximized is equal to $t_f$. If $Y_{D/A}$ does not pass through a maximum, $t_f$ must be set to a larger value and the process repeated.
-
 $$
-Y_{D/A} = \frac{n_D}{n_{A,0}}\tag{22}
+P_0 = P_{A,0} + P_{B,0} \tag{22}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-At this point the BSTR design equations have been solved and the quantities of interest, $t_f$ and $Y_{D/A}\Big\vert_{t_f}$ have been calculated. All that remains is to calculate the conversion of A at $t_f$. That can be accomplished using the defining equation for conversion in a closed system, @eq-conversion_def_closed.
+At this point, given a value for $t_f$, the BSTR design equations can be solved for $n_A\left(t\right)$, $n_B\left(t\right)$, $n_D\left(t\right)$, $n_Z\left(t\right)$, $n_U\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$. The final values can be used to calculate the yield for each value of $t_f$, from which the maximum can be identified. Then the conversion at that time can be calculated using the defining equation for conversion in a closed system, @eq-conversion_def_closed.
+
+If the yield does not pass through a maximum, the range of values of $t_f$ will need to be increased and the calculations repeated as necessary until the yield does pass through a maximum.
 
 :::
 
 **Ancillary Equations for Calculating Other Quantities of Interest**
 
-Calculating the final value, $t_f$, as described above will also yield the values of $n_A$, $n_B$, $n_D$, $n_Z$, $n_U\$, $T$, $P$, and $Y_{D/A}$ at $t=t_f$. The only other quantity of interest is the conversion, which can be calculated using equation (23).
+Using the information provided above, the design equations can be solved for a range of values of $t_f$. The results for each value of $t_f$ can be used to calculate the yield, equation (23). The optimum reaction time can then be identified as the final time that maximizes the yield, equation (24). The corresponding yield and conversion can be calculated using equations (25) and (26).
 
 $$
-f_A=\frac{n_{A,0}-n_A}{n_{A,0}} \tag{23}
+Y_{D/A}\big\vert_{t_f} = \frac{n_D\big\vert_{t_f}}{n_{A,0}}\tag{23}
 $$
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
+$$
+t_{opt} = \underset{t_f}{\arg\max} \left(Y_{D/A}\big\vert_{t_f}\right)\tag{24}
+$$
 
-During the numerical solution of the IVODEs and completion of the assignment it will be necessary to evaluate the derivatives, calculate the initial and final values, and calculate the quantities of interest. I will summarize each of those calculations to complete the mathematical formulation of the solution.
+$$
+Y_{D/A}\Big\vert_{t_{opt}} = \underset{t_f}{\max} \left(Y_{D/A}\big\vert_{t_f}\right) \tag{25}
+$$
 
-:::
+$$
+f_A\Big\vert_{t_{opt}}=\frac{n_{A,0}-n_A\Big\vert_{t_{opt}}}{n_{A,0}} \tag{26}
+$$
 
 **Calculations Summary**
 
-1. Substitute the given and known constants into all equations.
-2. To evaluate the derivatives knowing $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$,
-	a. calculate $P_A$, $P_B$, $P_D$, and $\dot{Q}$ using equations (15) through (18),
-	b. calculate $r_1$ and $r_2$ using equations (3) and (4),
-	c. calculate $\boldsymbol{M}$ using equation (13),
-	d. calculate the column vector on the right side of equation (14), and
-	e. calculate the values of the derivatives using equation (14).
-3. To calculate the initial values, $n_{A,0}$, $n_{B,0}$, and $P_0$, use equations (19) - (21).
-4. To calculate the quantities of interest, $Y_{D/A}\Big\vert_{t_f}$, and $f_A\Big\vert_{t_f}$, knowing $t_f$ and the values of $n_A$ and $n_D$ at $t_f$ use equations (22) and (23).
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the derivatives
+	a. $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ will be available.
+	b. Calculate $P_A$, $P_B$, $P_D$, and $\dot{Q}$ using equations (16) through (19).
+	c. Calculate $r_1$ and $r_2$ using equations (3) and (4).
+	d. calculate $\boldsymbol{M}$ and $\underline{g}$ using equations (13) and (14).
+	e. Calculate the values of the derivatives using equation (15).
+3. When it is necessary to calculate the initial and final values in @tbl-example_9_6_3_initial_values
+	a. $t_f$ will be available.
+	b. $T_0$ is a known constant.
+	c. Calculate $n_{A,0}$, $n_{B,0}$, and $P_0$ using equations (20) - (22).
+4. When it is necessary to calculate the yield, $Y_{D/A}\big\vert_{t_f}$
+	a. The values of $n_D\big\vert_{t=t_f}$ and $n_{A,0}$ will be available.
+	b. Calculate $Y_{D/A}\Big\vert_{t_f}$ using equation (23).
+5. When it is necessary to calculate $t_{opt}$, $Y_{D/A}\Big\vert_{t_{opt}}$, and $f_A\Big\vert_{t_{opt}}$
+	a. Sets of corresponding values of $t_f$ and $Y_{D/A}\Big\vert_{t_f}$ will be available.
+	b. Calculate $t_{opt}$, $Y_{D/A}\Big\vert_{t_{opt}}$, and $f_A\Big\vert_{t_{opt}}$ using equations (24), (25), and (26).
 
 #### Numerical implementation of the Solution
+
 1. Make the given and known constants available for use in all functions.
 2. Write a derivatives function that
 	a. receives $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ as arguments and
 	b. evaluates and returns the values of the derivatives as described in step 2 of the calculations summary.
 3. Write a reactor model function that
-	a. receives $t_f$ as an argument
+	a. receives a large value of $t_f$ as an argument,
 	b. calculates $n_{A,0}$, $n_{B,0}$, and $P_0$ as described in step 3 of the calculations summary
 	c. calculates $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ by calling an IVODE solver using the following arguments
 		i. the initial values and stopping criterion in @tbl-example_9_6_3_initial_values and
-		ii. the name of the derivatives function from step 2.
+		ii. the name of the derivatives function from step 2 above.
 	d. checks that the solver successfully solved the IVODEs, and
-	e. returns sets of corresponding values of $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U\$, $T$, and $P$ that span the range from their initial values to their values at the time the large value of $t$ from step 3b is reached.
+	e. returns the results obtained from the IVODE solver.
 4. Perform the analysis by
-	a choosing a range of reaction times, $t_f$
-	a. calling the reactor model function in step 3 to get sets of corresponding values of $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U\$, $T$, and $P$ for each $t_f$
-	b. calculating $Y_{D/A}$ corresponding to each $t_f$ using equation (19).
-	c. identifying $t_f$ where $Y_{D/A}$ is maximized.
-	d. calling the reactor model function in step 3 passing that $t_f$ as an argument
-	e. calculating $Y_{D/A}\Big\vert_{t_f}$, and $f_A\Big\vert_{t_f}$ as described in step 4 of the calculations summary.
+	a. choosing a range of reaction times, $t_f$,
+	b. calling the reactor model function in step 3 to get sets of corresponding values of $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U\$, $T$, and $P$ for each $t_f$
+	c. calculating $Y_{D/A}\big\vert_{t=t_f}$ corresponding to each $t_f$ as described in step 4 of the calculations summary.
+	d. calculating $t_{opt}$, $Y_{D/A}\Big\vert_{t_{opt}}$, and $f_A\Big\vert_{t_{opt}}$ as described in step 5 of the calculations summary.
 
 #### Results and Discussion
 
 ```{r}
 #| echo: false
 #| output: false
-df <- read.csv("results/reb_9_6_3_results.csv")
+df <- read.csv("examples/reb_9_6_3/results.csv")
 df <- fmt_tibble_col(df, 2, 3, 2, 1)
 ```
 
-The calculations were performed as described above. The final value of $t$ was set to 60 min (step 3b of the numerical implementation), the design equations were solved, and the yield was calculated as a function of $t$ The results are shown in @fig-example_9_6_3_yield_plot. The maximum yield, `r df$value[2]` `r df$units[2]`, occurs at a reaction time of `r df$value[1]` `r df$units[1]`. The conversion of A at that reaction time is `r df$value[3]` `r df$units[3]`.
+The calculations were performed as described above using values of $t_f$ between 1 and 60 min. @fig-example_9_6_3_yield_plot shows the variation of the yield as a function of the reaction time. The maximum yield, `r df$value[2]` `r df$units[2]`, occurs at a reaction time of `r df$value[1]` `r df$units[1]`. The conversion of A at that reaction time is `r df$value[3]` `r df$units[3]`.
 
-![Yield of D as the reaction time varies.](results/reb_9_6_3_yield_vs_t.png){#fig-example_9_6_3_yield_plot width="80%"}
+![Yield of D as the reaction time varies.](examples/reb_9_6_3/yield_vs_t.png){#fig-example_9_6_3_yield_plot width="80%"}
 
 Reactions (1) and (2) constitute a series-parallel reaction network. The desired product, D, is an intermediate product. It is produced in reaction (1) and consumed in reaction (2). Assuming that the temperature affects the two reactions equally, the yield of an intermediate product is expected to pass through a maximum as the reaction time increases as seen in @fig-example_9_6_3_yield_plot. This can be predicted using a quantitative analysis
 
 **Qualitative Analysis**
 
-The reason for the maximum is qualitatively easy to understand as long as the effect of temperature is comparable for the two reactions. At the start of the reaction, the concentrations of A and B will be large and those of D, U, and Z will be zero. The rate of reaction (1) will be positive while that for reaction (2) will be zero. Consequently, during a very brief interval at the start of the reactive process, the concentrations of A and B will decrease and the concentrations of D and Z will increase.
+The reason for the maximum is easy to understand as long as the effect of temperature is comparable for the two reactions. At the start of the reaction, the concentrations of A and B will be large and those of D, U, and Z will be zero. The rate of reaction (1) will be positive while that for reaction (2) will be zero. Consequently, during a very brief interval at the start of the reactive process, the concentrations of A and B will decrease and the concentrations of D and Z will increase.
 
-During the next brief interval in time, the rate of reaction (1) will be smaller because the concentrations of A and B will be smaller, and the rate of reaction (2) no longer will equal zero because a small amount D will be present leading to a positive rate. The concentrations of A and B will again decrease and the concentration of Z will again increase. It can be expected that the rate of reaction (1) will be greater than the rate of reaction (2) because only a small concentration of D will be present, so the concentration of D will again increase, as can be seen in @fig-example_9_6_3_yield_plot. 
+During the next brief interval in time, the rate of reaction (1) will be smaller because the concentrations of A and B will be smaller, and the rate of reaction (2) no longer will equal zero because a small amount D will be present leading to a positive rate. The concentrations of A and B will again decrease and the concentration of Z will again increase. It can be expected that the rate of reaction (1) will be greater than the rate of reaction (2) because only a small concentration of D will be present, so the concentration of D, and its yield, will again increase, as can be seen in @fig-example_9_6_3_yield_plot.
 
-For as long as the rate of reaction (2) remains smaller than the rate of reaction (1), the amount of D will be increasing, but its rate of increase will get smaller and smaller. The reason for this is that the concentrations of A and B will be decreasing, and hence the rate of reaction (1) will be decreasing. At the same time, the rate of reaction (2) will be increasing as the concentration of D builds. This can be seen in @fig-example_9_6_3_yield_plot where the curvature of the yield plot is initially concave downward,
+For as long as the rate of reaction (2) remains smaller than the rate of reaction (1), the amount of D will be increasing, but its rate of increase will get smaller and smaller. The reason for this is that the concentrations of A and B will be decreasing, and hence the rate of generation of D by reaction (1) will be decreasing. At the same time, the rate of consumption of D by reaction (2) will be increasing as the concentration of D builds. This can be seen in @fig-example_9_6_3_yield_plot where the curvature of the yield plot is initially concave downward,
 
 Eventually, the rate of reaction (2) will become equal to the rate of reaction (1). For that instant in time, the yield of D will not be changing. This corresponds to the maximum in @fig-example_9_6_3_yield_plot. At times beyond the maximum the rate of reaction (1) is less than the rate of reaction (2), so the concentration of D decreases. As the concentrations of both reactants, A and D, continue to decrease, both reactions (1) and (2) become slower and slower. This can be seen at larger reaction times in @fig-example_9_6_3_yield_plot where the curve is concave upward. Eventually, at very large reaction time, the rates will equal zero and all of the D will have been consumed.
 
 In this example series-parallel reactions are occurring where the desired product is produced in one reaction and consumed by another. In this situation it is often found that the reaction time has the greatest effect upon the amount of the desired product, as was the case here. Other process parameters such as the initial composition or temperature will also affect the results, but for series and series-parallel reactions their effect on the selectivity is often weaker. Temperature can be an effective parameter for adjusting the selectivity of multiple reactions if the activation energies of the reactions differ significantly. That was the case in [Example -@sec-example_9_6_3], and indeed, the discussion following the example showed that changing the temperature did have a significant effect. 
 
 :::{.callout-note collapse="false"}
-## Note
+## Notes
 
-In the solution above, the mass matrix was used to write the IVODEs in the form of derivatives expressions. Two other numerical approaches are possible. One is to generate 7 derivative expressions by algebraic manipulation of equations (5) through (11). The other is to solve equation (11) for $\frac{dP}{dt}$ and substitute the result into equation (10). This reduces the IVODEs to a set of six equations containing six dependent variables: $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, and $T$.
+1. In the solution above, the mass matrix was used to write the IVODEs in the form of seven derivatives expressions. An equivalent approach is to generate the 7 derivative expressions by algebraic manipulation of equations (5) through (11).
+
+2. Yet another approach is to solve equation (11) for $\frac{dP}{dt}$ and substitute the result into equation (10). This reduces the IVODEs to a set of six equations containing six dependent variables: $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, and $T$. Those six IVODEs can then be written as derivative expressions either by algebraic manipulation or using a mass matrix.
+
+3. Finally, the numerical implementation described here solved the IVODEs many times using different values of the optimization variable, $t_f$. That approach can be used for any optimization variable, and it must be used when the optimization variables is neither the independent variable nor one of the dependent variables. (For example, if the yield had been optimized with respect to the heat transfer area, the approach used here would have to be used.) However, if the optimization variable is the independent variable or one of the dependent variables, the equations only need to be solved once using a large value of the optimization variable. For example, here the design equations only needed to be solved once using a large value of $t_f$. The yield could then have been calculated as a function of time and the maximum identified.
 
 :::
 
