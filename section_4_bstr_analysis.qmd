@@ -1038,7 +1038,11 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 
 ### Optimization of Net Production Rate {#sec-example_9_6_4}
 
-{{< include problem_statements/reb_9_6_4.qmd >}}
+{{< include examples/reb_9_6_4/narrative.qmd >}}
+
+{{< include examples/reb_9_6_4/equations.qmd >}}
+
+{{< include examples/reb_9_6_4/narrative_2.qmd >}}
 
 ---
 
@@ -1053,7 +1057,7 @@ This reactor has both a coil for heating and a jacket for cooling. I'll use a su
 
 #### Assignment Summary
 
-**Given and Known Constants**: $k_{0,1}$ = 2.59 x 10^9^ min^-1^, $E_1$ = 16.5 kcal mol^-1^, $\Delta H_1$ = -22,200 cal mol^-1^, $C_{A,0}$ = 2 M, $T_0$ = 23 °C, $\breve{C}_p$ = 440 cal L^-1^ K^-1^, $V$ = 4.0 L, $V_{ex}$ = 0.5 L, $A_{ex}$ = 0.6 ft^2^, $U_{ex}$ = 1.13 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $T_{ex,in}$ = 20 °C, $\rho_{ex}$ = 1 g cm^-3^, $\tilde{C}_{p,ex}$ = 1 cal g^-1^ K^-1^, $U_{coil}$ = 3.8 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $A_{coil}$ =  0.23 ft^2^, $T_{coil}$ = 120 °C, $T_{ex,0}$ = 23 °C, $T_1$ = 50 °C, $T_f$ = 25 °C, $t_{turn}$ = 25 min.
+**Given and Known Constants**: $k_{0,1}$ = 2.59 x 10^9^ min^-1^, $E_1$ = 16.5 kcal mol^-1^, $\Delta H_1$ = -22,200 cal mol^-1^, $C_{A,0}$ = 2 M, $T_0$ = 23 °C, $\breve{C}_p$ = 440 cal L^-1^ K^-1^, $V$ = 4.0 L, $V_{ex}$ = 0.5 L, $A_{ex}$ = 0.6 ft^2^, $U_{ex}$ = 1.13 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $T_{ex,in}$ = 20 °C, $\rho_{ex}$ = 1 g cm^-3^, $\tilde{C}_{p,ex}$ = 1 cal g^-1^ K^-1^, $U_{coil}$ = 3.8 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $A_{coil}$ =  0.23 ft^2^, $T_{coil}$ = 120 °C, $T_{ex,0}$ = 23 °C, $T_1$ = 50 °C, $T_f$ = 25 °C, $t_{turn}$ = 25 min, and $R$ = 1.987 cal mol^-1^ K^-1^.
 
 **Reactor**: heated/cooled BSTR with a 2-stage operational protocol.
 
@@ -1088,7 +1092,7 @@ $$
 
 The steam in the coil exchanges latent heat, so its temperature is known and constant. As a consequence, the mole balances, energy balance on the reacting fluid and energy balance on the cooling water can be solved independently of the energy balance on the steam. The problem does not ask any questions about the steam flow rate or how much of it condenses, so an energy balance on the steam is not needed.
 
-Momentum balances are not used for stirred tank reactors, so the full set of reactor design equations consists of mole balances on A and Z, an energy balance on the reacting fluid and an energy balance on the cooling water. The mole balances are the same for both stages of operation, but both energy balances change from one stage to the other.
+Momentum balances are not used for stirred tank reactors, so the full set of reactor design equations consists of mole balances on A and Z, an energy balance on the reacting fluid and an energy balance on the cooling water. The mole balances are the same for both stages of operation, but both energy balances change from one stage to the other. For each stage there are four IVODEs and four dependent variables, so it is not necessary to add an IVODE or eliminate a dependent variable.
 
 :::
 
@@ -1123,15 +1127,48 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The reactor design equations for each stage consist of a set of four IVODEs. The independent variable is $t$ and the four dependent variables are $n_A$, $n_Z$, $T$, and $T_{ex}$. Since there are four equations and four dependent variables, it isn't necessary to add an equation or eliminate a dependent variable. The IVODEs are already written as derivative expressions, so no additional manipulation is needed.
+The BSTR design equations are IVODEs, so initial values and a stopping criterion are needed to solve them. For this system, two sets of initial values and stopping criteria will be needed because the IVODEs need to be solved for each of the two operational stages.
 
-The reactor design equations for each stage will be solved separately. In order to do so, it will be necessary to evaluate the derivatives given values of the independent and dependent variables. Before that can take place, it will be necessary to calculate any unknown constant and variables other than the independent and dependent variables.
+The instant the solution is added to the reactor can be defined as $t=0$. This marks the start of the heating phase. The molar amounts of A, $n_{A,0}$, and Z, 0.0 (only A is present initially), the reacting fluid temperature, $T_0$, and the cooling water temperature, $T_{ex,0}$, at that time are then the initial values for the analysis of the heating phase. It ends when the reacting fluid reaches $T_1$.
+
+The cooling phase begins the instant the heating phase ends, so the initial values for the cooling phase are the final values from the heating phase. The cooling phase ends when the reacting fluid cools down to $T_f$, so that is the stopping criterion for the cooling phase.
+
+:::
+
+**Initial Values and Stopping Criterion**
+
+| Variable | Initial Value | Stopping Criterion |
+|:-------|:-------:|:-------:|
+| $t$ | $0$ | |
+| $n_A$ | $n_{A,0}$ | |
+| $n_Z$ | 0 | |
+| $T$ | $T_0$ | $T_1$ |
+| $T_{ex}$ | $T_{ex,0}$ | |
+  
+: Initial values and stopping criterion for solving the design equations, (3) through (6), for the heating stage of the operating protocol. {#tbl-example_9_6_4_heating_initial_values}
+
+| Variable | Initial Value | Stopping Criterion |
+|:-------|:-------:|:-------:|
+| $t$ | $t_1$ | |
+| $n_A$ | $n_{A,1}$ | |
+| $n_Z$ | $n_{Z,1}$ | |
+| $T$ | $T_1$ | $T_f$ |
+| $T_{ex}$ | $T_{ex,1}$ | |
+  
+: Initial values and stopping criterion for solving the design equations, (3), (4), (7) and (8), for the cooling stage of the operating protocol. {#tbl-example_9_6_4_cooling_initial_values}
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the IVODEs numerically I'll need to do four things: calculate the values of the derivatives for each of the two stages at the start of each integration step, calculate all of the initial and final values in @tbl-example_9_6_4_heating_initial_values, and calculate all of the initial and final values in @tbl-example_9_6_4_cooling_initial_values.
+
+I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. The IVODEs are written in the form of derivative expressions. I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
 
 Examination of the reactor design equations for this system shows that $\dot{Q}_{coil}$ needs to be calculated for the first stage, $\dot{m}_{ex}$ needs to be calculated for the second stage, and $r_1$ and $\dot{Q}_{ex}$ need to be calculated for both stages.
 
 The heat exchange rates can be calculated using the known heat transfer coefficients and heat transfer areas, @eq-heat-trans-rate. The reaction rate can be calculated using the given rate expression, but doing so introduces two more variables, $k_1$ and $C_A$. The rate coefficient can be calculated using the Arrhenius expression, @eq-arrhenius, since the pre-expoenetial factor and activation energy are known. The concentration of reagent A can be calculated using the defining equation for concentration in a closed system, @eq-concentration_closed.
 
-The coolant flow rate is not known, but it is known that it is the flow rate that results in the maximum net rate of production of Z. There are a few approaches to making use of that information to calculate $\dot{m}_{ex}$, but in all approaches it will be necessary to solve the design equations using different values of $\dot{m}_{ex}$. Those values might be random (a trial and error approach), a chosen range (e. g. for a graphical approach), or they might supplied by a computer minimization function.
+The coolant flow rate is not known, but it is known that it is the flow rate that results in the maximum net rate of production of Z. There are a few approaches to making use of that information to calculate $\dot{m}_{ex}$. I will choose a range of values for $\dot{m}_{ex}$, calculate the net rate associated with each coolant flow rate, and plot the resulting data to find the coolant flow rate that maximizes the rate. As such, I will not need to calculate $\dot{m}_{ex}$ at the time I need to evaluate the derivatives. 
 
 :::
 
@@ -1162,42 +1199,7 @@ The coolant flow rate, $\dot{m}_{ex}$, will be varied to find the maximum net ra
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The BSTR design equations are IVODEs, so initial values and a stopping criterion are needed to solve them. For this system, two sets of initial values and stopping criteria will be needed because the IVODEs need to be solved for each of the two operational stages.
-
-The instant the solution is added to the reactor can be defined as $t=0$. This marks the start of the heating phase. The molar amounts of A, $n_{A,0}$, and Z, 0.0 (only A is present initially), the reacting fluid temperature, $T_0$, and the cooling water temperature, $T_{ex,0}$, at that time are then the initial values for the analysis of the heating phase. It ends when the reacting fluid reaches $T_1$.
-
-The cooling phase begins the instant the heating phase ends, so the initial values for the cooling phase are the final values from the heating phase. The cooling phase ends when the reacting fluid cools down to $T_f$, so that is the stopping criterion for the cooling phase.
-
-:::
-
-**Initial Values and Stopping Criterion**
-
-The initial values and stopping criterion for solving the reactor design equations for the heating phase are presented in @tbl-example_9_6_4_heating_initial_values. If $t_1$, $n_{A,1}$, $n_{Z,1}$, and $T_{ex,1}$ represent the values of $t$, $n_A$, $n_Z$, and $T_{ex}$ at the end of the heating phase, those values are also the initial values for the cooling phase, which ends when $T = T_f$. Thus, the initial values and stopping criterion for the cooling phase are given in @tbl-example_9_6_4_cooling_initial_values
-
-| Variable | Initial Value | Stopping Criterion |
-|:-------|:-------:|:-------:|
-| $t$ | $0$ | |
-| $n_A$ | $n_{A,0}$ | |
-| $n_Z$ | 0 | |
-| $T$ | $T_0$ | $T_1$ |
-| $T_{ex}$ | $T_{ex,0}$ | |
-  
-: Initial values and stopping criterion for solving the design equations for the heating stage of the operating protocol, equations (3) through (6). {#tbl-example_9_6_4_heating_initial_values}
-
-| Variable | Initial Value | Stopping Criterion |
-|:-------|:-------:|:-------:|
-| $t$ | $t_1$ | |
-| $n_A$ | $n_{A,1}$ | |
-| $n_Z$ | $n_{Z,1}$ | |
-| $T$ | $T_1$ | $T_f$ |
-| $T_{ex}$ | $T_{ex,1}$ | |
-  
-: Initial values and stopping criterion for solving the design equations for the cooling stage of the operating protocol, equations (3), (4), (7) and (8).. {#tbl-example_9_6_4_cooling_initial_values}
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-Before IVODEs can be solved numerically, all of the initial and final values must be known. The only unknown value for the first stage of processing is the molar amount of A which can be calculated from the known initial concentration and volume. The IVODEs for the first stage of operation will be solved before the IVODEs for the second stage. Consequently, all of the initial and iinal values for the second stage will be known.
+When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_9_6_4_heating_initial_values and @tbl-example_9_6_4_cooling_initial_values. The only unknown value for the first stage of processing is the molar amount of A which can be calculated from the known initial concentration and volume. The IVODEs for the first stage of operation will be solved before the IVODEs for the second stage. Consequently, all of the initial and final values for the second stage will be known.
 
 :::
 
@@ -1212,13 +1214,13 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-At this point, given a value of $\dot{m}_{ex}$, the design equations can be solved to find corresponding values of $t$, $n_A$, $n_Z$, $T\$, and $T_{ex}$ that span the range from their initial values to their final values. Using the final molar amount of Z, the net rate of production of Z can then be calculated from its definition, @eq-def_net_gen_rate. Similarly, using the molar amount of A, the conversion can be calculated at each time using its definition, @eq-conversion_def_closed. If the calculations are repeated using a range of values of $\dot{m}_{ex}$ that is sufficiently wide that $r_{Z,net}$ passes through a maximum, the maximum net rate and the optimum coolant flow rate can be identified.
+At this point, the design equations for the first stage can be solved to find corresponding sets of values of $t$, $n_A$, $n_Z$, $T\$, and $T_{ex}$ that span the range from their first-stage initial values to their first-stage final values. Then, given a value of $\dot{m}_{ex}$, the design equations for the second stage can be solved to find corresponding sets of values of $t$, $n_A$, $n_Z$, $T\$, and $T_{ex}$ that span the range from their second-stage initial values to their second-stage final values. Using the final molar amount of Z, the net rate of production of Z can then be calculated from its definition, @eq-def_net_gen_rate. Similarly, using the molar amount of A, the conversion can be calculated at each time using its definition, @eq-conversion_def_closed. If the calculations are repeated using a range of values of $\dot{m}_{ex}$ that is sufficiently wide that $r_{Z,net}$ passes through a maximum, the maximum net rate and the optimum coolant flow rate can be identified.
 
 :::
 
 **Ancillary Equations for Calculating the Other Quantities of Interest**
 
-With the information given above, and given a value of $\dot{m}_{ex}$, the design equations can be solved to find corresponding values of $t$, $n_A$, $n_Z$, $T\$, and $T_{ex}$ that span the range from their initial values to their final values. The net rate can be calculated using equation (14), and the conversion can be calculated using equation (15). By solving the design equations using a range of coolant flow rates, the optimum coolant flow rate and the maximum net rate can be identified, equations (16) and (17).
+With the information given above, the design equations for the first stage can be solved. Then, given a value of $\dot{m}_{ex}$, the design equations for the second stage can be solved to find corresponding values of $t$, $n_A$, $n_Z$, $T\$, and $T_{ex}$. The net rate can be calculated using equation (14), and the conversion can be calculated using equation (15). By solving the design equations using a range of coolant flow rates, the optimum coolant flow rate can be identified, equations (16).
 
 $$
 r_{Z,net} = \frac{n_Z\big\vert_{t_f}}{t_f + t_{turn}} \tag{14}
@@ -1232,81 +1234,79 @@ $$
 \dot{m}_{ex,opt} = \underset{\dot{m}_{ex}}{\arg\max}\left( r_{Z,net} \right) \tag{16}
 $$
 
-$$
-r_{Z,net,max} = \underset{\dot{m}_{ex}}{\max}\left( r_{Z,net} \right) \tag{17}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-When the IVODEs are solved numerically it will be necessary to evaluate the derivatives, calculate the initial and final values, and calculate the quantities of interest using the equations above. The last step in formulating the solution mathematically is to describe how to do those things using the equations presented earlier.
-
-:::
-
 **Calculations Summary**
 
-1. Substitute the given and known constants into all equations.
-2. To evaluate the derivatives for the first stage of operation knowing $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$
-	a. calculate $\dot{Q}_{coil}$, $\dot{Q}_{ex}$, $k_1$, and $C_A$ using equations (9) through (12),
-	b. calculate $r_1$ using equation (2), and
-	c. evaluate the derivatives using equations (3) - (6).
-3. To evaluate the derivatives for the second stage of operation knowing $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$
-	a. calculate $\dot{Q}_{ex}$, $k_1$, and $C_A$ using equations (9) through (12),
-	b. calculate $r_1$ using equation (2), and
-	c. evaluate the derivatives using equations (3), (4), (7), and (8).
-4. To calculate the initial value, $n_{A,0}$, use equation (13).
-5. To calculate the quantities of interest, $\dot{m}_{ex,opt}$ $f_A\big\vert_{\dot{m}_{ex,opt}}\left(t\right)$ and $T\big\vert_{\dot{m}_{ex,opt}}\left(t\right)$
-	a. choose a range of $\dot{m}_{ex}$
-	b. for each value of $\dot{m}_{ex}$
-		i. solve the IVODEs for both stages of operation to get sets of corresponding values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ spanning both stages of operation
-		ii. calculate $r_{Z,net}$ using equation (14)
-	c. identify $\dot{m}_{ex,opt}$ as the value of $\dot{m}_{ex}$ where $r_{Z,net}$ is maximized
-	d. solve the IVODEs for both stages of operation using $\dot{m}_{ex,opt}$ to get sets of corresponding values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ spanning both stages of operation
-	e. calculate $f_A$ using equation (15).
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the derivatives for either stage 
+	a. $t$, $n_A$, $n_Z$, $T$, $T_{ex}$, and $\dot{m}_{ex}$ will be available.
+	b. For the first stage,
+		i. Calculate $\dot{Q}_{coil}$, $\dot{Q}_{ex}$, $k_1$, and $C_A$ using equations (9) through (12).
+		ii. Calculate $r_1$ using equation (2), and
+		iii. Evaluate the derivatives using equations (3) - (6).
+	c. For the second stage,
+		i. Calculate $\dot{Q}_{ex}$, $k_1$, and $C_A$ using equations (9) through (12).
+		ii. Calculate $r_1$ using equation (2).
+		iii. Evaluate the derivatives using equations (3), (4), (7), and (8).
+3. When it is necessary to calculate the initial and final values in @tbl-example_9_6_4_heating_initial_values
+	a. $T_0$, $T_{ex,0}$, and $T_1$ are known constants.
+	b. Calculate $n_{A,0}$ using equation (13).
+4. When it is necessary to calculate the net rate, use equation (14).
+5. When it is necessary to calculate $f_A$
+	a. Values of $n_A$ corresponding to times spanning the range from 0 to $t_f$ will be available.
+	b. Calculate $f_A$ using equation (15).
 
 #### Numerical implementation of the Solution
 
 1. Make the given and known constants available for use in all functions.
-2. Define a variable to hold the current value of $\dot{m}_{ex,opt}$ and make it available to all functions
+2. 2. Define a variable to hold the current value of $\dot{m}_{ex,opt}$ and make it available to all functions.
 3. Write a derivatives function for the first stage of operation that 
 	a. receives $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ as arguments and
 	b. evaluates and returns the values of the derivatives as described in step 2 of the calculations summary.
 4. Write a derivatives function for the second stage of operation that 
 	a. receives $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ as arguments and
-	b. evaluates and returns the values of the derivatives as described in step 3 of the calculations summary.
+	b. evaluates and returns the values of the derivatives as described in step 2 of the calculations summary.
 5. Write a reactor model function for the first stage of operation that
-	a. calculates the initial value, $n_{A,0}$ as described in step 3 of the calculations summary,
-	b. calculates $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ for the first stage of operation by calling an IVODE solver using the following arguments,
+	a. calculates the initial and final values in @tbl-example_9_6_4_heating_initial_values as described in step 3 of the calculations summary,
+	b. gets corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
 		i. the initial values and stopping criterion in @tbl-example_9_6_4_heating_initial_values and 
 		ii. the name of the derivatives function from step 3,
 	c. checks that the solver successfully solved the IVODEs, and
-	d. returns sets of corresponding values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ spanning the range of the first stage of operation.
-6. Write a reactor model function for the second stage of operation that
-	a. receives the initial values as an argument
-	b. calculates $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ for the second stage of operation by calling an IVODE solver using the following arguments,
-		i. the initial values and stopping criterion in @tbl-example_9_6_4_cooling_initial_values, and 
+	d. returns the results returned by the IVODE solver.
+6. Write a reactor model function for the secon stage of operation that
+	a. receives the final values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex} from the first stage as arguments,
+	b. gets corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example_9_6_4_cooling_initial_values and 
 		ii. the name of the derivatives function from step 4,
 	c. checks that the solver successfully solved the IVODEs, and
-	d. returns sets of corresponding values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ spanning the range of the second stage of operation.
-7. Perform the analysis by calculating $\dot{m}_{ex,opt}$ $f_A\big\vert_{\dot{m}_{ex,opt}}\left(t\right)$ and $T\big\vert_{\dot{m}_{ex,opt}}\left(t\right)$ as described in step 5 of the calculations summary.
+	d. returns the results returned by the IVODE solver.
+7. Perform the analysis by
+	a. calling the reactor model function for the first stage from step 5 above to get $t$, $n_A$, $n_Z$, $T$, and $T_{ex} for the first stage,
+	b. choosing a range of $\dot{m}_{ex}$, and for each value in the range
+		i. making $\dot{m}_{ex}$ available to all functions,
+		ii. calling the reactor model function for the second stage from step 6 above to get $t$, $n_A$, $n_Z$, $T$, and $T_{ex} for the second stage, and
+		iii. calculating and saving the net rate as described in step 4 of the calculations summary,
+	c. using the results from step 7b to identify $\dot{m}_{ex,opt}$ using equation (16),
+	d. calling the reactor model function for the second stage from step 6 above to get $t$, $n_A$, $n_Z$, $T$, and $T_{ex} for the second stage, and
+	e. calculating the conversion for all times as described in step 5 of the calculations summary.
 
 #### Results and Discussion 
 
 ```{r}
 #| echo: false
 #| output: false
-df <- read.csv('results/reb_9_6_4_results.csv')
+df <- read.csv('examples/reb_9_6_4/results.csv')
+df <- fmt_tibble_col(df, 2, 3, 3, 2)
 ```
 
 The calculations were performed as described above. The net rate of production of Z is plotted as a function of the cooling water flow rate in @fig-example_9_6_4_net_rate_plot. The maximum net rate, `r df$value[2]` `r df$units[2]`, occurs at a coolant flow rate of `r df$value[1]` `r df$units[1]`. The conversion and reacting fluid temperature profiles at that coolant flow rate are shown in @fig-example_9_6_4_conversion_profile and @fig-example_9_6_4_temperature_profile. 
 
-![Net rate of production of Z as cooling water flow rate varies.](results/reb_9_6_4_net_rate_vs_coolant_flow.png){#fig-example_9_6_4_net_rate_plot width="80%"}
+![Net rate of production of Z as cooling water flow rate varies.](examples/reb_9_6_4/net_rate_vs_coolant_flow.png){#fig-example_9_6_4_net_rate_plot width="80%"}
 
-![Conversion profile during processing with the optimum coolant flow rate.](results/reb_9_6_4_conversion_profile.png){#fig-example_9_6_4_conversion_profile width="80%"}
+![Conversion profile during processing with the optimum coolant flow rate.](examples/reb_9_6_4/conversion_profile.png){#fig-example_9_6_4_conversion_profile width="80%"}
 
-![Temperature profile during processing with the optimum coolant flow rate.](results/reb_9_6_4_temperature_profile.png){#fig-example_9_6_4_temperature_profile width="80%"}
+![Temperature profile during processing with the optimum coolant flow rate.](examples/reb_9_6_4/temperature_profile.png){#fig-example_9_6_4_temperature_profile width="80%"}
 
-![Instantaneous reaction rate profile during processing with the optimum coolant flow rate.](results/reb_9_6_4_inst_rate_profile.png){#fig-example_9_6_4_rate_profile width="80%"}
+![Instantaneous reaction rate profile during processing with the optimum coolant flow rate.](examples/reb_9_6_4/inst_rate_profile.png){#fig-example_9_6_4_rate_profile width="80%"}
 
 Knowing the initial concentration of A and the Arrhenius parameters, the conversion and temperature profiles were used to calculate the instantaneous reaction rate profile shown in @fig-example_9_6_4_rate_profile. It shows that the rate effectively zero when the reactant is charged to the BSTR. @fig-example_9_6_4_temperature_profile shows the steam heating increases the temperature to 50 °C in ca. 2.5 min, at which time the rate has become significant. The temperature continues to rise because heat is being released by reaction faster than it is being removed by the coolant. As the reactant is depleted, the rate does not increase as rapidly until eventually, after ca. 31.1 min, the rate reaches its maximum value. As the rate decreases, the amount of heat released due to reaction decreases until, at ca. 31.5 min, it becomes equal to the rate at which the coolant is removing heat. At that point the temperature passes through a maximum. After that the coolant removes heat faster than it is generated, and after ca. 100 min the temperature reaches 25 °C and processing ends. The conversion at this point is over 99%.
 
@@ -1318,8 +1318,6 @@ In this assignment, the net rate was maximized with respect to the coolant flow 
 Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](URL).
 :::
 -->
-
-
 
 ## Symbols Used in @sec-4_bstr_analysis
 
