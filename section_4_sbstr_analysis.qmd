@@ -505,8 +505,6 @@ $$
 
 The instantaneous volumetric flow rate and reacting fluid volume appearing in the design equations can be calculated using equations (12) and (13). The rates, $r_1$ and $r_2$, are given by equations (3) and (4). The rate coefficients in those expressions can be calculated using equations (14) and (15), and the concentrations can be calculated using equations (16) and (17).
 
-
-
 $$
 \begin{aligned}
 \dot{V}_{in} &= \frac{V_B}{t_{add}}; \qquad t \le t_{add}\\
@@ -731,44 +729,138 @@ $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-define initial values and stopping criterion
+
+The design equations are IVODEs, so initial values and a stopping criterion are needed to solve them. I can define $t=0$ to be the instant that acetic anhydride begins to flow into the reactor. The initial values are the values of the dependent variables at that time. Here, there isn't any A present, so it's initial value is zero. The first stage of operation ends when all of the A has been added to the reactor. I can designate that as $t_{sf}$.
+
+The second stage of operation begins immediately, so the initial values for the second stage are simply equal to the final values from the first stage. The second stage ends when the 99% of the added A has been converted, so the stopping criterion can be defined in terms of the molar amount of A.
+
 :::
 
 **Initial Values and Stopping Criterion**
 
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
-| $$ | $$ | $$ |
-| $$ | $$ | |
+| $t$ | $0$ | $t_{sf}$ |
+| $n_A$ | $0$ | |
+| $n_B$ | $n_{B,0}$ | |
+| $n_Z$ | $n_{Z,0}$ | |
+| $T$ | $T_0$ | |
+| $T_{ex}$ | $T_{ex,0}$ | |
   
-: Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example_x_y_z_initial_values}
+: Initial values and stopping criterion for solving equations, (3), (4), (5), (7), and (9) for the first stage of operation. {#tbl-example_10_5_3_stage_1_initial_values}
+
+**Initial Values and Stopping Criterion**
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $t$ | $t_{sf}$ |  |
+| $n_A$ | $n_{A,sf}$ | $n_{A,f}$ |
+| $n_B$ | $n_{B,sf}$ | |
+| $n_Z$ | $n_{Z,sf}$ | |
+| $T$ | $T_{sf}$ | |
+| $T_{ex}$ | $T_{ex,sf}$ | |
+  
+: Initial values and stopping criterion for solving equations, (3), (4), (5), (7), and (9) for the second stage of operation. {#tbl-example_10_5_3_stage_2_initial_values}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_x_y_z_initial_values.
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_10_5_3_stage_1_initial_values and @tbl-example_10_5_3_stage_2_initial_values.
 
-I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations....
+I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. The design equations are in the form of differential expressions (see @sec-apndx_solve_ivodes), so no manipulation is needed to put them in that form.
 
-I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
+I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables ($t$, $n_A$, $n_W$, $n_Z$, $T$, and $T_{ex}$) will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions. Looking at equations (3), (4), (5), (7), and (9) I see that they contain the following unknown quantities: $\dot{n}_{A,in}$, $V$, $r_1$, $\dot{Q}$, and $\dot{m}_{ex}$.
+
+In this analysis, I will be choosing values of $t_{sf}$ to see which one gives the smallest acceptable processing time. Knowing the volume of A to be added and the time over which it will be added, the volumetric flow rate for the first stage of operation can be calculated. Then, knowing the density and molecular weight of A, its inlet molar flow rate can be calculated. The volumetric and molar flows are equal to zero during the second stage of operation.
+
+$$
+\dot{V}_{in} = \frac{V_A}{t_{sf}} \qquad \qquad t \le t_{sf}
+$$
+
+$$
+\dot{n}_{A,in} = \frac{\dot{V}_{in} \rho_A}{M_A} \qquad \qquad t \le t_{sf}
+$$
+
+The reacting liquid is an ideal solution. During the first stage of operation, liquid is being fed to the system, so the reacting fluid volume increases over time. Equation (8) can be integrated to generate an expression for the instantaneous reacting fluid volume during the first stage of operation. During the second stage of operation, the reacting fluid volume is constant and equal to its value at the end of the first stage.
+
+$$
+\frac{dV}{dt} = \dot{V}_{in} \qquad \Rightarrow \qquad \int_{V_0}^V dV = \dot{V}_{in} \int_{0}^t dt
+$$
+
+$$
+V = \dot{V}_{in} t + V_0 \qquad \qquad t \le t_{sf}
+$$
+
+The given rate expression, equation (2), can be used to calculate $r_1$, but that introduces the unknowns, $k_1$ and $C_A$. The rate coefficient can be calculated using the Arrhenius expression and the concentration of A using the definition of concentration. The rate of heat exchange can be calculated using the heat transfer area and heat transfer coefficient, and the mass flow rate of the cooling water can be calculated from its volumetric flow rate and the density of water. 
+
 :::
 
 **Ancillary Equations for Evaluating the Derivatives**
 
+The volumetric flow rate of A into the reactor during the first stage of operation is given by equation (10) and its molar flow rate is given by equation (11). The instantaneous reacting fluid volume is given by equation (12). The rate can be calculated using equation (2), with the rate coefficient and concentration of A that appear in it calculated using equations (13) and (14). The rate of heat exchange is given by equation (15) and the mass flow rate of the cooling water by equation (16).
 
+$$
+\begin{aligned}
+\dot{V}_{in} &= \frac{V_A}{t_{sf}}; \qquad t \le t_{sf}\\
+\dot{V}_{in} &= 0; \qquad t > t_{sf}
+\end{aligned} \tag{10}
+$$
+
+$$
+\dot{n}_{A,in} = \frac{\dot{V}_{in} \rho_A}{M_A} \tag{11}
+$$
+
+$$
+\begin{aligned}
+V &= V_0 + \dot{V}_{in}t; \qquad t \le t_{sf}\\
+V &= V_0 + V_A; \qquad t > t_{sf}
+\end{aligned}\tag{12}
+$$
+
+$$
+k_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT}  \right)} \tag{13}
+$$
+
+$$
+C_A = \frac{n_A}{V} \tag{14}
+$$
+
+$$
+\dot{Q} = UA\left(T - T_{ex} \right) \tag{15}
+$$
+
+$$
+\dot{m}_{ex} = \dot{V}_{ex} \rho_{ex} \tag{16}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_x_y_z_initial_values....
+
+When I solve the IVODEs numerically, I'll also need to know the initial and final values @tbl-example_10_5_3_stage_1_initial_values and @tbl-example_10_5_3_stage_2_initial_values. For the first stage of operation, the initial molar amounts can be calculated from the initial volumes, densities and molecular weights. The initial temperatures are known. I will be choosing values of $t_{sf}$ to find which one minimizes the processing time, so it, too will be known. The reactor design equations then can be solved for the first stage of processing. The resulting final values then can be used as the initial values for the second stage of operation. The final molar amount of A can be calculated from the spedified conversion and the initial amount.
+
 :::
 
 **Ancillary Equations for Calculating the Initial and Final Values**
 
+The unknown initial molar amounts for the first stage of operation can be found using equations (17) and (18). The initial temperatures will be known and the final time of the first stage, $t_{sf}$ will be chosen. The design equations for the first stage can then be solved. The resulting final values can then be used as the initial values for the second phase of operation. The final molar amount of A can be calculated using equation (19).
 
+$$
+n_{W,0} = \frac{V_{W,0}\rho_W}{M_W} \tag{17}
+$$ 
+
+$$
+n_{Z,0} = \frac{V_{Z,0}\rho_Z}{M_Z} \tag{18}
+$$
+
+$$
+n_{A,f} = \frac{V_A \rho_A}{M_A}\left(1 - f_A\right) \tag{19}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-develop equations needed to calculate quantities of interest
+
+
+
 :::
 
 **Ancillary Equations for Calculating the Quantities of Interest**
