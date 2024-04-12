@@ -164,7 +164,7 @@ The reactor is not isothermal, so an energy balance on the reaction fluid, @eq-s
 
 $$
 \begin{aligned}
-\cancelto{\rho V \tilde{C}_p}{\sum_i \left( n_i \hat C_{p,i}\right)}  \frac{dT}{dt} &- \cancelto{0}{V\frac{dP}{dt}} - P\frac{dV}{dt} = \dot Q - \cancelto{0}{\dot W} \\&- \cancelto{\dot{m}_{B,in}\tilde{C}_p \left(T - T_{in}\right)}{\sum_i \dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT}  - V\sum_j r_j \Delta H_j
+\cancelto{\rho V \tilde{C}_p}{\sum_i \left( n_i \hat C_{p,i}\right)}  \frac{dT}{dt} &- \cancelto{0}{V\frac{dP}{dt}} - P\frac{dV}{dt} = \dot Q - \cancelto{0}{\dot W} \\&- \cancelto{\dot{m}_{B,in}\tilde{C}_p \left(T - T_{in}\right)}{\sum_i \dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT}  - \cancelto{Vr_1 \Delta H_1}{V\sum_j r_j \Delta H_j}
 \end{aligned}
 $$
 
@@ -177,7 +177,6 @@ The reactor is cooled using a heat exchange fluid that gains sensible heat, so a
 $$
 \rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot Q - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex}} \tilde C_{p,ex}dT = -\dot Q - \dot m_{ex} \tilde C_{p,ex} \left( T_{ex} - T_{ex,in} \right)
 $$
-
 
 :::
 
@@ -373,121 +372,246 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-identify problem type, describe variable naming
+
+This assignment involves the analysis of an isolated SBSTR. I will begin by summarizing the information provided in the assignment narrative. I'll use variable symbols that are appropriate for each given quantity. I'll use subsctipted "0" to denote initial values, subscripted "f" to denote final values and subscripted "in" to denote inlet values. For the situations where the addition of the B solution will stop before the end of processing, I'll denote the elapsed time when the flow stopped as $t_{add}$.
+
+When the solution of B is added over 8 h, the reactor operates as an SBSTR for the entier time. However, when it is added over less than 8 hours, the operational protocol has two stages: semi-batch while reagent B is being added and batch after the feed stops.
+
 :::
 
 #### Assignment Summary
 
-**Given and Known Constants**: 
+**Given and Known Constants**: $k_{0,1}$ = 1.83 x 10^12^ L mol^-1^ h^-1^, $E_1$ = 18.0 kcal mol^-1^, $k_{0,2}$ = 5.08 x 10^13^ L mol^-1^ h^-1^, $E_2$ = 20.5 kcal mol^-1^, $\Delta H_1$ = -9000, $\Delta H_2$ = -7800 cal mol^-1^, $\breve{C}_p$ = 863 cal L^-1^ K^-1^, $C_{A,0}$ = 2 M, $C_{B,in}$ =  0.5 M, $T_0$ = 40 °C, $P$ = 1 atm, $V_0$ = 2000 L, $V_B$ = 8000 L, $t_f$ = 8 h, and $t_{add}$ = 2, 4, 6 or 8 h.
 
-**Reactor System**: 
+**Reactor System**: Adiabatic SBSTR with a one-stage operating protocol or Adiabatic SBSTR in the first stage of operation and adiabatic BSTR in the second stage.
 
-**Quantities of Interest**: 
+**Quantities of Interest**: $f_B$ and $S_{D/U}$
 
 #### Mathematical Formulation of the Solution
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-generate design equations:::
+
+I need to generate the reactor design equations for modeling this system. Mole balances are always included in the design equations. I'll write a molve banance for each of the four reagents. The general SBSTR mole balance is given in @eq-sbstr_mol_balance. Two reactions take place in this system, so the summation expands to two terms. The inlet molar flow rates of A, D, and U are all equal to zero. The only difference when there is a second phase of operation is that the inlet molar flow rate of reagent B is also equal to zero.
+
+$$
+\frac{dn_i}{dt} = \dot n_{i,in} + V \sum_j \nu_{i,j}r_j \Rightarrow \dot n_{i,in} + \nu_{i,1} V r_1 + \nu_{i,2} V r_2
+$$
+
+The reactor is not isothermal, so the mole balances cannot be solved independently of an energy balance. The general energy balance for an SBSTR is given in @eq-sbstr_energy_balance. The narrative provides a volumetric heat capacity that applies to solutions of A and B. Presumably this heat capacity is essentially equal to that of the solvent, so it can be used for both the reacting fluid and the feed stream, replacing the summations over molar heat capacities. The heat capacity is constant, so it can be taken outside of the integral, and the resulting trivial integral can be evaluated. The reactor is adiabatic, so $\dot{Q}$ is equal to zero and apart from agitation, no work is being done so $\dot{W}$ is neglibible. The reacting fluid is a liquid, so the pressure is constant and its time derivative is zero. Finally, two reactions are taking place, so the final summation expands to two terms. The only difference when there is a second phase of operation is that the inlet volumetric flow rate is equal to zero making the next to last term equal zero.
+
+$$
+\begin{aligned}
+\cancelto{V \breve{C}_p}{\sum_i \left( n_i \hat C_{p,i}\right)}  \frac{dT}{dt} &-V\cancelto{0}{\frac{dP}{dt}} - P\frac{dV}{dt} = \cancelto{0}{\dot Q} - \cancelto{0}{\dot W} \\&- \cancelto{\dot{V}_{in} \breve{C}_p \left( T - T_{in} \right)}{\sum_i \dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT}  - V\cancelto{\left(r_1 \Delta H_1 + r_2 \Delta H_2\right)}{\sum_j r_j \Delta H_j}
+\end{aligned}
+$$
+
+Being an adiabatic reactor, there isn't an exchange fluid, so an exchange fluid energy balance is not needed.
+
+:::
 
 **Reactor Design Equations**
 
-Mole balance design equations for [reagents] are presented in equations (numbers). The energy balance on the reacting fluid is given in equation (number). An energy balance on the heat exchange fluid is shown in equation (number).
+Mole balance design equations for reagents A, B, D, and U are presented in equations (5) through (8). If there is a second stage of BSTR operation, the only change is that $\dot{n}_{B,in}$ is equal to zero. The energy balance on the reacting fluid is given in equation (9). If there is a second stage of BSTR operation, the only change is that the first term on the right side of the equals sign is becomes zero.
+
+$$
+\frac{dn_A}{dt} = -r_1V \tag{5}
+$$
+
+$$
+\frac{dn_B}{dt} = \dot{n}_{B,in} -\left(r_1 + 2 r_2\right)V \tag{6}
+$$
+
+$$
+\frac{dn_D}{dt} = r_1V \tag{7}
+$$
+
+$$
+\frac{dn_U}{dt} = r_2V \tag{8}
+$$
+
+$$
+V \breve{C}_p \frac{dT}{dt} - P\frac{dV}{dt} = -\dot{V}_{in}\breve{C}_p \left(T - T_0 \right)  - r_1V \Delta H_1 - r_2V \Delta H_2 \tag{9}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-check number of ivodes and deps
+
+There are five IVODEs and six dependent variables, which means either an IVODE must be added or one of the dependent variables must be eliminated. Assuming the reacting fluid to be an ideal, incompressible solution, the instantaneous rate of change of the volume will equal the inlet volumetric flow rate. This can be used to eliminate $\frac{dV}{dt} from the energy balance.
+
 :::
 
-differential ideal gas law
+Assuming the reacting fluid to be an ideal, incompressible solution, the instantaneous rate of change of the volume will equal the inlet volumetric flow rate, equation (10). Substitution into equation (9) and rearranging yields equation (11). Equations (5), (6), (7), (8), and (11) are a set of five IVODEs with five dependent variables, $n_A$, $n_B$, $n_D$, $n_U$, and $T$.
+
+$$
+\frac{dV}{dt} = \dot{V}_{in} \tag{10}
+$$
+
+$$
+\frac{dT}{dt} = \frac{-\dot{V}_{in}\breve{C}_p \left(T - T_0 \right)  - r_1V \Delta H_1 - r_2V \Delta H_2 + P \dot{V}_{in}}{V \breve{C}_p} \tag{11}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-define initial values and stopping criterion
+
+The design equations are IVODEs, with two stages of operation possible. I can define $t=0$ to be the time when the flow of reagent B into the reactor begins. At that time only reagent A is present in the reactor. The first stage of operation ends when the flow of reagent B ends.
+
+If the flow of reagent B ends before 8 hours of operation, the second stage begins immediately. Consequently the initial values are equal to the final values from the first stage. I will use a subscript "sb,f" to denote values at the end of the semi-batch stage of operation. The second stage ends after 8 h of operation.
+
 :::
 
 **Initial Values and Stopping Criterion**
 
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
-| $$ | $$ | $$ |
-| $$ | $$ | |
+| $t$ | $0$ | $t_{add}$ |
+| $n_A$ | $n_{A,0}$ | |
+| $n_B$ | $0$ | |
+| $n_D$ | $0$ | |
+| $n_U$ | $0$ | |
+| $T$ | $T_0$ | |
   
-: Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example_x_y_z_initial_values}
+: Initial values and stopping criterion for solving  equations, (5) - (8) and (11) for the first stage of the operating protocol. {#tbl-example_10_5_2_stage_1_initial_values}
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $t$ | $t_{add}$ | $t_f$ |
+| $n_A$ | $n_{A,sb,f}$ | |
+| $n_B$ | $n_{B,sb,f}$ | |
+| $n_D$ | $n_{D,sb,f}$ | |
+| $n_U$ | $n_{U,sb,f}$ | |
+| $T$ | $T_{sb,f}$ | |
+  
+: Initial values and stopping criterion for solving  equations, (5) - (8) and (11) for the second stage of the operating protocol (i. e. if $t_{add} < t_f$). {#tbl-example_10_5_2_stage_2_initial_values}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_x_y_z_initial_values.
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_10_5_2_stage_1_initial_values and @tbl-example_10_5_2_stage_2_initial_values.
 
-I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations....
+I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. The design equations already take the form of derivative expressions (see @sec-apndx_solve_ivodes) so they do not need to be rearranged.
 
-I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
+I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables ($t$, $n_A$, $n_B$, $n_D$, $n_U$, and $T$) will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
+
+Loodking at the design equations I see that they contain the following unknown quantities: $r_1$, $r_2$, and $V$ ($V is the instantaneous volume of the reacting fluid, not the total capacity of the reactor). The rates can be calculated using the rate expressions provided in the assignment, but that introduces the rate coefficients and concentrations of A and B. The Arrhenius expression can be used to calculate the rate coefficients and the defining equations for concentration can be used to calculate the concentations. Noting that the inlet flow rate is constant, equation (10) can be integrated to get an expression for the instantaneous volume during the time that fluid is flowing into the reactor.
+
+$$
+\frac{dV}{dt} = \dot{V}_{in} \qquad \Rightarrow \qquad \int_{V_0}^V dV = \dot{V}_{in} \int_{0}^t dt
+$$
+
 :::
 
 **Ancillary Equations for Evaluating the Derivatives**
 
+The instantaneous volumetric flow rate and reacting fluid volume appearing in the design equations can be calculated using equations (12) and (13). The rates, $r_1$ and $r_2$, are given by equations (3) and (4). The rate coefficients in those expressions can be calculated using equations (14) and (15), and the concentrations can be calculated using equations (16) and (17).
 
+
+
+$$
+\begin{aligned}
+\dot{V}_{in} &= \frac{V_B}{t_{add}}; \qquad t \le t_{add}\\
+\dot{V}_{in} &= 0; \qquad t > t_{add}
+\end{aligned} \tag{12}
+$$
+
+$$
+\begin{aligned}
+V &= V_0 + \dot{V}_{in}t; \qquad t \le t_{add}\\
+V &= V_0 + V_B; \qquad t > t_{add}
+\end{aligned}\tag{13}
+$$
+
+$$
+k_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT}  \right)} \tag{14}
+$$
+
+$$
+k_2 = k_{0,2} \exp{\left( \frac{-E_2}{RT}  \right)} \tag{15}
+$$
+
+$$
+C_A = \frac{n_A}{V} \tag{16}
+$$
+
+$$
+C_B = \frac{n_B}{V} \tag{17}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_x_y_z_initial_values....
+
+When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_10_5_2_stage_1_initial_values and @tbl-example_10_5_2_stage_2_initial_values. The only unknown value in @tbl-example_10_5_2_stage_1_initial_values is the initial molar amount of A, and that can be calculated knowing the initial volume and concentration.
+
+The initial values in @tbl-example_10_5_2_stage_2_initial_values will be known after the design equations have been solved for the first stage, and the final value is known.
+
 :::
 
 **Ancillary Equations for Calculating the Initial and Final Values**
 
+The initial molar amount of A can be calculated using equation (18).
 
+$$
+n_{A,0} = C_{A,0}V_0 \tag{18}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-develop equations needed to calculate quantities of interest
+
+Solving the reactor design equations will yield corresponding values of $t$, $n_A$, $n_B$, $n_D$, $n_U$, and $T$ spanning the range from $t=0$ to $t=t_f$. The assignment asks for the final selectivity for D over U and the final conversion of B. The former can be calculated using its defining equation. Normally the conversion is calculated as the fraction of the initial amount of a reactant that has been converted. Here, the initial amount of B is zero, so that definition won't work. Instead, the conversion must be calculated as the fraction of the total B added to the system that has been converted.
+
 :::
 
 **Ancillary Equations for Calculating the Quantities of Interest**
 
-Solving the reactor design equations yields [list independent and dependent variables]. 
+Solving the reactor design equations yields $t$, $n_A$, $n_B$, $n_D$, $n_U$, and $T$ spanning the range from $t=0$ to $t=t_f$. The final amounts can be used to calculate the conversion of B and the selectivity using equations (19) and (20).
+
+$$
+f_B = \frac{V_BC_{B,in} - n_{B,f}}{V_BC_{B,in}} \tag{19}
+$$
+
+$$
+S_{D/U} = \frac{n_{D,f}}{n_{U,f}} \tag{20}
+$$
 
 **Calculations Summary**
 
 1. Substitute given and known constants into all equations.
 2. When it is necessary to evaluate the derivatives
-	a. [list of variables] will be available.
-	b. 
-3. When it is necessary to calculate the initial and final values in @tbl-example_x_y_z_initial_values
-	a. [list of variables] are known constants.
-	b. 
-4. When it is necessary to evaluate the residual corresponding to [variable]
-    a. a guess for [variable] will be available for use in all equations.
-    b. 
-5. When it is necessary to calculate the quantities of interest, [list]
-	a. corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values will be available.
-	b. 
+	a. $t$, $n_A$, $n_B$, $n_D$, $n_U$, and $T$ will be available.
+	b. calculate $\dot{V}_{in}$, $V$, $k_1$, and $k_2$ using equations (12) through (15).
+	c. calculate $C_A$ and $C_B$ using equations (16) and (17).
+	d. calcuate $r_1$ and $r_2$ using equations (3) and (4).
+	e. evaluate the derivatives using equations (5) through (8) and (11).
+3. When it is necessary to calculate the initial and final values in @tbl-example_10_5_2_stage_1_initial_values and @tbl-example_10_5_2_stage_2_initial_values.
+	a. $T_0$, $t_{add}$, and $t_f$ are known constants.
+	b. calculated $n_{A,0}$ using equation (18).
+	c. solve the design equations for the first phase of operation to find $n_{A,sb,f}$, $n_{B,sb,f}$, $n_{D,sb,f}$, $n_{U,sb,f}$, and $T_{sb,f}$ 
+4. When it is necessary to calculate the quantities of interest, $f_B$ and $S_{D/U}$
+	a. corresponding sets of values of $t$, $n_A$, $n_B$, $n_D$, $n_U$, and $T$, spanning the range from their initial values to their final values will be available.
+	b. calculate $f_B$ and $S_{D/U}$ using equations (19) and (20).
 
 #### Numerical implementation of the Solution
 
 1. Make the given and known constants available for use in all functions.
-2. Define a variable to hold [unknown constant] and make it available to all functions.
-3. Write a derivatives function that
-	a. receives the independent and dependent variables, [list], as arguments,
+2. Write a derivatives function that
+	a. receives the independent and dependent variables, $t$, $n_A$, $n_B$, $n_D$, $n_U$, and $T$, as arguments,
 	b. evaluates the derivatives as described in step 2 of the calculations summary, and 
-	c. returns the values of the derivatives, [list].
-4. Write a residuals function that
-	a. receives a guess for [variable] and makes it available to all functions,
-	b. evaluates the residual as described in step 4 of the calculations summary, and
-	c. returns the value of [variable].
-5. Write a reactor model function that
-	a. ...
-	b. calculates the initial and final values in @tbl-example_x_y_z_initial_values as described in step 3 of the calculations summary,
-	c. gets corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
-		i. the initial values and stopping criterion in @tbl-example_x_y_z_initial_values and
-		ii. the name of the derivatives function from step 3 above,
-	d, checks that the solver successfully solved the IVODEs, and
+	c. returns the values of the derivatives.
+3. Write a reactor model function that
+	a. calculates the initial and final values in @tbl-example_10_5_2_stage_1_initial_values as described in step 3 of the calculations summary,
+	c. gets corresponding sets of values of $t$, $n_A$, $n_B$, $n_D$, $n_U$, and $T$, spanning the range from their initial values to their final values for the first stage of operation by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example_10_5_2_stage_1_initial_values and
+		ii. the name of the derivatives function from step 2 above,
+	d, checks that the solver successfully solved the IVODEs, 
+	e. calculates the initial and final values in @tbl-example_10_5_2_stage_2_initial_values as described in step 3 of the calculations summary,
+	f. gets corresponding sets of values of $t$, $n_A$, $n_B$, $n_D$, $n_U$, and $T$, spanning the range from their initial values to their final values for the second stage of operation by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example_10_5_2_stage_2_initial_values and
+		ii. the name of the derivatives function from step 2 above, 
+	g. checks that the solver successfully solved the IVODEs, and
 	e. returns the values returned by the IVODE solver.
-6. Perform the analysis by
-	a. ...
-	b. getting corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling the reactor model function from step 5 above,
-	c. calculates the quantities of interest as described in step 5 of the calculations summary,
-	d. ....
+4. Perform the analysis by
+	a. getting corresponding sets of values of $t$, $n_A$, $n_B$, $n_D$, $n_U$, and $T$, spanning the range from their initial values to their final values by calling the reactor model function from step 3 above,
+	c. calculates the quantities of interest as described in step 4 of the calculations summary.
 
 #### Results and Discussion
 
@@ -517,33 +641,93 @@ This problem is loosely based upon the work of Haldar and Rao [-@haldar_experime
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-identify problem type, describe variable naming
+
+This assignment requires the analysis of an isolated reactor with a two-stage operational protocol. During the first stage it operates as an SBSTR. The first stage ends when all of the acetic anhydride has been added. During the second stage the reactor operates as a BSTR.
+
+I will begin by summarizing the information provided in the assighment narrative. To simplify the notation I well let A represent acetic anhydride, W represent water, and Z represent acetic acid. With this notation, the reaction is $A+W\rightarrow 2Z$. I will use a subscripted "0" to denote initial values, "sf" to denote values at the end of semi-batch processing (stage 1), "f" to denote final values (at the end of stage 2), and "in" to denote inlet values. I will assume that the density and heat capacity of the cooling water are constant and equal to 1 g cm^-3^ and 1 cal g^-1^ K^-1^.
+
 :::
 
 #### Assignment Summary
 
-**Given and Known Constants**: 
+**Given and Known Constants**: $k_{0,1}$ =  1.192 x 10^15^ min^-1^, $E_1$ =  97,600 J mol^-1^, $\Delta H_1$ = -58,615 J mol^-1^, $V_{ex}$ = ? cm^3^, $T_{ex,in}$ = 60 °C, $\dot{V}_{ex,in}$ = ? cm^3^ min^-1^ $UA$ = 260 cal min^-1^ K^-1^, $P$ = 1 atm, $V_{W,0}$ = 67 cm^3^ $V_{Z,0}$ = 283 cm^3^, $V_{H_2SO_4,0}$ = 0.30 cm^3^, $T_0$ = 60 °C, $\breve{C}_p$ =  2.68 J cm^-3^ K^-1^, $V_A$ = 350 cm^3^, $T_{in}$ =  21 °C, $f_A$ =  0.99, $T_{max}$ = 95 °C, $\rho_A$ = 1.082 g cm^-3^, $\rho_W$ = 1.0 g cm^-3^, $\rho_Z$ = 1.049 g cm^-3^, $M_A$ = 102g mol^-1^, $M_W$ = 18 g mol^-1^, $M_Z$ = 60 g mol^-1^, $\hat{C}_{p,A}$ = 168.2 J mol^-1^ K^-1^, $\rho_{ex} = 1.0 g cm^-3^, and $\tilde{C}_{p,ex}$ = 1 cal g^-1^ K^-1^.
 
-**Reactor System**: 
+**Reactor System**: Cooled stirred tank with a 2-stage operating protocol where the reactor is an SBSTR during the first stage and a BSTR during the second stage.
 
-**Quantities of Interest**: 
+**Quantities of Interest**: $\dot{V}_{opt} = \underset{\dot{V}_{in}}{\arg\min}\left( t_f \right)$, $T\left(t\right)\big\vert_{\dot{V}_{in} = \dot{V}_{opt}}$ (as a graph), and $C_A\left(t\right)\big\vert_{\dot{V}_{in} = \dot{V}_{opt}}$ (as a graph).
 
 #### Mathematical Formulation of the Solution
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-generate design equations:::
+
+This assignment requires the modeling of an isolated SBSTR/BSTR, so I need to generate the reactor design equations for it. Mole balances are always needed when modeling a reactor. The general SBSTR mole balance is given in @eq-sbstr_mol_balance. Only one reaction is taking place, so the summation reduces to a single term, and only reagent A flows into the reactor, so $\dot n_{W,in}$ = $\dot n_{Z,in}$ = 0.
+
+$$
+\frac{dn_i}{dt} = \dot n_{i,in} + V \sum_j \nu_{i,j}r_j \Rightarrow \dot n_{i,in} + \nu_{i,1} V r_1
+$$
+
+The reactor is not isothermal, so an energy balance on the reaction fluid, @eq-sbstr_energy_balance, must also be included among the reactor design equations. I am given the volumetric heat capacity of the reacting fluid, so I can replace the summation over the molar heat capacities in the first term. The reacting fluid is a liquid, so the pressure is constant and its time derivative is equal to zero. The only reagent flowing into the reactor during operation as an SBSTR is A, so the first summation on the right-hand side of the equation reduces to a single term. Additionally, the heat capacity of A is a constant so it can be taken outside of the integral and the integral can be evaluated. Finally, only one reaction is taking place, so the sum over the reactions reduces to a single term.
+
+$$
+\begin{aligned}
+\cancelto{V \breve{C}_p}{\sum_i \left( n_i \hat C_{p,i}\right)}  \frac{dT}{dt} &- \cancelto{0}{V\frac{dP}{dt}} - P\frac{dV}{dt} = \dot Q - \cancelto{0}{\dot W} \\&- \cancelto{\dot{n}_{A,in}\hat{C}_{p,A} \left(T - T_{in}\right)}{\sum_i \dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT}  - V\cancelto{r_1 \Delta H_1}{\sum_j r_j \Delta H_j}
+\end{aligned}
+$$
+
+$$
+V \breve{C}_p \frac{dT}{dt} - P\frac{dV}{dt} = \dot Q - \dot{n}_{A,in} \hat{C}_{p,A}\left(T - T_{in}\right)  - V r_1 \Delta H_1
+$$
+
+The reactor is cooled using water that gains sensible heat, so an energy balance on the exchange fluid, @eq-exchange_energy_bal_sensible, is also needed. Again, because the heat capacity is constant it can be taken outside of the integral and the integral can be evaluated.
+
+$$
+\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot Q - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex}} \tilde C_{p,ex}dT = -\dot Q - \dot m_{ex} \tilde C_{p,ex} \left( T_{ex} - T_{ex,in} \right)
+$$
+
+
+:::
 
 **Reactor Design Equations**
 
-Mole balance design equations for [reagents] are presented in equations (numbers). The energy balance on the reacting fluid is given in equation (number). An energy balance on the heat exchange fluid is shown in equation (number).
+Mole balance design equations for A, W, and Z are presented in equations (3), (4), and (5). The energy balance on the reacting fluid is given in equation (6). In the second stage of operation, $\dot{n}_{A,in}$ in equations (3) and (6) is equal to zero.  An energy balance on the heat exchange fluid is shown in equation (7).
+
+$$
+\frac{dn_A}{dt} = \dot n_{A,in} - V r_1 \tag{3}
+$$
+
+$$
+\frac{dn_W}{dt} = - V r_1 \tag{4}
+$$
+
+$$
+\frac{dn_Z}{dt} = V r_1 \tag{5}
+$$
+
+$$
+V \breve{C}_p \frac{dT}{dt} - P\frac{dV}{dt} = \dot Q - \dot{n}_{A,in} \hat{C}_{p,A}\left(T - T_{in}\right)  - V r_1 \Delta H_1 \tag{6}
+$$
+
+$$
+\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot Q - \dot m_{ex} \tilde C_{p,ex} \left( T_{ex} - T_{ex,in} \right) \tag{7}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-check number of ivodes and deps
+
+The reactor design equations are IVODEs. There are five of them, but they contain six dependent variables. Therefore, I need to either add an IVODE or eliminate a dependent variable. Assuming the reacting fluid to be an ideal, incompressible solution, the instantaneous rate of change of the volume will equal the inlet volumetric flow rate. This can be used to eliminate $\frac{dV}{dt} from the energy balance.
+
 :::
 
-differential ideal gas law
+Assuming the reacting fluid to be an ideal, incompressible solution, the instantaneous rate of change of the volume will equal the inlet volumetric flow rate, equation (8). Substitution into equation (6) and rearranging yields equation (9). Equations (3), (4), (5), (7), and (9) are a set of five IVODEs with five dependent variables, $n_A$, $n_W$, $n_Z$, $T$, and $T_{ex}$.
+
+$$
+\frac{dV}{dt} = \dot{V}_{in} \tag{8}
+$$
+
+$$
+\frac{dT}{dt} = \frac{\dot Q - \dot{n}_{A,in} \hat{C}_{p,A}\left(T - T_{in}\right)  - V r_1 \Delta H_1 + P\dot{V}_{in}}{V \breve{C}_p} \tag{9}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -637,7 +821,6 @@ Solving the reactor design equations yields [list independent and dependent vari
 
 The calculations were performed as described above.
 
-
 <!--
 ::: {.callout-note appearance="simple"}
 ## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
@@ -650,5 +833,31 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 | Symbol | Meaning |
 |:-------|:--------|
 | $i$ | index denoting a reagent. |
+| $k_j$ | rate coefficient for reaction $j$. |
+| $\dot{m}_{ex}$ | mass flow rate of the heat exchange fluid. |
+| $n_i$ | molar amount of reagent $i$; an additional subscripted $0$ indicates the molar amount at time zero. |
+| $\dot{n}_{i,in}$ | net molar flow rate of reagent $i$ into the SBSTR. |
+| $r_{i,j}$ | rate of generation of reagent $i$ via reaction $j$. |
+| $t$ | elapsed time. |
+| $A$ | heat transfer area. |
+| $C_i$ | molar concentration of reagent $i$. |
+| $\hat{C}_{p,i}$ | molar, constant-pressure heat capacity of reagent $i$ |
+| $\tilde{C}_{p,ex}$ | mass-specific, constant-pressure heat capacity of the heat exchange fluid. |
+| $\preve{C}_p$ | volume-specific, constant-pressure heat capacity of the reacting fluid, additional subscripts denote fluids other than the reacting fluid. |
+| $M_{ex}$ | molecular weight of the heat exchange fluid. |
+| $P$ | pressure of the reacting fluid, a subscripted $i$ denotes the partial pressure of reagent $i$. |
+| $\dot{Q}$ | rate of heat transfer *to* the reacting fluid, additional subscripts distinguish between different sources of the heat. |
+| $R$ | ideal gas constant. |
+| $S_{D/U,inst}$ | instantaneous selectivity for reagent D over reagent U. |
+| $T$ | temperature, no subscript denotes the reacting fluid, a subscripted $ex$ denotes the heat exchange fluid, an additional subscripted $0$ denotes an initial temperature, $in$ an inlet temperature and $f$ a final temperature. |
+| $U$ | heat transfer coefficient. |
+| $V$ | volume of reacting fluid in the reactor; an additional subscripted $0$ indicates the volume at time zero. |
+| $\dot{V}_{in}$ | volumetric flow rate into the reactor. |
+| $\dot{W}$ | rate at which the reacting fluid performs work on its surroundings. |
+| %\gamma$ | fraction of the heat exchange fluid that undergoes phase change. |
+| $\nu_{i,j}$ | stoichiometric coefficient of reagent $i$ in reaction $j$. |
+| $\rho$ | density, no subscript denotes the reacting fluid, a subscripted $ex$ denotes the heat exchange fluid. |
+| $\Delta H_j$ | heat of reaction $j$. |
+
 
 : {tbl-colwidths="[20,80]"}
