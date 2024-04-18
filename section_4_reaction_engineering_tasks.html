@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.551">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Reaction Engineering Basics - 8&nbsp; Response, Optimization and Design of Reactors</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./section_4_bstr_analysis.html" rel="next">
+<link href="./section_4_intro.html" rel="prev">
+<link href="./Graphics/BuffaloBadger_16_16.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
+    <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics"> 
+<span class="menu-text">Reaction Engineering Basics</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/SCoRE"> 
+<span class="menu-text">SCoRE</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/ToTaL_Engineering"> 
+<span class="menu-text">ToTaL Engineering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/The_Sett"> 
+<span class="menu-text">The Sett</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./section_4_intro.html">Modeling Isolated Ideal Reactors</a></li><li class="breadcrumb-item"><a href="./section_4_reaction_engineering_tasks.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_1_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Basic Information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_intro_and_defs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Reactions, Reactors, and Reaction Engineering</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_safety_and_ethics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Reaction Engineering Ethics and Safety</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_reaction_progress.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Measures of Reaction Progress</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_2_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rate Expressions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_2_rates_and_expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Reaction Rates and Rate Expressions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_2_mechanisms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reaction Mechanisms and Mechanistic Rate Expressions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ideal Reactor Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_3_design_equations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reactor Design Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_3_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Modeling Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Design of Non-Continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kinetics Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_data_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_7_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Non-Ideal Reactors</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_axial_dispersion_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Axial Dispersion Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_segregated_flow_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Segregated Flow Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_zoned_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Zoned Reactor Models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_useful_eqns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Frequently Used Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#isolated-ideal-reactor-analysis" id="toc-isolated-ideal-reactor-analysis" class="nav-link active" data-scroll-target="#isolated-ideal-reactor-analysis"><span class="header-section-number">8.1</span> Isolated Ideal Reactor Analysis</a>
+  <ul class="collapse">
+  <li><a href="#qualitative-reactor-analysis" id="toc-qualitative-reactor-analysis" class="nav-link" data-scroll-target="#qualitative-reactor-analysis"><span class="header-section-number">8.1.1</span> Qualitative Reactor Analysis</a></li>
+  <li><a href="#quantitative-reactor-analysis" id="toc-quantitative-reactor-analysis" class="nav-link" data-scroll-target="#quantitative-reactor-analysis"><span class="header-section-number">8.1.2</span> Quantitative Reactor Analysis</a></li>
+  </ul></li>
+  <li><a href="#common-reaction-engineering-tasks" id="toc-common-reaction-engineering-tasks" class="nav-link" data-scroll-target="#common-reaction-engineering-tasks"><span class="header-section-number">8.2</span> Common Reaction Engineering Tasks</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./section_4_intro.html">Modeling Isolated Ideal Reactors</a></li><li class="breadcrumb-item"><a href="./section_4_reaction_engineering_tasks.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-4_response_opt_design" class="quarto-section-identifier"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This section of <em>Reaction Engineering Basics</em> focuses on the reaction engineering analysis of an isolated ideal reactor. The analyses involve only a reactor and no other equipment. This first chapter is not specific to any one type of reactor, it applies equally to reaction engineering of batch stirred-tank reactors (BSTRs), semi-batch stirred-tank reactors (SBSTRs), continuous stirred-tank reactors (CSTRs), and plug-flow reactors (PFRs). It describes and discusses qualitative analysis of isolated reactors, highlighting how qualitative analysis complements quantitative analysis. Additionally, it offers a general description of four common reaction engineering tasks: response, optimization, design, and parameter estimation tasks.</p>
+<section id="isolated-ideal-reactor-analysis" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="isolated-ideal-reactor-analysis"><span class="header-section-number">8.1</span> Isolated Ideal Reactor Analysis</h2>
+<p>Reactors are typically one component of a larger chemical process. That process might include heat exchangers, other reactors, splitting and mixing of fluid streams, and many other types of equipment. Nonetheless, for analysis purposes it often is possible to draw an imaginary box around only the reactor, and treat it as an isolated system. If the reactor is a BSTR, SBSTR, CSTR or PFR, then the system consists of an isolated <em>ideal</em> reactor.</p>
+<p>Assignments that entail isolated ideal reactor analysis can be identified by the following distinguishing characteristics.</p>
+<ul>
+<li>The system consists of one ideal reactor and no other equipment.</li>
+<li>The assignment describes the reactor and provides information about its operation.</li>
+<li>The rate expressions are known for all reactions taking place in the reactor.</li>
+<li>The quantities of interest in the assignment are reactor parameters, process parameters, reactor inputs and/or reactor outputs.</li>
+</ul>
+<p>Reactor performance can be analyzed qualitatively and quantitatively. The quantitative analysis of an isolated ideal reactor requires a mathematical model of the reactor, and is the primary topic of the next several chapters. Before undertaking a quantitative analysis, it can be useful and insightful to perform a qualitative analysis.</p>
+<section id="qualitative-reactor-analysis" class="level3" data-number="8.1.1">
+<h3 data-number="8.1.1" class="anchored" data-anchor-id="qualitative-reactor-analysis"><span class="header-section-number">8.1.1</span> Qualitative Reactor Analysis</h3>
+<p>Qualitative analysis focuses upon <em>how</em> the composition and temperature will vary as the reaction or reactions progress, but not on the magnitude of the variations. <a href="section_3_design_equations.html" class="quarto-xref"><span>Chapter 6</span></a> noted that in batch reactors the time during which reactions occurs is measured using clock time and is equal to the time that has elapsed since the reaction was initiated. It further noted that in continuous flow systems, the time during which reactions occur is equal to the amount of time that the reagents spend in the reactor. It defined the space time, <a href="section_3_design_equations.html#eq-space_time" class="quarto-xref">Equation&nbsp;<span>6.1</span></a>, as one measure of the time reagents spend in the reactor. Reactions occur over time, so in qualitative analysis, changes in composition and temperature with increasing batch reaction time or flow reactor space time are of interest.</p>
+<p>Because the analysis is qualitative, the rate expression is not used directly. Instead, the general behavior of reactions must be used, noting that for a typical reaction</p>
+<ul>
+<li>the rate will increase if the temperature of the reacting system is increased,</li>
+<li>the rate will decrease if the concentration of one or more reactants decreases,</li>
+<li>the rate is not strongly affected by the concentration of the products if the reaction is irreversible,</li>
+<li>the rate decreases as the concentration of the products increases if the reaction is reversible,</li>
+<li>the equilibrium constant decreases as the temperature increases if the reaction is exothermic, and</li>
+<li>the equilibrium constant increases as the temperature increases if the reaction is endothermic.</li>
+</ul>
+<p>Of course, not all reactions behave “typically.” The approach to qualitative analysis presented here also can be applied to atypical reactions if the general behavior above is appropriately adjusted. Atypical behavior can often be recognized by examining the rate expression, if it is available. For example, if the rate increases as the concentration of a <em>product</em> increases, the reaction is said to be <strong>autocatalytic</strong>, and the qualitative behavior can be adjusted accordingly.</p>
+<p>The driving force for a chemical reaction is reducing the free energy of the system. Put differently, a chemical reaction always proceeds toward chemical reaction equilibrium. As a consequence, in an isothermal or adiabatic reactor, <strong>a single chemical reaction will never change direction spontaneously</strong>. To do so, the reaction would have to go beyond equilibrium and then turn around and go back. Since a single reaction will never change directions, the concentrations of the reactants will continually decrease over time and the concentrations of the products will continually increase over time until equilibrium is reached. As equilibrium is reached, the concentrations will stop changing over time.</p>
+<p>The other factor to be considered in a qualitative analysis is the extent to which heat is added or removed as the reaction or reactions progress. There are a number of possibilities in this regard. Qualitative analysis is easiest and most reliable when only one reaction is taking place in a reactor that operates either adiabatically or isothermally. When only one <em>exothermic</em> reaction is taking place adiabatically, the temperature will rise continually since the reaction is releasing heat, and that heat is not being removed. Similarly, when only one <em>endothermic</em> reaction takes place adiabatically, the temperature will drop continually. When a reactor operates isothermally, the temperature does not change as the reaction proceeds. When a reactor is neither adiabatic nor isothermal, qualitative analysis can be more difficult with greater uncertainty in the results.</p>
+<p>When a reactor operates adiabatically or isothermally with only one or two reactions taking place, the shape of plots of concentration, temperature, rate, selectivity, etc. <em>versus</em> reaction time or space time can be predicted qualitatively as follows.</p>
+<ol type="1">
+<li>Determine the reactor operating procedure (e. g. isothermal or adiabatic).</li>
+<li>Determine whether the reaction is typical or atypical, establishing the expected behavior as conditions change.</li>
+<li>Draw sets of axes for each graph with the quantity of interest on the y-axis and reaction time or space time on the x-axis.</li>
+<li>Plot a point on each y-axis representing the initial values of the quantities of interest. (The axes need not have a scale, and as such, plotted values only indicate whether the quantity is initially large, intermediate or small in value.)</li>
+<li>Determine the initial slope of each graph by considering how the concentrations and temperature will change during a short interval of time and how those changes will affect the quantity of interest being plotted.</li>
+<li>Determine the initial curvature of each graph by considering whether the changes in the <em>next</em> short interval of time will be greater than, equal to, or less than those in the <em>first</em> interval of time.</li>
+<li>Determine whether the initial curvature eventually will result in the system approaching equilibrium (i. e. will each graph asymptotically approach a horizontal line?).</li>
+<li>If the initial curvature will not lead to equilibrium, infer what must happen so that the system eventually will go to equilibrium (i. e. will there be an inflection point or a minimum/maximum?), and qualitatively explain what will cause these changes in the curvature.</li>
+</ol>
+<p>In <em>Reaction Engineering Basics</em>, qualitative analyses of this type often will be used in the discussion of the results of a quantitative analysis. In that context, qualitative analysis can be used to answer the question, “Do these results make sense?” Additionally, performing a qualitative analysis <em>after</em> the quantitative analysis helps new reaction engineers develop a physical understanding of results that complements the mathematical understanding obtained in quantitative analysis. As a reaction engineer gains experience and develops the necessary skills and understanding, qualitative analysis can often provide insight and guidance <em>before</em> beginning an assignment. This is particularly true for design tasks, which are defined later in this chapter.</p>
+</section>
+<section id="quantitative-reactor-analysis" class="level3" data-number="8.1.2">
+<h3 data-number="8.1.2" class="anchored" data-anchor-id="quantitative-reactor-analysis"><span class="header-section-number">8.1.2</span> Quantitative Reactor Analysis</h3>
+<p>Quantitative analysis of reactors was discussed in Chapters <a href="section_3_design_equations.html" class="quarto-xref"><span>6</span></a> and <a href="section_3_reactor_models.html" class="quarto-xref"><span>7</span></a>. The discussion from those chapters will not be repeated here other than to repeat the general steps in the analysis. For a given type of ideal reactor, those same steps can be used with the same reactor design equations to accomplish four different kinds of reaction engineering tasks, as described in the next section.</p>
+<ol type="1">
+<li>Summarizing the information provided in the assignment.</li>
+<li>Formulating the solution mathematically.</li>
+<li>Implementing the solution numerically.</li>
+<li>Reporting and commenting upon the results.</li>
+</ol>
+</section>
+</section>
+<section id="common-reaction-engineering-tasks" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="common-reaction-engineering-tasks"><span class="header-section-number">8.2</span> Common Reaction Engineering Tasks</h2>
+<p>The reactor design equations establish a quantitative relationship between the reactor inputs, the reactor outputs, and the reactor/process parameters. In any isolated reactor modeling assignment, the reaction engineer is given values for some of the inputs, outputs and parameters and tasked with determining the values of the others. For any one isolated reactor, the same reactor design equations and the same analysis steps, above, can be used to accomplish four kinds of tasks: response, optimization, design, and parameter estimation tasks. The difference between these tasks is found not in the equations themselves, but in how they are used.</p>
+<p><strong>Reactor response tasks</strong>, as defined here, are the most straightforward of the four tasks. In a reactor response assignment the reaction engineer is provided with a sufficient number of reactor variables to allow calculation of all of the quantities of interest. Generally there is a single, correct answer to a reactor response assignment.</p>
+<p>Sometimes a reactor response assignment will ask for a graph where a quantity of interest is plotted <em>versus</em> some other reactor variable. This is still a reactor response task. The only difference is that the reactor design equations are solved multiple times to generate the data to be plotted. Each time the reactor design equations are solved, there is a single, correct answer, and consequently, there is a single correct graph that completes the task.</p>
+<p>In <strong>optimization tasks</strong> the number of reactor variables that are specified or known is <em>not</em> sufficient to allow the reaction engineer to solve the reactor design equations and calculate the quantities of interest. The simplest example would task the engineer to maximize a quantity of interest (the target) with respect to some other reactor variable (the adjusted variable). Neither the value of the targe nor the value of the adjusted variable are known. In lieu of knowing their actual values, the reaction engineer instead knows that it is the maximum value that the target can be attained by varying the adjusted variable. Typically the engineer is tasked to find both the maximum value of the target and the corresponding value of the adjusted variable. Again, generally there is a single correct answer to a reactor optimization assignment.</p>
+<p>Knowing that the reactor design equations will be solved numerically, there are three ways the reaction engineer could approach an optimization task. In the first two a range of values of the adjusted variable would be selected and the design equations would be solved repeatedly to find the value of the target corresponding to each value of the adjusted variable. In one approach, a table is generated with one column for the target and one column for the adjusted variable. The column for the target would be scanned to identify the maximum value. The corresponding value of the adjusted variable is found in the other column in the same row.</p>
+<p>The second second differs in that instead of tabulating the results from solving the reactor design equations, they are plotted. The maximum in the graph is identified and the maximum value of the target and the corresponding value of the adjusted variable are read from the graph. In both of these approaches, it is possible that a maximum will not be present. In that case, the range of values of the adjusted variable must be increased until a maximum is observed. Once a maximum is observed, the precision of the results can be improved by adding many additional values of the adjusted variable between the two points that bracket the maximum.</p>
+<p>Many software packages include a function (an optimizer) that performs optimization, that is finds a maximum or minimum. The third approach involves using such an optimizer. In this case, the numerical implementation of the solution would entail writing a reactor model function that receives the adjusted variable as an argument and returns the corresponding quantity of interest. That reactor model function would then be passed to the optimizer. Typically an initial guess for the optimum value of the adjusted variable would also need to be provided.</p>
+<p>Optimization tasks can be much more complicated than simply maximizing a quantity of interest with respect to another reactor variable. In addition to specifying multiple adjusted variables, the assignment also could impose constraints on the values of one or more reactor variables (not just the adjusted variables). Constraints are conditions that must be obeyed. An example of a constraint would be that the temperature of the heat exchange fluid cannot exceed some specified value because it would boil or decompose above that temperature. Again, there are software packages that will perform constrained, multi-variable optimization.</p>
+<p><strong>Reactor design tasks</strong> are the most complicated of the tasks considered here. At the same time they can be intellectually stimulating, affording the reaction engineer an opportunity to be creative. A reactor design assignment <em>does not</em> provide sufficient information to solve the reactor design equations. The reaction engineer must choose values for the missing reactor variables. In more extreme cases, the assignment may provide little more than the reagents that are available and the products that are to be produced. The type of reactor to use and how to operate it may be among the choices the reaction engineer needs to make.</p>
+<p>Design tasks almost always involve an optimization sub-task. The quantity that needs to be maximized is typically financial in nature. The goal is to maximize the rate of making profit subject to both technical and financial constraints. Design at this level is typically taught in chemical engineering courses on plant design, and the system being optimized is typically an entire process, not just an isolated reactor.</p>
+<p>That level of design task is well beyond the scope of <em>Reaction Engineering Basics</em>. However, highly simplified design tasks are presented herein. In general there are reactor variables that are related to the finances of an overall process. For example, the cost of operating a process may scale with the temperature of that process, in which case minimizing the temperature minimizes the operating cost. In general, there <strong>is not</strong> a single correct solution to a reactor design assignment. Design tasks are inherently “open-ended,” and multiple solutions are possible and acceptable.</p>
+<p><strong>Parameter estimation tasks</strong> are inherently different from the three types of tasks described above, but they do use the same reactor design equations and the same solution steps. Briefly, a parameter estimation task involves generating data using a reactor and then using a model for the reactor to estimate the values of parameters appearing in a rate expression. Parameter estimation tasks are not considered in this section of <em>Reaction Engineering Basics</em>, but in Chapters <a href="section_6_data_generation.html" class="quarto-xref"><span>18</span></a> through <a href="section_6_pfr_data_analysis.html" class="quarto-xref"><span>21</span></a>.</p>
+<hr>
+<p>The next two Chapters, <a href="section_4_bstr_analysis.html" class="quarto-xref"><span>9</span></a> and <a href="section_4_sbstr_analysis.html" class="quarto-xref"><span>10</span></a>, examine the analysis of non-continuous reactors and present examples involving response and optimization tasks. That affords the reader an opportunity to gain some understanding of the qualitative and quantitative differences between BSTRs and SBSTRs, which is necessary for the design of non-continuous reactors in the following Chapter, <a href="section_4_non_continuous_design.html" class="quarto-xref"><span>11</span></a>. Following that, analysis of continuous reactors is considered in Chapters <a href="section_4_cstr_analysis.html" class="quarto-xref"><span>12</span></a> and <a href="section_4_pfr_analysis.html" class="quarto-xref"><span>13</span></a>. Similarly, they afford the reader an opportunity to gain some understanding of the qualitative and quantitative differences between CSTRs and PFRs, which is necessary for the design of continuous reactors in <a href="section_4_continuous_design.html" class="quarto-xref"><span>Chapter 14</span></a>, which also considers the choice between continuous and non-continuous reactors.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./section_4_intro.html" class="pagination-link" aria-label="Modeling Isolated Ideal Reactors">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Modeling Isolated Ideal Reactors</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./section_4_bstr_analysis.html" class="pagination-link" aria-label="BSTR Analysis">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

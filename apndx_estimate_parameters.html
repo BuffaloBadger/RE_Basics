@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Reaction Engineering Basics - Appendix J — Parameter Estimation</title>
+<title>Reaction Engineering Basics - Appendix L — Parameter Estimation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -31,7 +31,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
 <link href="./apndx_solve_bvodes.html" rel="next">
-<link href="./apndx_solve_ivodes.html" rel="prev">
+<link href="./apndx_solve_daes.html" rel="prev">
+<link href="./Graphics/BuffaloBadger_16_16.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -47,7 +48,12 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -56,6 +62,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -65,15 +72,42 @@ ul.task-list li input[type="checkbox"] {
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
     <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
     </a>
@@ -85,46 +119,51 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/total_ps.html" rel="" target="">
- <span class="menu-text">ToTaL PS</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics"> 
+<span class="menu-text">Reaction Engineering Basics</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics" rel="" target="">
- <span class="menu-text">Reaction Engineering Basics</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/SCoRE"> 
+<span class="menu-text">SCoRE</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/ToTaL_Engineering"> 
+<span class="menu-text">ToTaL Engineering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/The_Sett"> 
+<span class="menu-text">The Sett</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_prereq_knowledge.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_estimate_parameters.html"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_estimate_parameters.html"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -188,7 +227,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Reactor Models</span></a>
+ <span class="menu-text">Ideal Reactor Models</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -202,8 +241,8 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_3_response_function.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Response Functions</span></span></a>
+  <a href="./section_3_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Modeling Functions</span></span></a>
   </div>
 </li>
       </ul>
@@ -211,7 +250,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Kinetics Data Analysis</span></a>
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -219,26 +258,44 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_data_generation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  <a href="./section_4_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  <a href="./section_4_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  <a href="./section_4_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  <a href="./section_4_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Design of Non-Continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
   </div>
 </li>
       </ul>
@@ -246,7 +303,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -254,44 +311,20 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  <a href="./section_5_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_bstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  <a href="./section_5_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_non_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Design of Non-continuous Reactors</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_cstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_pfr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  <a href="./section_5_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
   </div>
 </li>
       </ul>
@@ -299,7 +332,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+ <span class="menu-text">Kinetics Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -307,20 +340,26 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_reactor_networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  <a href="./section_6_data_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Thermally Back-mixed PFRs</span></span></a>
+  <a href="./section_6_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_recycle_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  <a href="./section_6_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
   </div>
 </li>
       </ul>
@@ -371,74 +410,80 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./apndx_useful_eqns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Frequently Used Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
   </div>
 </li>
       </ul>
@@ -446,28 +491,28 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#defining-the-problem" id="toc-defining-the-problem" class="nav-link active" data-scroll-target="#defining-the-problem"><span class="header-section-number">J.1</span> Defining the Problem</a></li>
-  <li><a href="#items-that-must-be-provided-to-the-solver" id="toc-items-that-must-be-provided-to-the-solver" class="nav-link" data-scroll-target="#items-that-must-be-provided-to-the-solver"><span class="header-section-number">J.2</span> Items that Must be Provided to the Solver</a></li>
-  <li><a href="#a-simplistic-explanation-of-how-the-parameters-are-estimated" id="toc-a-simplistic-explanation-of-how-the-parameters-are-estimated" class="nav-link" data-scroll-target="#a-simplistic-explanation-of-how-the-parameters-are-estimated"><span class="header-section-number">J.3</span> A Simplistic Explanation of How the Parameters are Estimated</a></li>
-  <li><a href="#convergence" id="toc-convergence" class="nav-link" data-scroll-target="#convergence"><span class="header-section-number">J.4</span> Convergence</a></li>
-  <li><a href="#assessing-the-accuracy-of-the-model" id="toc-assessing-the-accuracy-of-the-model" class="nav-link" data-scroll-target="#assessing-the-accuracy-of-the-model"><span class="header-section-number">J.5</span> Assessing the Accuracy of the Model</a></li>
-  <li><a href="#cautions-related-to-parameter-estimation" id="toc-cautions-related-to-parameter-estimation" class="nav-link" data-scroll-target="#cautions-related-to-parameter-estimation"><span class="header-section-number">J.6</span> Cautions Related to Parameter Estimation</a></li>
+  <li><a href="#defining-the-problem" id="toc-defining-the-problem" class="nav-link active" data-scroll-target="#defining-the-problem"><span class="header-section-number">L.1</span> Defining the Problem</a></li>
+  <li><a href="#items-that-must-be-provided-to-the-solver" id="toc-items-that-must-be-provided-to-the-solver" class="nav-link" data-scroll-target="#items-that-must-be-provided-to-the-solver"><span class="header-section-number">L.2</span> Items that Must be Provided to the Solver</a></li>
+  <li><a href="#a-simplistic-explanation-of-how-the-parameters-are-estimated" id="toc-a-simplistic-explanation-of-how-the-parameters-are-estimated" class="nav-link" data-scroll-target="#a-simplistic-explanation-of-how-the-parameters-are-estimated"><span class="header-section-number">L.3</span> A Simplistic Explanation of How the Parameters are Estimated</a></li>
+  <li><a href="#convergence" id="toc-convergence" class="nav-link" data-scroll-target="#convergence"><span class="header-section-number">L.4</span> Convergence</a></li>
+  <li><a href="#assessing-the-accuracy-of-the-model" id="toc-assessing-the-accuracy-of-the-model" class="nav-link" data-scroll-target="#assessing-the-accuracy-of-the-model"><span class="header-section-number">L.5</span> Assessing the Accuracy of the Model</a></li>
+  <li><a href="#cautions-related-to-parameter-estimation" id="toc-cautions-related-to-parameter-estimation" class="nav-link" data-scroll-target="#cautions-related-to-parameter-estimation"><span class="header-section-number">L.6</span> Cautions Related to Parameter Estimation</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_estimate_parameters.html"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-apndx_parameter_est" class="quarto-section-identifier">Appendix J — Parameter Estimation</span></h1>
+<h1 class="title"><span id="sec-apndx_parameter_est" class="quarto-section-identifier">Appendix L — Parameter Estimation</span></h1>
 </div>
 
 
@@ -480,19 +525,21 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
 
+
 <p>This appendix provides a simplified overview on using experimental data to (a) estimate the values of parameters in a model and (b) assess the accuracy of the resulting model. Students may be familiar with estimating parameter values in linear models using linear least-squares fitting. The parameter estimation procedure outlined here is not limited to linear models, and it is usually performed using computer software. The presentation here is not specific to any one computer program or language. Students seeking a more complete understanding should consult a statistical analysis textbook or take a course on statistical analysis.</p>
-<section id="defining-the-problem" class="level2" data-number="J.1">
-<h2 data-number="J.1" class="anchored" data-anchor-id="defining-the-problem"><span class="header-section-number">J.1</span> Defining the Problem</h2>
+<section id="defining-the-problem" class="level2" data-number="L.1">
+<h2 data-number="L.1" class="anchored" data-anchor-id="defining-the-problem"><span class="header-section-number">L.1</span> Defining the Problem</h2>
 <p>Parameter estimation requires experimental data. In each experiment, the person performing the experiments sets the values of one or more quantities. Herein, the variables used to represent those quantities are referred to as the <em>adjusted input variables</em>. After setting those values, the experimenter then records the values of other quantities. The variables used to represent these other quantities are referred to as the <em>experimental responses</em>. In <em>Reaction Engineering Basics</em> only experiments with a single experimental response are considered. Every experiment performed involves the same set of adjusted input variables and the same experimental response, but their values are different from experiment to experiment.</p>
 <p>Often, the reason someone performs experiments like these is because they believe that the response depends upon the values of the adjusted input variables. Based upon that belief, they propose a mathematical <em>response model</em>. The values of the adjusted input variables from any one experiment can be substituted into the response model permitting the calculation of a <em>model-predicted response</em> for that experiment. Typically the response model contains one or more unknown constants, called the <em>model parameters</em>.</p>
 <p>It is important to understand that even if the model is correct and the values of the model parameters are known exactly, the model-predicted response for any one experiment will not be exactly equal to the experimental response. Measured values, such as the experimental response, always include random error. Put differently, if the same experiment was performed 10 times, 10 slightly different experimental responses could be recorded. Given a response model (including the values of the parameters appearing in it), the difference between the experimental response and the model-predicted response for any one experiment is called the error or the residual for that one experiment.</p>
 <p>Returning to the reason the experiments were performed, the person who performed them believes that the response depends upon the values of the adjusted input variables. However, they do not know what the correct response model is. Therefore, when they propose a response model, they don’t know whether the proposed model is correct and they don’t know the values of the parameters that the proposed model contains. The purposes of parameter estimation are first, to calculate the “best” values of the parameters in the proposed model, second, to estimate the uncertainty in each parameter value, and third, to provide some measure of how accurately the model predicts the experimental responses.</p>
 <p>This raises the question of how to define the “best” values of the model parameters. If the error (i. e. the difference between the experimental response and the model-predicted response) for each experiment is squared and then the resulting squares of the errors are added together, the most common definition for the “best” parameter values is that the sum of the squares of the errors is minimized when the “best” values of the parameters are used in the response model. The squares of the errors are used instead of the errors themselves so that positive and negative errors don’t cancel each other out. For this reason, parameter estimation is sometimes referred to as “least-squares fitting.” An alternative definition of the “best” parameter values uses the sum of the squares of the <em>relative</em> errors. The use of this definition is considered in the final section of this appendix.</p>
 </section>
-<section id="items-that-must-be-provided-to-the-solver" class="level2" data-number="J.2">
-<h2 data-number="J.2" class="anchored" data-anchor-id="items-that-must-be-provided-to-the-solver"><span class="header-section-number">J.2</span> Items that Must be Provided to the Solver</h2>
+<section id="items-that-must-be-provided-to-the-solver" class="level2" data-number="L.2">
+<h2 data-number="L.2" class="anchored" data-anchor-id="items-that-must-be-provided-to-the-solver"><span class="header-section-number">L.2</span> Items that Must be Provided to the Solver</h2>
 <p>Model parameters can be estimated numerically. While “estimator” might be more appropriate, for consistency with the other numerical methods appendices in <em>Reaction Engineering Basics</em>, the term “solver” is used herein to refer to the computer program or function that numerically estimates the parameters in a model. There are many different parameter estimation solvers available, and each has specific instructions on how to use it. This appendix makes no attempt to explain the details of using any of the available parameter estimation solvers.</p>
 <p>Regardless of the specific solver being used, when performing parameter estimation, four things must be provided to the solver:</p>
 <ol type="1">
@@ -510,8 +557,8 @@ ul.task-list li input[type="checkbox"] {
 </ol></li>
 </ol>
 </section>
-<section id="a-simplistic-explanation-of-how-the-parameters-are-estimated" class="level2" data-number="J.3">
-<h2 data-number="J.3" class="anchored" data-anchor-id="a-simplistic-explanation-of-how-the-parameters-are-estimated"><span class="header-section-number">J.3</span> A Simplistic Explanation of How the Parameters are Estimated</h2>
+<section id="a-simplistic-explanation-of-how-the-parameters-are-estimated" class="level2" data-number="L.3">
+<h2 data-number="L.3" class="anchored" data-anchor-id="a-simplistic-explanation-of-how-the-parameters-are-estimated"><span class="header-section-number">L.3</span> A Simplistic Explanation of How the Parameters are Estimated</h2>
 <p>The intent here is to provide a sense of how the solver estimates parameters. It is highly simplified and skips over some details. Generally, numerical parameter estimation is an iterative process that involves the steps listed here.</p>
 <ol type="1">
 <li>Using the guess for the parameter values, calculate the model-predicted response for each experiment.</li>
@@ -531,8 +578,8 @@ ul.task-list li input[type="checkbox"] {
 </ol></li>
 </ol>
 </section>
-<section id="convergence" class="level2" data-number="J.4">
-<h2 data-number="J.4" class="anchored" data-anchor-id="convergence"><span class="header-section-number">J.4</span> Convergence</h2>
+<section id="convergence" class="level2" data-number="L.4">
+<h2 data-number="L.4" class="anchored" data-anchor-id="convergence"><span class="header-section-number">L.4</span> Convergence</h2>
 <p>The solver uses a set of convergence criteria to determine whether (a) it has converged to a minimum value of the sum of the squares of the errors, (b) it has not converged to a minimum value of the sum of the squares of the errors but it is making progress and should continue iterating or (c) it has not converged to a minimum value and it is not making progress, so it should stop iterating. Typical convergence criteria are listed below; the solver usually provides a default for the “specified amounts” in this list, but the defaults can be overridden at the time the solver is started.</p>
 <ul>
 <li>the sum of the squares of the errors is smaller than a specified amount (converged).</li>
@@ -544,8 +591,8 @@ ul.task-list li input[type="checkbox"] {
 <li>the guess is changing by less than a specified amount between iterations (not making progress).</li>
 </ul>
 </section>
-<section id="assessing-the-accuracy-of-the-model" class="level2" data-number="J.5">
-<h2 data-number="J.5" class="anchored" data-anchor-id="assessing-the-accuracy-of-the-model"><span class="header-section-number">J.5</span> Assessing the Accuracy of the Model</h2>
+<section id="assessing-the-accuracy-of-the-model" class="level2" data-number="L.5">
+<h2 data-number="L.5" class="anchored" data-anchor-id="assessing-the-accuracy-of-the-model"><span class="header-section-number">L.5</span> Assessing the Accuracy of the Model</h2>
 <p>Typically, if successful, the solver will return (a) the estimated values of the model parameters, (b) some measure of the uncertainty in the estimated values (e. g. a 95% confidence interval) and (c) the coefficient of determination, <span class="math inline">\(R^2\)</span>.</p>
 <p>The estimated values of the model parameters can be used to compute the model-predicted response for each experiment. A “parity plot” can then be created wherein the model-predicted response is plotted versus the experimental response. If the model was perfect, every point in the parity plot would fall on a diagonal line passing through the origin. The farther the points are from the diagonal, the lower the accuracy of the model.</p>
 <p>The errors, or residuals, for each experiment can also be calculated. A set of “residuals plots” can then be created wherein the residuals are plotted versus each of the experimental adjusted input variables. If the model was perfect, every residual would equal zero and every point in every residuals plot would fall on the horizontal axis. The magnitude of the deviations from the horizontal axis is not important (the parity plot is used for this purpose). The critical issue whether the points scatter randomly above and below the horizontal axis as the value of the adjusted input variable increases. When the model is good, there should not be any trends in the deviations as the value of the adjusted input variable increases.</p>
@@ -557,8 +604,8 @@ ul.task-list li input[type="checkbox"] {
 <li>In each residuals plot, the points scatter randomly about the horizontal axis, and no systematic deviations are apparent.</li>
 </ul>
 </section>
-<section id="cautions-related-to-parameter-estimation" class="level2" data-number="J.6">
-<h2 data-number="J.6" class="anchored" data-anchor-id="cautions-related-to-parameter-estimation"><span class="header-section-number">J.6</span> Cautions Related to Parameter Estimation</h2>
+<section id="cautions-related-to-parameter-estimation" class="level2" data-number="L.6">
+<h2 data-number="L.6" class="anchored" data-anchor-id="cautions-related-to-parameter-estimation"><span class="header-section-number">L.6</span> Cautions Related to Parameter Estimation</h2>
 <p>A few issues should be kept in mind when performing numerical parameter estimation. The first is that <strong>the solver may converge to a local minimum</strong> of the sum of the squares of the errors and not the global minimum. This could result in a model that does not appear to be accurate, but that could be accurate if the global minimum was located. One way to try to detect this situation is to repeat the parameter estimation using a very different initial guess. If the solver converges to a different set of estimated parameters, that indicates that one (or possibly both) of the sets of estimated parameters corresponds to a local minimum. If a wide range of initial guesses always leads to the same parameter estimates, that <em>may</em> suggest the a global minimum has been found, and it is the model, itself, that is not accurate.</p>
 <p>The second issue arises <strong>when initially guessing the value of a model parameter that might fall anywhere in a very wide range of values</strong>. As an example, in <em>Reaction Engineering Basics</em> problems, the pre-exponential factor for a rate coefficient could have a value anywhere between 10<sup>-20</sup> and 10<sup>20</sup>. In this situation, if the initial guess is not sufficiently close to the actual value of the parameter, the solver may quit because it is not making progress. One way to reduce the likelihood of this happening is to use the base-10 logarithm of the parameter instead of the parameter itself. That is, if <span class="math inline">\(k_0\)</span> is the actual parameter of interest in the model, re-write the model replacing <span class="math inline">\(k_0\)</span> with <span class="math inline">\(10^\beta\)</span>. Then perform parameter estimation to find the best value of <span class="math inline">\(\beta\)</span>. When the possible range of <span class="math inline">\(k_0\)</span> is between 10<sup>-20</sup> and 10<sup>20</sup>, the corresponding range of <span class="math inline">\(\beta\)</span> is between -20 and 20. Once the best value <span class="math inline">\(\beta\)</span> has been found, the best value of <span class="math inline">\(k_0\)</span> is simply calculated as <span class="math inline">\(k_0 = 10^\beta\)</span>.</p>
 <p>The third issue arises <strong>when the experimental responses span several orders of magnitude</strong>. In this situation, the errors associated with larger values of the response may be greater than errors associated with smaller values of the response. If that is so, the minimization process will focus on the responses with larger values because they have a greater effect upon the sum of the squares of the errors. One option for addressing this situation is to minimize the sum of the squares of the <em>relative</em> errors instead of the sum of the squares of the <em>absolute</em> errors.</p>
@@ -646,10 +693,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -659,8 +723,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -672,7 +745,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -716,6 +912,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -741,6 +938,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -802,17 +1025,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./apndx_solve_ivodes.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span>
+      <a href="./apndx_solve_daes.html" class="pagination-link" aria-label="Solving Differential-Algebraic Equations">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./apndx_solve_bvodes.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./apndx_solve_bvodes.html" class="pagination-link" aria-label="Solving Boundary-Value ODEs">
+        <span class="nav-page-text"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Reaction Engineering Basics - Appendix C — Reaction Thermodynamics</title>
+<title>Reaction Engineering Basics - Appendix D — Reaction Thermodynamics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -32,6 +32,7 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="./">
 <link href="./apndx_heat_exchange.html" rel="next">
 <link href="./apndx_nomenclature.html" rel="prev">
+<link href="./Graphics/BuffaloBadger_16_16.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -47,7 +48,12 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -56,6 +62,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -65,15 +72,42 @@ ul.task-list li input[type="checkbox"] {
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
     <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
     </a>
@@ -85,46 +119,51 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/total_ps.html" rel="" target="">
- <span class="menu-text">ToTaL PS</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics"> 
+<span class="menu-text">Reaction Engineering Basics</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics" rel="" target="">
- <span class="menu-text">Reaction Engineering Basics</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/SCoRE"> 
+<span class="menu-text">SCoRE</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/ToTaL_Engineering"> 
+<span class="menu-text">ToTaL Engineering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/The_Sett"> 
+<span class="menu-text">The Sett</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_prereq_knowledge.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_reaction_thermo.html"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_reaction_thermo.html"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -188,7 +227,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Reactor Models</span></a>
+ <span class="menu-text">Ideal Reactor Models</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -202,8 +241,8 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_3_response_function.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Response Functions</span></span></a>
+  <a href="./section_3_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Modeling Functions</span></span></a>
   </div>
 </li>
       </ul>
@@ -211,7 +250,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Kinetics Data Analysis</span></a>
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -219,26 +258,44 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_data_generation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  <a href="./section_4_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  <a href="./section_4_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  <a href="./section_4_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  <a href="./section_4_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Design of Non-Continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
   </div>
 </li>
       </ul>
@@ -246,7 +303,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -254,44 +311,20 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  <a href="./section_5_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_bstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  <a href="./section_5_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_non_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Design of Non-continuous Reactors</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_cstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_pfr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  <a href="./section_5_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
   </div>
 </li>
       </ul>
@@ -299,7 +332,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+ <span class="menu-text">Kinetics Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -307,20 +340,26 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_reactor_networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  <a href="./section_6_data_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Thermally Back-mixed PFRs</span></span></a>
+  <a href="./section_6_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_recycle_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  <a href="./section_6_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
   </div>
 </li>
       </ul>
@@ -371,74 +410,80 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./apndx_useful_eqns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Frequently Used Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
   </div>
 </li>
       </ul>
@@ -446,31 +491,31 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#heats-of-reaction" id="toc-heats-of-reaction" class="nav-link active" data-scroll-target="#heats-of-reaction"><span class="header-section-number">C.1</span> Heats of Reaction</a>
+  <li><a href="#heats-of-reaction" id="toc-heats-of-reaction" class="nav-link active" data-scroll-target="#heats-of-reaction"><span class="header-section-number">D.1</span> Heats of Reaction</a>
   <ul class="collapse">
-  <li><a href="#the-standard-heat-of-reaction-at-298-k" id="toc-the-standard-heat-of-reaction-at-298-k" class="nav-link" data-scroll-target="#the-standard-heat-of-reaction-at-298-k"><span class="header-section-number">C.1.1</span> The Standard Heat of Reaction at 298 K</a></li>
-  <li><a href="#the-standard-heat-of-reaction-at-temperature-t" id="toc-the-standard-heat-of-reaction-at-temperature-t" class="nav-link" data-scroll-target="#the-standard-heat-of-reaction-at-temperature-t"><span class="header-section-number">C.1.2</span> The Standard Heat of Reaction at Temperature T</a></li>
+  <li><a href="#the-standard-heat-of-reaction-at-298-k" id="toc-the-standard-heat-of-reaction-at-298-k" class="nav-link" data-scroll-target="#the-standard-heat-of-reaction-at-298-k"><span class="header-section-number">D.1.1</span> The Standard Heat of Reaction at 298 K</a></li>
+  <li><a href="#the-standard-heat-of-reaction-at-temperature-t" id="toc-the-standard-heat-of-reaction-at-temperature-t" class="nav-link" data-scroll-target="#the-standard-heat-of-reaction-at-temperature-t"><span class="header-section-number">D.1.2</span> The Standard Heat of Reaction at Temperature T</a></li>
   </ul></li>
-  <li><a href="#adiabatic-temperature" id="toc-adiabatic-temperature" class="nav-link" data-scroll-target="#adiabatic-temperature"><span class="header-section-number">C.2</span> Adiabatic Temperature</a></li>
-  <li><a href="#equilibrium-constants" id="toc-equilibrium-constants" class="nav-link" data-scroll-target="#equilibrium-constants"><span class="header-section-number">C.3</span> Equilibrium Constants</a></li>
-  <li><a href="#equilibrium-composition" id="toc-equilibrium-composition" class="nav-link" data-scroll-target="#equilibrium-composition"><span class="header-section-number">C.4</span> Equilibrium Composition</a></li>
-  <li><a href="#symbols-used-in-this-appendix" id="toc-symbols-used-in-this-appendix" class="nav-link" data-scroll-target="#symbols-used-in-this-appendix"><span class="header-section-number">C.5</span> Symbols Used in this Appendix</a></li>
+  <li><a href="#adiabatic-temperature" id="toc-adiabatic-temperature" class="nav-link" data-scroll-target="#adiabatic-temperature"><span class="header-section-number">D.2</span> Adiabatic Temperature</a></li>
+  <li><a href="#equilibrium-constants" id="toc-equilibrium-constants" class="nav-link" data-scroll-target="#equilibrium-constants"><span class="header-section-number">D.3</span> Equilibrium Constants</a></li>
+  <li><a href="#equilibrium-composition" id="toc-equilibrium-composition" class="nav-link" data-scroll-target="#equilibrium-composition"><span class="header-section-number">D.4</span> Equilibrium Composition</a></li>
+  <li><a href="#symbols-used-in-this-appendix" id="toc-symbols-used-in-this-appendix" class="nav-link" data-scroll-target="#symbols-used-in-this-appendix"><span class="header-section-number">D.5</span> Symbols Used in this Appendix</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_reaction_thermo.html"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-apndx_reaction_thermo" class="quarto-section-identifier">Appendix C — Reaction Thermodynamics</span></h1>
+<h1 class="title"><span id="sec-apndx_reaction_thermo" class="quarto-section-identifier">Appendix D — Reaction Thermodynamics</span></h1>
 </div>
 
 
@@ -483,93 +528,95 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
 
+
 <p>This appendix provides an abbreviated overview of the calculation of heats of reaction, equilibrium constants and equilibrium composition.</p>
-<section id="heats-of-reaction" class="level2" data-number="C.1">
-<h2 data-number="C.1" class="anchored" data-anchor-id="heats-of-reaction"><span class="header-section-number">C.1</span> Heats of Reaction</h2>
+<section id="heats-of-reaction" class="level2" data-number="D.1">
+<h2 data-number="D.1" class="anchored" data-anchor-id="heats-of-reaction"><span class="header-section-number">D.1</span> Heats of Reaction</h2>
 <p>The heat of reaction appears in the energy balances for the ideal reactors considered in <em>Reaction Engineering Basics</em>. The heat of reaction also changes with temperature. As such, it is essential that students know how to calculate the heat of reaction at any given temperature.</p>
 <p>The heat, <span class="math inline">\(\Delta H_j\)</span>, of an arbitrary reaction, <span class="math inline">\(j\)</span>, is defined as the change in enthalpy when stoichiometric amounts of the reactants in reaction <span class="math inline">\(j\)</span> are <strong>completely</strong> converted to stoichiometric amounts of the products of the reaction. This is true, even if the equilibrium conversion for reaction <span class="math inline">\(j\)</span> is less than 100%. The heat of reaction does not depend upon the conversion, it is defined in terms of complete conversion.</p>
 <p>If heat is released when reaction <span class="math inline">\(j\)</span> occurs, reaction <span class="math inline">\(j\)</span> is said to be an <em>exothermic</em> reaction, and <span class="math inline">\(\Delta H_j\)</span> will be negative. Conversely, if heat is consumed when reaction <span class="math inline">\(j\)</span> occurs, reaction <span class="math inline">\(j\)</span> is said to be an <em>endothermic</em> reaction, and <span class="math inline">\(\Delta H_j\)</span> will be positive.</p>
 <p>The units of the heat of reaction are energy per mole. The “mole” in the units is a mole of extent of reaction for the reaction, as written.</p>
 <p>Typically, the calculation of the heat of reaction proceeds in two steps. First, the standard heat of reaction at 298 K is calculated. Then that result is used to calculate the heat of reaction at any other temperature. The next two sub-sections describe these two steps.</p>
-<section id="the-standard-heat-of-reaction-at-298-k" class="level3" data-number="C.1.1">
-<h3 data-number="C.1.1" class="anchored" data-anchor-id="the-standard-heat-of-reaction-at-298-k"><span class="header-section-number">C.1.1</span> The Standard Heat of Reaction at 298 K</h3>
+<section id="the-standard-heat-of-reaction-at-298-k" class="level3" data-number="D.1.1">
+<h3 data-number="D.1.1" class="anchored" data-anchor-id="the-standard-heat-of-reaction-at-298-k"><span class="header-section-number">D.1.1</span> The Standard Heat of Reaction at 298 K</h3>
 <p>The <em>standard heat of formation</em> at 298 K of some species, <span class="math inline">\(i\)</span>, <span class="math inline">\(\Delta H_{f,i}^0 \Bigr\rvert_{T=298K}\)</span>, is the heat of the reaction in which one mole of species <span class="math inline">\(i\)</span> (in its standard state) is synthesized at 298 K from the elements that it comprises (in their standard states). Standard heats of formation of many reagents at 298 K are tabulated in various handbooks; selected lists often appear in thermodynamics textbooks, too. Tables of this type should indicate the standard state that has been used for species <span class="math inline">\(i\)</span> and each of the elements.</p>
-<p>The widespread availability of tables containing standard heats of formation is important because the standard heat of any reaction, <span class="math inline">\(j\)</span>, at 298 K can be calculated from the standard heats of formation of the reactants and products in reaction <span class="math inline">\(j\)</span>. Specifically, <a href="#eq-deltaH-298-form">Equation&nbsp;<span>C.1</span></a> is used to calculate the standard heat of reaction <span class="math inline">\(j\)</span> from the standard heats of formation of its reactants and products. <a href="#eq-deltaH-298-form">Equation&nbsp;<span>C.1</span></a> uses the <em>Reaction Engineering Basics</em> sign convention wherein the stoichiometric coefficients of reactants are negative and the stoichiometric coefficients of products are positive.</p>
+<p>The widespread availability of tables containing standard heats of formation is important because the standard heat of any reaction, <span class="math inline">\(j\)</span>, at 298 K can be calculated from the standard heats of formation of the reactants and products in reaction <span class="math inline">\(j\)</span>. Specifically, <a href="#eq-deltaH-298-form" class="quarto-xref">Equation&nbsp;<span>D.1</span></a> is used to calculate the standard heat of reaction <span class="math inline">\(j\)</span> from the standard heats of formation of its reactants and products. <a href="#eq-deltaH-298-form" class="quarto-xref">Equation&nbsp;<span>D.1</span></a> uses the <em>Reaction Engineering Basics</em> sign convention wherein the stoichiometric coefficients of reactants are negative and the stoichiometric coefficients of products are positive.</p>
 <p><span id="eq-deltaH-298-form"><span class="math display">\[
 \Delta H_j^0\Bigr\rvert_{T=298K} = \sum_i \left( \nu_{i,j} \Delta H_{f,i}^0\Bigr\rvert_{T=298K} \right)
-\tag{C.1}\]</span></span></p>
-<p>An alternative to using standard heats of formation is to use the <em>standard heat of combustion</em> of the reactants and products at 298 K. The standard heat of combustion at 298 K of some species <span class="math inline">\(i\)</span>, <span class="math inline">\(\Delta H_{c,i}^0 \biggr\rvert_{T=298K}\)</span>, is the heat of the reaction in which species <span class="math inline">\(i\)</span> is completely oxidized by O<sub>2</sub> at 298 K, usually producing CO<sub>2</sub> and H<sub>2</sub>O<sub>(l)</sub>, and with all species in their standard states. Standard heats of combustion are tabulated in handbooks and textbooks, just as standard heats of formation are. Standard heats of combustion are particularly convenient for use with hydrocarbons. If reagent <span class="math inline">\(i\)</span> contains elements other than C, O and H, the table providing the value of the standard heat of combustion should indicate the additional combustion products and their standard states. <a href="#eq-deltaH-298-comb">Equation&nbsp;<span>C.2</span></a> is used to calculate the standard heat of reaction <span class="math inline">\(j\)</span> from the standard heats of combustion of its reactants and products.</p>
+\tag{D.1}\]</span></span></p>
+<p>An alternative to using standard heats of formation is to use the <em>standard heat of combustion</em> of the reactants and products at 298 K. The standard heat of combustion at 298 K of some species <span class="math inline">\(i\)</span>, <span class="math inline">\(\Delta H_{c,i}^0 \biggr\rvert_{T=298K}\)</span>, is the heat of the reaction in which species <span class="math inline">\(i\)</span> is completely oxidized by O<sub>2</sub> at 298 K, usually producing CO<sub>2</sub> and H<sub>2</sub>O<sub>(l)</sub>, and with all species in their standard states. Standard heats of combustion are tabulated in handbooks and textbooks, just as standard heats of formation are. Standard heats of combustion are particularly convenient for use with hydrocarbons. If reagent <span class="math inline">\(i\)</span> contains elements other than C, O and H, the table providing the value of the standard heat of combustion should indicate the additional combustion products and their standard states. <a href="#eq-deltaH-298-comb" class="quarto-xref">Equation&nbsp;<span>D.2</span></a> is used to calculate the standard heat of reaction <span class="math inline">\(j\)</span> from the standard heats of combustion of its reactants and products.</p>
 <p><span id="eq-deltaH-298-comb"><span class="math display">\[
 \Delta H_j^0\Bigr\rvert_{T=298K} = \sum_i \left( -\nu_{i,j} \Delta H_{c,i}^0\Bigr\rvert_{T=298K} \right)
-\tag{C.2}\]</span></span></p>
+\tag{D.2}\]</span></span></p>
 </section>
-<section id="the-standard-heat-of-reaction-at-temperature-t" class="level3" data-number="C.1.2">
-<h3 data-number="C.1.2" class="anchored" data-anchor-id="the-standard-heat-of-reaction-at-temperature-t"><span class="header-section-number">C.1.2</span> The Standard Heat of Reaction at Temperature T</h3>
-<p><em>Assuming none of the reactants and products in reaction <span class="math inline">\(j\)</span> undergo a phase change between 298 K and T</em>, the standard heat of reaction <span class="math inline">\(j\)</span> at arbitrary temperature, <span class="math inline">\(T\)</span>, can be calculated using <a href="#eq-deltaH-T">Equation&nbsp;<span>C.3</span></a>. If one of the reagents does undergo a phase change, the latent heat for that phase change would need to be included in the equation.</p>
+<section id="the-standard-heat-of-reaction-at-temperature-t" class="level3" data-number="D.1.2">
+<h3 data-number="D.1.2" class="anchored" data-anchor-id="the-standard-heat-of-reaction-at-temperature-t"><span class="header-section-number">D.1.2</span> The Standard Heat of Reaction at Temperature T</h3>
+<p><em>Assuming none of the reactants and products in reaction <span class="math inline">\(j\)</span> undergo a phase change between 298 K and T</em>, the standard heat of reaction <span class="math inline">\(j\)</span> at arbitrary temperature, <span class="math inline">\(T\)</span>, can be calculated using <a href="#eq-deltaH-T" class="quarto-xref">Equation&nbsp;<span>D.3</span></a>. If one of the reagents does undergo a phase change, the latent heat for that phase change would need to be included in the equation.</p>
 <p><span id="eq-deltaH-T"><span class="math display">\[
 \Delta H_j^0 = \Delta H_j^0\Bigr\rvert_{T=298K} + \sum_i \left( \nu_{i,j} \int_{298\text{ K}}^T \hat C_{p,i}dT \right)
-\tag{C.3}\]</span></span></p>
+\tag{D.3}\]</span></span></p>
 </section>
 </section>
-<section id="adiabatic-temperature" class="level2" data-number="C.2">
-<h2 data-number="C.2" class="anchored" data-anchor-id="adiabatic-temperature"><span class="header-section-number">C.2</span> Adiabatic Temperature</h2>
+<section id="adiabatic-temperature" class="level2" data-number="D.2">
+<h2 data-number="D.2" class="anchored" data-anchor-id="adiabatic-temperature"><span class="header-section-number">D.2</span> Adiabatic Temperature</h2>
 <p>Consider an exothermic chemical reaction that takes place adiabatically in a system with no shafts or moving boundaries. Since there are no shafts or moving boundaries, no energy enters or leaves the system in the form of work. As the exothermic reaction takes place, the standard heat of reaction is released. It cannot leave the system because it is an adiabatic process. Consequently, the heat released by the exothermic reaction is converted into internal molecular energy. From a macroscopic perspective the result is that the temperature of the system increases. That is, the heat released by the reaction is used to raise the temperature of the reacting system. This assumes that no phase changes occur as the reaction takes place.</p>
 <p>When the reaction process ends, the system will be at a new temperature that is sometimes referred to as the adiabatic temperature. In the case of an exothermic reaction, this temperature will be greater than the starting temperature, and the change in temperature is referred to as the adiabatic temperature rise. For an endothermic reaction the system temperature would decrease, resulting in an adiabatic temperature drop. For the remainder of this discussion, we can generalize by simply referring to the adiabatic temperature change, noting that if the reaction is exothermic it will be a rise and if the reaction is endothermic it will be a drop.</p>
-<p>Notice that one doesn’t need to know anything about the container holding the system, i. e. the reactor, other than it operates adiabatically and without any shafts or moving boundaries. The adiabatic temperature can be computed using only thermodynamic quantities. Typically in reaction engineering, the goal is to calculate the adiabatic temperature change given the starting composition and temperature and the final composition. Knowing the initial and final amounts of the reagents, it is possible to calculate the apparent extents (see <a href="section_1_reaction_progress.html"><span>Chapter&nbsp;3</span></a>) of a complete mathematically independent subset of the reactions occurring in the system. The essential concept when calculating the adiabatic temperature is that the heat released or absorbed by reaction must just equal the change in the sensible heat of the reagents.</p>
-<p>Enthalpy is a state function, so it is not necessary to perform the calculations using the exact path followed by the reacting system. Any path that starts at the same initial conditions and ends at the same final conditions can be used. For analysis purposes, it is convenient to use a pathway where the reactions first occur isothermally at the initial temperature and then the resulting product mix is heated (or cooled) to the final temperature. The net <span class="math inline">\(\Delta H\)</span> for the two steps is then set equal to zero, giving an implicit equation for the final, adiabatic temperature as shown in <a href="#eq-adiabatic_temperature">Equation&nbsp;<span>C.4</span></a> which assumes that no phase changes occur as the reaction takes place.</p>
+<p>Notice that one doesn’t need to know anything about the container holding the system, i. e. the reactor, other than it operates adiabatically and without any shafts or moving boundaries. The adiabatic temperature can be computed using only thermodynamic quantities. Typically in reaction engineering, the goal is to calculate the adiabatic temperature change given the starting composition and temperature and the final composition. Knowing the initial and final amounts of the reagents, it is possible to calculate the apparent extents (see <a href="section_1_reaction_progress.html" class="quarto-xref"><span>Chapter 3</span></a>) of a complete mathematically independent subset of the reactions occurring in the system. The essential concept when calculating the adiabatic temperature is that the heat released or absorbed by reaction must just equal the change in the sensible heat of the reagents.</p>
+<p>Enthalpy is a state function, so it is not necessary to perform the calculations using the exact path followed by the reacting system. Any path that starts at the same initial conditions and ends at the same final conditions can be used. For analysis purposes, it is convenient to use a pathway where the reactions first occur isothermally at the initial temperature and then the resulting product mix is heated (or cooled) to the final temperature. The net <span class="math inline">\(\Delta H\)</span> for the two steps is then set equal to zero, giving an implicit equation for the final, adiabatic temperature as shown in <a href="#eq-adiabatic_temperature" class="quarto-xref">Equation&nbsp;<span>D.4</span></a> which assumes that no phase changes occur as the reaction takes place.</p>
 <p><span id="eq-adiabatic_temperature"><span class="math display">\[
 \sum_{j^\prime} \xi_{j^\prime}\left( - \Delta H_{j^\prime}\Big \vert_{T_0} \right) = \sum_i \int_{T_0}^{T_{ad}} \hat C_{p,i} \left( n_{i,0} + \nu_{i,j^\prime} \xi_{j^\prime} \right)dT
-\tag{C.4}\]</span></span></p>
-<p><span class="math inline">\(\qquad\)</span> where <span class="math inline">\(j^\prime\)</span> indexes the reactions in a complete, mathematically<br>
-<span class="math inline">\(\qquad \qquad\)</span> independent subset of the reactions ocurring in the system.</p>
-<p>Given only the initial amounts of the reagents and the requisite thermodynamic data, <a href="#eq-adiabatic_temperature">Equation&nbsp;<span>C.4</span></a> provides a relationship between the final temperature and the extents of reaction.</p>
+\tag{D.4}\]</span></span></p>
+<div class="line-block"><span class="math inline">\(\qquad\)</span> where <span class="math inline">\(j^\prime\)</span> indexes the reactions in a complete, mathematically<br>
+<span class="math inline">\(\qquad \qquad\)</span> independent subset of the reactions ocurring in the system.</div>
+<p>Given only the initial amounts of the reagents and the requisite thermodynamic data, <a href="#eq-adiabatic_temperature" class="quarto-xref">Equation&nbsp;<span>D.4</span></a> provides a relationship between the final temperature and the extents of reaction.</p>
 </section>
-<section id="equilibrium-constants" class="level2" data-number="C.3">
-<h2 data-number="C.3" class="anchored" data-anchor-id="equilibrium-constants"><span class="header-section-number">C.3</span> Equilibrium Constants</h2>
+<section id="equilibrium-constants" class="level2" data-number="D.3">
+<h2 data-number="D.3" class="anchored" data-anchor-id="equilibrium-constants"><span class="header-section-number">D.3</span> Equilibrium Constants</h2>
 <p>Equilibrium constants can appear in rate expressions, and their value changes with temperature. As such, it is important that students know how to calculate equilibrium constants at any given temperature. The calculation of an equilibrium constant at temperature, <span class="math inline">\(T\)</span>, proceeds in four steps.</p>
-<p>To calculate the equilibrium constant for reaction <span class="math inline">\(j\)</span>, it is first necessary to calculate the standard Gibbs free energy change of reaction <span class="math inline">\(j\)</span> at 298 K, <span class="math inline">\(\Delta G_j^0 \Bigr\rvert_{T=298K}\)</span>. Like standard heats of formation at 298 K, standard Gibbs free energies of formation at 298 K, <span class="math inline">\(\Delta G_{f,i}^0 \Bigr\rvert_{T=298K}\)</span>, of many reagents, <span class="math inline">\(i\)</span>, are tabulated in various handbooks and textbooks. They can be used to calculate the Gibbs free energy change for reaction <span class="math inline">\(j\)</span> at 298 K using <a href="#eq-deltaG-298">Equation&nbsp;<span>C.5</span></a>.</p>
+<p>To calculate the equilibrium constant for reaction <span class="math inline">\(j\)</span>, it is first necessary to calculate the standard Gibbs free energy change of reaction <span class="math inline">\(j\)</span> at 298 K, <span class="math inline">\(\Delta G_j^0 \Bigr\rvert_{T=298K}\)</span>. Like standard heats of formation at 298 K, standard Gibbs free energies of formation at 298 K, <span class="math inline">\(\Delta G_{f,i}^0 \Bigr\rvert_{T=298K}\)</span>, of many reagents, <span class="math inline">\(i\)</span>, are tabulated in various handbooks and textbooks. They can be used to calculate the Gibbs free energy change for reaction <span class="math inline">\(j\)</span> at 298 K using <a href="#eq-deltaG-298" class="quarto-xref">Equation&nbsp;<span>D.5</span></a>.</p>
 <p><span id="eq-deltaG-298"><span class="math display">\[
 \Delta G_j^0\Bigr\rvert_{T=298K} = \sum_i \left( \nu_{i,j} \Delta G_{f,i}^0\Bigr\rvert_{T=298K} \right)
-\tag{C.5}\]</span></span></p>
-<p>Knowing the standard Gibbs free energy of reaction <span class="math inline">\(j\)</span> at 298K, the equilibrium constant <em>at 298 K</em> for reaction <span class="math inline">\(j\)</span> can be calculated using <a href="#eq-K-298">Equation&nbsp;<span>C.6</span></a>.</p>
+\tag{D.5}\]</span></span></p>
+<p>Knowing the standard Gibbs free energy of reaction <span class="math inline">\(j\)</span> at 298K, the equilibrium constant <em>at 298 K</em> for reaction <span class="math inline">\(j\)</span> can be calculated using <a href="#eq-K-298" class="quarto-xref">Equation&nbsp;<span>D.6</span></a>.</p>
 <p><span id="eq-K-298"><span class="math display">\[
 K_j \Bigr\rvert_{T=298K} = \exp{ \left( \frac{-\Delta G_j^0\Bigr\rvert_{T=298K}}{R(298\text{ K})} \right)}
-\tag{C.6}\]</span></span></p>
-<p>To calculate the equilibrium constant at any other temperature, an expression for the standard heat of reaction <span class="math inline">\(j\)</span> as a function of temperature must next be generated. This can be done using <a href="#eq-deltaH-298-form">Equation&nbsp;<span>C.1</span></a> or <a href="#eq-deltaH-298-comb">Equation&nbsp;<span>C.2</span></a> together with <a href="#eq-deltaH-T">Equation&nbsp;<span>C.3</span></a> as described above.</p>
-<p>The equilibrium constant for reaction <span class="math inline">\(j\)</span> at any temperature then can be calculated using <a href="#eq-K-T">Equation&nbsp;<span>C.7</span></a>.</p>
+\tag{D.6}\]</span></span></p>
+<p>To calculate the equilibrium constant at any other temperature, an expression for the standard heat of reaction <span class="math inline">\(j\)</span> as a function of temperature must next be generated. This can be done using <a href="#eq-deltaH-298-form" class="quarto-xref">Equation&nbsp;<span>D.1</span></a> or <a href="#eq-deltaH-298-comb" class="quarto-xref">Equation&nbsp;<span>D.2</span></a> together with <a href="#eq-deltaH-T" class="quarto-xref">Equation&nbsp;<span>D.3</span></a> as described above.</p>
+<p>The equilibrium constant for reaction <span class="math inline">\(j\)</span> at any temperature then can be calculated using <a href="#eq-K-T" class="quarto-xref">Equation&nbsp;<span>D.7</span></a>.</p>
 <p><span id="eq-K-T"><span class="math display">\[
 K_j  = K_j \Bigr\rvert_{T=298K} \exp{\left\{ \frac{1}{R} \int_{298K}^T\frac{\Delta H_j^0}{T^2}dT \right\}}
-\tag{C.7}\]</span></span></p>
+\tag{D.7}\]</span></span></p>
 </section>
-<section id="equilibrium-composition" class="level2" data-number="C.4">
-<h2 data-number="C.4" class="anchored" data-anchor-id="equilibrium-composition"><span class="header-section-number">C.4</span> Equilibrium Composition</h2>
+<section id="equilibrium-composition" class="level2" data-number="D.4">
+<h2 data-number="D.4" class="anchored" data-anchor-id="equilibrium-composition"><span class="header-section-number">D.4</span> Equilibrium Composition</h2>
 <p>Knowing the initial composition of a system, the reactions taking place, the final temperature and, for gases, the final pressure, the equilibrium composition of the system can be calculated. Doing this won’t be necessary in <em>Reaction Engineering Basics</em>, but it is an important skill that a reaction engineer needs. It can be important in the early stages of designing a reactor system and whenever reaction engineering tasks involve reversible reactions.</p>
-<p>The reactions taking place in the system may not be mathematically independent. The first step in calculating the equilibrium composition of a system is to identify a complete, mathematically independent subset of the reactions taking place. <a href="apndx_prereq_knowledge.html">Appendix&nbsp;<span>A</span></a> includes a section that describes how to do so. Here, for convenience, the reactions in the complete mathematically independent subset of the reactions taking place will simply be referred to as “the independent reactions.”</p>
-<p>Having identified the independent reactions, an equilibrium expression, <a href="#eq-equil-expr">Equation&nbsp;<span>C.8</span></a>, can be written for each of them.</p>
+<p>The reactions taking place in the system may not be mathematically independent. The first step in calculating the equilibrium composition of a system is to identify a complete, mathematically independent subset of the reactions taking place. <a href="apndx_prereq_knowledge.html" class="quarto-xref">Appendix&nbsp;<span>B</span></a> includes a section that describes how to do so. Here, for convenience, the reactions in the complete mathematically independent subset of the reactions taking place will simply be referred to as “the independent reactions.”</p>
+<p>Having identified the independent reactions, an equilibrium expression, <a href="#eq-equil-expr" class="quarto-xref">Equation&nbsp;<span>D.8</span></a>, can be written for each of them.</p>
 <p><span id="eq-equil-expr"><span class="math display">\[
 K_{j^\prime} = \prod_i a_i^{\nu_{i,j^\prime}}
-\tag{C.8}\]</span></span></p>
-<p><span class="math inline">\(\qquad\)</span> where <span class="math inline">\(j^\prime\)</span> indexes the reactions in a complete, mathematically<br>
-<span class="math inline">\(\qquad \qquad\)</span> independent subset of the reactions ocurring in the system.</p>
-<p>The thermodynamic activity, <span class="math inline">\(a_i\)</span>, of each species, <span class="math inline">\(i\)</span>, in the equilibrium expressions can be related to the composition. For an ideal liquid solution, the activity is simply equal to the mole fraction, <a href="#eq-liq-activity">Equation&nbsp;<span>C.9</span></a>. For an ideal gas, the activity is the partial pressure divided by the standard state of 1 atm, <a href="#eq-gas-activity">Equation&nbsp;<span>C.10</span></a>.</p>
+\tag{D.8}\]</span></span></p>
+<div class="line-block"><span class="math inline">\(\qquad\)</span> where <span class="math inline">\(j^\prime\)</span> indexes the reactions in a complete, mathematically<br>
+<span class="math inline">\(\qquad \qquad\)</span> independent subset of the reactions ocurring in the system.</div>
+<p>The thermodynamic activity, <span class="math inline">\(a_i\)</span>, of each species, <span class="math inline">\(i\)</span>, in the equilibrium expressions can be related to the composition. For an ideal liquid solution, the activity is simply equal to the mole fraction, <a href="#eq-liq-activity" class="quarto-xref">Equation&nbsp;<span>D.9</span></a>. For an ideal gas, the activity is the partial pressure divided by the standard state of 1 atm, <a href="#eq-gas-activity" class="quarto-xref">Equation&nbsp;<span>D.10</span></a>.</p>
 <p><span id="eq-liq-activity"><span class="math display">\[
 a_i = x_i \quad \text{(ideal liquid solution)}
-\tag{C.9}\]</span></span></p>
+\tag{D.9}\]</span></span></p>
 <p><span id="eq-gas-activity"><span class="math display">\[
 a_i = \frac{P_i}{1 \text{ atm}} = \frac{y_iP}{1 \text{ atm}} \quad \text{(ideal gas)}
-\tag{C.10}\]</span></span></p>
-<p>Finally, the mole fractions can be expressed in terms of the apparent extents of the independent reactions. For example the gas phase mole fraction of reagent <span class="math inline">\(i\)</span> in a closed system would be written as shown in <a href="#eq-y-in-terms-of-xi">Equation&nbsp;<span>C.11</span></a>. Similar equations are used for liquid phase systems (where <span class="math inline">\(x_i\)</span> is used instead of <span class="math inline">\(y_i\)</span>) and for open, steady-state systems (where <span class="math inline">\(\dot n_i\)</span>, <span class="math inline">\(\dot n_{i,in}\)</span> and <span class="math inline">\(\dot \xi\)</span> are used instead of <span class="math inline">\(n_i\)</span>, <span class="math inline">\(n_{i,0}\)</span> and <span class="math inline">\(\xi\)</span>).</p>
+\tag{D.10}\]</span></span></p>
+<p>Finally, the mole fractions can be expressed in terms of the apparent extents of the independent reactions. For example the gas phase mole fraction of reagent <span class="math inline">\(i\)</span> in a closed system would be written as shown in <a href="#eq-y-in-terms-of-xi" class="quarto-xref">Equation&nbsp;<span>D.11</span></a>. Similar equations are used for liquid phase systems (where <span class="math inline">\(x_i\)</span> is used instead of <span class="math inline">\(y_i\)</span>) and for open, steady-state systems (where <span class="math inline">\(\dot n_i\)</span>, <span class="math inline">\(\dot n_{i,in}\)</span> and <span class="math inline">\(\dot \xi\)</span> are used instead of <span class="math inline">\(n_i\)</span>, <span class="math inline">\(n_{i,0}\)</span> and <span class="math inline">\(\xi\)</span>).</p>
 <p><span id="eq-y-in-terms-of-xi"><span class="math display">\[
 y_i = \frac{n_i}{\displaystyle \sum_i n_i} = \frac{n_{i,0} + \displaystyle \sum_{j^\prime}\nu_{i,j^\prime}\xi_{j^\prime}}{\displaystyle \sum_i \left( n_{i,0} + \sum_{j^\prime}\nu_{i,j^\prime}\xi_{j^\prime}\right)}
-\tag{C.11}\]</span></span></p>
-<p><span class="math inline">\(\qquad\)</span> where <span class="math inline">\(j^\prime\)</span> indexes the reactions in a complete, mathematically<br>
-<span class="math inline">\(\qquad \qquad\)</span> independent subset of the reactions ocurring in the system.</p>
-<p>If <span class="math inline">\(N\)</span> is the number of independent reactions, then after substitution for the activities and mole fractions as just described, <a href="#eq-equil-expr">Equation&nbsp;<span>C.8</span></a> can be used to write a set of <span class="math inline">\(N\)</span> equilibrium expressions containing <span class="math inline">\(N\)</span> unknown apparent extents of reaction. Those equations can be solved to find the equilibrium extents of reaction which, in turn, can be used to calculate the equilibrium mole fractions or any other measure of the equilibrium composition.</p>
+\tag{D.11}\]</span></span></p>
+<div class="line-block"><span class="math inline">\(\qquad\)</span> where <span class="math inline">\(j^\prime\)</span> indexes the reactions in a complete, mathematically<br>
+<span class="math inline">\(\qquad \qquad\)</span> independent subset of the reactions ocurring in the system.</div>
+<p>If <span class="math inline">\(N\)</span> is the number of independent reactions, then after substitution for the activities and mole fractions as just described, <a href="#eq-equil-expr" class="quarto-xref">Equation&nbsp;<span>D.8</span></a> can be used to write a set of <span class="math inline">\(N\)</span> equilibrium expressions containing <span class="math inline">\(N\)</span> unknown apparent extents of reaction. Those equations can be solved to find the equilibrium extents of reaction which, in turn, can be used to calculate the equilibrium mole fractions or any other measure of the equilibrium composition.</p>
 </section>
-<section id="symbols-used-in-this-appendix" class="level2" data-number="C.5">
-<h2 data-number="C.5" class="anchored" data-anchor-id="symbols-used-in-this-appendix"><span class="header-section-number">C.5</span> Symbols Used in this Appendix</h2>
+<section id="symbols-used-in-this-appendix" class="level2" data-number="D.5">
+<h2 data-number="D.5" class="anchored" data-anchor-id="symbols-used-in-this-appendix"><span class="header-section-number">D.5</span> Symbols Used in this Appendix</h2>
 <table class="table">
 <colgroup>
 <col style="width: 20%">
@@ -758,10 +805,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -771,8 +835,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -784,7 +857,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -828,6 +1024,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -853,6 +1050,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -914,17 +1137,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./apndx_nomenclature.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span>
+      <a href="./apndx_nomenclature.html" class="pagination-link" aria-label="Acronyms, Notation, and Sign Conventions">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./apndx_heat_exchange.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./apndx_heat_exchange.html" class="pagination-link" aria-label="Reactor Heat Exchange">
+        <span class="nav-page-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

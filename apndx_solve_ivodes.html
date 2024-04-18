@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Reaction Engineering Basics - Appendix I — Solving Initial-Value ODEs</title>
+<title>Reaction Engineering Basics - Appendix J — Solving Initial-Value ODEs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./apndx_estimate_parameters.html" rel="next">
+<link href="./apndx_solve_daes.html" rel="next">
 <link href="./apndx_solve_ates.html" rel="prev">
+<link href="./Graphics/BuffaloBadger_16_16.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -47,7 +48,12 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -56,6 +62,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -65,15 +72,42 @@ ul.task-list li input[type="checkbox"] {
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
     <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
     </a>
@@ -85,46 +119,51 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/total_ps.html" rel="" target="">
- <span class="menu-text">ToTaL PS</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics"> 
+<span class="menu-text">Reaction Engineering Basics</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics" rel="" target="">
- <span class="menu-text">Reaction Engineering Basics</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/SCoRE"> 
+<span class="menu-text">SCoRE</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/ToTaL_Engineering"> 
+<span class="menu-text">ToTaL Engineering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/The_Sett"> 
+<span class="menu-text">The Sett</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_prereq_knowledge.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_ivodes.html"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_ivodes.html"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -188,7 +227,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Reactor Models</span></a>
+ <span class="menu-text">Ideal Reactor Models</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -202,8 +241,8 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_3_response_function.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Response Functions</span></span></a>
+  <a href="./section_3_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Modeling Functions</span></span></a>
   </div>
 </li>
       </ul>
@@ -211,7 +250,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Kinetics Data Analysis</span></a>
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -219,26 +258,44 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_data_generation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  <a href="./section_4_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  <a href="./section_4_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  <a href="./section_4_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  <a href="./section_4_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Design of Non-Continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
   </div>
 </li>
       </ul>
@@ -246,7 +303,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -254,44 +311,20 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  <a href="./section_5_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_bstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  <a href="./section_5_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_non_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Design of Non-continuous Reactors</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_cstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_pfr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  <a href="./section_5_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
   </div>
 </li>
       </ul>
@@ -299,7 +332,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+ <span class="menu-text">Kinetics Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -307,20 +340,26 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_reactor_networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  <a href="./section_6_data_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Thermally Back-mixed PFRs</span></span></a>
+  <a href="./section_6_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_recycle_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  <a href="./section_6_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
   </div>
 </li>
       </ul>
@@ -371,74 +410,80 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./apndx_useful_eqns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Frequently Used Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
   </div>
 </li>
       </ul>
@@ -446,29 +491,42 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#the-nature-of-a-numerical-solution-of-an-initial-value-ode" id="toc-the-nature-of-a-numerical-solution-of-an-initial-value-ode" class="nav-link active" data-scroll-target="#the-nature-of-a-numerical-solution-of-an-initial-value-ode"><span class="header-section-number">I.1</span> The Nature of a Numerical Solution of an Initial-Value ODE</a></li>
-  <li><a href="#writing-ivodes-as-matrix-and-vector-equations" id="toc-writing-ivodes-as-matrix-and-vector-equations" class="nav-link" data-scroll-target="#writing-ivodes-as-matrix-and-vector-equations"><span class="header-section-number">I.2</span> Writing IVODEs as Matrix and Vector Equations</a></li>
-  <li><a href="#preparing-the-ivodes-for-solution." id="toc-preparing-the-ivodes-for-solution." class="nav-link" data-scroll-target="#preparing-the-ivodes-for-solution."><span class="header-section-number">I.3</span> Preparing the IVODEs for Solution.</a></li>
-  <li><a href="#items-that-must-be-provided-to-the-solver" id="toc-items-that-must-be-provided-to-the-solver" class="nav-link" data-scroll-target="#items-that-must-be-provided-to-the-solver"><span class="header-section-number">I.4</span> Items that must be Provided to the Solver</a></li>
-  <li><a href="#an-oversimplified-description-of-how-the-ivodes-are-solved" id="toc-an-oversimplified-description-of-how-the-ivodes-are-solved" class="nav-link" data-scroll-target="#an-oversimplified-description-of-how-the-ivodes-are-solved"><span class="header-section-number">I.5</span> An Oversimplified Description of How the IVODEs are Solved</a></li>
-  <li><a href="#cautions-related-to-numerical-solutions" id="toc-cautions-related-to-numerical-solutions" class="nav-link" data-scroll-target="#cautions-related-to-numerical-solutions"><span class="header-section-number">I.6</span> Cautions Related to Numerical Solutions</a></li>
-  <li><a href="#symbols-used-in-this-appendix" id="toc-symbols-used-in-this-appendix" class="nav-link" data-scroll-target="#symbols-used-in-this-appendix"><span class="header-section-number">I.7</span> Symbols Used in this Appendix</a></li>
+  <li><a href="#identifying-ivodes" id="toc-identifying-ivodes" class="nav-link active" data-scroll-target="#identifying-ivodes"><span class="header-section-number">J.1</span> Identifying IVODEs</a></li>
+  <li><a href="#ivode-solvers" id="toc-ivode-solvers" class="nav-link" data-scroll-target="#ivode-solvers"><span class="header-section-number">J.2</span> IVODE Solvers</a>
+  <ul class="collapse">
+  <li><a href="#cautions-related-to-numerical-solution-of-ivodes" id="toc-cautions-related-to-numerical-solution-of-ivodes" class="nav-link" data-scroll-target="#cautions-related-to-numerical-solution-of-ivodes"><span class="header-section-number">J.2.1</span> Cautions Related to Numerical Solution of IVODEs</a></li>
+  </ul></li>
+  <li><a href="#input-required-by-ivode-solvers" id="toc-input-required-by-ivode-solvers" class="nav-link" data-scroll-target="#input-required-by-ivode-solvers"><span class="header-section-number">J.3</span> Input Required by IVODE Solvers</a>
+  <ul class="collapse">
+  <li><a href="#sec-mass_matrix" id="toc-sec-mass_matrix" class="nav-link" data-scroll-target="#sec-mass_matrix"><span class="header-section-number">J.3.1</span> Derivative Expressions and the Derivatives Function</a></li>
+  <li><a href="#initial-values-and-the-stopping-criterion" id="toc-initial-values-and-the-stopping-criterion" class="nav-link" data-scroll-target="#initial-values-and-the-stopping-criterion"><span class="header-section-number">J.3.2</span> Initial Values and the Stopping Criterion</a></li>
+  <li><a href="#sec-unk_ivode_const_eqn" id="toc-sec-unk_ivode_const_eqn" class="nav-link" data-scroll-target="#sec-unk_ivode_const_eqn"><span class="header-section-number">J.3.3</span> Calculating the Unknown Constant</a></li>
+  </ul></li>
+  <li><a href="#sec-math_form_ivodes" id="toc-sec-math_form_ivodes" class="nav-link" data-scroll-target="#sec-math_form_ivodes"><span class="header-section-number">J.4</span> Formulating the Solution of a Set of IVODEs Mathematically</a></li>
+  <li><a href="#sec-num_impl_ivodes" id="toc-sec-num_impl_ivodes" class="nav-link" data-scroll-target="#sec-num_impl_ivodes"><span class="header-section-number">J.5</span> Implementing the Solution of a Set of IVODEs Numerically</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples"><span class="header-section-number">J.6</span> Examples</a>
+  <ul class="collapse">
+  <li><a href="#sec-example_J_6_1" id="toc-sec-example_J_6_1" class="nav-link" data-scroll-target="#sec-example_J_6_1"><span class="header-section-number">J.6.1</span> Example: Numerical Solution of a Set of IVODEs</a></li>
+  <li><a href="#sec-example_J_6_2" id="toc-sec-example_J_6_2" class="nav-link" data-scroll-target="#sec-example_J_6_2"><span class="header-section-number">J.6.2</span> Example: Numerical Solution of a Set of IVODEs with a “Missing” Initial Value</a></li>
+  <li><a href="#sec-example_J_6_3" id="toc-sec-example_J_6_3" class="nav-link" data-scroll-target="#sec-example_J_6_3"><span class="header-section-number">J.6.3</span> Example: Numerical Solution of a Set of IVODEs Containing an Unknown Constant</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-sec-apndx_solve_ivodes" id="toc-symbols-used-in-sec-apndx_solve_ivodes" class="nav-link" data-scroll-target="#symbols-used-in-sec-apndx_solve_ivodes"><span class="header-section-number">J.7</span> Symbols Used in <span>Appendix J</span></a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_ivodes.html"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-apndx_solve_ivodes" class="quarto-section-identifier">Appendix I — Solving Initial-Value ODEs</span></h1>
+<h1 class="title"><span id="sec-apndx_solve_ivodes" class="quarto-section-identifier">Appendix J — Solving Initial-Value ODEs</span></h1>
 </div>
 
 
@@ -481,169 +539,1282 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
 
-<p>This appendix provides a simplified introduction to numerical solution of sets of coupled, initial-value ordinary differential equations (IVODEs). It is not specific to any one computer program or language. Students seeking a more complete understanding should consult a numerical methods textbook or take a course on numerical methods.</p>
-<section id="the-nature-of-a-numerical-solution-of-an-initial-value-ode" class="level2" data-number="I.1">
-<h2 data-number="I.1" class="anchored" data-anchor-id="the-nature-of-a-numerical-solution-of-an-initial-value-ode"><span class="header-section-number">I.1</span> The Nature of a Numerical Solution of an Initial-Value ODE</h2>
-<p>When an IVODE is solved <em>analytically</em>, the solution is a function that describes how the dependent variable varies as a function of the independent variable. For example, the solution of the IVODE shown in <a href="#eq-ivode">Equation&nbsp;<span>I.1</span></a>, with the initial values of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> given in <a href="#eq-initial-value">Equation&nbsp;<span>I.2</span></a>, is <a href="#eq-ivode-soln">Equation&nbsp;<span>I.3</span></a>.</p>
-<p><span id="eq-ivode"><span class="math display">\[
-\frac{dy}{dx} = 2x
-\tag{I.1}\]</span></span></p>
-<p><span id="eq-initial-value"><span class="math display">\[
-y \Bigr\rvert_{x=3} = 10
-\tag{I.2}\]</span></span></p>
-<p><span id="eq-ivode-soln"><span class="math display">\[
-y = x^2 + 1
-\tag{I.3}\]</span></span></p>
-<p>When an IVODE is solved <em>numerically</em>, there are two significant differences. First, <strong>the solution is not an analytical function</strong>, it is a set of values of <span class="math inline">\(x\)</span>, starting at the initial value, along with a second set of the corresponding values of <span class="math inline">\(y\)</span>. A numerical solution of <a href="#eq-ivode">Equation&nbsp;<span>I.1</span></a>, with the initial values given in <a href="#eq-initial-value">Equation&nbsp;<span>I.2</span></a> is shown in <a href="#tbl-ivode-num-soln">Table&nbsp;<span>I.1</span></a>.</p>
-<div id="tbl-ivode-num-soln" class="anchored">
+
+<p>This appendix examines the numerical solution of sets of initial value ordinary differential equations (IVODEs). There are many software packages that include an IVODE solver (a function that can be used to solve sets of IVODEs). Under the assumption that different readers will choose to use different software packages, the discussion in this appendix is general. Nonetheless it provides sufficient information for readers to follow <em>Reaction Engineering Basics</em> examples wherein sets of IVODEs ae solved, and to implement them using the IVODE solver they prefer. Of course it will be necessary to consult the documentation for the chosen solver to learn the details for using it. Readers seeking a more complete understanding of how IVODE solvers work should consult a numerical methods textbook or take a course on numerical methods.</p>
+<section id="identifying-ivodes" class="level2" data-number="J.1">
+<h2 data-number="J.1" class="anchored" data-anchor-id="identifying-ivodes"><span class="header-section-number">J.1</span> Identifying IVODEs</h2>
+<p>A differential equation contains at least one derivative. A distinguishing feature of a set of <strong>ordinary</strong> differential equations is that every derivative that appears in the equations has the same independent variable. Put differently, there are no partial derivatives in a set of ordinary differential equations. In virtually all cases, the sets of IVODEs that are solved in <em>Reaction Engineering Basics</em> are linear, first-order ODEs. That means that there are no higher order derivatives in the equations and that there are no products, quotients or powers of the first-order derivatives.</p>
+<p>Thus, the sets of IVODEs under consideration here will take the form shown in Equations <a href="#eq-example-ode-1" class="quarto-xref"><span>J.1</span></a> through <a href="#eq-example-ode-4" class="quarto-xref"><span>J.4</span></a>. In those equations <span class="math inline">\(x\)</span> is the independent variable; <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span>, <span class="math inline">\(y_3\)</span>, and <span class="math inline">\(y_4\)</span> are the dependent variables; and <span class="math inline">\(m_{1,1}\)</span> through <span class="math inline">\(m_{4,4}\)</span> and <span class="math inline">\(g_1\)</span> through <span class="math inline">\(g_4\)</span> can be constants or functions of the independent and dependent variables.</p>
+<p><span id="eq-example-ode-1"><span class="math display">\[
+m_{1,1}\frac{dy_1}{dx} + m_{1,2}\frac{dy_2}{dx} + m_{1,3}\frac{dy_3}{dx} + m_{1,4}\frac{dy_4}{dx} = g_1
+\tag{J.1}\]</span></span></p>
+<p><span id="eq-example-ode-2"><span class="math display">\[
+m_{2,1}\frac{dy_1}{dx} + m_{2,2}\frac{dy_2}{dx} + m_{2,3}\frac{dy_3}{dx} + m_{2,4}\frac{dy_4}{dx} = g_2
+\tag{J.2}\]</span></span></p>
+<p><span id="eq-example-ode-3"><span class="math display">\[
+m_{3,1}\frac{dy_1}{dx} + m_{3,2}\frac{dy_2}{dx} + m_{3,3}\frac{dy_3}{dx} + m_{3,4}\frac{dy_4}{dx} = g_3
+\tag{J.3}\]</span></span></p>
+<p><span id="eq-example-ode-4"><span class="math display">\[
+m_{4,1}\frac{dy_1}{dx} + m_{4,2}\frac{dy_2}{dx} + m_{4,3}\frac{dy_3}{dx}  + m_{4,4}\frac{dy_4}{dx} = g_4
+\tag{J.4}\]</span></span></p>
+<p>While four equations are being used here for illustration purposes, there can be any number of ordinary differential equations in the set as long as the number of ordinary differential equations is equal to the number of dependent variables, and there is only one independent variable. In <em>Reaction Engineering Basics</em>, the independent variable is either the elapsed time, <span class="math inline">\(t\)</span>, or the axial position, <span class="math inline">\(z\)</span>, measured from the inlet of a plug flow reactor.</p>
+<p>Numerical solution finds the values of the independent and dependent variables over a continuous range. The values of the independent and dependent variables at the start of that range are called their <strong>initial values</strong>, and the values of the independent and dependent variables at the end of the range are called their final values.</p>
+</section>
+<section id="ivode-solvers" class="level2" data-number="J.2">
+<h2 data-number="J.2" class="anchored" data-anchor-id="ivode-solvers"><span class="header-section-number">J.2</span> IVODE Solvers</h2>
+<p>The inner workings of IVODE solvers are beyond the scope of <em>Reaction Engineering Basics</em>. Nonetheless, a simplified understanding of how IVODEs are solved numerically is useful. When an IVODE solver is called, it must be provided with the following arguments: the initial values, the stopping criterion (i. e. the final value of either the independent variable or one of the dependent variables), and a derivatives function. As described below, the derivatives function uses the IVODEs to calculate and return the values of the derivatives appearing in the IVODEs.</p>
+<p>The solver starts from the initial values, as illustrated graphically in part (a) of <a href="#fig-ivode-integration-step" class="quarto-xref">Figure&nbsp;<span>J.1</span></a> for any one of the dependent variables. It isn’t possible to plot <span class="math inline">\(y\)</span> <em>vs.</em> <span class="math inline">\(x\)</span> at that point because <span class="math inline">\(y\left(x\right)\)</span> is not known. (Indeed, <span class="math inline">\(y\left(x\right)\)</span> is the solution to the IVODE.) Instead, the solver uses the IVODEs to calculate the value of each of the derivatives at <span class="math inline">\(\left(x_0,y_0\right)\)</span>. The derivative, <span class="math inline">\(\frac{dy}{dx}\)</span>, at that point is the slope of the unknown function at <span class="math inline">\(\left(x_0,y_0\right)\)</span>. This is shown graphically in part (b) of <a href="#fig-ivode-integration-step" class="quarto-xref">Figure&nbsp;<span>J.1</span></a>.</p>
+<div id="fig-ivode-integration-step" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ivode-integration-step-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./Graphics/IVODE_Integration_Step.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ivode-integration-step-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;J.1: Graphical Representation of an IVODE Integration Step. (a) The initial value. (b) The slope at that point. (c) Incrementally increasing x and approximating the corresponding y.
+</figcaption>
+</figure>
+</div>
+<p>Starting from the known point, <span class="math inline">\(\left(x_0,y_0\right)\)</span>, the solver increases <span class="math inline">\(x\)</span> by a small amount, <span class="math inline">\(\Delta x\)</span>, which is known as the <em>step-size</em>. It then calculates the corresponding change in <span class="math inline">\(y\)</span>, <span class="math inline">\(\Delta y\)</span>, using the slope. The resulting point, <span class="math inline">\(\left(x_1,y_1\right)\)</span>, is shown in part (c) of <a href="#fig-ivode-integration-step" class="quarto-xref">Figure&nbsp;<span>J.1</span></a>. This process is sometimes referred to as taking an integration step. Effectively, the solver uses the small straight line segment between <span class="math inline">\(\left(x_0,y_0\right)\)</span> and <span class="math inline">\(\left(x_1,y_1\right)\)</span> to approximate the true solution, <span class="math inline">\(y\left(x\right)\)</span>, in that interval. The accuracy of this approximation increases as <span class="math inline">\(\Delta x\)</span> decreases, so typically the solver uses small steps. A new integration step is then taken starting fr0m <span class="math inline">\(\left(x_1,y_1\right)\)</span>.</p>
+<p>Of course, the solver eventually must stop taking integration steps. After completing each step, the solver checks to determine whether making that step resulted in the stopping criterion being satisfied. If not, the solver takes another integration step. As an example, suppose the stopping criterion is that <span class="math inline">\(y_3\)</span> should equal some value, <span class="math inline">\(y_{3,f}\)</span>, the solver would check to see whether <span class="math inline">\(y_3\)</span> did, in fact, reach or surpass <span class="math inline">\(y_{3,f}\)</span> after making the step. In most cases the stopping criterion will have been surpassed by some small amount, in which case the solver interpolates to find final values that exactly satisfy the stopping criterion. It then returns the values of the dependent variables and the independent variable for all of the steps it took while solving the IVODEs, including those final interpolated values.</p>
+<section id="cautions-related-to-numerical-solution-of-ivodes" class="level3" data-number="J.2.1">
+<h3 data-number="J.2.1" class="anchored" data-anchor-id="cautions-related-to-numerical-solution-of-ivodes"><span class="header-section-number">J.2.1</span> Cautions Related to Numerical Solution of IVODEs</h3>
+<p><em>When the stopping criterion is a value of one of the dependent variables</em>, many solvers require that you provide <em>both</em> a final value of the independent variable <em>and</em> the known final value of that dependent variable. The solver then takes steps as described above, and after each step it checks to see whether either variable has reached its specified final value. The problem is that if you specify a final value of the <em>independent</em> variable that is too small, the solver may reach that value first and stop. The stopping criterion you specified for the dependent variable will not have been reached, and the result that is returned is not the result you are seeking. Therefore it is important to <strong>check that the dependent variable reached the specified final value</strong>.</p>
+<p>To avoid having the solver stop because it reached the stopping criterion for the <em>independent</em> variable, it is tempting to specify a very large final value for the independent variable stopping criterion. The problem with doing this is that it may cause the solver to use a step size that is too large, resulting in an inaccurate solution. Therefore, it is important to <strong>check that the step size was not too large</strong>. The solution that is returned will include the final value of the independent variable. The stopping criterion for the independent variable can be set to a value slightly larger than that and the equations can be solved a second time. Assuming the second solution reaches the desired stopping criterion for the dependent variable, the second solution should be accurate.</p>
+<p>A second possible problem arises when solving sets of IVODEs where one of the dependent variables changes very abruptly over a very small range of the independent variable. The abrupt changes in that dependent variable may significantly affect the other dependent variables over a much broader range of the independent variable. Equations like this are called <strong>stiff ODEs</strong>, and they require special treatment of the step size. Therefore, when solving sets of ODEs, one should pay attention to whether any of the dependent variables change very abruptly as the independent variable changes. If they do, it is advisable to repeat the solution using a solver that is specifically tailored to stiff ODEs.</p>
+</section>
+</section>
+<section id="input-required-by-ivode-solvers" class="level2" data-number="J.3">
+<h2 data-number="J.3" class="anchored" data-anchor-id="input-required-by-ivode-solvers"><span class="header-section-number">J.3</span> Input Required by IVODE Solvers</h2>
+<p>The preceeding discussion shows that IVODE solvers need three things in order to solve a set of IVODEs. The first are the initial values from which the solver will take the first integration step. The second is the name of a function, written by the reaction engineer, that the solver can use to evaluate the derivatives, that is to calculate the numerical values of the derivatives. Herein, this function will be referred to as the derivatives function. The third required input to an IVODE solver is a stopping criterion that the solver can use to decide when to stop taking integration steps. As noted above, a stopping criterion has two parts: the identity of the variable (the independent variable or one of the dependent variables) and its final value.</p>
+<section id="sec-mass_matrix" class="level3" data-number="J.3.1">
+<h3 data-number="J.3.1" class="anchored" data-anchor-id="sec-mass_matrix"><span class="header-section-number">J.3.1</span> Derivative Expressions and the Derivatives Function</h3>
+<p>It was noted above that one input required by an IVODE solver is the name of a function, written by the reaction engineer, that the solver can use to evaluate the derivatives. More specifically, the derivatives function must accept the independent variable and the dependent variables corresponding to the start of an integration step as input arguments, and it must use them to calculate and return the values of the derivatives that appear in the IVODEs.</p>
+<p>To do so, it is useful to convert the IVODEs into a set of expressions for the individual derivatives if they aren’t already in that form. For example, Equations <a href="#eq-example-ode-1" class="quarto-xref"><span>J.1</span></a> through <a href="#eq-example-ode-4" class="quarto-xref"><span>J.4</span></a> need to be converted to derivative expressions of the form shown in Equations <a href="#eq-example-vector-ode-1" class="quarto-xref"><span>J.5</span></a> through <a href="#eq-example-vector-ode-4" class="quarto-xref"><span>J.8</span></a> where <span class="math inline">\(f_1\)</span>, <span class="math inline">\(f_2\)</span>, <span class="math inline">\(f_3\)</span>, and <span class="math inline">\(f_4\)</span> each may be a function of <span class="math inline">\(x\)</span>, <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span>, <span class="math inline">\(y_3\)</span>, and <span class="math inline">\(y_4\)</span>.</p>
+<p><span id="eq-example-vector-ode-1"><span class="math display">\[
+\frac{dy_1}{dx}  = f_1
+\tag{J.5}\]</span></span></p>
+<p><span id="eq-example-vector-ode-2"><span class="math display">\[
+\frac{dy_2}{dx} = f_2
+\tag{J.6}\]</span></span></p>
+<p><span id="eq-example-vector-ode-3"><span class="math display">\[
+\frac{dy_3}{dx} = f_3
+\tag{J.7}\]</span></span></p>
+<p><span id="eq-example-vector-ode-4"><span class="math display">\[
+\frac{dy_4}{dx} = f_4
+\tag{J.8}\]</span></span></p>
+<p>That can be accomplished by algebraic manipulation of Equations <a href="#eq-example-ode-1" class="quarto-xref"><span>J.1</span></a> through <a href="#eq-example-ode-4" class="quarto-xref"><span>J.4</span></a>, but it is particularly straightforward if the original IVODEs are written as a matrix equation. The coefficients in Equations <a href="#eq-example-ode-1" class="quarto-xref"><span>J.1</span></a> through <a href="#eq-example-ode-4" class="quarto-xref"><span>J.4</span></a>, <span class="math inline">\(m_{1,1}\)</span>, <span class="math inline">\(m_{1,2}\)</span>, etc., can be used to construct a so-called mass matrix, <span class="math inline">\(\boldsymbol{M}\)</span>, as shown in <a href="#eq-mass-matrix" class="quarto-xref">Equation&nbsp;<span>J.9</span></a>, the dependent variables can be used to construct a column vector, <span class="math inline">\(\underline{y}\)</span>, as in equation <a href="#eq-dependent-var-vector" class="quarto-xref">Equation&nbsp;<span>J.10</span></a>, and the functions, <span class="math inline">\(g_1\)</span>, <span class="math inline">\(g_2\)</span>, <span class="math inline">\(g_3\)</span>, and <span class="math inline">\(g_4\)</span>, can be used to construct a column vector, <span class="math inline">\(\underline{g}\)</span>, as in equation <a href="#eq-function-vector" class="quarto-xref">Equation&nbsp;<span>J.11</span></a>.</p>
+<p><span id="eq-mass-matrix"><span class="math display">\[
+\boldsymbol{M} = \begin{bmatrix} m_{1,1} \ m_{1,2} \ m_{1,3} \ m_{1,4} \\m_{2,1} \ m_{2,2} \ m_{2,3} \ m_{2,4} \\m_{3,1} \ m_{3,2} \ m_{3,3} \ m_{3,4} \\ m_{4,1} \ m_{4,2} \ m_{4,3} \ m_{4,4}  \end{bmatrix}
+\tag{J.9}\]</span></span></p>
+<p><span id="eq-dependent-var-vector"><span class="math display">\[
+\underline{y} = \begin{bmatrix} y_1 \\ y_2 \\ y_3 \\ y_4 \end{bmatrix}
+\tag{J.10}\]</span></span></p>
+<p><span id="eq-function-vector"><span class="math display">\[
+\underline{g} = \begin{bmatrix} g_1 \\ g_2 \\ g_3 \\ g_4 \end{bmatrix}
+\tag{J.11}\]</span></span></p>
+<p>Equations <a href="#eq-example-ode-1" class="quarto-xref"><span>J.1</span></a> through <a href="#eq-example-ode-4" class="quarto-xref"><span>J.4</span></a> then can be written as a matrix equation, <a href="#eq-matrix-form-ivode" class="quarto-xref">Equation&nbsp;<span>J.12</span></a>. Pre-multiplying each side of <a href="#eq-matrix-form-ivode" class="quarto-xref">Equation&nbsp;<span>J.12</span></a> by the inverse of the mass matrix yields the desired derivative expressions, <a href="#eq-matrix-form-of-vector-ivodes" class="quarto-xref">Equation&nbsp;<span>J.13</span></a>. That is, comparing <a href="#eq-matrix-form-of-vector-ivodes" class="quarto-xref">Equation&nbsp;<span>J.13</span></a> to Equations <a href="#eq-example-vector-ode-1" class="quarto-xref"><span>J.5</span></a> through <a href="#eq-example-vector-ode-4" class="quarto-xref"><span>J.8</span></a>, it is apparent that they are equivalent with <span class="math inline">\(f_1\)</span>, <span class="math inline">\(f_2\)</span>, <span class="math inline">\(f_3\)</span>, and <span class="math inline">\(f_4\)</span> given by <a href="#eq-g-in-terms-of-f" class="quarto-xref">Equation&nbsp;<span>J.14</span></a>.</p>
+<p><span id="eq-matrix-form-ivode"><span class="math display">\[
+\boldsymbol{M}\frac{d}{dx}\underline{y} = \underline{g}
+\tag{J.12}\]</span></span></p>
+<p><span id="eq-matrix-form-of-vector-ivodes"><span class="math display">\[
+\frac{d}{dx}\underline{y} = \boldsymbol{M}^{-1} \underline{g}
+\tag{J.13}\]</span></span></p>
+<p><span id="eq-g-in-terms-of-f"><span class="math display">\[
+\begin{bmatrix} f_1 \\ f_2 \\ f_3 \\ f_4 \end{bmatrix} = \underline{f} = \boldsymbol{M}^{-1} \underline{g}
+\tag{J.14}\]</span></span></p>
+<p>Wring the IVODEs in the form of derivatives expressions, facilitates evaluating the derivatives. The derivatives function will be provided with the independent and dependent variables as arguments. They can be used, along with known constants provided as part of the assignment, to evaluate each of the <span class="math inline">\(f\)</span> functions in Equations <a href="#eq-example-vector-ode-1" class="quarto-xref"><span>J.5</span></a> through <a href="#eq-example-vector-ode-4" class="quarto-xref"><span>J.8</span></a>, or equivalently in <a href="#eq-g-in-terms-of-f" class="quarto-xref">Equation&nbsp;<span>J.14</span></a>.</p>
+<p>The <span class="math inline">\(f\)</span> functions may also contain other variables and possibly, an <strong>unknown constant</strong>. The other variables clearly must be calculated in order to evaluate the <span class="math inline">\(f\)</span> functions. This is done using expressions for those other variables in terms of known constants and the independent and dependent variables.</p>
+<p>If the <span class="math inline">\(f\)</span> functions contain an unknown constant, that, too, must be calculated before the <span class="math inline">\(f\)</span> functions can be evaluated. Here, saying it is unknown means that it cannot be calculated directly using the known constants given as part of the assignment. In the examples presented in <em>Reaction Engineering Basics</em> there will be at most one such unknown constant.</p>
+<p>When the IVODEs, or equivalently the <span class="math inline">\(f\)</span> functions, contain an unknown constant, the assignment will provide two final values. One of the two final values is used to specify the stopping criterion. The other final value is used to calculate the unknown constant. Doing this is described below. The important point here is that <strong>the unknown constant must be calculated before calling the IVODE solver</strong>, and after doing so, its value must be made available to the derivatives function. If the unknown constant is also needed for calcuating initial values, it must be made available wherever the IVODE solver is called, too. (See <a href="#sec-example_J_6_3" class="quarto-xref">Example&nbsp;<span>J.6.3</span></a>.)</p>
+<p>So to summarize, if the IVODEs contain an unknown constant, its value must be calculated before calling the IVODE solver, and it must be made available within the derivatives function. Similarly, the known constants given as part of the assignment must also be available within the derivatives function. When the reaction engineer writes the derivatives function, it should receive the independent and dependent variables as arguments. It should first calculate the values of any variables other than the independent and dependent variables. Then it should evaluate the <span class="math inline">\(f\)</span> functions using Equations <a href="#eq-example-vector-ode-1" class="quarto-xref"><span>J.5</span></a> through <a href="#eq-example-vector-ode-4" class="quarto-xref"><span>J.8</span></a>, or equivalently, <a href="#eq-g-in-terms-of-f" class="quarto-xref">Equation&nbsp;<span>J.14</span></a>. Finally it should return the resulting values of the derivatives.</p>
+</section>
+<section id="initial-values-and-the-stopping-criterion" class="level3" data-number="J.3.2">
+<h3 data-number="J.3.2" class="anchored" data-anchor-id="initial-values-and-the-stopping-criterion"><span class="header-section-number">J.3.2</span> Initial Values and the Stopping Criterion</h3>
+<p>The initial and final values are constants. If their values are not given as part of the assignment, they must be calculated before the IVODEs can be solved. In most instances, if they are not provided as part of an assignment, they can be calculated using other constants that are given in the assignment. As an example, the assignment might give the volume of the reacting fluid and initial concentrations of reagents from which the initial molar amounts can be calculated.</p>
+<p>There <em>might</em> be one initial value that cannot be calculated directly using the constants provided in the assignment. This situation is same as that described above when an unknown constant is present in the IVODEs. The value of the unknown (constant) initial value is calculated the same way. If there is an unknown initial value, two final values will be known. One will be used to specify the stopping criterion and the other will be used to calculate the unknown initial value. As before, the value of this unknown constant must be calculated <em>before</em> the IVODE solver is called. The only difference is that after it is calculated, it must be made available at the point in the code where the IVODE solver is called, but not in the derivatives function.</p>
+<p>Specifying the stopping criterion is straightforward. The final value or values are always known or can be calculated from other known constants provided as part of the assignment. Specifying the stopping criterion simply entails identifying which variable’s final value is known and providing that value. The initial values and the stopping criterion are passed directly to the IVODE solver when it is called, so as already noted, they must be calculated before the IVODE solver is called.</p>
+</section>
+<section id="sec-unk_ivode_const_eqn" class="level3" data-number="J.3.3">
+<h3 data-number="J.3.3" class="anchored" data-anchor-id="sec-unk_ivode_const_eqn"><span class="header-section-number">J.3.3</span> Calculating the Unknown Constant</h3>
+<p>Many of the examples presented in <em>Reaction Engineering Basics</em> that require solving a set of IVODEs do not have an unknown constant either in the equations or as an initial value. In examples that do have an unknown constant, there will only be one, either an unknown constant appearing in the IVODEs or an unknown initial value. In both cases, the unknown constant is calculated using a second known final value. (The other known final value is used to specify the stopping criterion.)</p>
+<p>To illustrate, let <span class="math inline">\(a\)</span> represent the unknown constant, let <span class="math inline">\(x_f\)</span> represent the first known final value, let <span class="math inline">\(y_{i,f}\)</span> represent the second known final value, and let <span class="math inline">\(y_i\big\vert_{x=x_f}\)</span> represent the final value that is found by solving the IVODEs. The unknown constant, <span class="math inline">\(a\)</span>, can be described as the value of <span class="math inline">\(a\)</span> that results in <span class="math inline">\(y_i\big\vert_{x=x_f}\)</span>, being equal to <span class="math inline">\(y_{i,f}\)</span>, or in mathematical terms as <span class="math inline">\(a: y_i\big\vert_{x=x_f} = y_{i,f}\)</span>. This description can be converted to an implicit equation for <span class="math inline">\(a\)</span> shown in <a href="#eq-implicit_initial_value_eqn" class="quarto-xref">Equation&nbsp;<span>J.15</span></a>. That equation is written in the form of a residual expression (see <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a>), anticipating that it will be solved numerically using an ATE solver. Put differently <a href="#eq-implicit_initial_value_eqn" class="quarto-xref">Equation&nbsp;<span>J.15</span></a> can be treated as an ATE with <span class="math inline">\(a\)</span> as the only unknown.</p>
+<p><span id="eq-implicit_initial_value_eqn"><span class="math display">\[
+0 = y_i\big\vert_{x=x_f} - y_{i,f} = \epsilon
+\tag{J.15}\]</span></span></p>
+<p>The numerical solution of ATEs like this is described in <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a>. Very briefly, to calculate <span class="math inline">\(a\)</span>, an ATE solver is called passing two arguments. The first argument is a guess for <span class="math inline">\(a\)</span> and the second is a residuals function written by the reaction engineer. The residuals functions receives a guess for <span class="math inline">\(a\)</span>. It makes it available to the code that needs it, and then calls an IVODE solver to solve the IVODEs. Finally, it uses the results from solving the IVODEs to evaluate and return the residual, <a href="#eq-implicit_initial_value_eqn" class="quarto-xref">Equation&nbsp;<span>J.15</span></a>. When the ATE solver returns the value of <span class="math inline">\(a\)</span>, it is made available to other code as necessary. At that point, the IVODEs can be solved.</p>
+</section>
+</section>
+<section id="sec-math_form_ivodes" class="level2" data-number="J.4">
+<h2 data-number="J.4" class="anchored" data-anchor-id="sec-math_form_ivodes"><span class="header-section-number">J.4</span> Formulating the Solution of a Set of IVODEs Mathematically</h2>
+<p>As discussed above, solving a set of IVODEs numerically requires writing code that (a) evaluates the derivatives appearing in the IVODEs, (b) calculates and sets the initial values, and (c) specifies the stopping criterion. In essence, mathematical formulation of the solution entails writing the equations that are needed to perform those calculations and describing how to use those equations to perform the calculations. Starting with a set of <span class="math inline">\(N\)</span> IVODEs that contain <span class="math inline">\(N\)</span> dependent variables, the formulation proceeds as follows.</p>
+<ol type="1">
+<li>Write the IVODEs in the form of derivative expressions if they aren’t already written as such.</li>
+<li>Write the equations needed to use the independent and dependent variables to calculate
+<ol type="a">
+<li>variables other than the independent and dependent variables,</li>
+<li>the unknown constant appearing in the IVODEs, if there is one, and</li>
+<li>the values of the derivatives.</li>
+</ol></li>
+<li>Define the initial values and the stopping criterion.</li>
+<li>Write the equations needed to calculate the initial and final values, including the unknown initial value, if there is one.</li>
+<li>Describe how to use the equations written in step 2 to evaluate the derivatives.</li>
+<li>Describe how to use the equations written in step 4 to calculate the initial and final values.</li>
+</ol>
+</section>
+<section id="sec-num_impl_ivodes" class="level2" data-number="J.5">
+<h2 data-number="J.5" class="anchored" data-anchor-id="sec-num_impl_ivodes"><span class="header-section-number">J.5</span> Implementing the Solution of a Set of IVODEs Numerically</h2>
+<p>Numerical implementation of the solution entails writing code that solves the IVODEs using the equations and information from the mathematical formulation. That code will work together with an IVODE solver, and the specifics of writing it will depend upon the IVODE solver that is being used. Herein the implementation is presented in general terms that provide sufficient detail so that the solution can be implemented using mathematics software of the reader’s choosing.</p>
+<p>The structure of the code will depend upon the mathematics software being used and programmer preference. For any one mathematics software package, there may be multiple ways to structure the code. <em>Reaction Engineering Basics</em> assumes that the code will be broken into computer functions that each perform a specific task.</p>
+<dl>
+<dt>reactor model function</dt>
+<dd>
+sets the initial values and stopping criterion, calls the IVODE solver, and returns corresponding sets of values of the independent variable and each of the dependent variables spanning the range from their initial value to their final value.
+</dd>
+<dt>derivatives function</dt>
+<dd>
+receives the independent and dependent variables, evaluates the derivatives and returns their values.
+</dd>
+<dt>residuals function</dt>
+<dd>
+receives a guess for the unknown constant, makes it available to the other functions, calls the model function to solve the IVODEs using the guess, uses the results to evaluate and return the residual corresponding to the unknown constant.
+</dd>
+<dt>top-level code (and/or a master calculations function)</dt>
+<dd>
+establishes a mechanism for making quantities available to all functions, calls an ATE solver to calculate the unknown constant, if there is one, makes the value of the unknown constant available to other functions, and calls the reactor model function to get the solution of the IVODEs.
+</dd>
+</dl>
+</section>
+<section id="examples" class="level2" data-number="J.6">
+<h2 data-number="J.6" class="anchored" data-anchor-id="examples"><span class="header-section-number">J.6</span> Examples</h2>
+<p><a href="#sec-example_J_6_1" class="quarto-xref">Example&nbsp;<span>J.6.1</span></a> shows how to solve a set of IVODEs numerically when there are no unknown constants within the equations, all of the initial values are known, and one final value is known. Additionally, it illustrates using the mass matrix to write the derivatives function as described in <a href="#sec-mass_matrix" class="quarto-xref"><span>Section J.3.1</span></a>. Examples <a href="#sec-example_J_6_2" class="quarto-xref"><span>J.6.2</span></a> and <a href="#sec-example_J_6_2" class="quarto-xref"><span>J.6.2</span></a> illustrates the solution of a set of IVODEs when an initial value or constant in the IVODEs is unknown but a second final value is specified. In <a href="#sec-example_J_6_2" class="quarto-xref">Example&nbsp;<span>J.6.2</span></a> an initial value is unknown and in <a href="#sec-example_J_6_3" class="quarto-xref">Example&nbsp;<span>J.6.3</span></a> a constant appearing in the IVODEs is unknown.</p>
+<section id="sec-example_J_6_1" class="level3" data-number="J.6.1">
+<h3 data-number="J.6.1" class="anchored" data-anchor-id="sec-example_J_6_1"><span class="header-section-number">J.6.1</span> Example: Numerical Solution of a Set of IVODEs</h3>
+<p>This is not an example of a reactor analysis; it simply illustrates how to solve a set of IVODEs when all of the initial values are known. Equations (1) through (6) with the initial values, <span class="math inline">\(n_{A,0}\)</span> = <span class="math inline">\(n_{B,0}\)</span> = 190 mol, <span class="math inline">\(n_{Y,0}\)</span> = <span class="math inline">\(n_{Z,0}\)</span> = 0, <span class="math inline">\(T_0\)</span> = 450 K, and <span class="math inline">\(P_0\)</span> = 7 atm, and the final value, <span class="math inline">\(t_f\)</span> = 2 h, are representative of a set of IVODEs that an engineer might generate during the analysis of an adiabatic BSTR. For this illustration we will assume that the engineer knows the constant values of the following quantities: <span class="math inline">\(V\)</span> = 2 m<sup>3</sup>, <span class="math inline">\(\Delta H_1\)</span> = -3470 cal mol<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,A}\)</span> = 7.5 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,B}\)</span> = 8.5 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,Y}\)</span> = 12.1 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,Z}\)</span> = 5.7 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(k_{0,1}\)</span> = 83.0 m<sup>3</sup> mol<sup>-1</sup> h<sup>-1</sup>, and <span class="math inline">\(E_1\)</span> = 10.2 kcal mol<sup>-1</sup>, as well as the rate expression, equation (7).</p>
+<p><span class="math display">\[
+\frac{dn_A}{dt} = -Vr_1 \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dn_B}{dt} = -Vr_1 \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dn_Y}{dt} = Vr_1 \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dn_Z}{dt} = Vr_1 \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\left(n_A \hat{C}_{p,A} + n_B \hat{C}_{p,B} + n_Y \hat{C}_{p,Y} + n_Z \hat{C}_{p,Z} \right) \frac{dT}{dt} - V\frac{dP}{dt} = -Vr_1 \Delta H_1 \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align}
+RT\frac{dn_A}{dt} + RT\frac{dn_B}{dt} &amp;+ RT\frac{dn_Y}{dt} + RT\frac{dn_Z}{dt} \\&amp;+ R\left(n_A + n_B + n_Y + n_Z\right)\frac{dT}{dt} - V\frac{dP}{dt} = 0
+\end{align} \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+r_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)} C_AC_B \tag{7}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The narrative for this example assigned appropriate variable symbols to every quantity it provided. I can see that I’m going to need the ideal gas constant, so I’ll add it to the given constant quantities. The narrative doesn’t say so, but a subscripted “1” denotes the reaction, “0” denotes values at <span class="math inline">\(t=0\)</span>, and “f” denotes final values. It also doesn’t say what quantities are of interest to the reaction engineer. The purpose here is to illustrate solving IVODEs, and doing so yields corresponding sets of values of the independent variable and the dependent variables spanning the range from their initial value to their final values. I’ll just use <span class="math inline">\(n_A\left(t\right)\)</span>, etc. to denote those quantities in my summary.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary" class="level4" data-number="J.6.1.1">
+<h4 data-number="J.6.1.1" class="anchored" data-anchor-id="assignment-summary"><span class="header-section-number">J.6.1.1</span> Assignment Summary</h4>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(n_{A,0}\)</span> = <span class="math inline">\(n_{B,0}\)</span> = 190 mol, <span class="math inline">\(n_{Y,0}\)</span> = <span class="math inline">\(n_{Z,0}\)</span> = 0, <span class="math inline">\(T_0\)</span> = 450 K, <span class="math inline">\(P_0\)</span> = 7 atm, <span class="math inline">\(t_f\)</span> = 2 h, <span class="math inline">\(V\)</span> = 2 m<sup>3</sup>, <span class="math inline">\(\Delta H_1\)</span> = -6870 cal mol<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,A}\)</span> = 7.5 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,B}\)</span> = 8.5 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,Y}\)</span> = 12.1 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,Z}\)</span> = 5.7 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(k_{0,1}\)</span> = 83.0 m<sup>3</sup> mol<sup>-1</sup> h<sup>-1</sup>, <span class="math inline">\(E_1\)</span> = 10.2 kcal mol<sup>-1</sup>, and <span class="math inline">\(R\)</span> = 1.987 cal mol<sup>-1</sup> K<sup>-1</sup> = 8.206 x 10<sup>-2</sup> L atm mol<sup>-1</sup> K<sup>-1</sup>.</p>
+<p><strong>Reactor</strong>: Adiabatic BSTR</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(n_A\left(t\right)\)</span>, <span class="math inline">\(n_B\left(t\right)\)</span>, <span class="math inline">\(n_Y\left(t\right)\)</span>, <span class="math inline">\(n_Z\left(t\right)\)</span>, <span class="math inline">\(T\left(t\right)\)</span>, and <span class="math inline">\(P\left(t\right)\)</span>.</p>
+</section>
+<section id="mathematical-formulation-of-the-solution" class="level4" data-number="J.6.1.2">
+<h4 data-number="J.6.1.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution"><span class="header-section-number">J.6.1.2</span> Mathematical Formulation of the Solution</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Normally the reactor design equations would need to be generated based on information provided in the narrative, but here they are simply given. The narrative doesn’t say so, but equations (1) - (4) are mole balances, equation (5) is an energy balance on the reacting fluid, and equation (6) is a differential form of the ideal gas law.</p>
+</div>
+</div>
+</div>
+<p><strong>Reactor Design Equations</strong></p>
+<p>Mole balance design equations for A, B, Y, and Z are presented in equations (1) through (4). The energy balance on the reacting fluid is given in equation (5). Equation (6) is the ideal gas law in differential form.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The reactor in this illustration is a BSTR. Defining <span class="math inline">\(t=0\)</span> as the instant the reagents were added to the reactor allows specification of the initial and final values.</p>
+</div>
+</div>
+</div>
+<p><strong>Initial Values and Stopping Criterion</strong></p>
+<div id="tbl-example_J_6_1_initial_values" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_J_6_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;J.1: Initial values and stopping criterion for solving the IVODEs, equations (1) through (6).
+</figcaption>
+<div aria-describedby="tbl-example_J_6_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
-<caption>Table&nbsp;I.1: Numerical solution of <a href="#eq-ivode">Equation&nbsp;<span>I.1</span></a> for the initial values given in <a href="#eq-initial-value">Equation&nbsp;<span>I.2</span></a>.</caption>
 <thead>
 <tr class="header">
-<th style="text-align: center;">x</th>
-<th style="text-align: center;">y</th>
+<th style="text-align: center;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">3.0</td>
-<td style="text-align: center;">10.00</td>
+<td style="text-align: center;"><span class="math inline">\(t\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(t_f\)</span></td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">3.1</td>
-<td style="text-align: center;">10.61</td>
+<td style="text-align: center;"><span class="math inline">\(n_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(n_{A,0}\)</span></td>
+<td style="text-align: center;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;">3.3</td>
-<td style="text-align: center;">11.89</td>
+<td style="text-align: center;"><span class="math inline">\(n_B\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(n_{B,0}\)</span></td>
+<td style="text-align: center;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">3.4</td>
-<td style="text-align: center;">12.56</td>
+<td style="text-align: center;"><span class="math inline">\(n_Y\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(n_{Y,0}\)</span></td>
+<td style="text-align: center;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;">3.6</td>
-<td style="text-align: center;">13.96</td>
+<td style="text-align: center;"><span class="math inline">\(n_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(n_{Z,0}\)</span></td>
+<td style="text-align: center;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">3.7</td>
-<td style="text-align: center;">14.69</td>
+<td style="text-align: center;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_0\)</span></td>
+<td style="text-align: center;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;">4.0</td>
-<td style="text-align: center;">17.00</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">4.5</td>
-<td style="text-align: center;">21.25</td>
+<td style="text-align: center;"><span class="math inline">\(P\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(P_0\)</span></td>
+<td style="text-align: center;"></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The second significant difference is that <strong>the numerical solution spans a finite range of <span class="math inline">\(x\)</span> values</strong>. For example, the numerical solution shown in <a href="#tbl-ivode-num-soln">Table&nbsp;<span>I.1</span></a> spans the range from <span class="math inline">\(x=3\)</span> to <span class="math inline">\(x=4.5\)</span>, or equivalently, the range from <span class="math inline">\(y=10.00\)</span> to <span class="math inline">\(y=21.25\)</span>. In contrast, the analytical solution in <a href="#eq-ivode-soln">Equation&nbsp;<span>I.3</span></a> yields the value of <span class="math inline">\(y\)</span> for <em>any</em> value of <span class="math inline">\(x\)</span>.</p>
-</section>
-<section id="writing-ivodes-as-matrix-and-vector-equations" class="level2" data-number="I.2">
-<h2 data-number="I.2" class="anchored" data-anchor-id="writing-ivodes-as-matrix-and-vector-equations"><span class="header-section-number">I.2</span> Writing IVODEs as Matrix and Vector Equations</h2>
-<p>The sets IVODEs that will be solved in <em>Reaction Engineering Basics</em> will be first-order differential equations, and there will be no products, quotients or powers of the derivatives. Equations <a href="#eq-typical-ode-1"><span>I.4</span></a>, <a href="#eq-typical-ode-2"><span>I.5</span></a>, <a href="#eq-typical-ode-3"><span>I.6</span></a> and <a href="#eq-typical-ode-4"><span>I.7</span></a> are an example of a set of IVODEs that might need to be solved to find the values of <span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span>, <span class="math inline">\(\dot V\)</span> and <span class="math inline">\(T\)</span> at times between <span class="math inline">\(t=0\)</span> and some later time, <span class="math inline">\(t_f\)</span>.</p>
-<p><span id="eq-typical-ode-1"><span class="math display">\[
-\frac{V}{\dot V}\frac{d\dot n_A}{dt} - \frac{\dot n_A V}{\dot V^2}\frac{d\dot V}{dt} = \dot n_{A,in} - \dot n_A - Vr
-\tag{I.4}\]</span></span></p>
-<p><span id="eq-typical-ode-2"><span class="math display">\[
-\frac{V}{\dot V}\frac{d\dot n_Z}{dt} - \frac{\dot n_Z V}{\dot V^2}\frac{d\dot V}{dt} = \dot n_{Z,in} - \dot n_Z + Vr
-\tag{I.5}\]</span></span></p>
-<p><span id="eq-typical-ode-3"><span class="math display">\[
-RT\frac{d\dot n_A}{dt} + RT\frac{d\dot n_Z}{dt} - P\frac{d\dot V}{dt} + \left(\dot n_A + \dot n_Z\right)R\frac{dT}{dt} = 0
-\tag{I.6}\]</span></span></p>
-<p><span id="eq-typical-ode-4"><span class="math display">\[
-\frac{V\left(\dot{n}_A \hat{C}_{p,A} + \dot{n}_Z \hat{C}_{p,Z}\right)}{\dot{V}}  \frac{dT}{dt} = - \left(  \dot{n}_{A,in} \hat{C}_{p,A} + \dot{n}_{Z,in} \hat{C}_{p,Z} \right)\left(T - T_{in}\right) - V r \Delta H
-\tag{I.7}\]</span></span></p>
-<p>Notice that the IVODEs have been written with all of the derivatives on one side of the equation and the remaining terms on the other side. The set of reactions presented in Equations <a href="#eq-example-ode-1"><span>I.8</span></a>, <a href="#eq-example-ode-2"><span>I.9</span></a>, <a href="#eq-example-ode-3"><span>I.10</span></a>, and <a href="#eq-example-ode-4"><span>I.11</span></a> are a generalization of the sets of IVODEs that must be solved in <em>Reaction Engineering Basics</em>. In those equations, <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span>, <span class="math inline">\(y_3\)</span>, and <span class="math inline">\(y_4\)</span> are called the <em>dependent variables</em>; they are each functionally dependent upon only <span class="math inline">\(x\)</span>, which is called the <em>independent variable</em>. The coefficients, <span class="math inline">\(m_{1,1}\)</span>, <span class="math inline">\(m_{1,2}\)</span>, etc., as well as <span class="math inline">\(g_1\)</span>, <span class="math inline">\(g_2\)</span>, <span class="math inline">\(g_3\)</span>, and <span class="math inline">\(g_4\)</span> each may be a function of <span class="math inline">\(x\)</span>, <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span>, <span class="math inline">\(y_3\)</span>, and <span class="math inline">\(y_4\)</span>.</p>
-<p><span id="eq-example-ode-1"><span class="math display">\[
-m_{1,1}\frac{dy_1}{dx} + m_{1,2}\frac{dy_2}{dx} + m_{1,3}\frac{dy_3}{dx} + m_{1,4}\frac{dy_4}{dx} = g_1
-\tag{I.8}\]</span></span></p>
-<p><span id="eq-example-ode-2"><span class="math display">\[
-m_{2,1}\frac{dy_1}{dx} + m_{2,2}\frac{dy_2}{dx} + m_{2,3}\frac{dy_3}{dx} + m_{2,4}\frac{dy_4}{dx} = g_2
-\tag{I.9}\]</span></span></p>
-<p><span id="eq-example-ode-3"><span class="math display">\[
-m_{3,1}\frac{dy_1}{dx} + m_{3,2}\frac{dy_2}{dx} + m_{3,3}\frac{dy_3}{dx} + m_{3,4}\frac{dy_4}{dx} = g_3
-\tag{I.10}\]</span></span></p>
-<p><span id="eq-example-ode-4"><span class="math display">\[
-m_{4,1}\frac{dy_1}{dx} + m_{4,2}\frac{dy_2}{dx} + m_{4,3}\frac{dy_3}{dx}  + m_{4,4}\frac{dy_4}{dx} = g_4
-\tag{I.11}\]</span></span></p>
-<p>While four equations are being used here for illustration purposes, there can be any number of mathematically independent IVODE’s in the set as long as <strong>the number of IVODEs is equal to the number of dependent variables</strong> and there is <strong>only one independent variable</strong>. Through algebraic manipulation, the equations can be re-written in the form shown in Equations <a href="#eq-example-vector-ode-1"><span>I.12</span></a>, <a href="#eq-example-vector-ode-2"><span>I.13</span></a>, <a href="#eq-example-vector-ode-3"><span>I.14</span></a> and <a href="#eq-example-vector-ode-4"><span>I.15</span></a> where the <span class="math inline">\(f_1\)</span>, <span class="math inline">\(f_2\)</span>, <span class="math inline">\(f_3\)</span>, and <span class="math inline">\(f_4\)</span> each may be a function of <span class="math inline">\(x\)</span>, <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span>, <span class="math inline">\(y_3\)</span>, and <span class="math inline">\(y_4\)</span>.</p>
-<p><span id="eq-example-vector-ode-1"><span class="math display">\[
-\frac{dy_1}{dx}  = f_1
-\tag{I.12}\]</span></span></p>
-<p><span id="eq-example-vector-ode-2"><span class="math display">\[
-\frac{dy_2}{dx} = f_2
-\tag{I.13}\]</span></span></p>
-<p><span id="eq-example-vector-ode-3"><span class="math display">\[
-\frac{dy_3}{dx} = f_3
-\tag{I.14}\]</span></span></p>
-<p><span id="eq-example-vector-ode-4"><span class="math display">\[
-\frac{dy_4}{dx} = f_4
-\tag{I.15}\]</span></span></p>
-<p>The qualifier, “initial-value,” indicates that there is one value of the independent variable, <span class="math inline">\(x\)</span>, at which the values of <em>all</em> of the dependent variables are known. That set of values becomes the starting point for solving the set of IVODEs. While they are called “initial values,” and the value of <span class="math inline">\(x\)</span> at which the values of all of the dependent variables are known is often <span class="math inline">\(x=0\)</span>, this is not a requirement. The values of all of the dependent variables might be known at some value of <span class="math inline">\(x\)</span> other than 0, as was the case in <a href="#eq-initial-value">Equation&nbsp;<span>I.2</span></a>.</p>
-<p>Referring to Equations <a href="#eq-example-ode-1"><span>I.8</span></a>, <a href="#eq-example-ode-2"><span>I.9</span></a>, <a href="#eq-example-ode-3"><span>I.10</span></a>, and <a href="#eq-example-ode-4"><span>I.11</span></a> the coefficients, <span class="math inline">\(m_{1,1}\)</span>, <span class="math inline">\(m_{1,2}\)</span>, etc., can be used to construct a matrix, <span class="math inline">\(\boldsymbol{M}\)</span>, as shown in <a href="#eq-mass-matrix">Equation&nbsp;<span>I.16</span></a>. The dependent variables can be used to construct a column vector, <span class="math inline">\(\underline{y}\)</span>, as in equation <a href="#eq-dependent-var-vector">Equation&nbsp;<span>I.17</span></a>, and the functions, <span class="math inline">\(g_1\)</span>, <span class="math inline">\(g_2\)</span>, <span class="math inline">\(g_3\)</span>, and <span class="math inline">\(g_4\)</span>, can be used to construct a column vector, <span class="math inline">\(\underline{g}\)</span>, as in equation <a href="#eq-function-vector">Equation&nbsp;<span>I.18</span></a>.</p>
-<p><span id="eq-mass-matrix"><span class="math display">\[
-\boldsymbol{M} = \begin{bmatrix} m_{1,1} \ m_{1,2} \ m_{1,3} \ m_{1,4} \\m_{2,1} \ m_{2,2} \ m_{2,3} \ m_{2,4} \\m_{3,1} \ m_{3,2} \ m_{3,3} \ m_{3,4} \\ m_{4,1} \ m_{4,2} \ m_{4,3} \ m_{4,4}  \end{bmatrix}
-\tag{I.16}\]</span></span></p>
-<p><span id="eq-dependent-var-vector"><span class="math display">\[
-\underline{y} = \begin{bmatrix} y_1 \\ y_2 \\ y_3 \\ y_4 \end{bmatrix}
-\tag{I.17}\]</span></span></p>
-<p><span id="eq-function-vector"><span class="math display">\[
-\underline{g} = \begin{bmatrix} g_1 \\ g_2 \\ g_3 \\ g_4 \end{bmatrix}
-\tag{I.18}\]</span></span></p>
-<p>Defining <span class="math inline">\(\boldsymbol{M}\)</span>, <span class="math inline">\(\underline{y}\)</span> and <span class="math inline">\(\underline{f}\)</span> in that way allows Equations <a href="#eq-example-ode-1"><span>I.8</span></a>, <a href="#eq-example-ode-2"><span>I.9</span></a>, <a href="#eq-example-ode-3"><span>I.10</span></a>, and <a href="#eq-example-ode-4"><span>I.11</span></a> to be written as a single matrix equation.</p>
-<p><span id="eq-matrix-form-ivode"><span class="math display">\[
-\boldsymbol{M}\frac{d}{dt}\underline{y} = \underline{g}
-\tag{I.19}\]</span></span></p>
-<p>The matrix equation equivalent of Equations <a href="#eq-example-vector-ode-1"><span>I.12</span></a>, <a href="#eq-example-vector-ode-2"><span>I.13</span></a>, <a href="#eq-example-vector-ode-3"><span>I.14</span></a>, and <a href="#eq-example-vector-ode-4"><span>I.15</span></a> then is given by <a href="#eq-matrix-form-of-vector-ivodes">Equation&nbsp;<span>I.20</span></a>.</p>
-<p><span id="eq-matrix-form-of-vector-ivodes"><span class="math display">\[
-\frac{d}{dt}\underline{y} = \boldsymbol{M}^{-1} \underline{g}
-\tag{I.20}\]</span></span></p>
-<p>Comparing <a href="#eq-matrix-form-of-vector-ivodes">Equation&nbsp;<span>I.20</span></a> to Equations <a href="#eq-example-vector-ode-1"><span>I.12</span></a>, <a href="#eq-example-vector-ode-2"><span>I.13</span></a>, <a href="#eq-example-vector-ode-3"><span>I.14</span></a>, and <a href="#eq-example-vector-ode-4"><span>I.15</span></a>, the relationship between <span class="math inline">\(g_1\)</span>, <span class="math inline">\(g_2\)</span>, <span class="math inline">\(g_3\)</span>, and <span class="math inline">\(g_4\)</span> and <span class="math inline">\(f_1\)</span>, <span class="math inline">\(f_2\)</span>, <span class="math inline">\(f_3\)</span>, and <span class="math inline">\(f_4\)</span> becomes apparent.</p>
-<p><span id="eq-g-in-terms-of-f"><span class="math display">\[
-\begin{bmatrix} f_1 \\ f_2 \\ f_3 \\ f_4 \end{bmatrix} = \underline{f} = \boldsymbol{M}^{-1} \underline{g}
-\tag{I.21}\]</span></span></p>
-<p>Matrix representation provides a compact way writing large sets of IVODEs.</p>
-</section>
-<section id="preparing-the-ivodes-for-solution." class="level2" data-number="I.3">
-<h2 data-number="I.3" class="anchored" data-anchor-id="preparing-the-ivodes-for-solution."><span class="header-section-number">I.3</span> Preparing the IVODEs for Solution.</h2>
-<p>It has already been noted that the number of IVODEs must equal the number of dependent variables and there must be only one independent variable. So the first step in preparing to solve the equations is to verify that this condition is satisfied. Doing so identifies the <span class="math inline">\(N\)</span> IVODEs being solved and the <span class="math inline">\(N\)</span> dependent variables whose values will be found over a range of values of the independent variable. Using Equations <a href="#eq-typical-ode-1"><span>I.4</span></a>, <a href="#eq-typical-ode-2"><span>I.5</span></a>, <a href="#eq-typical-ode-3"><span>I.6</span></a>, and <a href="#eq-typical-ode-4"><span>I.7</span></a> as an example, there are 4 IVODEs, 4 dependent variables (<span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span>, <span class="math inline">\(\dot V\)</span>, and <span class="math inline">\(T\)</span>) and 1 independent variable, <span class="math inline">\(t\)</span>.</p>
-<p>The next step in preparing to solve the IVODEs is to <strong>express every other quantity appearing in the equations in terms of known constants, the independent variable, and the <span class="math inline">\(N\)</span> dependent variables</strong>. In the present example, that means that <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot V\)</span>, <span class="math inline">\(\dot n_{A,in}\)</span>, <span class="math inline">\(r\)</span>, <span class="math inline">\(\dot n_{Z,in}\)</span>, <span class="math inline">\(R\)</span>, <span class="math inline">\(P\)</span>, <span class="math inline">\(\hat{C}_{p,A}\)</span>, <span class="math inline">\(\hat{C}_{p,Z}\)</span> <span class="math inline">\(T_{in}\)</span>, and <span class="math inline">\(\Delta H\)</span> must be expressed in terms of known constants, <span class="math inline">\(t\)</span>, <span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span>, <span class="math inline">\(\dot V\)</span>, and <span class="math inline">\(T\)</span>.</p>
-<p>Recall that the numerical solution of IVODEs spans a finite range of values of each variable. For each variable, that range begins at its <em>intial value</em>. The third step in preparing to solve the IVODEs is to <strong>specify the “initial value” of the independent variable and the corresponding initial values of the dependent variables</strong>. In the example being used here, this might entail defining <span class="math inline">\(t=0\)</span> as the initial value of the independent variables and then listing the corresponding values of <span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span>, <span class="math inline">\(\dot V\)</span>, and <span class="math inline">\(T\)</span> at <span class="math inline">\(t=0\)</span>.</p>
-<p>The last step in praparing to solve the IVODEs is to <strong>specify the other end of the range over which the equations will be solved</strong>. This is sometimes referred to as providing a <em>stopping criterion</em> (also known as the final value or the ending value). (The reason for calling it the “stopping criterion” should be apparent after reading the description, below, of how the IVODEs are solved.) The stopping criterion can be defined explicitly, by setting the value of the independent variable, or implicitly, by setting the value of <strong>one</strong> of the dependent variables at the end of the range over which the equations will be solved. In the present example an explicit stopping criterion might be that the equations will be solved in the range from <span class="math inline">\(t=0\)</span> to <span class="math inline">\(t=30 \text{ min}\)</span>. An implicit stopping criterion might be that the equations will be solved in the range from <span class="math inline">\(t=0\)</span> to the time when <span class="math inline">\(n_A = 0.05n_{A,in}\)</span> (i. e. the time when the conversion reaches 95%).</p>
-</section>
-<section id="items-that-must-be-provided-to-the-solver" class="level2" data-number="I.4">
-<h2 data-number="I.4" class="anchored" data-anchor-id="items-that-must-be-provided-to-the-solver"><span class="header-section-number">I.4</span> Items that must be Provided to the Solver</h2>
-<p>In this appendix, the term “solver” is used to refer to the computer program or function that numerically solves a set of IVODEs. There are many different IVODE solvers available, and each has specific instructions on how to use it. This appendix makes no attempt to explain the details of using any of the available solvers.</p>
-<p>However, no matter which specific solver one uses, there are three things that must be provided to the solver. The first of these are the initial values as described in the preceding section. The second thing that must be provided to the solver is the stopping criterion as described above. The stopping criterion must identify <em>both</em> the variable that is being used to define the end of the range <em>and</em> it’s value at the end of that range.</p>
-<p>Finally, a means of calculating the value of each of the derivatives in the IVODEs, given values of the dependent variables and the independent variable, must be provided to the solver. Quite commonly, this is done by providing the name of a function or subroutine to the solver. That subroutine receives values of the dependent variables and the independent variable as arguments. It then uses Equations <a href="#eq-example-vector-ode-1"><span>I.12</span></a>, <a href="#eq-example-vector-ode-2"><span>I.13</span></a>, <a href="#eq-example-vector-ode-3"><span>I.14</span></a>, and <a href="#eq-example-vector-ode-4"><span>I.15</span></a> to evaluate the functions, <span class="math inline">\(f_1\)</span> through <span class="math inline">\(f_N\)</span>, and returns the resulting values (which are equal to the values of the derivatives). Some solvers alternatively can use Equations <a href="#eq-example-ode-1"><span>I.8</span></a>, <a href="#eq-example-ode-2"><span>I.9</span></a>, <a href="#eq-example-ode-3"><span>I.10</span></a>, and <a href="#eq-example-ode-4"><span>I.11</span></a> to evaluate the matrix, <span class="math inline">\(\boldsymbol{M}\)</span>, and the functions, <span class="math inline">\(g_1\)</span> through <span class="math inline">\(g_N\)</span>, and then use <a href="#eq-g-in-terms-of-f">Equation&nbsp;<span>I.21</span></a> to evaluate and return the values of <span class="math inline">\(f_1\)</span> through <span class="math inline">\(f_N\)</span>.</p>
-</section>
-<section id="an-oversimplified-description-of-how-the-ivodes-are-solved" class="level2" data-number="I.5">
-<h2 data-number="I.5" class="anchored" data-anchor-id="an-oversimplified-description-of-how-the-ivodes-are-solved"><span class="header-section-number">I.5</span> An Oversimplified Description of How the IVODEs are Solved</h2>
-<p>The description presented here of how the solver works is overly simplified, but hopefully it provides sense of how the solution is generated. At the start, the solver has a set of values of the dependent variables at a known value of the independent variable, i. e. it has the initial values. This is illustrated graphically in part (a) of <a href="#fig-ivode-integration-step">Figure&nbsp;<span>I.1</span></a> for any one of the dependent variables.</p>
-<div id="fig-ivode-integration-step" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./Graphics/IVODE_Integration_Step.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;I.1: Graphical Representation of an IVODE Integration Step. (a) The initial value. (b) Using the slope to approximate y(x). (c) Incrementally increasing x and approximating the corresponding y.</figcaption>
 </figure>
 </div>
-<p>It isn’t possible to plot <span class="math inline">\(y\)</span> <em>vs.</em> <span class="math inline">\(x\)</span> at that point because <span class="math inline">\(y\left(x\right)\)</span> is not known. (Indeed, <span class="math inline">\(y\left(x\right)\)</span> is the solution to the IVODE.) Instead, the solver calculates the values of the derivatives of the dependent variables at that initial point, represented in the figure as the point at <span class="math inline">\(\left(x_0,y_0\right)\)</span>. The derivative, <span class="math inline">\(\frac{dy}{dx}\)</span> at that point is the slope of the unknown function, <span class="math inline">\(y\left(x\right)\)</span>. This is shown graphically in part (b) of <a href="#fig-ivode-integration-step">Figure&nbsp;<span>I.1</span></a>.</p>
-<p>Starting from the known point, <span class="math inline">\(\left(x_0,y_0\right)\)</span>, the solver increases <span class="math inline">\(x\)</span> by a small amount, <span class="math inline">\(\Delta x\)</span>, which is known as the <em>step-size</em>. It then calculates the corresponding change in <span class="math inline">\(y\)</span>, <span class="math inline">\(\Delta y\)</span>, using the slope. The resulting point, <span class="math inline">\(\left(x_1,y_1\right)\)</span>, is shown in part (c) of <a href="#fig-ivode-integration-step">Figure&nbsp;<span>I.1</span></a>. This process is sometimes referred to as taking an integration step. Effectively, the solver uses the small straight line seqment between <span class="math inline">\(\left(x_0,y_0\right)\)</span> and <span class="math inline">\(\left(x_1,y_1\right)\)</span> to approximate the true solution, <span class="math inline">\(y\left(x\right)\)</span>, in that interval. The accuracy of this approximation increases as <span class="math inline">\(\Delta x\)</span> decreases, so typically the solver uses a large number of very small steps.</p>
-<p>Once the step has been completed and the value of every dependent variable is known at <span class="math inline">\(x=x_1\)</span> , the solver checks to determine whether making that step resulted in the stopping criterion being satisfied. In other words, if the stopping criterion is that <span class="math inline">\(y_3\)</span> should equal some value, <span class="math inline">\(y_{3,f}\)</span>, the solver would check to see whether <span class="math inline">\(y_3\)</span> did, in fact, reach or surpass <span class="math inline">\(y_{3,f}\)</span> after making the step. If so, the numerical solution is complete and the solver returns the values of the dependent variables and the independent variable for each of the steps it took. If the stopping criterion has <em>not</em> been satisfied after taking a step, another step is taken, this time starting from the point <span class="math inline">\(\left(x_1,y_1\right)\)</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In order to solve the IVODEs numerically I’ll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in <a href="#tbl-example_J_6_1_initial_values" class="quarto-xref">Table&nbsp;<span>J.1</span></a>.</p>
+<p>I’ll start by writing the equations that I’ll need in order to evaluate the derivatives appearing in the reactor design equations. As given in the narrative, the reactor design equations are not in the form of derivative expressions. They need to be re-written in that form, and <a href="#sec-mass_matrix" class="quarto-xref"><span>Section J.3.1</span></a> describes how to do that using a mass matrix.</p>
+<p>I’ll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.</p>
+<p>The only other variable appearing in these IVODEs is <span class="math inline">\(r_1\)</span>. According to the narrative, the engineer knows the rate expression is equation (7), and that can be used to calculate <span class="math inline">\(r_1\)</span>. However, using the rate expression as an ancillary equation to calculate <span class="math inline">\(r_1\)</span> introduces two additional variables, <span class="math inline">\(C_A\)</span> and <span class="math inline">\(C_B\)</span>, so I need to write ancillary equations for them, too. The necessary equations are simply defining equations for concentration in a BSTR. A reaction engineer would know these definitions.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Evaluating the Derivatives</strong></p>
+<p>The IVODEs, equations (1) through (6) can be written as the matrix equation, (10), with the mass matrix defined as shown in equation (11). The IVODEs can then be written as derivative expressions as shown in equation (12).</p>
+<p><span class="math display">\[
+\boldsymbol{M}\frac{d}{dt} \begin{bmatrix} n_A \\ n_B \\ n_Y \\ n_Z \\ T \\ P \end{bmatrix} = \begin{bmatrix} -Vr_1 \\ -Vr_1 \\ Vr_1 \\ Vr_1 \\ -Vr_1\Delta H_1 \\ 0 \end{bmatrix}\tag{10}
+\]</span></p>
+<p><span class="math display">\[
+\boldsymbol{M} = \begin{bmatrix} 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; 0 &amp; \left(n_A \hat{C}_{p,A} + n_B \hat{C}_{p,B} + n_Y \hat{C}_{p,Y} + n_Z \hat{C}_{p,Z} \right) &amp; -V \\ RT &amp; RT &amp; RT &amp; RT &amp; R\left(n_A + n_B + n_Y + n_Z\right) &amp; -V  \end{bmatrix} \tag{11}
+\]</span></p>
+<p><span class="math display">\[
+\begin{bmatrix} \frac{dn_A}{dt} \\ \frac{n_B}{dt} \\ \frac{n_Y}{dt} \\ \frac{n_Z}{dt} \\ \frac{T}{dt} \\ \frac{P}{dt} \end{bmatrix} = \boldsymbol{M}^{-1} \begin{bmatrix} -Vr_1 \\ -Vr_1 \\ Vr_1 \\ Vr_1 \\ -Vr_1\Delta H_1 \\ 0 \end{bmatrix} \tag{12}
+\]</span></p>
+<p>The rate expression for <span class="math inline">\(r_1\)</span> is given, equation (7). The concentrations appearing in it can be calculated using equations (8) and (9).</p>
+<p><span class="math display">\[
+C_A = \frac{n_A}{V} \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+C_B = \frac{n_B}{V} \tag{9}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When I solve the IVODEs numerically, I’ll also need to know the initial and final values in <a href="#tbl-example_J_6_1_initial_values" class="quarto-xref">Table&nbsp;<span>J.1</span></a>. In this illustration, they are all given constants, so I don’t need equations to calculate any of them.</p>
+<p>Solving the IVODEs will yield all of the quantities of interest, so no additional equations are needed. I can conclude the numerical formulation with a summary of how to use the equations I’ve written.</p>
+</div>
+</div>
+</div>
+<p><strong>Calculations Summary</strong></p>
+<ol type="1">
+<li>Substitute given and known constants into all equations.</li>
+<li>When it is necessary to evaluate the derivatives
+<ol type="a">
+<li><span class="math inline">\(t\)</span>, <span class="math inline">\(n_A\)</span>, <span class="math inline">\(n_B\)</span>, <span class="math inline">\(n_Y\)</span>, <span class="math inline">\(n_Z\)</span>, <span class="math inline">\(T\)</span>, and <span class="math inline">\(P\)</span> will be available.</li>
+<li>Calculate <span class="math inline">\(C_A\)</span> and <span class="math inline">\(C_B\)</span> using equations (8) and (9).</li>
+<li>Calculate <span class="math inline">\(r_1\)</span> using equation (7).</li>
+<li>Calculate the vector on the right side of equation (10).</li>
+<li>Calculate <span class="math inline">\(\boldsymbol{M}\)</span> using equation (11).</li>
+<li>Calculate the values of the derivatives using equation (12).</li>
+</ol></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Derivative expressions could also be generated by algebraic manipulation of the IVODEs. Equations (1) through (4) are already in the form of derivative expressions.</p>
+<p>Substitution of equation (1) for <span class="math inline">\(\frac{dn_A}{dt}\)</span>, equation (2) for <span class="math inline">\(\frac{dn_B}{dt}\)</span>, equation (3) for <span class="math inline">\(\frac{dn_Y}{dt}\)</span>, and equation (4) for <span class="math inline">\(\frac{dn_Z}{dt}\)</span> into equation (6) yields equation (13).</p>
+<p><span class="math display">\[
+-RTVr_1 - RTVr_1 + RTVr_1 + RTVr_1 + R\left(n_A + n_B + n_Y + n_Z\right)\frac{dT}{dt} - V\frac{dP}{dt} = 0
+\]</span></p>
+<p><span class="math display">\[
+R\left(n_A + n_B + n_Y + n_Z\right)\frac{dT}{dt} - V\frac{dP}{dt} = 0 \tag{13}
+\]</span></p>
+<p>Subtracting equation (13) from equation (5) and rearranging yields the derivative expression in equation (14).</p>
+<p><span class="math display">\[
+\frac{dT}{dt} = \frac{-Vr_1 \Delta H_1}{n_A \left(\hat{C}_{p,A} - R\right) + n_B \left(\hat{C}_{p,B} - R\right) + n_Y \left(\hat{C}_{p,Y} - R\right) + n_Z \left(\hat{C}_{p,Z} - R\right)} \tag{14}
+\]</span></p>
+<p>Rearrangement of equation (6) and substitution of equation (14) for <span class="math inline">\(\frac{dT}{dt}\)</span> yields the derivative expression in equation (15).</p>
+<p><span class="math display">\[
+\frac{dP}{dt} = \frac{R\left(n_A + n_B + n_Y + n_Z\right)}{V}\frac{dT}{dt}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dP}{dt} = \frac{-R\left(n_A + n_B + n_Y + n_Z\right)r_1 \Delta H_1}{n_A \left(\hat{C}_{p,A} - R\right) + n_B \left(\hat{C}_{p,B} - R\right) + n_Y \left(\hat{C}_{p,Y} - R\right) + n_Z \left(\hat{C}_{p,Z} - R\right)} \tag{15}
+\]</span></p>
+<p>Step 2 in the Calculations Summary would then be replaced as follows:</p>
+<ol start="2" type="1">
+<li>When it is necessary to evaluate the derivatives
+<ol type="a">
+<li><span class="math inline">\(t\)</span>, <span class="math inline">\(n_A\)</span>, <span class="math inline">\(n_B\)</span>, <span class="math inline">\(n_Y\)</span>, <span class="math inline">\(n_Z\)</span>, <span class="math inline">\(T\)</span>, and <span class="math inline">\(P\)</span> will be available.</li>
+<li>Calculate <span class="math inline">\(C_A\)</span> and <span class="math inline">\(C_B\)</span> using equations (8) and (9).</li>
+<li>Calculate <span class="math inline">\(r_1\)</span> using equation (7).</li>
+<li>Calculate the values of the derivatives using equations (1) - (4), (14) and (15).</li>
+</ol></li>
+</ol>
+</div>
+</div>
+</div>
 </section>
-<section id="cautions-related-to-numerical-solutions" class="level2" data-number="I.6">
-<h2 data-number="I.6" class="anchored" data-anchor-id="cautions-related-to-numerical-solutions"><span class="header-section-number">I.6</span> Cautions Related to Numerical Solutions</h2>
-<p><em>When the stopping criterion is a value of one of the</em> <strong>dependent</strong> <em>variables</em>, many solvers require that you provide <em>both</em> a final value of the independent variable <em>and</em> a final value of that dependent variable. The solver then takes steps as described above, and after each step it checks to see whether the dependent variable has reached the value you specified. The problem is that if you specify a final value of the <em>independent</em> variable that is too small, the solver may reach that value first and stop. The stopping criterion you specified for the dependent variable will not have been reached, and the result that is returned is not the result you are seeking. Therefore <strong>it is important to check that the dependent variable reached the stopping criterion you specified</strong>.</p>
-<p>To avoid having the solver stop because it reached the stopping criterion for the <em>independent</em> variable, it is common to specify a very large final value for the independent variable stopping criterion. The problem with doing this is that it may cause the solver to use a step size that is too large, and that may result in an inaccurate solution. Therefore, <strong>it is important to check that the step size was not too large</strong>. The solution that is returned will include the final value of the independent variable. The stopping criterion for the independent variable can be set to a value slightly larger than that and the equations can be solved a second time. Assuming the second solution reaches the desired stopping criterion for the dependent variable, the second solution can then be taken as the desired result.</p>
-<p>A second possible problem arises when solving sets of IVODEs where one of the dependent variables changes very abruptly over a very small range of the independent variable, and the changes in that dependent variable significantly affect the changes in the other dependent variables over a much larger range of the independent variable. Equations like this are called <em>stiff ODEs</em>, and they require special treatment of the step size. Therefore, when solving sets of ODEs, one should pay attention to whether any of the dependent variables change very abruptly as the independent variable changes. If they do, it is advisable to <strong>repeat the solution using a solver that is specifically tailored to stiff ODEs</strong>.</p>
+<section id="numerical-implementation-of-the-solution" class="level4" data-number="J.6.1.3">
+<h4 data-number="J.6.1.3" class="anchored" data-anchor-id="numerical-implementation-of-the-solution"><span class="header-section-number">J.6.1.3</span> Numerical Implementation of the Solution</h4>
+<ol type="1">
+<li>Make the given and known constants available for use in all functions,</li>
+<li>Write a derivatives function that
+<ol type="a">
+<li>receives the independent and dependent variables, <span class="math inline">\(t\)</span>, <span class="math inline">\(n_A\)</span>, <span class="math inline">\(n_B\)</span>, <span class="math inline">\(n_Y\)</span>, <span class="math inline">\(n_Z\)</span>, <span class="math inline">\(T\)</span>, and <span class="math inline">\(P\)</span>, as arguments,</li>
+<li>evaluates the derivatives as described in step 2 of the calculations summary, and</li>
+<li>returns their values.</li>
+</ol></li>
+<li>Write a reactor model function that
+<ol type="a">
+<li>gets corresponding sets of values of <span class="math inline">\(t\)</span>, <span class="math inline">\(n_A\)</span>, <span class="math inline">\(n_B\)</span>, <span class="math inline">\(n_Y\)</span>, <span class="math inline">\(n_Z\)</span>, <span class="math inline">\(T\)</span>, and <span class="math inline">\(P\)</span>, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+<ol type="i">
+<li>the initial values and stopping criterion in <a href="#tbl-example_J_6_1_initial_values" class="quarto-xref">Table&nbsp;<span>J.1</span></a> and</li>
+<li>the name of the derivatives function from step 3 above,</li>
+</ol></li>
+<li>checks that the solver successfully solved the IVODEs, and</li>
+<li>returns the values returned by the IVODE solver.</li>
+</ol></li>
+<li>Solve the IVODEs by calling the reactor model function.</li>
+</ol>
 </section>
-<section id="symbols-used-in-this-appendix" class="level2" data-number="I.7">
-<h2 data-number="I.7" class="anchored" data-anchor-id="symbols-used-in-this-appendix"><span class="header-section-number">I.7</span> Symbols Used in this Appendix</h2>
+<section id="results-and-discussion" class="level4" data-number="J.6.1.4">
+<h4 data-number="J.6.1.4" class="anchored" data-anchor-id="results-and-discussion"><span class="header-section-number">J.6.1.4</span> Results and Discussion</h4>
+<p>The calculations were performed as described above yielding the results shown in <a href="#tbl-example_J_6_1_ivode_results" class="quarto-xref">Table&nbsp;<span>J.2</span></a></p>
+<div class="cell">
+<div id="tbl-example_J_6_1_ivode_results" class="cell quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_J_6_1_ivode_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;J.2: Solution of equations (1) through (6) using the initial values and stopping criterion in <a href="#tbl-example_J_6_1_initial_values" class="quarto-xref">Table&nbsp;<span>J.1</span></a>.
+</figcaption>
+<div aria-describedby="tbl-example_J_6_1_ivode_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell table table-sm table-striped small">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 9%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(t\)</span> (n)</th>
+<th style="text-align: center;"><span class="math inline">\(n_A\)</span> (mol)</th>
+<th style="text-align: center;"><span class="math inline">\(n_B\)</span> (mol)</th>
+<th style="text-align: center;"><span class="math inline">\(n_Y\)</span> (mol)</th>
+<th style="text-align: center;"><span class="math inline">\(n_Z\)</span> (mol)</th>
+<th style="text-align: center;"><span class="math inline">\(T\)</span> (K)</th>
+<th style="text-align: center;"><span class="math inline">\(P\)</span> (atm)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">190</td>
+<td style="text-align: center;">190</td>
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">450</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8.49 x 10<sup>-5</sup></td>
+<td style="text-align: center;">190</td>
+<td style="text-align: center;">190</td>
+<td style="text-align: center;">1.41 x 10<sup>-3</sup></td>
+<td style="text-align: center;">1.41 x 10<sup>-3</sup></td>
+<td style="text-align: center;">450</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">9.34 x 10<sup>-4</sup></td>
+<td style="text-align: center;">190</td>
+<td style="text-align: center;">190</td>
+<td style="text-align: center;">1.56 x 10<sup>-2</sup></td>
+<td style="text-align: center;">1.56 x 10<sup>-2</sup></td>
+<td style="text-align: center;">450</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">9.43 x 10<sup>-3</sup></td>
+<td style="text-align: center;">190</td>
+<td style="text-align: center;">190</td>
+<td style="text-align: center;">0.157</td>
+<td style="text-align: center;">0.157</td>
+<td style="text-align: center;">450</td>
+<td style="text-align: center;">7</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">9.44 x 10<sup>-2</sup></td>
+<td style="text-align: center;">188</td>
+<td style="text-align: center;">188</td>
+<td style="text-align: center;">1.61</td>
+<td style="text-align: center;">1.61</td>
+<td style="text-align: center;">452</td>
+<td style="text-align: center;">7.04</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.944</td>
+<td style="text-align: center;">170</td>
+<td style="text-align: center;">170</td>
+<td style="text-align: center;">20.2</td>
+<td style="text-align: center;">20.2</td>
+<td style="text-align: center;">480</td>
+<td style="text-align: center;">7.47</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">129</td>
+<td style="text-align: center;">129</td>
+<td style="text-align: center;">60.7</td>
+<td style="text-align: center;">60.7</td>
+<td style="text-align: center;">540</td>
+<td style="text-align: center;">8.4</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<hr>
+<p>Unlike analytical solution, solving the IVODEs numerically does not yield expressions for <span class="math inline">\(n_A\left(t\right)\)</span>, <span class="math inline">\(n_B\left(t\right)\)</span>, <span class="math inline">\(n_Y\left(t\right)\)</span>, <span class="math inline">\(n_Z\left(t\right)\)</span>, <span class="math inline">\(T\left(t\right)\)</span>, and <span class="math inline">\(P\left(t\right)\)</span>. Instead it yields sets of corresponding values of <span class="math inline">\(t\)</span>, <span class="math inline">\(n_A\)</span>, <span class="math inline">\(n_B\)</span>, <span class="math inline">\(n_Y\)</span>, <span class="math inline">\(n_Z\)</span>, <span class="math inline">\(T\)</span>, and <span class="math inline">\(P\)</span>, in the form of <a href="#tbl-example_J_6_1_ivode_results" class="quarto-xref">Table&nbsp;<span>J.2</span></a> where the rows span the range from the initial values to the final values.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>The results shown here have 7 values of each variable spanning the range from their initial values to their final values. The IVODE solver determines the number of integration steps needed to solve the equations accurately. The default tolerances for determining accuracy may differ from one solver to another. As a consequence, if the calculations were performed using a different IVODE solver, there could be fewer or more rows than shown in <a href="#tbl-example_J_6_1_ivode_results" class="quarto-xref">Table&nbsp;<span>J.2</span></a>. However, the values shown in the first and last rows would be the same, and interpolation to a common <span class="math inline">\(t\)</span>, would give equal values of <span class="math inline">\(n_A\)</span>, <span class="math inline">\(n_B\)</span>, <span class="math inline">\(n_Y\)</span>, <span class="math inline">\(n_Z\)</span>, <span class="math inline">\(T\)</span> and <span class="math inline">\(P\)</span>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:blue">SC</span>o<span style="color:red">RE</span> Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in <a href="http://buffalobadger.github.io/SCoRE/comp_ivodes.html">SCoRE</a></p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-example_J_6_2" class="level3" data-number="J.6.2">
+<h3 data-number="J.6.2" class="anchored" data-anchor-id="sec-example_J_6_2"><span class="header-section-number">J.6.2</span> Example: Numerical Solution of a Set of IVODEs with a “Missing” Initial Value</h3>
+<p>This is not an example of a reactor analysis; it simply illustrates how to solve a set of IVODEs when one of the initial values is unknown. Equations (1) through (3) are representative of the IVODEs an engineer might need to solve when analyzing an adiabatic, steady-state PFR with negligible pressure drop. Suppose the engineer needs to calculate the initial value of <span class="math inline">\(T\)</span>, <span class="math inline">\(T_{in}\)</span>, that will result in a specified final value of <span class="math inline">\(T\)</span>, <span class="math inline">\(T_{out}\)</span>, and then calculate <span class="math inline">\(\dot{n}_A\left(z\right)\)</span>, <span class="math inline">\(\dot{n}_Z\left(z\right)\)</span>, and <span class="math inline">\(T\left(z\right)\)</span> using <span class="math inline">\(T_{in}\)</span>. For this example, assume that the engineer knows that equation (4) is the rate expression, and that <span class="math inline">\(D\)</span> = 1 in, <span class="math inline">\(k_0\)</span> = 7.49 x 10<sup>9</sup> L mol<sup>-1</sup> min<sup>-1</sup>, <span class="math inline">\(E\)</span> = 15,300 cal mol<sup>-1</sup>, <span class="math inline">\(P\)</span> = 4 atm, <span class="math inline">\(\Delta H\)</span> = -14,500 cal mol<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,A}\)</span> = 10.9 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,Z}\)</span> = 21.8 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(L\)</span> = 100 in, <span class="math inline">\(\dot{n}_{A,in}\)</span> = 1.5 mol min<sup>-1</sup>, <span class="math inline">\(\dot{n}_{Z,in}\)</span> = 0, and <span class="math inline">\(T_{out}\)</span> = 400 K.</p>
+<p><span class="math display">\[
+\frac{d\dot{n}_A}{dz} = -2\frac{\pi D^2}{4}r \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Z}{dz} = \frac{\pi D^2}{4}r \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dT}{dz} = -\frac{\pi D^2}{4}\frac{r\Delta H}{\dot{n}_A \hat{C}_{p,A} + \dot{n}_Z \hat{C}_{p,Z}} \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+r = k_0exp{\left( \frac{-E}{RT}\right)} \left(\frac{\dot{n}_AP}{\left( \dot{n}_A + \dot{n}_Z\right)RT}\right)^2 \tag{4}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The problem statement assigns appropriate variables to represent all of the known constants and the quantities of interest. This is a PFR, so a subscripted “in” denotes initial values (at <span class="math inline">\(z=0\)</span>) and a subscripted “out” represents final values (except that <span class="math inline">\(L\)</span> is used instead of <span class="math inline">\(z_{out}\)</span>). In this example, there is only one reaction, so a subscript denoting the reaction isn’t needed. I can see that I’m going to need the ideal gas constant, so I can add that to the known constants.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary-1" class="level4" data-number="J.6.2.1">
+<h4 data-number="J.6.2.1" class="anchored" data-anchor-id="assignment-summary-1"><span class="header-section-number">J.6.2.1</span> Assignment Summary</h4>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(D\)</span> = 1 in, <span class="math inline">\(k_0\)</span> = 7.49 x 10<sup>9</sup> L mol<sup>-1</sup> min<sup>-1</sup>, <span class="math inline">\(E\)</span> = 15,300 cal mol<sup>-1</sup>, <span class="math inline">\(P\)</span> = 4 atm, <span class="math inline">\(\Delta H\)</span> = -14,500 cal mol<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,A}\)</span> = 10.9 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,Z}\)</span> = 21.8 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(L\)</span> = 100 in, <span class="math inline">\(\dot{n}_{A,in}\)</span> = 1.5 mol min<sup>-1</sup>, <span class="math inline">\(\dot{n}_{Z,in}\)</span> = 0, <span class="math inline">\(T_{out}\)</span> = 400 K, and <span class="math inline">\(R\)</span> = 1.987 cal mol<sup>-1</sup> K<sup>-1</sup> = 8.206 x 10<sup>-2</sup> L atm mol<sup>-1</sup> K<sup>-1</sup>.</p>
+<p><strong>Reactor</strong>: Adiabatic, steady-state PFR with negligible pressure drop.</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(T_{in} : T\big\vert_{z=L} = T_{out}\)</span>, <span class="math inline">\(\dot{n}_A\left(z\right)\)</span>, <span class="math inline">\(\dot{n}_Z\left(z\right)\)</span>, and <span class="math inline">\(T\left(z\right)\)</span>.</p>
+</section>
+<section id="mathematical-formulation-of-the-solution-1" class="level4" data-number="J.6.2.2">
+<h4 data-number="J.6.2.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution-1"><span class="header-section-number">J.6.2.2</span> Mathematical Formulation of the Solution</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Reactor design equations are always needed for a reactor analysis. Here I don’t need to generate the reactor design equations because the example narrative provides the three reactor design equations, (1) through (3). Equations (1) and (2) are mole balances, and equation (3) is an energy balance on the reacting fluid They contain a single independent variable, <span class="math inline">\(z\)</span>, and three dependent variables, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>. The number of IVODEs equals the number of dependent variables, so they can be solved.</p>
+</div>
+</div>
+</div>
+<p><strong>Reactor Design Equations</strong>:</p>
+<p>Mole balance design equations for A and Z are presented in equations (1) and (2). The energy balance on the reacting fluid is given in equation (3).</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The reactor in this illustration is a PFR. Defining <span class="math inline">\(z=0\)</span> as the inlet to the reactor allows specification of the initial and final values.</p>
+</div>
+</div>
+</div>
+<p><strong>Intial Values and Stopping Criterion</strong></p>
+<div id="tbl-example_J_6_2_initial_values" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_J_6_2_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;J.3: Initial values and stopping criterion for solving the IVODEs, equations (1) through (3).
+</figcaption>
+<div aria-describedby="tbl-example_J_6_2_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(L\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_{in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In order to solve the IVODEs numerically I’ll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in <a href="#tbl-example_J_6_2_initial_values" class="quarto-xref">Table&nbsp;<span>J.3</span></a>.</p>
+<p>I’ll start by writing the equations that I’ll need in order to evaluate the derivatives appearing in the reactor design equations. They are already written in the form of derivative expressions, so no further manipulations of the equations is necessary.</p>
+<p>I’ll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions. Here, the only other variable in equations (1), (2), and (3) that needs to be calculated is the rate, <span class="math inline">\(r\)</span>. The example provides the ancillary equation, (4), that is needed to do so.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equation for Evaluating the Derivatives</strong></p>
+<p>The rate, <span class="math inline">\(r\)</span>, appearing in the IVODEs is given by equation (4).</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When I solve the IVODEs numerically, I’ll also need to know the initial and final values in <a href="#tbl-example_J_6_2_initial_values" class="quarto-xref">Table&nbsp;<span>J.3</span></a>. From the assignment summary I can see that <span class="math inline">\(L\)</span>, <span class="math inline">\(\dot{n}_{A,in}\)</span>, and <span class="math inline">\(\dot{n}_{Z,in}\)</span> are known, but <span class="math inline">\(T_{in}\)</span> is unknown and must be calculated.</p>
+<p><span class="math inline">\(T_{in}\)</span> cannot be calculated directly from any of the given and known constants. However, a second final value, the outlet temperature, <span class="math inline">\(T_{out}\)</span>, is given. Using that second final value I can write an implicit equation that can be solved to find <span class="math inline">\(T_{in}\)</span> as described in <a href="#sec-unk_ivode_const_eqn" class="quarto-xref"><span>Section J.3.3</span></a>. Knowing that equation will be solved numerically using an ATE solver, I will write it in the form of a residual expression.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Calculating the Initial and Final Values</strong></p>
+<p>The initial value, <span class="math inline">\(T_{in} : T\big\vert_{z=L} = T_{out}\)</span>, can be calculated by using an ATE solver to solve equation (5), for the unknown value of <span class="math inline">\(T_{in}\)</span> that results in the calculated value, <span class="math inline">\(T\big\vert_{z=L}\)</span>, being equal to <span class="math inline">\(T_{out}\)</span>.</p>
+<p><span class="math display">\[
+0 = T\big\vert_{z=L} - T_{out} = \epsilon \tag{5}
+\]</span></p>
+<p>With the information given above, equations (1), (2), (3), and (5) can be solved to find <span class="math inline">\(T_{in}\)</span> and sets of corresponding values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> that span the range from their initial values to their final values.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>At this point I have written all of the equations needed to solve the IVODEs. Doing so will yield all of the quantities of interest, so no additional calculations will be necessary</p>
+</div>
+</div>
+</div>
+<p><strong>Calculations Summary</strong></p>
+<ol type="1">
+<li>Substitute given and known constants into all equations.</li>
+<li>When it is necessary to evaluate the derivatives
+<ol type="a">
+<li><span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> will be available.</li>
+<li>Calculate <span class="math inline">\(r\)</span> using equation (4).</li>
+<li>Calculate the values of the derivatives using equations (1), (2), and (3).</li>
+</ol></li>
+<li>When it is necessary to evaluate the residual, <span class="math inline">\(\epsilon\)</span>
+<ol type="a">
+<li>A guess for <span class="math inline">\(T_{in}\)</span> will be available for use in all equations.</li>
+<li>Solve equations (1) through (3) using that guess and extract <span class="math inline">\(T\big\vert_{z=L}\)</span> from the results.</li>
+<li>Evaluate <span class="math inline">\(\epsilon\)</span> using equation (5).</li>
+</ol></li>
+</ol>
+</section>
+<section id="numerical-implementation-of-the-solution-1" class="level4" data-number="J.6.2.3">
+<h4 data-number="J.6.2.3" class="anchored" data-anchor-id="numerical-implementation-of-the-solution-1"><span class="header-section-number">J.6.2.3</span> Numerical Implementation of the Solution</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The numerical implementation is a little tricky in that before I can solve the IVODEs, I need to calculate <span class="math inline">\(T_{in}\)</span>, but to calculate <span class="math inline">\(T_{in}\)</span>, I need to solve the IVODEs (step 3b above). The key to resolving this dilemma is that when the IVODEs are being solved in step 3b, the ATE solver will have provided a guess for <span class="math inline">\(T_{in}\)</span>.</p>
+</div>
+</div>
+</div>
+<ol type="1">
+<li>Make the given and known constants available for use in all functions,</li>
+<li>Define a variable to hold the current value of <span class="math inline">\(T_{in}\)</span> and make it available to all functions.</li>
+<li>Write a derivatives function that
+<ol type="a">
+<li>receives the independent and dependent variables, <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, as arguments,</li>
+<li>evaluates derivatives as described in step 2 of the calculations summary, and</li>
+<li>returns their values.</li>
+</ol></li>
+<li>Write a residuals function that
+<ol type="a">
+<li>receives a guess for <span class="math inline">\(T_{in}\)</span> and makes it available to all functions,</li>
+<li>evaluates the residual as described in step 3 of the calculations summary, and</li>
+<li>returns the value of <span class="math inline">\(\epsilon\)</span>.</li>
+</ol></li>
+<li>Write a reactor model function that
+<ol type="a">
+<li>uses the current value of <span class="math inline">\(T_{in}\)</span> to set the initial values and stopping criterion as in <a href="#tbl-example_J_6_2_initial_values" class="quarto-xref">Table&nbsp;<span>J.3</span></a>,</li>
+<li>gets corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+<ol type="i">
+<li>the initial values and stopping criterion in <a href="#tbl-example_J_6_2_initial_values" class="quarto-xref">Table&nbsp;<span>J.3</span></a> and</li>
+<li>the name of the derivatives function from step 3 above, d, checks that the solver successfully solved the IVODEs, and</li>
+</ol></li>
+<li>returns the values returned by the IVODE solver.</li>
+</ol></li>
+<li>perform the analysis by
+<ol type="a">
+<li>calculating <span class="math inline">\(T_{in}\)</span> by calling an ATE solver and passing the following information to it
+<ol type="i">
+<li>an initial guess for <span class="math inline">\(T_{in}\)</span> and</li>
+<li>the neme of the residuals function from step 4 above as arguments,</li>
+</ol></li>
+<li>checking that the ATE solver converged,</li>
+<li>setting the current value of <span class="math inline">\(T_{in}\)</span> equal to the result from step 6a, and</li>
+<li>calling the reactor model function from step 4 above to get sets of corresponding values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> that span the range from their initial values to their final values.</li>
+</ol></li>
+</ol>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Notice that while the ATE solver is making guesses for <span class="math inline">\(T_{in}\)</span> and testing them by calling the residuals function (step 6a), the IVODEs are always solved using the guess. Then, once <span class="math inline">\(T_{in}\)</span> has been found, the IVODEs are solved using the value that the ATE solver returned (step 6d).</p>
+</div>
+</div>
+</div>
+</section>
+<section id="results-and-discussion-1" class="level4" data-number="J.6.2.4">
+<h4 data-number="J.6.2.4" class="anchored" data-anchor-id="results-and-discussion-1"><span class="header-section-number">J.6.2.4</span> Results and Discussion</h4>
+<p>The calculations were performed as described above. The required inlet temperature, <span class="math inline">\(T_{in}\)</span>, is 334 K. Using that initial value and solving the IVODEs yields the results shown in <a href="#tbl-example_J_6_2_ivode_results" class="quarto-xref">Table&nbsp;<span>J.4</span></a></p>
+<div class="cell">
+<div id="tbl-example_J_6_2_ivode_results" class="cell quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_J_6_2_ivode_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;J.4: Solution of equations (1) through (3).
+</figcaption>
+<div aria-describedby="tbl-example_J_6_2_ivode_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell table table-sm table-striped small">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 36%">
+<col style="width: 36%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(z\)</span> (in)</th>
+<th style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span> (mol min<sup>-1</sup>)</th>
+<th style="text-align: center;"><span class="math inline">\(\dot{n}_Z\)</span> (mol min<sup>-1</sup>)</th>
+<th style="text-align: center;"><span class="math inline">\(T\)</span> (K)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">1.5</td>
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">334</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.155</td>
+<td style="text-align: center;">1.5</td>
+<td style="text-align: center;">3.02 x 10<sup>-5</sup></td>
+<td style="text-align: center;">334</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">1.7</td>
+<td style="text-align: center;">1.5</td>
+<td style="text-align: center;">3.36 x 10<sup>-4</sup></td>
+<td style="text-align: center;">334</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">17.2</td>
+<td style="text-align: center;">1.49</td>
+<td style="text-align: center;">3.7 x 10<sup>-3</sup></td>
+<td style="text-align: center;">337</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">62.4</td>
+<td style="text-align: center;">1.46</td>
+<td style="text-align: center;">1.96 x 10<sup>-2</sup></td>
+<td style="text-align: center;">351</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">85.1</td>
+<td style="text-align: center;">1.42</td>
+<td style="text-align: center;">3.78 x 10<sup>-2</sup></td>
+<td style="text-align: center;">367</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">1.35</td>
+<td style="text-align: center;">7.48 x 10<sup>-2</sup></td>
+<td style="text-align: center;">400</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>When 334 K was used as the initial value of the temperature, <a href="#tbl-example_J_6_2_ivode_results" class="quarto-xref">Table&nbsp;<span>J.4</span></a> shows that the outlet temperature did, indeed, equal 400 K at <span class="math inline">\(L\)</span> = 100 in. That table additionally shows that the initial values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span> and <span class="math inline">\(\dot{n}_Z\)</span>, and the final value of <span class="math inline">\(z\)</span> all have their specified values. Thus the results are consistent.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:blue">SC</span>o<span style="color:red">RE</span> Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in <a href="http://buffalobadger.github.io/SCoRE/comp_ivodes.html">SCoRE</a></p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-example_J_6_3" class="level3" data-number="J.6.3">
+<h3 data-number="J.6.3" class="anchored" data-anchor-id="sec-example_J_6_3"><span class="header-section-number">J.6.3</span> Example: Numerical Solution of a Set of IVODEs Containing an Unknown Constant</h3>
+<p>This is not an example of a reactor analysis; it simply illustrates how to solve a set of IVODEs that contain an unknown constant. Equations (1) through (3) are representative IVODEs that a reaction engineer might need to solve when analyzing a steady-state, adiabatic PFR with negligible pressure drop. Suppose the engineer is tasked with finding the volumetric flow rate, <span class="math inline">\(\dot{V}\)</span>, that results in the outlet <span class="math inline">\(T\)</span> being equal to 325 K, and then using that volumetric flow rate, to calculate <span class="math inline">\(\dot{n}_A\left(z\right)\)</span>, <span class="math inline">\(\dot{n}_Z\left(z\right)\)</span>, and <span class="math inline">\(T\left(z\right)\)</span>. It can be assumed that the reaction engineer knows that the rate expression for <span class="math inline">\(r\)</span> is equation (4), and the following values: <span class="math inline">\(D\)</span> = 5 cm, <span class="math inline">\(\Delta H\)</span> = -14,000 cal mol<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 1.3 cal cm<sup>-3</sup> K<sup>-1</sup>, <span class="math inline">\(C_{A,in}\)</span> = 0.0025 mol cm<sup>3</sup>, <span class="math inline">\(C_{Z,in}\)</span> = 0, <span class="math inline">\(T_{in}\)</span> = 300 K, <span class="math inline">\(L\)</span> = 50 cm, <span class="math inline">\(k_0\)</span> = 4.2 x 10<sup>15</sup> cm<sup>3</sup> mol<sup>-1</sup> min<sup>-1</sup>, and <span class="math inline">\(E\)</span> = 18,000 cal mol<sup>-1</sup>.</p>
+<p><span class="math display">\[
+\frac{d\dot{n}_A}{dz} = - \frac{\pi D^2}{4}r \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Z}{dz} =  \frac{\pi D^2}{4}r \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dT}{dz} = - \frac{\pi D^2}{4}\frac{r\Delta H}{\dot{V} \breve{C}_p} \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+r = k_0 \exp{\left( \frac{-E}{RT} \right)}\frac{\dot{n}_A^2}{\dot{V}^2} \tag{4}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The narrative assigns variables to the known constants. It uses a subscripted “in” to denote initial values. I’ll use <span class="math inline">\(T_{out}\)</span> to denote the final (outlet) value of the temperature; the narrative uses <span class="math inline">\(L\)</span> as the final value of <span class="math inline">\(z\)</span>. I can see I’ll need to use the gas constant, so I’ll add it to the given constants.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary-2" class="level4" data-number="J.6.3.1">
+<h4 data-number="J.6.3.1" class="anchored" data-anchor-id="assignment-summary-2"><span class="header-section-number">J.6.3.1</span> Assignment Summary</h4>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(T_{out}\)</span> = 325 K, <span class="math inline">\(D\)</span> = 5 cm, <span class="math inline">\(\Delta H\)</span> = -14,000 cal mol<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 1.3 cal cm<sup>-3</sup> K<sup>-1</sup>, <span class="math inline">\(C_{A,in}\)</span> = 0.0025 mol cm<sup>3</sup>, <span class="math inline">\(C_{Z,in}\)</span> = 0, <span class="math inline">\(T_{in}\)</span> = 300 K, <span class="math inline">\(L\)</span> = 50 cm, <span class="math inline">\(k_0\)</span> = 4.2 x 10<sup>15</sup> cm<sup>3</sup> mol<sup>-1</sup> min<sup>-1</sup>, <span class="math inline">\(E\)</span> = 18,000 cal mol<sup>-1</sup>, and <span class="math inline">\(R\)</span> = 1.987 cal mol<sup>-1</sup> K<sup>-1</sup>.</p>
+<p><strong>Reactor</strong>: Adiabatic, steady-state PFR with negligible pressure drop.</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(\dot{V}: T\big\vert_{z=L} = T_{out}\)</span>, <span class="math inline">\(\dot{n}_A\left(z\right)\)</span>, <span class="math inline">\(\dot{n}_Z\left(z\right)\)</span>, and <span class="math inline">\(T\left(z\right)\)</span>.</p>
+</section>
+<section id="mathematical-formulation-of-the-solution-2" class="level4" data-number="J.6.3.2">
+<h4 data-number="J.6.3.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution-2"><span class="header-section-number">J.6.3.2</span> Mathematical Formulation of the Solution</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The reactor design equations are provided. Equations (1) and (2) are mole balances and equation (3) is an energy balance on the reacting fluid.</p>
+</div>
+</div>
+</div>
+<p><strong>Reactor Design Equations</strong></p>
+<p>Mole balance design equations for A and Z are presented in equations (1) and (2). The energy balance on the reacting fluid is given in equation (3).</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-20-contents" aria-controls="callout-20" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-20" class="callout-20-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The inlet to the reactor can be defined as <span class="math inline">\(z=0\)</span>, in which case the initial values of the dependent variables are just their values at the reactor inlet. The assignment provides two final values: <span class="math inline">\(z=L\)</span> and <span class="math inline">\(T=T_{out}\)</span>. I’ll use the former as the stopping criterion.</p>
+</div>
+</div>
+</div>
+<p><strong>Intial Values and Stopping Criterion</strong></p>
+<div id="tbl-example_J_6_3_initial_values" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_J_6_3_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;J.5: Initial values and stopping criterion for solving the IVODEs, equations (1) through (3).
+</figcaption>
+<div aria-describedby="tbl-example_J_6_3_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(L\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(n_{A,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(n_{Z,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_{in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-21-contents" aria-controls="callout-21" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-21" class="callout-21-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In order to solve the IVODEs numerically I’ll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in <a href="#tbl-example_J_6_3_initial_values" class="quarto-xref">Table&nbsp;<span>J.5</span></a>.</p>
+<p>I’ll start by writing the equations that I’ll need in order to evaluate the derivatives appearing in the reactor design equations. The design equations are written in the form of deivative expressions, so no further manipulation of them is necessary.</p>
+<p>I’ll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions. Using the assignment summary, I can see that the only quantities that need to be calculated are the rate, <span class="math inline">\(r\)</span>, and the volumetric flow rate, <span class="math inline">\(\dot{V}\)</span>.</p>
+<p>The rate is a variable that depends upon <span class="math inline">\(\dot_{n}_A\)</span> and <span class="math inline">\(T\)</span>. The rate expression for calculating it is provided. That equation does not introduce any additional unknown quantities, but it does include the volumetric flow rate, <span class="math inline">\(\dot{V}\)</span>.</p>
+<p>The unknown quantity, <span class="math inline">\(\dot{V} : T\big\vert_{z=L} = T_{out}\)</span>, is a constant. It cannot be calculated directly from the other given constants. However since a second final value, <span class="math inline">\(T_{out}\)</span>, is given, an implicit equation for calculating it can be written as described in <a href="#sec-unk_ivode_const_eqn" class="quarto-xref"><span>Section J.3.3</span></a>. Knowing that I will be solving that equation numerically, I’ll write it in the form of a residual (see <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a>).</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Evaluating the Derivatives</strong></p>
+<p>The rate, <span class="math inline">\(r\)</span> appearing in the design equations is given by equation (4). The volumetric flow rate, <span class="math inline">\(\dot{V} : T\big\vert_{z=L} = T_{out}\)</span>, can be calculated by using an ATE solver to solve equation, (5), for the value of <span class="math inline">\(\dot{V}\)</span> that results in <span class="math inline">\(T\big\vert_{z=L}\)</span> being equal to <span class="math inline">\(T_{out}\)</span>.</p>
+<p><span class="math display">\[
+0 = T\big\vert_{z=L} - T_{out} = \epsilon \tag{5}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-22-contents" aria-controls="callout-22" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-22" class="callout-22-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When I solve the IVODEs numerically, I’ll also need to know the initial and final values in <a href="#tbl-example_J_6_3_initial_values" class="quarto-xref">Table&nbsp;<span>J.5</span></a>. The inlet temperature and the length of the reactor are known constants, but the inlet molar flow rates of A and Z, <span class="math inline">\(n_{A,in}\)</span> and <span class="math inline">\(n_{Z,in}\)</span>, must be calculated. The inlet concentrations are known, so the definiting equation for concentration in a flow reactor can be used to calculate the inlet molar flow rates. Of course, the volumetric flow rate will need to be calculated first.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Calculating the Initial and Final Values</strong></p>
+<p>The inlet molar flow rates in <a href="#tbl-example_J_6_3_initial_values" class="quarto-xref">Table&nbsp;<span>J.5</span></a> can be calculated using equations (6) and (7).</p>
+<p><span class="math display">\[
+\dot{n}_{A,in} = \dot{V} C_{A,in} \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,in} = \dot{V} C_{Z,in} \tag{7}
+\]</span></p>
+<p>With the information provided above the reactor design equations can be solved numerically to find <span class="math inline">\(\dot{V}\)</span> and corresponding set of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> that span the range from their initial values to their final values.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-23-contents" aria-controls="callout-23" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-23" class="callout-23-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Solving equation (5) and the IVODEs will yield all of the quantities of interest, so no additional equations are needed.</p>
+<p>When I implement the solution numerically I will need to use the equations I’ve written to do three things: evaluate the derivatives, calculate the initial and final values, and evaluate the residual. To complete the mathematical formulation of the solution, I’ll’ describe how to use the equations to do those things.</p>
+</div>
+</div>
+</div>
+<p><strong>Calculations Summary</strong></p>
+<ol type="1">
+<li>Substitute given and known constants into all equations.</li>
+<li>When it is necessary to evaluate the derivatives
+<ol type="a">
+<li><span class="math inline">\(\dot{V}\)</span>, <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> will be available.</li>
+<li>Calculate <span class="math inline">\(r\)</span> using equation (4)</li>
+<li>Calculate the values of the derivatives using equations (1), (2), and (3).</li>
+</ol></li>
+<li>When it is necessary to calculate the initial and final values in <a href="#tbl-example_J_6_3_initial_values" class="quarto-xref">Table&nbsp;<span>J.5</span></a>
+<ol type="a">
+<li><span class="math inline">\(\dot{V}\)</span> will be available.</li>
+<li>Calculate <span class="math inline">\(n_{A,in}\)</span> and <span class="math inline">\(n_{Z,in}\)</span> using equations (6) and (7).</li>
+</ol></li>
+<li>When it is necessary to evaluate the residual, <span class="math inline">\(\epsilon\)</span>
+<ol type="a">
+<li>A guess for <span class="math inline">\(\dot{V}\)</span> will be available for use in all equations.</li>
+<li>Solve equations (1) through (3) using that guess and extract <span class="math inline">\(T\big\vert_{z=L}\)</span> from the results.</li>
+<li>Evaluate <span class="math inline">\(\epsilon\)</span> using equation (5).</li>
+</ol></li>
+</ol>
+</section>
+<section id="numerical-implementation-of-the-solution-2" class="level4" data-number="J.6.3.3">
+<h4 data-number="J.6.3.3" class="anchored" data-anchor-id="numerical-implementation-of-the-solution-2"><span class="header-section-number">J.6.3.3</span> Numerical Implementation of the Solution</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-24-contents" aria-controls="callout-24" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-24" class="callout-24-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The missing constant, <span class="math inline">\(\dot{V}\)</span>, in the IVODEs complicates the numerical implementation slightly. It must be calculated first and then used when solving the IVODEs. The complication arises because the IVODEs must be solved in order to calculate <span class="math inline">\(\dot{V}\)</span>. The code must be written so that while the ATE solver is testing guesses for <span class="math inline">\(\dot{V}\)</span>, those guesses are used in the solution of the IVODEs. Then, after <span class="math inline">\(\dot{V}\)</span> has been found, the resulting value must be used when the IVODEs are solved to find the other quantities of interest.</p>
+</div>
+</div>
+</div>
+<ol type="1">
+<li>Make the given and known constants available for use in all functions.</li>
+<li>Define a variable to hold <span class="math inline">\(\dot{V}\)</span> and make it available to all functions.</li>
+<li>Write a derivatives function that
+<ol type="a">
+<li>receives the independent and dependent variables, <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, as arguments,</li>
+<li>evaluates the derivatives as described in step 2 of the calculations summary, and</li>
+<li>returns the values of the derivatives.</li>
+</ol></li>
+<li>Write a residuals function that
+<ol type="a">
+<li>receives a guess for <span class="math inline">\(\dot{V}\)</span> and makes it available to all functions,</li>
+<li>evaluates the residual as described in step 4 of the calculations summary, and</li>
+<li>returns the value of <span class="math inline">\(\epsilon\)</span>.</li>
+</ol></li>
+<li>Write a reactor model function that
+<ol type="a">
+<li>calculates the initial and final values in <a href="#tbl-example_J_6_3_initial_values" class="quarto-xref">Table&nbsp;<span>J.5</span></a> as described in step 3 of the calculations summary,</li>
+<li>gets corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+<ol type="i">
+<li>the initial values and stopping criterion in <a href="#tbl-example_J_6_3_initial_values" class="quarto-xref">Table&nbsp;<span>J.5</span></a> and</li>
+<li>the name of the derivatives function from step 3 above, d, checks that the solver successfully solved the IVODEs, and</li>
+</ol></li>
+<li>returns the values returned by the IVODE solver.</li>
+</ol></li>
+<li>Perform the analysis by
+<ol type="a">
+<li>calculating <span class="math inline">\(\dot{V}\)</span> by calling an ATE solver passing an initial guess for <span class="math inline">\(\dot{V}\)</span> and the neme of the residuals function from step 5 as arguments.</li>
+<li>checking that the ATE solver converged</li>
+<li>making the resulting value of <span class="math inline">\(\dot{V}\)</span> available to all functions, and</li>
+<li>gets corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values by calling the reactor model function from step 5 above.</li>
+</ol></li>
+</ol>
+</section>
+<section id="results-and-discussion-2" class="level4" data-number="J.6.3.4">
+<h4 data-number="J.6.3.4" class="anchored" data-anchor-id="results-and-discussion-2"><span class="header-section-number">J.6.3.4</span> Results and Discussion</h4>
+<p>The calculations were performed as described above. The required volumetric flow rate, <span class="math inline">\(\dot{V}\)</span>, is 400 cm<sup>3</sup> min<sup>-1</sup>. Using that flow rate and solving the IVODEs yields the results shown in <a href="#tbl-example_J_6_3_ivode_results" class="quarto-xref">Table&nbsp;<span>J.6</span></a></p>
+<div class="cell">
+<div id="tbl-example_J_6_3_ivode_results" class="cell quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_J_6_3_ivode_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;J.6: Solution of equations (1) through (3).
+</figcaption>
+<div aria-describedby="tbl-example_J_6_3_ivode_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell table table-sm table-striped small">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 36%">
+<col style="width: 36%">
+<col style="width: 12%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span class="math inline">\(z\)</span> (cm)</th>
+<th style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span> (mol min<sup>-1</sup>)</th>
+<th style="text-align: center;"><span class="math inline">\(\dot{n}_Z\)</span> (mol min<sup>-1</sup>)</th>
+<th style="text-align: center;"><span class="math inline">\(T\)</span> (K)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">0.999</td>
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">300</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.0357</td>
+<td style="text-align: center;">0.997</td>
+<td style="text-align: center;">0.00141</td>
+<td style="text-align: center;">300</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.392</td>
+<td style="text-align: center;">0.983</td>
+<td style="text-align: center;">0.0156</td>
+<td style="text-align: center;">300</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">3.96</td>
+<td style="text-align: center;">0.834</td>
+<td style="text-align: center;">0.164</td>
+<td style="text-align: center;">304</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">18.1</td>
+<td style="text-align: center;">0.321</td>
+<td style="text-align: center;">0.678</td>
+<td style="text-align: center;">318</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">29.2</td>
+<td style="text-align: center;">0.16</td>
+<td style="text-align: center;">0.838</td>
+<td style="text-align: center;">323</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">40.3</td>
+<td style="text-align: center;">0.0979</td>
+<td style="text-align: center;">0.901</td>
+<td style="text-align: center;">324</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">50</td>
+<td style="text-align: center;">0.0713</td>
+<td style="text-align: center;">0.927</td>
+<td style="text-align: center;">325</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>As was the case in <a href="#sec-example_J_6_2" class="quarto-xref"><span>Section J.6.2</span></a>, the key feature of the numerical implementation is creating a variable to hold the current value of <span class="math inline">\(\dot{V}\)</span> and making it available throughout the code. By doing so, each time the ATE solver tests a guess it has generated, the IVODEs are solved using that guess. Then, once <span class="math inline">\(\dot{V}\)</span> has been found, the IVODEs are solved using the result.</p>
+<p>The initial and final values of <span class="math inline">\(z\)</span> and <span class="math inline">\(T\)</span> in <a href="#tbl-example_J_6_3_ivode_results" class="quarto-xref">Table&nbsp;<span>J.6</span></a> are as specified in the description of the assignment. The initial value of <span class="math inline">\(\dot{n}_Z\)</span> is also as expected because <span class="math inline">\(C_{Z,in}\)</span> is equal to zero. However, if the volumetric flow rate is 400 cm<sup>3</sup> min<sup>-1</sup> and the feed concentration of A is 0.0025 mol cm<sup>3</sup>, the inlet molar flow rate of A should equal 1.0, not 0.999 as shown in <a href="#tbl-example_J_6_3_ivode_results" class="quarto-xref">Table&nbsp;<span>J.6</span></a>. The reason for this discrepancy is that the actual value of <span class="math inline">\(\dot{V}\)</span> found by solving equation (5) using an ATE solver was 399.5065292240422 cm<sup>3</sup> min<sup>-1</sup>. Recall (see <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a>) that numerical solution of ATEs does not yield an exact solution, but one that is “very close.” Clearly that number of significant figures is not warranted, so the value was reported above as 400 cm<sup>3</sup> min<sup>-1</sup>.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:blue">SC</span>o<span style="color:red">RE</span> Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in <a href="http://buffalobadger.github.io/SCoRE/comp_ivodes.html">SCoRE</a></p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="symbols-used-in-sec-apndx_solve_ivodes" class="level2" data-number="J.7">
+<h2 data-number="J.7" class="anchored" data-anchor-id="symbols-used-in-sec-apndx_solve_ivodes"><span class="header-section-number">J.7</span> Symbols Used in <a href="#sec-apndx_solve_ivodes" class="quarto-xref"><span>Appendix J</span></a></h2>
 <table class="table">
 <colgroup>
 <col style="width: 20%">
@@ -657,52 +1828,60 @@ m_{4,1}\frac{dy_1}{dx} + m_{4,2}\frac{dy_2}{dx} + m_{4,3}\frac{dy_3}{dx}  + m_{4
 </thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(a\)</span></td>
+<td style="text-align: left;">Unknown initial value or constant appearing in the IVODEs</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><span class="math inline">\(f_i\)</span></td>
 <td style="text-align: left;">Function of the independent and dependent variables in the <span class="math inline">\(i^{th}\)</span> differential equation when the ODEs are written in vector form without a matrix.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(\underline f\)</span></td>
 <td style="text-align: left;">Column vector formed from a set of functions.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><span class="math inline">\(g_i\)</span></td>
 <td style="text-align: left;">Function of the independent and dependent variables in the <span class="math inline">\(i^{th}\)</span> differential equation when the ODEs are written using a matrix.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(\underline g\)</span></td>
 <td style="text-align: left;">Column vector formed from a set of functions.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><span class="math inline">\(m_{i,j}\)</span></td>
 <td style="text-align: left;">Coefficient that multiplies the derivative of dependent variable <span class="math inline">\(j\)</span> in the <span class="math inline">\(i^{th}\)</span> differential equation.</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;"><span class="math inline">\(\dot n_i\)</span></td>
-<td style="text-align: left;">Molar flow rate of reagent <span class="math inline">\(i\)</span>; and additional subscripted <span class="math inline">\(in\)</span> denotes an <em>inlet</em> molar flow rate.</td>
-</tr>
 <tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(n_i\)</span></td>
+<td style="text-align: left;">Molar amount of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><span class="math inline">\(r\)</span></td>
 <td style="text-align: left;">Reaction rate per unit volume.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(t\)</span></td>
 <td style="text-align: left;">Time; a subscripted <span class="math inline">\(f\)</span> indicates the <em>final</em> time.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><span class="math inline">\(x\)</span></td>
-<td style="text-align: left;">Generic independent variable.</td>
+<td style="text-align: left;">Generic independent variable; a subscripted <span class="math inline">\(0\)</span> indicates the initial value.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\left(x_i,y_i\right)\)</span></td>
+<td style="text-align: left;">Cartesion coordinates of the <span class="math inline">\(i^{th}\)</span> point.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span class="math inline">\(y\)</span></td>
-<td style="text-align: left;">Generic dependent variable; a numerical subscript denotes one specific dependent variable out of the vector <span class="math inline">\(\underline y\)</span>; an additional subscripted <span class="math inline">\(f\)</span> indicates the <em>final</em> value.</td>
+<td style="text-align: left;">Generic dependent variable; a numerical subscript denotes one specific dependent variable out of the vector <span class="math inline">\(\underline y\)</span>; an additional subscripted <span class="math inline">\(f\)</span> indicates the <em>final</em> value; an additional subscripted <span class="math inline">\(0\)</span> indicates the initial value.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(\underline y\)</span></td>
 <td style="text-align: left;">Column vector formed from the dependent variables in a set of ODEs.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><span class="math inline">\(\left(x_i,y_i\right)\)</span></td>
-<td style="text-align: left;">Cartesion coordinates of the <span class="math inline">\(i^{th}\)</span> point.</td>
+<td style="text-align: left;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: left;">axial position measured from the reactor inlet.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(\hat C_{p,i}\)</span></td>
@@ -713,34 +1892,38 @@ m_{4,1}\frac{dy_1}{dx} + m_{4,2}\frac{dy_2}{dx} + m_{4,3}\frac{dy_3}{dx}  + m_{4
 <td style="text-align: left;">Matrix of coefficients that multiplies a column vector of derivatives when the ODEs are written using a matrix.</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(N\)</span></td>
+<td style="text-align: left;">Number of IVODEs in the set.</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><span class="math inline">\(P\)</span></td>
 <td style="text-align: left;">Pressure.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(R\)</span></td>
 <td style="text-align: left;">Ideal gas constant.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><span class="math inline">\(T\)</span></td>
 <td style="text-align: left;">Temperature; a subscripted <span class="math inline">\(in\)</span> denotes the <em>inlet</em> temperature.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(V\)</span></td>
 <td style="text-align: left;">Volume of fluid.</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;"><span class="math inline">\(\dot V\)</span></td>
-<td style="text-align: left;">Volumetric flow rate.</td>
-</tr>
 <tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\epsilon\)</span></td>
+<td style="text-align: left;">Residual corresponding to the implicit equation for calculating a missing initial value of IVODE constant.</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(\Delta x\)</span></td>
 <td style="text-align: left;">Change in the value of the independent variable.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><span class="math inline">\(\Delta y\)</span></td>
 <td style="text-align: left;">Change in the value of the dependent variable.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(\Delta H\)</span></td>
 <td style="text-align: left;">Heat of reaction.</td>
 </tr>
@@ -830,10 +2013,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -843,8 +2043,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -856,7 +2065,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -900,6 +2232,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -925,6 +2258,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -986,17 +2345,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./apndx_solve_ates.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span>
+      <a href="./apndx_solve_ates.html" class="pagination-link" aria-label="Solving Algebraic/Transcendental Equations">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./apndx_estimate_parameters.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./apndx_solve_daes.html" class="pagination-link" aria-label="Solving Differential-Algebraic Equations">
+        <span class="nav-page-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

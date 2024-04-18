@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Reaction Engineering Basics - Appendix L — Solving Differential-Algebraic Equations</title>
+<title>Reaction Engineering Basics - Appendix K — Solving Differential-Algebraic Equations</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,7 +30,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./apndx_solve_bvodes.html" rel="prev">
+<link href="./apndx_estimate_parameters.html" rel="next">
+<link href="./apndx_solve_ivodes.html" rel="prev">
+<link href="./Graphics/BuffaloBadger_16_16.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -46,7 +48,12 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -55,12 +62,42 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -68,9 +105,9 @@ ul.task-list li input[type="checkbox"] {
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
     <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
     </a>
@@ -82,46 +119,51 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/total_ps.html" rel="" target="">
- <span class="menu-text">ToTaL PS</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics"> 
+<span class="menu-text">Reaction Engineering Basics</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics" rel="" target="">
- <span class="menu-text">Reaction Engineering Basics</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/SCoRE"> 
+<span class="menu-text">SCoRE</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/ToTaL_Engineering"> 
+<span class="menu-text">ToTaL Engineering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/The_Sett"> 
+<span class="menu-text">The Sett</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_prereq_knowledge.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_daes.html"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_daes.html"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -185,7 +227,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Reactor Models</span></a>
+ <span class="menu-text">Ideal Reactor Models</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -199,8 +241,8 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_3_response_function.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Response Functions</span></span></a>
+  <a href="./section_3_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Modeling Functions</span></span></a>
   </div>
 </li>
       </ul>
@@ -208,7 +250,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Kinetics Data Analysis</span></a>
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -216,26 +258,44 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_data_generation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  <a href="./section_4_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  <a href="./section_4_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  <a href="./section_4_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  <a href="./section_4_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Design of Non-Continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
   </div>
 </li>
       </ul>
@@ -243,7 +303,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -251,44 +311,20 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  <a href="./section_5_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_bstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  <a href="./section_5_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_non_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Design of Non-continuous Reactors</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_cstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_pfr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  <a href="./section_5_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
   </div>
 </li>
       </ul>
@@ -296,7 +332,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+ <span class="menu-text">Kinetics Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -304,20 +340,26 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_reactor_networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  <a href="./section_6_data_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Thermally Back-mixed PFRs</span></span></a>
+  <a href="./section_6_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_recycle_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  <a href="./section_6_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
   </div>
 </li>
       </ul>
@@ -368,74 +410,80 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./apndx_useful_eqns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Frequently Used Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
   </div>
 </li>
       </ul>
@@ -443,17 +491,32 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-form_soln_daes" id="toc-sec-form_soln_daes" class="nav-link active" data-scroll-target="#sec-form_soln_daes"><span class="header-section-number">K.1</span> Mathematical Formulation of the Solution</a></li>
+  <li><a href="#sec-impl_soln_daes" id="toc-sec-impl_soln_daes" class="nav-link" data-scroll-target="#sec-impl_soln_daes"><span class="header-section-number">K.2</span> Numerical Implementation of the Solution</a></li>
+  <li><a href="#sec-example_K" id="toc-sec-example_K" class="nav-link" data-scroll-target="#sec-example_K"><span class="header-section-number">K.3</span> Example</a>
+  <ul class="collapse">
+  <li><a href="#assignment-summary" id="toc-assignment-summary" class="nav-link" data-scroll-target="#assignment-summary"><span class="header-section-number">K.3.1</span> Assignment Summary</a></li>
+  <li><a href="#mathematical-formulation-of-the-solution" id="toc-mathematical-formulation-of-the-solution" class="nav-link" data-scroll-target="#mathematical-formulation-of-the-solution"><span class="header-section-number">K.3.2</span> Mathematical Formulation of the Solution</a></li>
+  <li><a href="#numerical-implementation-of-the-solution" id="toc-numerical-implementation-of-the-solution" class="nav-link" data-scroll-target="#numerical-implementation-of-the-solution"><span class="header-section-number">K.3.3</span> Numerical Implementation of the Solution</a></li>
+  <li><a href="#results-and-discussion" id="toc-results-and-discussion" class="nav-link" data-scroll-target="#results-and-discussion"><span class="header-section-number">K.3.4</span> Results and Discussion</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-sec-apndx_solve_daes" id="toc-symbols-used-in-sec-apndx_solve_daes" class="nav-link" data-scroll-target="#symbols-used-in-sec-apndx_solve_daes"><span class="header-section-number">K.4</span> Symbols Used in <span>Appendix K</span></a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_daes.html"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-apndx_solve_daes" class="quarto-section-identifier">Appendix L — Solving Differential-Algebraic Equations</span></h1>
+<h1 class="title"><span id="sec-apndx_solve_daes" class="quarto-section-identifier">Appendix K — Solving Differential-Algebraic Equations</span></h1>
 </div>
 
 
@@ -466,11 +529,418 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
 
-<p>This appendix will be added as soon as I finish writing it.</p>
+
+<p>A set of differential-algebraic equations (DAEs) includes two subsets of equations. One subset contains differential equations and the other contains ATEs. Generally, a special computer function (a DAE solver) is needed to solve them numerically. This is <em>not</em> the case in <em>Reaction Engineering Basics</em>. <strong>The DAEs encountered in <em>Reaction Engineering Basics</em> can be solved by using an IVODE solver within the residuals function passed to an ATE solver</strong>. That is possible because in the DAEs in <em>Reaction Engineering Basics</em>, unknown quantities in the ATEs are initial or final values for the IVODEs, but they do not appear within the IVODEs.</p>
+<section id="sec-form_soln_daes" class="level2" data-number="K.1">
+<h2 data-number="K.1" class="anchored" data-anchor-id="sec-form_soln_daes"><span class="header-section-number">K.1</span> Mathematical Formulation of the Solution</h2>
+<p>To illustrate, suppose the DAEs consist of two ATEs, Equations <a href="#eq-ate1_in_daes" class="quarto-xref"><span>K.1</span></a> and <a href="#eq-ate2_in_daes" class="quarto-xref"><span>K.2</span></a>, and two IVODEs, Equations <a href="#eq-ivode1_in_daes" class="quarto-xref"><span>K.3</span></a> and <a href="#eq-ivode2_in_daes" class="quarto-xref"><span>K.4</span></a>. In those equations <span class="math inline">\(y_{1,0}\)</span> and <span class="math inline">\(y_{2,0}\)</span> represent the initial values of the dependent variables in the IVODEs and <span class="math inline">\(y_1\big\vert_{x_f}\)</span> and <span class="math inline">\(y_2\big\vert_{x_f}\)</span> represent the final values of the dependent variables in the IVODEs.</p>
+<p><span id="eq-ate1_in_daes"><span class="math display">\[
+0 = f_1\left(y_{1,0}, y_{2,0}, y_1\big\vert_{x_f}, y_2\big\vert_{x_f} \right)
+\tag{K.1}\]</span></span></p>
+<p><span id="eq-ate2_in_daes"><span class="math display">\[
+0 = f_2\left(y_{1,0}, y_{2,0}, y_1\big\vert_{x_f}, y_2\big\vert_{x_f} \right)
+\tag{K.2}\]</span></span></p>
+<p><span id="eq-ivode1_in_daes"><span class="math display">\[
+\frac{dy_1}{dx} = f_3\left(x, y_1, y_2\right)
+\tag{K.3}\]</span></span></p>
+<p><span id="eq-ivode2_in_daes"><span class="math display">\[
+\frac{dy_2}{dx} = f_4\left(x, y_1, y_2\right)
+\tag{K.4}\]</span></span></p>
+<p>The initial and final values of the independent variable in the IVODEs, <span class="math inline">\(x_0\)</span> and <span class="math inline">\(x_f\)</span>, are known, but the other initial values,<span class="math inline">\(y_{1,0}\)</span> and <span class="math inline">\(y_{2,0}\)</span>, are not known, so the IVODEs cannot be solved directly. There are two ATEs, but they contain four unknowns. However, as explained in <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a>, the ATEs can be solved for <span class="math inline">\(y_{1,0}\)</span> and <span class="math inline">\(y_{2,0}\)</span> if <span class="math inline">\(y_1\big\vert_{x_f}\)</span> and <span class="math inline">\(y_2\big\vert_{x_f}\)</span> are expressed in terms of <span class="math inline">\(y_{1,0}\)</span> and <span class="math inline">\(y_{2,0}\)</span>. In fact, the IVODEs do exactly that: given values of <span class="math inline">\(y_{1,0}\)</span> and <span class="math inline">\(y_{2,0}\)</span>, the IVODEs can be solved to find <span class="math inline">\(y_1\big\vert_{x_f}\)</span> and <span class="math inline">\(y_2\big\vert_{x_f}\)</span>.</p>
+<p>Thus, the key to solving the DAEs is to formulate the solution of the ATEs using the <em>initial</em> values of the dependent variables in the IVODEs as the unknowns. Following the formulation presented in <a href="apndx_solve_ates.html#sec-apndx_math_formulation_ates" class="quarto-xref"><span>Section I.3</span></a>, the two ATEs, Equations <a href="#eq-ate1_in_daes" class="quarto-xref"><span>K.1</span></a> and <a href="#eq-ate2_in_daes" class="quarto-xref"><span>K.2</span></a>, can be solved to find the two unknowns, <span class="math inline">\(y_{1,0}\)</span> and <span class="math inline">\(y_{2,0}\)</span> as follows.</p>
+<ol type="1">
+<li>Solve Equations <a href="#eq-ivode1_in_daes" class="quarto-xref"><span>K.3</span></a> and <a href="#eq-ivode2_in_daes" class="quarto-xref"><span>K.4</span></a> to express <span class="math inline">\(y_1\big\vert_{x_f}\)</span> and <span class="math inline">\(y_2\big\vert_{x_f}\)</span> in terms of <span class="math inline">\(y_{1,0}\)</span> and <span class="math inline">\(y_{2,0}\)</span>.</li>
+<li>Substitute the results for <span class="math inline">\(y_1\big\vert_{x_f}\)</span> and <span class="math inline">\(y_2\big\vert_{x_f}\)</span> in Equations <a href="#eq-ate1_in_daes" class="quarto-xref"><span>K.1</span></a> and <a href="#eq-ate2_in_daes" class="quarto-xref"><span>K.2</span></a>.</li>
+<li>Solve Equations <a href="#eq-ate1_in_daes" class="quarto-xref"><span>K.1</span></a> and <a href="#eq-ate2_in_daes" class="quarto-xref"><span>K.2</span></a> for <span class="math inline">\(y_{1,0}\)</span> and <span class="math inline">\(y_{2,0}\)</span>.</li>
+<li>Knowing the initial values, solve Equations <a href="#eq-ivode1_in_daes" class="quarto-xref"><span>K.3</span></a> and <a href="#eq-ivode2_in_daes" class="quarto-xref"><span>K.4</span></a> for <span class="math inline">\(y_1\big\vert_{x_f}\)</span> and <span class="math inline">\(y_2\big\vert_{x_f}\)</span>.</li>
+</ol>
+</section>
+<section id="sec-impl_soln_daes" class="level2" data-number="K.2">
+<h2 data-number="K.2" class="anchored" data-anchor-id="sec-impl_soln_daes"><span class="header-section-number">K.2</span> Numerical Implementation of the Solution</h2>
+<p>If the solution was being implemented analytically, the first step would not be possible in most situations. In contrast, the numerical implementation of the solution is relatively straightforward.</p>
+<ul>
+<li>When solving the IVODEs in the steps that follow, use the known final value of the independent variable as the stopping criterion.</li>
+<li>Choose the initial values of the dependent variables in the IVODEs as the unknowns to be found by solving the ATEs.</li>
+<li>Write a residuals function that receives a guess for those initial values and
+<ul>
+<li>uses that guess to solve the IVODEs numerically and get the corresponding final values of the IVODEs,</li>
+<li>evaluates the residuals corresponding to the ATEs (Equations <a href="#eq-ate1_in_daes" class="quarto-xref"><span>K.1</span></a> and <a href="#eq-ate2_in_daes" class="quarto-xref"><span>K.2</span></a> here), and</li>
+<li>returns the values of the residuals</li>
+</ul></li>
+<li>Define an initial guess for the initial values of the dependent variables in the IVODEs</li>
+<li>Call an ATE solver, passing the residuals function and the initial guess as arguments to find the initial values of the dependent variables from the IVODEs</li>
+<li>Knowing the initial values of the dependent variables, call an IVODE solver to calculate their final values.</li>
+</ul>
+</section>
+<section id="sec-example_K" class="level2" data-number="K.3">
+<h2 data-number="K.3" class="anchored" data-anchor-id="sec-example_K"><span class="header-section-number">K.3</span> Example</h2>
+<p>A reaction engineer analyzing an adiabatic, steady-state, recycle PFR might need to solve the DAEs shown in equations (1) through (6) using the initial values and stopping criterion shown in <a href="#tbl-example_K_3_initial_values" class="quarto-xref">Table&nbsp;<span>K.1</span></a>. Specifically, the engineer might need to calculate <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, <span class="math inline">\(T_{in}\)</span>, <span class="math inline">\(\dot{n}_A\big\vert_{z=L}\)</span>, <span class="math inline">\(\dot{n}_Z\big\vert_{z=L}\)</span>, and <span class="math inline">\(T\big\vert_{z=L}\)</span>, knowing the rate expression, equation (7), and the following values: <span class="math inline">\(D\)</span> = 5 cm, <span class="math inline">\(\Delta H\)</span> = -14,000 cal mol<sup>-1</sup>, <span class="math inline">\(\dot{V}\)</span> = 1150 cm<sup>3</sup> min<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 1.3 cal cm<sup>-3</sup> K<sup>-1</sup>, <span class="math inline">\(R_R\)</span> = 1.3, <span class="math inline">\(\dot{n}_{A,feed}\)</span> = 1.0 mol min<sup>-1</sup>, <span class="math inline">\(L\)</span> = 50 cm, <span class="math inline">\(T_{feed}\)</span> = 300 K, <span class="math inline">\(k_0\)</span> = 4.2 x 10<sup>15</sup> cm<sup>3</sup> mol<sup>-1</sup> min<sup>-1</sup>, and <span class="math inline">\(E\)</span> = 18,000 cal mol<sup>-1</sup>.</p>
+<p><span class="math display">\[
+\frac{d\dot{n}_A}{dz} = - \frac{\pi D^2}{4}r \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Z}{dz} =  \frac{\pi D^2}{4}r \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dT}{dz} = - \frac{\pi D^2}{4}\frac{r\Delta H}{\dot{V} \breve{C}_p} \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{feed,A} + \frac{R_R}{1+R_R}\dot{n}_A\big\vert_{z=L} - \dot{n}_{A,in}  = 0 \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\frac{R_R}{1+R_R} \dot{n}_Z\big\vert_{z=L} - \dot{n}_{Z,in}  = 0 \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+T_{in} - T_{feed} - R_R\left( T\big\vert_{z=L} - T_{in} \right) = 0 \tag{6}
+\]</span></p>
+<div id="tbl-example_K_3_initial_values" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_K_3_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;K.1: Initial values and stopping criterion for solving the IVODEs, equations (1) through (3).
+</figcaption>
+<div aria-describedby="tbl-example_K_3_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(L\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_{in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p><span class="math display">\[
+r = k_0 \exp{\left( \frac{-E}{RT} \right)}\frac{\dot{n}_A\dot{n}_Z}{\dot{V}^2} \tag{7}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The first step in completing a reaction engineering assignment, <a href="section_3_reactor_models.html" class="quarto-xref"><span>Chapter 7</span></a>, is summarizing it. Here, symbols have been assigned to all constants and the quantities, so I can simply list the information.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary" class="level3" data-number="K.3.1">
+<h3 data-number="K.3.1" class="anchored" data-anchor-id="assignment-summary"><span class="header-section-number">K.3.1</span> Assignment Summary</h3>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(D\)</span> = 5 cm, <span class="math inline">\(\Delta H\)</span> = -14,000 cal mol<sup>-1</sup>, <span class="math inline">\(\dot{V}\)</span> = 1150 cm<sup>3</sup> min<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 1.3 cal cm<sup>-3</sup> K<sup>-1</sup>, <span class="math inline">\(R_R\)</span> = 1.3, <span class="math inline">\(\dot{n}_{A,feed}\)</span> = 1.0 mol min<sup>-1</sup>, <span class="math inline">\(L\)</span> = 50 cm, <span class="math inline">\(T_{feed}\)</span> = 300 K, <span class="math inline">\(k_0\)</span> = 4.2 x 10<sup>15</sup> cm<sup>3</sup> mol<sup>-1</sup> min<sup>-1</sup>, and <span class="math inline">\(E\)</span> = 18,000 cal mol<sup>-1</sup>.</p>
+<p><strong>Reactor System</strong>: Adiabatic, steady-state, recycle PFR.</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, <span class="math inline">\(T_{in}\)</span>, <span class="math inline">\(\dot{n}_A\big\vert_{z=L}\)</span>, <span class="math inline">\(\dot{n}_Z\big\vert_{z=L}\)</span>, and <span class="math inline">\(T\big\vert_{z=L}\)</span>.</p>
+</section>
+<section id="mathematical-formulation-of-the-solution" class="level3" data-number="K.3.2">
+<h3 data-number="K.3.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution"><span class="header-section-number">K.3.2</span> Mathematical Formulation of the Solution</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><a href="#sec-form_soln_daes" class="quarto-xref"><span>Section K.1</span></a> states that the key to solving a set of DAEs is to formulate the solution of the ATEs, and to consider the initial values for the IVODEs as the unknowns in the ATEs, so I will follow that advice here. There are 3 ATEs, equations (4), (5), and (6), and 3 unknown initial values, <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, and <span class="math inline">\(T_{in}\)</span>, so no additional model equations are needed.</p>
+</div>
+</div>
+</div>
+<p><strong>Model Equations</strong>:</p>
+<p>Equations (4) through (6) will be solved to find the values of <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, and <span class="math inline">\(T_{in}\)</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Before the ATEs can be solved, every quantity other than the unknowns must be expressed in terms of known constants and the unknowns. In this example, there are four such quantities: <span class="math inline">\(r\)</span>, <span class="math inline">\(\dot{n}_A\big\vert_{z=L}\)</span>, <span class="math inline">\(\dot{n}_Z\big\vert_{z=L}\)</span>, and <span class="math inline">\(T\big\vert_{z=L}\)</span>.</p>
+<p>The narrative provides equation (7), which can be used to eliminate <span class="math inline">\(r\)</span>. The other quantities can be eliminated by solving the IVODEs, equations (1) through (3). There are 3 IVODEs, and they contain 3 dependent variables, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, so it is not necessary to add IVODEs or eliminate dependent variables.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Calculating the Residuals</strong>:</p>
+<p>The rate expression for <span class="math inline">\(r\)</span>, is given, equation (7). The final values in equations (4) through (6) can be calculated by solving equations (1), (2), and (3) using the initial values and stopping criterion in <a href="#tbl-example_K_3_initial_values" class="quarto-xref">Table&nbsp;<span>K.1</span></a>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Before the IVODEs can be solved, any unknown constants appearing in them must be calculated and any variables other than the independent variables must be eliminated from them. Here there are no unknown constants in the IVODEs, and the only variable that needs to be eliminated is <span class="math inline">\(r\)</span>.</p>
+</div>
+</div>
+</div>
+<p>The rate expression, <span class="math inline">\(r\)</span>, can also be used with calculating the derivatives in equations (1) through (3).</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>It is also necessary to calculate the initial and final values before the IVODEs can be solved. Here, the initial and final values of <span class="math inline">\(z\)</span> are known, and the other initial values will be provided by the ATE solver. Consequently no ancillary equations are needed to to calculate the initial and final values.</p>
+<p>Solving the ATEs will yield three of the quantities of interest, namely <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, and <span class="math inline">\(T_{in}\)</span>. Once that is done, the other quantities of interest can be calculated by solving the IVODEs. Thus, no additional ancillary equations are need to calculate the quantities of interest.</p>
+</div>
+</div>
+</div>
+<p>Given the information above, equations (4) through (6) can be solved to find <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, and <span class="math inline">\(T_{in}\)</span>. After doing that, equations (1) through (3) can be solved to find <span class="math inline">\(r\)</span>, <span class="math inline">\(\dot{n}_A\big\vert_{z=L}\)</span>, <span class="math inline">\(\dot{n}_Z\big\vert_{z=L}\)</span>, and <span class="math inline">\(T\big\vert_{z=L}\)</span>.</p>
+<p><strong>Solution Procedure</strong>:</p>
+<ol type="1">
+<li>Substitute the given and known quantities in all equations.</li>
+<li>Substitute equation (7) for <span class="math inline">\(r\)</span> in equations (1), through (6).</li>
+<li>Express <span class="math inline">\(\dot{n}_A\big\vert_{z=L}\)</span>, <span class="math inline">\(\dot{n}_Z\big\vert_{z=L}\)</span>, and <span class="math inline">\(T\big\vert_{z=L}\)</span> in terms of <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, and <span class="math inline">\(T_{in}\)</span> by solving equations (1) - (3) using the initial values and stopping criterion in <a href="#tbl-example_K_3_initial_values" class="quarto-xref">Table&nbsp;<span>K.1</span></a>.</li>
+<li>Substitute the results from step 3 into the ATEs, equations (4) through (6), and solve for <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, and <span class="math inline">\(T_{in}\)</span>.</li>
+<li>Use the results from step 4 and the initial values and stopping criterion in <a href="#tbl-example_K_3_initial_values" class="quarto-xref">Table&nbsp;<span>K.1</span></a> to solve equations (1) through (3) for <span class="math inline">\(\dot{n}_A\big\vert_{z=L}\)</span>, <span class="math inline">\(\dot{n}_Z\big\vert_{z=L}\)</span>, and <span class="math inline">\(T\big\vert_{z=L}\)</span>.</li>
+</ol>
+</section>
+<section id="numerical-implementation-of-the-solution" class="level3" data-number="K.3.3">
+<h3 data-number="K.3.3" class="anchored" data-anchor-id="numerical-implementation-of-the-solution"><span class="header-section-number">K.3.3</span> Numerical Implementation of the Solution</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><a href="#sec-impl_soln_daes" class="quarto-xref"><span>Section K.2</span></a> describes the numerical implementation of the solution of a set of DAEs. It requires the numerical solution of ATEs, as described in <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a> and the numerical solution of IVODEs, as described in <a href="apndx_solve_ivodes.html" class="quarto-xref"><span>Appendix J</span></a>. The ATEs are already written in the form of residuals and the IVODEs are written in the form of derivatives expressions, so no additional equations are needed.</p>
+<p>I will need a guess for the unknowns in the ATEs. I’m simply going to guess that both inlet flows are equal to the known flow rate of A into the system. The reaction is exothermic, so I’m going to guess a temperature 5 K greater tnan the inlet value. If I knew more about the configuration of the system, I might be able to make more educated guesses, but I don’t have that information. If the ATE solver doesn’t converge, I’ll just have to play around with these guesses until it does.</p>
+</div>
+</div>
+</div>
+<p>Create a model function that will perform the calculations, and within that function</p>
+<ol type="1">
+<li>make the given and known constants available for use in all equations,</li>
+<li>write a derivatives function that
+<ol type="a">
+<li>receives values of <span class="math inline">\(\dot{n}_{A}\)</span>, <span class="math inline">\(\dot{n}_{Z}\)</span>, and <span class="math inline">\(T\)</span> as input,</li>
+<li>calculates <span class="math inline">\(r\)</span> using equation (7), and</li>
+<li>calculates and returns the values of the derivatives using equations (1) through (3),</li>
+</ol></li>
+<li>write a residuals function that
+<ol type="a">
+<li>receives values of <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, and <span class="math inline">\(T_{in}\)</span> as input,</li>
+<li>defines initial values and a stopping criterion using <a href="#tbl-example_K_3_initial_values" class="quarto-xref">Table&nbsp;<span>K.1</span></a>,</li>
+<li>calls an IVODE solver, passing the derivatives function (step 2), initial values and stopping criterion (step 3b) to get the final values, <span class="math inline">\(\dot{n}_A\big\vert_{z=L}\)</span>, <span class="math inline">\(\dot{n}_Z\big\vert_{z=L}\)</span>, and <span class="math inline">\(T\big\vert_{z=L}\)</span>, and</li>
+<li>evaluates and returns the residuals (the left sides of equations (4) through (6)),</li>
+</ol></li>
+<li>define an initial guess for <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, and <span class="math inline">\(T_{in}\)</span>,</li>
+<li>call an ATE solver, passing the residuals function (step 3) and the initial guess (step 4) to get the desired values of <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, and <span class="math inline">\(T_{in}\)</span>,</li>
+<li>use the results from step 5 to define initial values and a stopping criterion using <a href="#tbl-example_K_3_initial_values" class="quarto-xref">Table&nbsp;<span>K.1</span></a>, and</li>
+<li>call an IVODE solver, passing the derivatives function (step 2), initial values and stopping criterion (step 6) to get the desired final values, <span class="math inline">\(\dot{n}_A\big\vert_{z=L}\)</span>, <span class="math inline">\(\dot{n}_Z\big\vert_{z=L}\)</span>, and <span class="math inline">\(T\big\vert_{z=L}\)</span>.</li>
+</ol>
+</section>
+<section id="results-and-discussion" class="level3" data-number="K.3.4">
+<h3 data-number="K.3.4" class="anchored" data-anchor-id="results-and-discussion"><span class="header-section-number">K.3.4</span> Results and Discussion</h3>
+<p>The calculations were performed as described above and the results are shown in <a href="#tbl-apndx_K_3_2_results" class="quarto-xref">Table&nbsp;<span>K.2</span></a>.</p>
+<div class="cell">
+<div id="tbl-apndx_K_3_2_results" class="cell quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-apndx_K_3_2_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;K.2: Results from solving the DAEs.
+</figcaption>
+<div aria-describedby="tbl-apndx_K_3_2_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: center;">item</th>
+<th style="text-align: center;">value</th>
+<th style="text-align: center;">units</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,in}\)</span></td>
+<td style="text-align: center;">1.07</td>
+<td style="text-align: center;">mol min<sup>-1</sup></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,in}\)</span></td>
+<td style="text-align: center;">1.23</td>
+<td style="text-align: center;">mol min<sup>-1</sup></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(T_{in}\)</span></td>
+<td style="text-align: center;">311</td>
+<td style="text-align: center;">K</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,out}\)</span></td>
+<td style="text-align: center;">0.128</td>
+<td style="text-align: center;">mol min<sup>-1</sup></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,out}\)</span></td>
+<td style="text-align: center;">2.17</td>
+<td style="text-align: center;">mol min<sup>-1</sup></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(T_{out}\)</span></td>
+<td style="text-align: center;">320</td>
+<td style="text-align: center;">K</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<p>As noted in the introduction, the numerical solution of a set of DAEs generally requires using solver that is designed for that purpose. However, DAEs are only encountered a few times in <em>Reaction Engineering Basics</em>, and each time they are encountered, the mathematical formulation and numerical implementation of the solution can be accomplished in the same manner as illustrated in this example.</p>
+<!--
+:::{.callout-note collapse="false"}
+## Note
+
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](URL)
+
+:::
+-->
+</section>
+</section>
+<section id="symbols-used-in-sec-apndx_solve_daes" class="level2" data-number="K.4">
+<h2 data-number="K.4" class="anchored" data-anchor-id="symbols-used-in-sec-apndx_solve_daes"><span class="header-section-number">K.4</span> Symbols Used in <a href="#sec-apndx_solve_daes" class="quarto-xref"><span>Appendix K</span></a></h2>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(f\)</span></td>
+<td style="text-align: left;">An unspecified function; an additional subscript is used to index the function if it is one of a set of functions.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(k_0\)</span></td>
+<td style="text-align: left;">Arrhenius pre-exponential factor; an additional subscript indexes the reaction.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}\)</span></td>
+<td style="text-align: left;">Molar flow rate; additional subscripts denote the reagent and identify the flow stream.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(r\)</span></td>
+<td style="text-align: left;">Reaction rate; additional subscripts index the reaction.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(x\)</span></td>
+<td style="text-align: left;">The independent variable in an IVODE; an additional subscripted <span class="math inline">\(0\)</span> denotes the initial value and an additional subscripted <span class="math inline">\(f\)</span> denotes the final value.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(y\)</span></td>
+<td style="text-align: left;">The dependent variable in an IVODE; an additional subscript is used to index the dependent variables if there are more than one IVODEs; a second subscripted <span class="math inline">\(0\)</span> denotes the initial value and a second subscripted <span class="math inline">\(f\)</span> denotes the final value.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: left;">Axial distance from the inlet of a PFR.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\breve{C}_p\)</span></td>
+<td style="text-align: left;">Volumetric heat capacity.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(D\)</span></td>
+<td style="text-align: left;">PFR diameter.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(E\)</span></td>
+<td style="text-align: left;">Activation energy; an additional subscript indexes the reaction.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(L\)</span></td>
+<td style="text-align: left;">Length of a PFR.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(P\)</span></td>
+<td style="text-align: left;">Pressure.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(R\)</span></td>
+<td style="text-align: left;">Ideal gas constant.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(R_R\)</span></td>
+<td style="text-align: left;">Recycle ratio.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: left;">Temperature; an additional subscript denotes the flow stream.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{V}\)</span></td>
+<td style="text-align: left;">Volumetric flow rate.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\Delta H\)</span></td>
+<td style="text-align: left;">Heat of reaction; an additional subscript indexes the reaction.</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -552,10 +1022,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -565,8 +1052,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -578,7 +1074,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -622,6 +1241,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -647,6 +1267,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -708,14 +1354,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./apndx_solve_bvodes.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span>
+      <a href="./apndx_solve_ivodes.html" class="pagination-link" aria-label="Solving Initial-Value ODEs">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="./apndx_estimate_parameters.html" class="pagination-link" aria-label="Parameter Estimation">
+        <span class="nav-page-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

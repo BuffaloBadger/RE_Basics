@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Reaction Engineering Basics - Appendix H — Solving Algebraic Equations</title>
+<title>Reaction Engineering Basics - Appendix I — Solving Algebraic/Transcendental Equations</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -32,6 +32,7 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="./">
 <link href="./apndx_solve_ivodes.html" rel="next">
 <link href="./apndx_ideal_reactor_models.html" rel="prev">
+<link href="./Graphics/BuffaloBadger_16_16.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -47,7 +48,12 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -56,6 +62,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -65,15 +72,42 @@ ul.task-list li input[type="checkbox"] {
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
     <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
     </a>
@@ -85,46 +119,51 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/total_ps.html" rel="" target="">
- <span class="menu-text">ToTaL PS</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics"> 
+<span class="menu-text">Reaction Engineering Basics</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics" rel="" target="">
- <span class="menu-text">Reaction Engineering Basics</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/SCoRE"> 
+<span class="menu-text">SCoRE</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/ToTaL_Engineering"> 
+<span class="menu-text">ToTaL Engineering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/The_Sett"> 
+<span class="menu-text">The Sett</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_prereq_knowledge.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_ates.html"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_ates.html"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -188,7 +227,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Reactor Models</span></a>
+ <span class="menu-text">Ideal Reactor Models</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -202,8 +241,8 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_3_response_function.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Response Functions</span></span></a>
+  <a href="./section_3_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Modeling Functions</span></span></a>
   </div>
 </li>
       </ul>
@@ -211,7 +250,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Kinetics Data Analysis</span></a>
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -219,26 +258,44 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_data_generation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  <a href="./section_4_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  <a href="./section_4_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  <a href="./section_4_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  <a href="./section_4_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Design of Non-Continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
   </div>
 </li>
       </ul>
@@ -246,7 +303,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -254,44 +311,20 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  <a href="./section_5_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_bstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  <a href="./section_5_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_non_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Design of Non-continuous Reactors</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_cstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_pfr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  <a href="./section_5_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
   </div>
 </li>
       </ul>
@@ -299,7 +332,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+ <span class="menu-text">Kinetics Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -307,20 +340,26 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_reactor_networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  <a href="./section_6_data_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Thermally Back-mixed PFRs</span></span></a>
+  <a href="./section_6_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_recycle_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  <a href="./section_6_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
   </div>
 </li>
       </ul>
@@ -371,74 +410,80 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./apndx_useful_eqns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Frequently Used Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
   </div>
 </li>
       </ul>
@@ -446,29 +491,37 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#writing-ates-as-residuals" id="toc-writing-ates-as-residuals" class="nav-link active" data-scroll-target="#writing-ates-as-residuals"><span class="header-section-number">H.1</span> Writing ATEs as Residuals</a></li>
-  <li><a href="#preparing-the-ates-for-solution" id="toc-preparing-the-ates-for-solution" class="nav-link" data-scroll-target="#preparing-the-ates-for-solution"><span class="header-section-number">H.2</span> Preparing the ATEs for Solution</a></li>
-  <li><a href="#items-that-must-be-provided-to-the-solver" id="toc-items-that-must-be-provided-to-the-solver" class="nav-link" data-scroll-target="#items-that-must-be-provided-to-the-solver"><span class="header-section-number">H.3</span> Items that must be Provided to the Solver</a></li>
-  <li><a href="#a-simplistic-explanation-of-how-the-ates-are-solved" id="toc-a-simplistic-explanation-of-how-the-ates-are-solved" class="nav-link" data-scroll-target="#a-simplistic-explanation-of-how-the-ates-are-solved"><span class="header-section-number">H.4</span> A Simplistic Explanation of How the ATEs are Solved</a></li>
-  <li><a href="#convergence" id="toc-convergence" class="nav-link" data-scroll-target="#convergence"><span class="header-section-number">H.5</span> Convergence</a></li>
-  <li><a href="#cautions-related-to-numerical-solutions" id="toc-cautions-related-to-numerical-solutions" class="nav-link" data-scroll-target="#cautions-related-to-numerical-solutions"><span class="header-section-number">H.6</span> Cautions Related to Numerical Solutions</a></li>
-  <li><a href="#symbols-used-in-this-appendix" id="toc-symbols-used-in-this-appendix" class="nav-link" data-scroll-target="#symbols-used-in-this-appendix"><span class="header-section-number">H.7</span> Symbols Used in this Appendix</a></li>
+  <li><a href="#identifying-ates" id="toc-identifying-ates" class="nav-link active" data-scroll-target="#identifying-ates"><span class="header-section-number">I.1</span> Identifying ATEs</a></li>
+  <li><a href="#defining-residuals-for-ates-and-a-residuals-function" id="toc-defining-residuals-for-ates-and-a-residuals-function" class="nav-link" data-scroll-target="#defining-residuals-for-ates-and-a-residuals-function"><span class="header-section-number">I.2</span> Defining Residuals for ATEs and a Residuals Function</a></li>
+  <li><a href="#sec-apndx_math_formulation_ates" id="toc-sec-apndx_math_formulation_ates" class="nav-link" data-scroll-target="#sec-apndx_math_formulation_ates"><span class="header-section-number">I.3</span> Formulating the Solution of a Set of ATEs Mathematically</a></li>
+  <li><a href="#ate-solvers" id="toc-ate-solvers" class="nav-link" data-scroll-target="#ate-solvers"><span class="header-section-number">I.4</span> ATE Solvers</a>
+  <ul class="collapse">
+  <li><a href="#sec-ate_solver_issues" id="toc-sec-ate_solver_issues" class="nav-link" data-scroll-target="#sec-ate_solver_issues"><span class="header-section-number">I.4.1</span> Solver Issues</a></li>
+  </ul></li>
+  <li><a href="#sec-apndx_numeric_implem_ates" id="toc-sec-apndx_numeric_implem_ates" class="nav-link" data-scroll-target="#sec-apndx_numeric_implem_ates"><span class="header-section-number">I.5</span> Implementing the Solution of a Set of ATEs Numerically</a></li>
+  <li><a href="#example-solving-3-ates-to-find-3-unknowns" id="toc-example-solving-3-ates-to-find-3-unknowns" class="nav-link" data-scroll-target="#example-solving-3-ates-to-find-3-unknowns"><span class="header-section-number">I.6</span> Example: Solving 3 ATEs to Find 3 Unknowns</a>
+  <ul class="collapse">
+  <li><a href="#mathematical-formulation-of-the-solution" id="toc-mathematical-formulation-of-the-solution" class="nav-link" data-scroll-target="#mathematical-formulation-of-the-solution"><span class="header-section-number">I.6.1</span> Mathematical Formulation of the Solution</a></li>
+  <li><a href="#numerical-implementation-of-the-solution" id="toc-numerical-implementation-of-the-solution" class="nav-link" data-scroll-target="#numerical-implementation-of-the-solution"><span class="header-section-number">I.6.2</span> Numerical Implementation of the Solution</a></li>
+  <li><a href="#results-and-discussion" id="toc-results-and-discussion" class="nav-link" data-scroll-target="#results-and-discussion"><span class="header-section-number">I.6.3</span> Results and Discussion</a></li>
+  </ul></li>
+  <li><a href="#sec-apndx_symbols_soln_of_ates" id="toc-sec-apndx_symbols_soln_of_ates" class="nav-link" data-scroll-target="#sec-apndx_symbols_soln_of_ates"><span class="header-section-number">I.7</span> Symbols Used in <span>Appendix I</span></a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_ates.html"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-apndx_solve_ates" class="quarto-section-identifier">Appendix H — Solving Algebraic Equations</span></h1>
+<h1 class="title"><span id="sec-apndx_solve_ates" class="quarto-section-identifier">Appendix I — Solving Algebraic/Transcendental Equations</span></h1>
 </div>
 
 
@@ -481,82 +534,223 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
 
-<p>This appendix provides a simplified overview of the numerical solution of sets of algebraic-transcendental equations (ATEs). It is not specific to any one computer program or language. Students seeking a more complete understanding should consult a numerical methods textbook or take a course on numerical methods.</p>
-<section id="writing-ates-as-residuals" class="level2" data-number="H.1">
-<h2 data-number="H.1" class="anchored" data-anchor-id="writing-ates-as-residuals"><span class="header-section-number">H.1</span> Writing ATEs as Residuals</h2>
-<p>For present purposes, an algebraic-transcendental equation (ATE) is one that does not contain derivatives, integrals, limits, etc., but that might contain transcendental functions such as exponentials, logarithms, etc. Equations <a href="#eq-example-ate-1"><span>H.1</span></a>, <a href="#eq-example-ate-2"><span>H.2</span></a> and <a href="#eq-example-ate-3"><span>H.3</span></a> are an example of a set of ATEs that might need to be solved to find the values of <span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span> and <span class="math inline">\(T\)</span> in a <em>Reaction Engineering Basics</em> problem. Those equations have been written so that there is a zero on one side of the equation. When an equation is written this way, the function on the other side of the equals sign can be called a <em>residual</em>.</p>
-<p><span id="eq-example-ate-1"><span class="math display">\[
-0 = \dot n_{A,in} - \dot n_A - Vk_0\exp{\left(  \frac{-E}{RT} \right)}\frac{\dot n_A^2 \dot n_Z}{\dot V^3}
-\tag{H.1}\]</span></span></p>
-<p><span id="eq-example-ate-2"><span class="math display">\[
-0 = \dot n_{Z,in} - \dot n_Z + Vk_0\exp{\left(  \frac{-E}{RT} \right)}\frac{\dot n_A^2 \dot n_Z}{\dot V^3}
-\tag{H.2}\]</span></span></p>
-<p><span id="eq-example-ate-3"><span class="math display">\[
-0 = \left( \dot n_{A,in} \hat C_{p,A} + \dot n_{Z,in} \hat C_{p,Z} \right)\left(  T - T_0 \right) + Vk_0\exp{\left(  \frac{-E}{RT} \right)}\frac{\dot n_A^2 \dot n_Z}{\dot V^3}\Delta H
-\tag{H.3}\]</span></span></p>
-<p>Letting <span class="math inline">\(u_1\)</span>, <span class="math inline">\(u_2\)</span> and <span class="math inline">\(u_3\)</span> represent the three unknown quantities and <span class="math inline">\(f_1\)</span>, <span class="math inline">\(f_2\)</span> and <span class="math inline">\(f_3\)</span> represent the residuals, it can be seen that the equations are of the general form shown in Equations <a href="#eq-example-general-ate-1"><span>H.4</span></a>, <a href="#eq-example-general-ate-2"><span>H.5</span></a> and <a href="#eq-example-general-ate-3"><span>H.6</span></a>. Clearly, if the value of the three residuals are each 0 when a set of values (<span class="math inline">\(u_1\)</span>, <span class="math inline">\(u_2\)</span>,<span class="math inline">\(u_3\)</span>) is substituted into them, then the values (<span class="math inline">\(u_1\)</span>, <span class="math inline">\(u_2\)</span>,<span class="math inline">\(u_3\)</span>) are a solution to the set of equations.</p>
-<p><span id="eq-example-general-ate-1"><span class="math display">\[
-0=f_1\left(  u_1, u_2, u_3 \right)
-\tag{H.4}\]</span></span></p>
-<p><span id="eq-example-general-ate-2"><span class="math display">\[
-0=f_2\left(  u_1, u_2, u_3 \right)
-\tag{H.5}\]</span></span></p>
-<p><span id="eq-example-general-ate-3"><span class="math display">\[
-0=f_3\left(  u_1, u_2, u_3 \right)
-\tag{H.6}\]</span></span></p>
+
+<p>This appendix examines the numerical solution of sets of algebraic/transcendental equations (ATEs). There are numerous software packages that include an ATE solver (function that solves a set of ATEs numerically). While the details differ from one software package to another, the vast majority of ATE solvers require the same input, use it the same way, and return equivalent results. In order to follow <em>Reaction Engineering Basics</em> example assignments wherein sets of ATEs ae solved, and in order to implement them using an ATE solver of one’s choosing, a general understanding of how ATE solvers work and the input that must be provided to them is needed. The intent of this appendix is to provide that necessary understanding.</p>
+<section id="identifying-ates" class="level2" data-number="I.1">
+<h2 data-number="I.1" class="anchored" data-anchor-id="identifying-ates"><span class="header-section-number">I.1</span> Identifying ATEs</h2>
+<p>In <em>Reaction Engineering Basics</em>, almost any equation that does not contain an ordinary derivative or a partial derivative is likely an ATE. Slightly more specifically, a set of ATEs is a group of 1 or more mathematical equations that may involve or contain math operations (addition, subtraction, multiplication, and division), quantities raised to powers, and transcendental functions. Exponential functions are the most common transcendental functions appearing in the ATEs found in <em>Reaction Engineering Basics</em>. They arise any time an equation includes a rate coefficient that displays Arrhenius temperature dependence, <a href="section_2_rates_and_expressions.html#eq-arrhenius" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>.</p>
 </section>
-<section id="preparing-the-ates-for-solution" class="level2" data-number="H.2">
-<h2 data-number="H.2" class="anchored" data-anchor-id="preparing-the-ates-for-solution"><span class="header-section-number">H.2</span> Preparing the ATEs for Solution</h2>
-<p>In order to solve a set of <span class="math inline">\(N\)</span> ATEs, there must be a total of <span class="math inline">\(N\)</span> unknowns in the equations. So, given a set of <span class="math inline">\(N\)</span> ATEs, the first step in preparing to solve them is to <strong>identify <span class="math inline">\(N\)</span> unknowns that will found by solving the equations</strong>. Continuing with the example in the preceding section, if Equations <a href="#eq-example-ate-1"><span>H.1</span></a>, <a href="#eq-example-ate-2"><span>H.2</span></a> and <a href="#eq-example-ate-3"><span>H.3</span></a> are going to be solved for <span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span> and <span class="math inline">\(T\)</span>, the equations can be rewritten as shown in Equations <a href="#eq-example-ate-1u"><span>H.7</span></a>, <a href="#eq-example-ate-2u"><span>H.8</span></a> and <a href="#eq-example-ate-3u"><span>H.9</span></a> where <span class="math inline">\(u_1\)</span>, <span class="math inline">\(u_2\)</span> and <span class="math inline">\(u_3\)</span> represent <span class="math inline">\(\dot n_A\)</span>, <span class="math inline">\(\dot n_Z\)</span> and <span class="math inline">\(T\)</span>, respectively.</p>
-<p><span id="eq-example-ate-1u"><span class="math display">\[
-0 = \dot n_{A,in} - u_1 - Vk_0\exp{\left(  \frac{-E}{Ru_3} \right)}\frac{u_1^2 u_2}{\dot V^3}
-\tag{H.7}\]</span></span></p>
-<p><span id="eq-example-ate-2u"><span class="math display">\[
-0 = \dot n_{Z,in} - u_2 + Vk_0\exp{\left(  \frac{-E}{Ru_3} \right)}\frac{u_1^2 u_2}{\dot V^3}
-\tag{H.8}\]</span></span></p>
-<p><span id="eq-example-ate-3u"><span class="math display">\[
-0 = \left( \dot n_{A,in} \hat C_{p,A} + \dot n_{Z,in} \hat C_{p,Z} \right)\left( u_3 - T_0 \right) + Vk_0\exp{\left(  \frac{-E}{Ru_3} \right)}\frac{u_1^2 u_2}{\dot V^3}\Delta H
-\tag{H.9}\]</span></span></p>
-<p>Once <span class="math inline">\(N\)</span> equations and <span class="math inline">\(N\)</span> unknowns have been identified, the second step in preparing to solve them is to <strong>express every other quantity appearing in the equations in terms of known constants and the <span class="math inline">\(N\)</span> unknowns</strong>. In the example being used here, that means that <span class="math inline">\(\dot n_{A,in}\)</span>, <span class="math inline">\(V\)</span>, <span class="math inline">\(k_0\)</span>, <span class="math inline">\(E\)</span>, <span class="math inline">\(R\)</span>, <span class="math inline">\(\dot V\)</span>, <span class="math inline">\(\dot n_{Z,in}\)</span>, <span class="math inline">\(\hat C_{p,A}\)</span>, <span class="math inline">\(\hat C_{p,Z}\)</span> and <span class="math inline">\(\Delta H\)</span>, must each be expressed in terms of <span class="math inline">\(u_1\)</span>, <span class="math inline">\(u_2\)</span>, <span class="math inline">\(u_3\)</span> and known constants. When that has been done, the set of ATEs is ready to be solved.</p>
+<section id="defining-residuals-for-ates-and-a-residuals-function" class="level2" data-number="I.2">
+<h2 data-number="I.2" class="anchored" data-anchor-id="defining-residuals-for-ates-and-a-residuals-function"><span class="header-section-number">I.2</span> Defining Residuals for ATEs and a Residuals Function</h2>
+<p>When solving a set of ATEs numerically, it is useful to define a residual for each ATE. To do so, rearrange the ATE so that there is a zero on one side of the equation. The residual is equal to the non-zero side of the resulting equation. A residual can be defined for each ATE in the set to be solved. Note that in general each residual is a function of all of the unknowns. A guess for a solution of the ATEs can be tested by using the guess to calculate the residuals. If all of the residuals equal zero, the guess is a solution of the ATEs.</p>
+<p>A computer function, here called a residuals function, can be written and used to test guesses in that way. The residuals function receives as an argument, a guess for the solution. That is it receives a set of guessed values for the unknowns. Within the residuals function, the guess is used to calculate the residual for each of the ATEs, and the resulting values are returned. Often the guesses are passed to the residuals function as a vector and the corresponding residuals are returned as a vector.</p>
 </section>
-<section id="items-that-must-be-provided-to-the-solver" class="level2" data-number="H.3">
-<h2 data-number="H.3" class="anchored" data-anchor-id="items-that-must-be-provided-to-the-solver"><span class="header-section-number">H.3</span> Items that must be Provided to the Solver</h2>
-<p>Sets of ATEs can be solved numerically. In this appendix, the term “solver” is used to refer to the computer program or function that numerically solves a set of ATEs. There are many different ATE solvers available, and each has specific instructions on how to use it. This appendix makes no attempt to explain the details of using any of the available equation solvers.</p>
-<p>No matter which solver is used, there are <strong>two things that must be provided</strong> to it. The first is <strong>a guess for the solution</strong>. In the case of Equations <a href="#eq-example-ate-1u"><span>H.7</span></a>, <a href="#eq-example-ate-2u"><span>H.8</span></a> and <a href="#eq-example-ate-3u"><span>H.9</span></a> the guess would consist of a value for <span class="math inline">\(u_1\)</span>, a value for <span class="math inline">\(u_2\)</span> and a value for <span class="math inline">\(u_3\)</span>. The other thing that must be provided to the solver is <strong>a means of calculating the value of each of the residuals</strong>, given values for the unknowns. Typically this is done by providing the name of a function or subroutine to the solver. That subroutine receives values of the unknowns as arguments. It then evaluates the residuals, e. g. <span class="math inline">\(f_1\)</span>, <span class="math inline">\(f_2\)</span> and <span class="math inline">\(f_3\)</span> in Equations <a href="#eq-example-ate-1u"><span>H.7</span></a>, <a href="#eq-example-ate-2u"><span>H.8</span></a> and <a href="#eq-example-ate-3u"><span>H.9</span></a>, and returns their values.</p>
-</section>
-<section id="a-simplistic-explanation-of-how-the-ates-are-solved" class="level2" data-number="H.4">
-<h2 data-number="H.4" class="anchored" data-anchor-id="a-simplistic-explanation-of-how-the-ates-are-solved"><span class="header-section-number">H.4</span> A Simplistic Explanation of How the ATEs are Solved</h2>
-<p>It should be noted that the solver can solve a set of <em>linear</em> equations exactly, or at least to within the roundoff error of the computer, easily and rapidly. When ATEs are solved numerically, the solution is not exact, but it is “very close” to the actual solution. See the following section on convergence for a more complete explanation of what is meant by “very close.”</p>
-<p>The description of numerical solution of ATEs presented here is overly simplistic. It is intended to provide a sense of how the solver works. The solver begins by approximating the residuals as linear functions that pass through the point provided to it as a guess. It then solves the linear approximation to obtain an improved guess. The values of the residuals are calculated using the improved guess and checked to see whether they are “very close” to zero. If so, the improved guess is the solution to the ATEs. The solver returns the improved guess as the solution and quits. If the residuals are not “very close” to zero, the entire process is repeated starting with the improved guess. This continues until a solution is found or until the solver determines it is not able to find a solution (see the following sections on convergence and cautions).</p>
-</section>
-<section id="convergence" class="level2" data-number="H.5">
-<h2 data-number="H.5" class="anchored" data-anchor-id="convergence"><span class="header-section-number">H.5</span> Convergence</h2>
-<p>As explained in the preceding section, the numerical solution of a set of ATEs is an iterative process. In each iteration the values of the residuals are calculated and checked to determine whether they are “very close” to zero. Ideally, the values of the residuals should get closer and closer to zero with each iteration. This is called convergence to the solution. Sometimes the solver is unable to converge to the point where the residuals are “very close” to zero. In this situation, the solver eventually has to quit without finding the solution (hopefully warning the user of this fact). Most solvers have several criteria that they use to determine when to stop iterating. Common convergence criteria include the following:</p>
+<section id="sec-apndx_math_formulation_ates" class="level2" data-number="I.3">
+<h2 data-number="I.3" class="anchored" data-anchor-id="sec-apndx_math_formulation_ates"><span class="header-section-number">I.3</span> Formulating the Solution of a Set of ATEs Mathematically</h2>
+<p>In general, a set of <span class="math inline">\(N\)</span> ATEs can contain any number of known, constant quantities. (More precisely, the values of these quantities must be known, and they must not be functionally dependent on the values of the unknowns.) The set of ATEs can be solved to find the values of <span class="math inline">\(N\)</span> unknown quantities (the unknowns). When completing reaction engineering assignments, the set of <span class="math inline">\(N\)</span> ATEs may contain more than <span class="math inline">\(N\)</span> unknown quantities initially. Nonetheless, mathematical formulation of the solution is straightforward.</p>
 <ul>
-<li>the residuals are smaller than a specified amount (a solution has been found).</li>
-<li>a specified number of iterations has occurred (a solution was not found).</li>
-<li>the residuals have been evaluated a specified number of times (a solution was not found).</li>
-<li>the values of the residuals are getting farther from zero instead of closer (a solution was not found).</li>
-<li>the values of the residuals are changing by less than a specified amount between iterations (a solution was not found).</li>
-<li>the improved guess is changing by less than a specified amount between iterations (a solution was not found).</li>
+<li>Identify all known constants and their values.</li>
+<li>Identify the <span class="math inline">\(N\)</span> ATEs to be solved.</li>
+<li>Identify the <span class="math inline">\(N\)</span> unknowns to be found by solving the <span class="math inline">\(N\)</span> ATEs.</li>
+<li>Go through each of the ATEs, and express every other quantity in terms of the known constants and the <span class="math inline">\(N\)</span> unknowns.</li>
+<li>Solve the resulting <span class="math inline">\(N\)</span> equations for the <span class="math inline">\(N\)</span> unknowns.</li>
 </ul>
-<p>Each “specified amount” in these criteria typically has a default value that can can be over-ridden when the solver is started.</p>
 </section>
-<section id="cautions-related-to-numerical-solutions" class="level2" data-number="H.6">
-<h2 data-number="H.6" class="anchored" data-anchor-id="cautions-related-to-numerical-solutions"><span class="header-section-number">H.6</span> Cautions Related to Numerical Solutions</h2>
+<section id="ate-solvers" class="level2" data-number="I.4">
+<h2 data-number="I.4" class="anchored" data-anchor-id="ate-solvers"><span class="header-section-number">I.4</span> ATE Solvers</h2>
+<p>Typically, an ATE solver must be provided with two inputs. The first is an initial guess for the unknowns. The second is a residuals function, as defined above. The manner in which these inputs are provided to the solver depends upon the specific solver being used.</p>
+<p>Effectively, an ATE solver finds the solution of a set of ATEs by trial and error.</p>
+<ul>
+<li>It tests the initial guess by calling the residuals function and determining whether all of the residuals equal zero.</li>
+<li>If the initial guess is not a solution of the ATEs, the ATE solver generates an improved guess and tests that.
+<ul>
+<li>The improved guess will <strong>not</strong> be an exact solution (unless the ATEs are linear equations), but usually it will be closer to the solution than the previous guess.</li>
+</ul></li>
+<li>The ATE solver keeps generating improved guesses and testing them until no further improvement is possible.</li>
+<li>It then returns the final, most-improved guess as the best solution of the ATEs.</li>
+</ul>
+<p>So, the numerical solution of a set of ATEs is an iterative process, and ideally, the residuals should get closer and closer to zero with each iteration. This is called <strong>convergence</strong> to a solution. Typically, the solution returned by the solver will not be exact, but it will be “very close” to the exact solution. Put differently, when a converged solution is found, the difference between the solution returned by the solver and the exact solution is negligible.</p>
+<section id="sec-ate_solver_issues" class="level3" data-number="I.4.1">
+<h3 data-number="I.4.1" class="anchored" data-anchor-id="sec-ate_solver_issues"><span class="header-section-number">I.4.1</span> Solver Issues</h3>
+<p>Sometimes the solver is unable to converge to the point where the residuals are “very close” to zero. In this situation, the solver eventually has to quit without finding a converged solution. Typically it will print an error message or return a flag variable, and that variable will indicate whether or not a converged solution was obtained.</p>
+<p>When the ATE solver is not able to converge to a solution, it is often because the guess provided to the solver wasn’t close enough to the solution or because of a singularity in one or more of the residuals. For example, fractions that contain one or more unknowns in the denominator may appear in the residuals. If a guess for the solution causes such a denominator to equal zero, the residual becomes infinite.</p>
+<p>Potential singularities can be removed by re-defining the residuals. To do so, first rearrange each ATE so there is a zero on one side of the equation. Then multiply through the equation by each denominator that contains an unknown. Finally, use the resulting non-zero side of the equation as the residual. If possible, a better initial guess should be defined, and the solver should be called again.</p>
+<p>Additionally, sets of nonlinear equations can have more than one solution. For example, a quadratic polynomial has two solutions. <strong>If a set of ATEs has multiple solutions, most ATE solvers will only find one solution</strong>. To find other solutions, the solver should be re-started using a different initial guess.</p>
+</section>
+</section>
+<section id="sec-apndx_numeric_implem_ates" class="level2" data-number="I.5">
+<h2 data-number="I.5" class="anchored" data-anchor-id="sec-apndx_numeric_implem_ates"><span class="header-section-number">I.5</span> Implementing the Solution of a Set of ATEs Numerically</h2>
+<p>The mathematical formulation of the solution of a set of ATES described in <a href="#sec-apndx_math_formulation_ates" class="quarto-xref"><span>Section I.3</span></a> (a) identifies known constants, (b) identifies the <span class="math inline">\(N\)</span> ATEs to be solved, (c) identifies the <span class="math inline">\(N\)</span> unknowns to be found by solving the ATEs, and (d) generates ancillary equations that express all other non-constant quantities in terms of the unknowns. With that information, the solution can be implemented numerically as follows.</p>
+<ul>
+<li>Define a residual corresponding to each ATE if the residuals were not defined during mathematical formulation of the solution.</li>
+<li>Using mathematics software that includes an ATE solver,
+<ul>
+<li>make given and known constants available for use in all equations,</li>
+<li>write a residuals function that calculates the values of the residuals given a guess for the unknowns,</li>
+<li>define an initial guess for the unknowns,</li>
+<li>call the ATE solver passing the residuals function and the initial guess to it and receiving a solution from it, and</li>
+<li>check that the solver returned a converged solution.</li>
+</ul></li>
+<li>If additional solutions are possible, find them by repeating this process using different initial guesses.</li>
+</ul>
+</section>
+<section id="example-solving-3-ates-to-find-3-unknowns" class="level2" data-number="I.6">
+<h2 data-number="I.6" class="anchored" data-anchor-id="example-solving-3-ates-to-find-3-unknowns"><span class="header-section-number">I.6</span> Example: Solving 3 ATEs to Find 3 Unknowns</h2>
+<p>Equations (1), (2), and (3) are representative of a set of ATEs that an engineer might generate and need to solve when completing a reaction engineering assignment. For this example, suppose that the engineer needs to find the values of <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> by solving the ATEs. For this example we will also assume that the engineer knows the rate expression for <span class="math inline">\(r\)</span> that is used in the solution that follows and the constant values of the following quantities: <span class="math inline">\(\dot n_{A,in}\)</span> = 500 mol h<sup>-1</sup>, <span class="math inline">\(V\)</span> = 500 L, <span class="math inline">\(\dot n_{Z,in}\)</span> = 0 mol h<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 1170 cal L<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\dot{V}\)</span> = 250 L h<sup>-1</sup>, <span class="math inline">\(T_{in}\)</span> = 423 K, <span class="math inline">\(\Delta H\)</span> = 18,200 cal mol<sup>-1</sup>, <span class="math inline">\(k_0\)</span> = 1.14 x 10<sup>9</sup> L mol<sup>-1</sup> h<sup>-1</sup>, and <span class="math inline">\(E\)</span> = 16,200 cal mol<sup>-1</sup>.</p>
+<p><span class="math display">\[
+\dot n_{A,in} =  \dot n_A + Vr \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+\dot n_{Z,in} = \dot n_Z - Vr \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+\breve{C}_p \dot{V}\left(  T - T_{in} \right) = - Vr\Delta H \tag{3}
+\]</span></p>
+<hr>
+<section id="mathematical-formulation-of-the-solution" class="level3" data-number="I.6.1">
+<h3 data-number="I.6.1" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution"><span class="header-section-number">I.6.1</span> Mathematical Formulation of the Solution</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The mathematical formulation of the solution of a set of ATEs is outlined in <a href="#sec-apndx_math_formulation_ates" class="quarto-xref"><span>Section I.3</span></a>. Accordingly, here I must</p>
+<ul>
+<li>Identify all known constants and their values.</li>
+<li>Identify the <span class="math inline">\(N\)</span> ATEs to be solved.</li>
+<li>Identify the <span class="math inline">\(N\)</span> unknowns to be found by solving the <span class="math inline">\(N\)</span> ATEs.</li>
+<li>Go through each of the ATEs, and express every other quantity in terms of the known constants and the <span class="math inline">\(N\)</span> unknowns.</li>
+<li>Solve the resulting <span class="math inline">\(N\)</span> equations for the <span class="math inline">\(N\)</span> unknowns.</li>
+</ul>
+</div>
+</div>
+</div>
+<p><strong>Given and Known Constants:</strong> <span class="math inline">\(\dot n_{A,in}\)</span> = 500 mol h<sup>-1</sup>, <span class="math inline">\(V\)</span> = 500 L, <span class="math inline">\(\dot n_{Z,in}\)</span> = 0 mol h<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 1170 cal L<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\dot{V}\)</span> = 250 L h<sup>-1</sup>, <span class="math inline">\(T_{in}\)</span> = 423 K, <span class="math inline">\(\Delta H\)</span> = 18,200 cal mol<sup>-1</sup>, <span class="math inline">\(k_0\)</span> = 1.14 x 10<sup>9</sup> L mol<sup>-1</sup> h<sup>-1</sup>, <span class="math inline">\(E\)</span> = 16,200 cal mol<sup>-1</sup>, and <span class="math inline">\(R\)</span> = 1.987 cal mol<sup>-1</sup> K<sup>-1</sup>.</p>
+<p><strong>Quantities of Interest:</strong> <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span></p>
+<p><strong>Model Equations:</strong> Equations (1), (2), and (3), will be solved numerically to find the quantities of interest, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Having identified the equations, the unknowns and the known constants, now I must go through each equation, and express every other quantity in terms of the known constants and the unknowns.</p>
+<p>In this example, the only other quantity that appears in any of the ATEs is <span class="math inline">\(r\)</span>, so I will write an expression for <span class="math inline">\(r\)</span> in terms of the known constants and the unknowns. (As mentioned in the problem statement, it is assumed here that the engineer knows the rate expression used in equation (4) below.)</p>
+<p>Writing the ancillary equation for <span class="math inline">\(r\)</span> introduces <span class="math inline">\(C_A\)</span>, and <span class="math inline">\(C_A\)</span> is neither a known constant nor one of the unknowns, so an expression is needed for <span class="math inline">\(C_A\)</span>, too. In this case, the defining equation for concentration in a closed system can be used.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations</strong></p>
+<p><span class="math display">\[
+r = k_0 \exp{\left( \frac{-E}{RT} \right)} C_A^2 \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+C_A = \frac{\dot{n}_A}{\dot{V}} \tag{5}
+\]</span></p>
+<p><strong>Solution Procedure</strong></p>
 <ol type="1">
-<li>As noted in the preceding section on convergence, sometimes the solver is not able to converge to a solution. Assuming there are no errors in the function that calculates the values of the residuals, when this happens, it is often because the guess provided to the solver wasn’t close enough to the solution. Another reason might be a singularity in the residuals, as written. If the solver does not converge there are a few things that can be tried.
-<ol type="a">
-<li>Restart the solver using a different guess.</li>
-<li>Rewrite the residuals so that there are no denominators that contain an unknown. This can be done multiplying both sides of the residual by each denominator that contains an unknown.</li>
-</ol></li>
-<li>Nonlinear equations can have more than one solution. For example, a quadratic polynomial has two solutions. Most solvers will only locate one solution. To find other solutions, the solver should be re-started using a different guess.</li>
+<li>Substitute the known constants into all equations.</li>
+<li>Substitute equation (5) for <span class="math inline">\(C_A\)</span> into equation (4).</li>
+<li>Substitute equation (4) for <span class="math inline">\(r\)</span> into equations (1) through (3).</li>
+<li>Solve equations (1) through (3) to find <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>.</li>
 </ol>
 </section>
-<section id="symbols-used-in-this-appendix" class="level2" data-number="H.7">
-<h2 data-number="H.7" class="anchored" data-anchor-id="symbols-used-in-this-appendix"><span class="header-section-number">H.7</span> Symbols Used in this Appendix</h2>
+<section id="numerical-implementation-of-the-solution" class="level3" data-number="I.6.2">
+<h3 data-number="I.6.2" class="anchored" data-anchor-id="numerical-implementation-of-the-solution"><span class="header-section-number">I.6.2</span> Numerical Implementation of the Solution</h3>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The general procedure for numerical implementation of the solution is outlined in <a href="#sec-apndx_numeric_implem_ates" class="quarto-xref"><span>Section I.5</span></a>.</p>
+<ul>
+<li>Define a residual corresponding to each ATE if the residuals were not defined during mathematical formulation of the solution.</li>
+<li>Using mathematics software that includes an ATE solver,
+<ul>
+<li>make given and known constants available for use in all equations,</li>
+<li>write a residuals function that calculates the values of the residuals given a guess for the unknowns,</li>
+<li>define an initial guess for the unknowns,</li>
+<li>call the ATE solver passing the residuals function and the initial guess to it and receiving a solution from it, and</li>
+<li>check that the solver returned a converged solution.</li>
+</ul></li>
+<li>If additional solutions are possible, find them by repeating this process using different initial guesses.</li>
+</ul>
+<p>When I formulated the solution mathematically, I did not write the equations to be solved in the form of residuals, so I need to do that first.</p>
+<p>I am also going to need to make an initial guess for the solution. In this system, I expect reagent A to be consumed and an equal amount of reagent Z to be produced. Hence, I might guess that <span class="math inline">\(\dot{n}_A\)</span> will equal one-half of <span class="math inline">\(\dot{n}_{A,in}\)</span> and that <span class="math inline">\(\dot{n}_Z\)</span> also will equal one-half of <span class="math inline">\(\dot{n}_{A,in}\)</span>. I have no idea what the temperature might equal, but since the reaction is endothermic and the reactor is adiabatic I expect the temperature to be less than the inlet temperature. So I might guess that <span class="math inline">\(T\)</span> will be 1 K less than <span class="math inline">\(T_{in}\)</span>.</p>
+</div>
+</div>
+</div>
+<p>Residuals for equations (1) through (3), <span class="math inline">\(\epsilon_1\)</span>, <span class="math inline">\(\epsilon_2\)</span>, and <span class="math inline">\(\epsilon_3\)</span>, can be defined as shown in equations (6), (7), and (8).</p>
+<p><span class="math display">\[
+\epsilon_1 = \dot n_{A,in} - \dot n_A - Vr \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+\epsilon_2 = \dot n_{Z,in} - \dot n_Z + Vr \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+\epsilon_3 = \dot{V} \breve{C}_p \left(  T - T_{in} \right) + Vr\Delta H \tag{8}
+\]</span></p>
+<p>The solution can then be implemented numerically as described in <a href="#sec-apndx_numeric_implem_ates" class="quarto-xref"><span>Section I.5</span></a>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Notes
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<ol type="1">
+<li>Reactor models can be very sensitive to temperature due to the exponential term. For this reason it is prudent when guessing a temperature to guess a value that is close to a known temperature in the system, such as <span class="math inline">\(T_{in}\)</span> in this example. If the guess is too large, the exponential term may become excessively large and prevent the solver from converging.</li>
+<li>In this situation (an endothermic reaction in an adiabatic CSTR) the engineer would not expect multiple solutions to be possible. If the engineer knew that multiple solutions were possible, the solution would be repeated using different initial guesses to find additional solutions.</li>
+</ol>
+</div>
+</div>
+</div>
+</section>
+<section id="results-and-discussion" class="level3" data-number="I.6.3">
+<h3 data-number="I.6.3" class="anchored" data-anchor-id="results-and-discussion"><span class="header-section-number">I.6.3</span> Results and Discussion</h3>
+<p>The calculations were performed as described above and it was found that <span class="math inline">\(\dot{n}_A\)</span> = 157 mol h<sup>-1</sup>, <span class="math inline">\(\dot{n}_Z\)</span> = 343 mol h<sup>-1</sup>, and <span class="math inline">\(T\)</span> = 128 °C.</p>
+<p>Note that the solution is not exact, but the error is negligibly small. That is, if the solution is used to calculate the residuals using equations (6) through (8), the values are not exactly zero, but instead (with the software used here), <span class="math inline">\(\epsilon_1\)</span> = -1.14 x 10<sup>-13</sup>, <span class="math inline">\(\epsilon_2\)</span> = 1.14 x 10<sup>-13</sup>, <span class="math inline">\(\epsilon_3\)</span> = 9.31 x 10<sup>-9</sup>.</p>
+<!--
+::: {.callout-note appearance="simple"}
+
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](URL)
+
+:::
+-->
+</section>
+</section>
+<section id="sec-apndx_symbols_soln_of_ates" class="level2" data-number="I.7">
+<h2 data-number="I.7" class="anchored" data-anchor-id="sec-apndx_symbols_soln_of_ates"><span class="header-section-number">I.7</span> Symbols Used in <a href="#sec-apndx_solve_ates" class="quarto-xref"><span>Appendix I</span></a></h2>
 <table class="table">
 <colgroup>
 <col style="width: 20%">
@@ -570,24 +764,24 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><span class="math inline">\(f_i\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(i^{\text{th}}\)</span> residual function.</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;"><span class="math inline">\(k_0\)</span></td>
 <td style="text-align: left;">Pre-exponential factor in the Arrhenius expression.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><span class="math inline">\(\dot n_i\)</span></td>
 <td style="text-align: left;">Molar flow rate of reagent <span class="math inline">\(i\)</span>; an additional subscripted <span class="math inline">\(in\)</span> denotes the inlet molar flow rate.</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(r\)</span></td>
+<td style="text-align: left;">Rate of reaction.</td>
+</tr>
 <tr class="even">
-<td style="text-align: left;"><span class="math inline">\(u_i\)</span></td>
-<td style="text-align: left;"><span class="math inline">\(i^{\text{th}}\)</span> unknown.</td>
+<td style="text-align: left;"><span class="math inline">\(\breve{C}_p\)</span></td>
+<td style="text-align: left;">Volumetric heat capacity of a fluid.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><span class="math inline">\(\hat C_{p,i}\)</span></td>
-<td style="text-align: left;">Molar heat capacity of reagent <span class="math inline">\(i\)</span>.</td>
+<td style="text-align: left;"><span class="math inline">\(C_i\)</span></td>
+<td style="text-align: left;">Molar concentration of reagent <span class="math inline">\(i\)</span>.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span class="math inline">\(E\)</span></td>
@@ -603,7 +797,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(T\)</span></td>
-<td style="text-align: left;">Temperature.</td>
+<td style="text-align: left;">Temperature; an additional subscripted <span class="math inline">\(in\)</span> denotes the inlet temperature.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span class="math inline">\(V\)</span></td>
@@ -614,6 +808,10 @@ ul.task-list li input[type="checkbox"] {
 <td style="text-align: left;">Volumetric flow rate.</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\epsilon_i\)</span></td>
+<td style="text-align: left;">Residual for the <span class="math inline">\(i^{th}\)</span> ATE.</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><span class="math inline">\(\Delta H\)</span></td>
 <td style="text-align: left;">Heat of reaction.</td>
 </tr>
@@ -703,10 +901,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -716,8 +931,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -729,7 +953,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -773,6 +1120,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -798,6 +1146,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -859,17 +1233,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./apndx_ideal_reactor_models.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span>
+      <a href="./apndx_ideal_reactor_models.html" class="pagination-link" aria-label="Ideal Reactor Models">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./apndx_solve_ivodes.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./apndx_solve_ivodes.html" class="pagination-link" aria-label="Solving Initial-Value ODEs">
+        <span class="nav-page-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Reaction Engineering Basics - Appendix K — Solving Boundary-Value ODEs</title>
+<title>Reaction Engineering Basics - Appendix M — Solving Boundary-Value ODEs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +30,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./apndx_solve_daes.html" rel="next">
 <link href="./apndx_estimate_parameters.html" rel="prev">
+<link href="./Graphics/BuffaloBadger_16_16.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -47,7 +47,12 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -56,6 +61,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -65,15 +71,42 @@ ul.task-list li input[type="checkbox"] {
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
     <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
     </a>
@@ -85,46 +118,51 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/total_ps.html" rel="" target="">
- <span class="menu-text">ToTaL PS</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics"> 
+<span class="menu-text">Reaction Engineering Basics</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics" rel="" target="">
- <span class="menu-text">Reaction Engineering Basics</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/SCoRE"> 
+<span class="menu-text">SCoRE</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/ToTaL_Engineering"> 
+<span class="menu-text">ToTaL Engineering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/The_Sett"> 
+<span class="menu-text">The Sett</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_prereq_knowledge.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_bvodes.html"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_bvodes.html"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -188,7 +226,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Reactor Models</span></a>
+ <span class="menu-text">Ideal Reactor Models</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -202,8 +240,8 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_3_response_function.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Response Functions</span></span></a>
+  <a href="./section_3_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Modeling Functions</span></span></a>
   </div>
 </li>
       </ul>
@@ -211,7 +249,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Kinetics Data Analysis</span></a>
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -219,26 +257,44 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_data_generation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  <a href="./section_4_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  <a href="./section_4_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  <a href="./section_4_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  <a href="./section_4_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Design of Non-Continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
   </div>
 </li>
       </ul>
@@ -246,7 +302,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -254,44 +310,20 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  <a href="./section_5_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_bstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  <a href="./section_5_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_non_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Design of Non-continuous Reactors</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_cstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_pfr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  <a href="./section_5_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
   </div>
 </li>
       </ul>
@@ -299,7 +331,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+ <span class="menu-text">Kinetics Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -307,20 +339,26 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_reactor_networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  <a href="./section_6_data_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Thermally Back-mixed PFRs</span></span></a>
+  <a href="./section_6_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_recycle_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  <a href="./section_6_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
   </div>
 </li>
       </ul>
@@ -371,74 +409,80 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./apndx_useful_eqns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Frequently Used Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
   </div>
 </li>
       </ul>
@@ -446,28 +490,28 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#boundary-value-odes-in-reaction-engineering-basics" id="toc-boundary-value-odes-in-reaction-engineering-basics" class="nav-link active" data-scroll-target="#boundary-value-odes-in-reaction-engineering-basics"><span class="header-section-number">K.1</span> Boundary-value ODEs in <em>Reaction Engineering Basics</em></a></li>
-  <li><a href="#writing-a-second-order-ode-as-two-first-order-odes" id="toc-writing-a-second-order-ode-as-two-first-order-odes" class="nav-link" data-scroll-target="#writing-a-second-order-ode-as-two-first-order-odes"><span class="header-section-number">K.2</span> Writing a Second-Order ODE as Two First-Order ODEs</a></li>
-  <li><a href="#items-that-must-be-provided-to-the-solver" id="toc-items-that-must-be-provided-to-the-solver" class="nav-link" data-scroll-target="#items-that-must-be-provided-to-the-solver"><span class="header-section-number">K.3</span> Items that Must be Provided to the Solver</a></li>
-  <li><a href="#a-simplified-description-of-how-the-bvodes-are-solved" id="toc-a-simplified-description-of-how-the-bvodes-are-solved" class="nav-link" data-scroll-target="#a-simplified-description-of-how-the-bvodes-are-solved"><span class="header-section-number">K.4</span> A Simplified Description of How the BVODEs are Solved</a></li>
-  <li><a href="#cautions-related-to-numerical-solution" id="toc-cautions-related-to-numerical-solution" class="nav-link" data-scroll-target="#cautions-related-to-numerical-solution"><span class="header-section-number">K.5</span> Cautions Related to Numerical Solution</a></li>
-  <li><a href="#symbols-used-in-this-appendix" id="toc-symbols-used-in-this-appendix" class="nav-link" data-scroll-target="#symbols-used-in-this-appendix"><span class="header-section-number">K.6</span> Symbols Used in this Appendix</a></li>
+  <li><a href="#boundary-value-odes-in-reaction-engineering-basics" id="toc-boundary-value-odes-in-reaction-engineering-basics" class="nav-link active" data-scroll-target="#boundary-value-odes-in-reaction-engineering-basics"><span class="header-section-number">M.1</span> Boundary-value ODEs in <em>Reaction Engineering Basics</em></a></li>
+  <li><a href="#writing-a-second-order-ode-as-two-first-order-odes" id="toc-writing-a-second-order-ode-as-two-first-order-odes" class="nav-link" data-scroll-target="#writing-a-second-order-ode-as-two-first-order-odes"><span class="header-section-number">M.2</span> Writing a Second-Order ODE as Two First-Order ODEs</a></li>
+  <li><a href="#items-that-must-be-provided-to-the-solver" id="toc-items-that-must-be-provided-to-the-solver" class="nav-link" data-scroll-target="#items-that-must-be-provided-to-the-solver"><span class="header-section-number">M.3</span> Items that Must be Provided to the Solver</a></li>
+  <li><a href="#a-simplified-description-of-how-the-bvodes-are-solved" id="toc-a-simplified-description-of-how-the-bvodes-are-solved" class="nav-link" data-scroll-target="#a-simplified-description-of-how-the-bvodes-are-solved"><span class="header-section-number">M.4</span> A Simplified Description of How the BVODEs are Solved</a></li>
+  <li><a href="#cautions-related-to-numerical-solution" id="toc-cautions-related-to-numerical-solution" class="nav-link" data-scroll-target="#cautions-related-to-numerical-solution"><span class="header-section-number">M.5</span> Cautions Related to Numerical Solution</a></li>
+  <li><a href="#symbols-used-in-this-appendix" id="toc-symbols-used-in-this-appendix" class="nav-link" data-scroll-target="#symbols-used-in-this-appendix"><span class="header-section-number">M.6</span> Symbols Used in this Appendix</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_solve_bvodes.html"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-apndx_solving_bvodes" class="quarto-section-identifier">Appendix K — Solving Boundary-Value ODEs</span></h1>
+<h1 class="title"><span id="sec-apndx_solving_bvodes" class="quarto-section-identifier">Appendix M — Solving Boundary-Value ODEs</span></h1>
 </div>
 
 
@@ -480,79 +524,81 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
 
+
 <p>There is only one situation where boundary value ordinary differential equations (BVODEs) are encountered in <em>Reaction Engineering Basics</em>. This appendix presents a simplified overview of how to solve them numerically. It offers a general description that is not specific to any one computer program or language.</p>
-<section id="boundary-value-odes-in-reaction-engineering-basics" class="level2" data-number="K.1">
-<h2 data-number="K.1" class="anchored" data-anchor-id="boundary-value-odes-in-reaction-engineering-basics"><span class="header-section-number">K.1</span> Boundary-value ODEs in <em>Reaction Engineering Basics</em></h2>
-<p>The axial dispersion reactor model equations are second-order BVODEs. <a href="#eq-bvode-ex">Equation&nbsp;<span>K.1</span></a>, with the boundary conditions given in Equations <a href="#eq-bvode-ex-bc1"><span>K.2</span></a> and <a href="#eq-bvode-ex-bc2"><span>K.3</span></a>, is an example of a BVODE that might be encountered in <em>Reaction Engineering Basics</em>. Notice that the boundary values are written in the form of residuals (with a zero on one side of the equation).</p>
+<section id="boundary-value-odes-in-reaction-engineering-basics" class="level2" data-number="M.1">
+<h2 data-number="M.1" class="anchored" data-anchor-id="boundary-value-odes-in-reaction-engineering-basics"><span class="header-section-number">M.1</span> Boundary-value ODEs in <em>Reaction Engineering Basics</em></h2>
+<p>The axial dispersion reactor model equations are second-order BVODEs. <a href="#eq-bvode-ex" class="quarto-xref">Equation&nbsp;<span>M.1</span></a>, with the boundary conditions given in Equations <a href="#eq-bvode-ex-bc1" class="quarto-xref"><span>M.2</span></a> and <a href="#eq-bvode-ex-bc2" class="quarto-xref"><span>M.3</span></a>, is an example of a BVODE that might be encountered in <em>Reaction Engineering Basics</em>. Notice that the boundary values are written in the form of residuals (with a zero on one side of the equation).</p>
 <p><span id="eq-bvode-ex"><span class="math display">\[
 -D_{ax} \frac{d^2 C_A}{dz^2} + u_s \frac{dC_A}{dz} = -kC_A
-\tag{K.1}\]</span></span></p>
+\tag{M.1}\]</span></span></p>
 <p><span id="eq-bvode-ex-bc1"><span class="math display">\[
 u_s C_A \Bigr\rvert_{z=0} - D_{ax} \frac{dC_A}{dz} \Bigr\rvert_{z=0} - u_s C_{A,in} = 0
-\tag{K.2}\]</span></span></p>
+\tag{M.2}\]</span></span></p>
 <p><span id="eq-bvode-ex-bc2"><span class="math display">\[
 \frac{dC_A}{dz} \Bigr\rvert_{z=L} = 0
-\tag{K.3}\]</span></span></p>
-<p>Each BVODE can be written in the form shown in <a href="#eq-bvode">Equation&nbsp;<span>K.4</span></a>, where <span class="math inline">\(g_1\)</span> and <span class="math inline">\(g_2\)</span> may be constants or functions of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>. The BVODE applies only in the range of <span class="math inline">\(x\)</span> from <span class="math inline">\(a\)</span> to <span class="math inline">\(b\)</span>, where <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are constants. The boundary conditions take the form shown in Equations <a href="#eq-bvode-bc1"><span>K.5</span></a> and <a href="#eq-bvode-bc2"><span>K.6</span></a>, where <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f_2\)</span> are residual functions that evaluate to zero when the boundary conditions are satisfied. BVODEs differ from initial-value ODEs in that one boundary condition applies at one end of the range of <span class="math inline">\(x\)</span> and the other applies at the other end of the range.</p>
+\tag{M.3}\]</span></span></p>
+<p>Each BVODE can be written in the form shown in <a href="#eq-bvode" class="quarto-xref">Equation&nbsp;<span>M.4</span></a>, where <span class="math inline">\(g_1\)</span> and <span class="math inline">\(g_2\)</span> may be constants or functions of <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>. The BVODE applies only in the range of <span class="math inline">\(x\)</span> from <span class="math inline">\(a\)</span> to <span class="math inline">\(b\)</span>, where <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are constants. The boundary conditions take the form shown in Equations <a href="#eq-bvode-bc1" class="quarto-xref"><span>M.5</span></a> and <a href="#eq-bvode-bc2" class="quarto-xref"><span>M.6</span></a>, where <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f_2\)</span> are residual functions that evaluate to zero when the boundary conditions are satisfied. BVODEs differ from initial-value ODEs in that one boundary condition applies at one end of the range of <span class="math inline">\(x\)</span> and the other applies at the other end of the range.</p>
 <p><span id="eq-bvode"><span class="math display">\[
 \frac{d^2y}{dx^2} -g_1 \frac{dy}{dx} = g_2 \, \quad a \le x \le b
-\tag{K.4}\]</span></span></p>
+\tag{M.4}\]</span></span></p>
 <p><span id="eq-bvode-bc1"><span class="math display">\[
 f_1\left(y \Big\rvert_{x=a}, \left( \frac{dy}{dx} \right)\Bigg\rvert_{x=a} \right) = 0
-\tag{K.5}\]</span></span></p>
+\tag{M.5}\]</span></span></p>
 <p><span id="eq-bvode-bc2"><span class="math display">\[
 f_2\left(y \Big\rvert_{x=b}, \left( \frac{dy}{dx} \right)\Bigg\rvert_{x=b} \right) = 0
-\tag{K.6}\]</span></span></p>
+\tag{M.6}\]</span></span></p>
 </section>
-<section id="writing-a-second-order-ode-as-two-first-order-odes" class="level2" data-number="K.2">
-<h2 data-number="K.2" class="anchored" data-anchor-id="writing-a-second-order-ode-as-two-first-order-odes"><span class="header-section-number">K.2</span> Writing a Second-Order ODE as Two First-Order ODEs</h2>
-<p>Before solving, each second-order BVODE is converted to two first-order ODEs. Using <a href="#eq-bvode-ex">Equation&nbsp;<span>K.1</span></a> as an example, a new first-order ODE simply defines a new variable, <span class="math inline">\(w\)</span>, <a href="#eq-bvode-new-var">Equation&nbsp;<span>K.7</span></a>. Noting that with that definition, <span class="math inline">\(\frac{dw}{dz} = \frac{d^2C_A}{dz^2}\)</span>, substituting for <span class="math inline">\(\frac{d^2C_A}{dz^2}\)</span> and <span class="math inline">\(\frac{dC_A}{dz}\)</span> in <a href="#eq-bvode-ex">Equation&nbsp;<span>K.1</span></a> yields the other first order ODE, <a href="#eq-bvode-new-ode">Equation&nbsp;<span>K.8</span></a>. The boundary conditions also need to be re-written as Equations <a href="#eq-bvode-new-bc1"><span>K.9</span></a> and <a href="#eq-bvode-new-bc2"><span>K.10</span></a>.</p>
+<section id="writing-a-second-order-ode-as-two-first-order-odes" class="level2" data-number="M.2">
+<h2 data-number="M.2" class="anchored" data-anchor-id="writing-a-second-order-ode-as-two-first-order-odes"><span class="header-section-number">M.2</span> Writing a Second-Order ODE as Two First-Order ODEs</h2>
+<p>Before solving, each second-order BVODE is converted to two first-order ODEs. Using <a href="#eq-bvode-ex" class="quarto-xref">Equation&nbsp;<span>M.1</span></a> as an example, a new first-order ODE simply defines a new variable, <span class="math inline">\(w\)</span>, <a href="#eq-bvode-new-var" class="quarto-xref">Equation&nbsp;<span>M.7</span></a>. Noting that with that definition, <span class="math inline">\(\frac{dw}{dz} = \frac{d^2C_A}{dz^2}\)</span>, substituting for <span class="math inline">\(\frac{d^2C_A}{dz^2}\)</span> and <span class="math inline">\(\frac{dC_A}{dz}\)</span> in <a href="#eq-bvode-ex" class="quarto-xref">Equation&nbsp;<span>M.1</span></a> yields the other first order ODE, <a href="#eq-bvode-new-ode" class="quarto-xref">Equation&nbsp;<span>M.8</span></a>. The boundary conditions also need to be re-written as Equations <a href="#eq-bvode-new-bc1" class="quarto-xref"><span>M.9</span></a> and <a href="#eq-bvode-new-bc2" class="quarto-xref"><span>M.10</span></a>.</p>
 <p><span id="eq-bvode-new-var"><span class="math display">\[
 \frac{dC_A}{dz}=w
-\tag{K.7}\]</span></span></p>
+\tag{M.7}\]</span></span></p>
 <p><span id="eq-bvode-new-ode"><span class="math display">\[
 -D_{ax} \frac{dw}{dz} + u_s w = -kC_A \quad \Rightarrow \quad \frac{dw}{dz} = \frac{kC_A + u_sw}{D_{ax}}
-\tag{K.8}\]</span></span></p>
+\tag{M.8}\]</span></span></p>
 <p><span id="eq-bvode-new-bc1"><span class="math display">\[
 u_s C_A \Bigr\rvert_{z=0} - D_{ax} w \Bigr\rvert_{z=0} - u_s C_{A,in} = 0
-\tag{K.9}\]</span></span></p>
+\tag{M.9}\]</span></span></p>
 <p><span id="eq-bvode-new-bc2"><span class="math display">\[
 w \Bigr\rvert_{z=L} = 0
-\tag{K.10}\]</span></span></p>
-<p>At this point, Equations <a href="#eq-bvode-new-var"><span>K.7</span></a> through <a href="#eq-bvode-new-bc2"><span>K.10</span></a> are in a form that can be solved numerically.</p>
+\tag{M.10}\]</span></span></p>
+<p>At this point, Equations <a href="#eq-bvode-new-var" class="quarto-xref"><span>M.7</span></a> through <a href="#eq-bvode-new-bc2" class="quarto-xref"><span>M.10</span></a> are in a form that can be solved numerically.</p>
 </section>
-<section id="items-that-must-be-provided-to-the-solver" class="level2" data-number="K.3">
-<h2 data-number="K.3" class="anchored" data-anchor-id="items-that-must-be-provided-to-the-solver"><span class="header-section-number">K.3</span> Items that Must be Provided to the Solver</h2>
+<section id="items-that-must-be-provided-to-the-solver" class="level2" data-number="M.3">
+<h2 data-number="M.3" class="anchored" data-anchor-id="items-that-must-be-provided-to-the-solver"><span class="header-section-number">M.3</span> Items that Must be Provided to the Solver</h2>
 <p>As in the other numerical methods appendices, the term “solver” is used here to refer to the computer program or function that numerically solves a set of BVODEs. There are many different BVODE solvers available, and each has specific instructions on how to use it. This appendix makes no attempt to explain the details of using any one of the available solvers.</p>
-<p>However, no matter which specific solver one uses, there are six things that must be provided to the solver. The first of two of these are the values of <span class="math inline">\(x\)</span> at each end of the range where the BVODEs are valid. In terms of Equations <a href="#eq-bvode"><span>K.4</span></a> through <a href="#eq-bvode-bc2"><span>K.6</span></a> this means providing the values of <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>. In the example here, Equations <a href="#eq-bvode-ex"><span>K.1</span></a> through <a href="#eq-bvode-ex-bc2"><span>K.3</span></a>, those values are 0 and <span class="math inline">\(L\)</span>.</p>
+<p>However, no matter which specific solver one uses, there are six things that must be provided to the solver. The first of two of these are the values of <span class="math inline">\(x\)</span> at each end of the range where the BVODEs are valid. In terms of Equations <a href="#eq-bvode" class="quarto-xref"><span>M.4</span></a> through <a href="#eq-bvode-bc2" class="quarto-xref"><span>M.6</span></a> this means providing the values of <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>. In the example here, Equations <a href="#eq-bvode-ex" class="quarto-xref"><span>M.1</span></a> through <a href="#eq-bvode-ex-bc2" class="quarto-xref"><span>M.3</span></a>, those values are 0 and <span class="math inline">\(L\)</span>.</p>
 <p>The process for solving the BVODEs requires dividing the range of <span class="math inline">\(x\)</span> between <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> into a number of small intervals. The third thing that must be supplied to the solver is the number of intervals to be used. Generally a larger number of intervals results in a more accurate answer, but increases the computation time.</p>
 <p>The fourth thing that must be provided to the solver is a guess for the values of the dependent variables. The form in which this is provided might vary depending on the specific software being used. In the simplest case, the fourth item is simply a guess for the average value of <span class="math inline">\(C_A\)</span> between <span class="math inline">\(z=0\)</span> and <span class="math inline">\(z=L\)</span> and a guess for the average value of <span class="math inline">\(w\)</span> between <span class="math inline">\(z=0\)</span> and <span class="math inline">\(z=L\)</span>. In a more demanding case, this might entail providing a guess for the values of <span class="math inline">\(C_A\)</span> and <span class="math inline">\(w\)</span> at the boundary of each of the intervals between <span class="math inline">\(z=0\)</span> and <span class="math inline">\(z=L\)</span>.</p>
-<p>The fifth thing that must be provided to the BVODE solver is a means of calculating the values of each of the first order derivatives, given values for the independent variable and the dependent variables. Quite commonly, this is done by providing the name of a function or subroutine to the solver. That subroutine receives values of the independent variable and the dependent variables as arguments. It then uses the expressions for the first-order ODEs being solved, Equations <a href="#eq-bvode-new-var"><span>K.7</span></a> and <a href="#eq-bvode-new-ode"><span>K.8</span></a> in the present example, to calculate the values of the derivatives, <span class="math inline">\(\frac{dC_A}{dz}\)</span> and <span class="math inline">\(\frac{dw}{dz}\)</span>, and returns them.</p>
-<p>The final thing that must be provided to the BVODE solver is a means of evaluating the boundary conditions, i. e. a means of evaluating the residual functions, <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f_2\)</span>, given values for the dependent variables, <span class="math inline">\(y\)</span> and <span class="math inline">\(w\)</span>, at each of the boundaries, <span class="math inline">\(x=a\)</span> and <span class="math inline">\(x=b\)</span>. Again, this is commonly done by providing the name of another function or subroutine to the solver. That subroutine receives <span class="math inline">\(y \Big\rvert_{x=a}\)</span>, <span class="math inline">\(w \Big\rvert_{x=a}\)</span>, <span class="math inline">\(y \Big\rvert_{x=b}\)</span> and <span class="math inline">\(w \Big\rvert_{x=b}\)</span> as arguments. It then calculates the values of <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f_2\)</span> and returns them. In the present example, this second subroutine would receive <span class="math inline">\(C_A \Bigr\rvert_{z=0}\)</span>, <span class="math inline">\(C_A \Bigr\rvert_{z=L}\)</span>, <span class="math inline">\(w\Bigr\rvert_{z=0}\)</span>, and <span class="math inline">\(w\Bigr\rvert_{z=L}\)</span> as arguments, use Equations <a href="#eq-bvode-new-bc1"><span>K.9</span></a> and <a href="#eq-bvode-new-bc2"><span>K.10</span></a> to evaluate the residuals, and return them.</p>
+<p>The fifth thing that must be provided to the BVODE solver is a means of calculating the values of each of the first order derivatives, given values for the independent variable and the dependent variables. Quite commonly, this is done by providing the name of a function or subroutine to the solver. That subroutine receives values of the independent variable and the dependent variables as arguments. It then uses the expressions for the first-order ODEs being solved, Equations <a href="#eq-bvode-new-var" class="quarto-xref"><span>M.7</span></a> and <a href="#eq-bvode-new-ode" class="quarto-xref"><span>M.8</span></a> in the present example, to calculate the values of the derivatives, <span class="math inline">\(\frac{dC_A}{dz}\)</span> and <span class="math inline">\(\frac{dw}{dz}\)</span>, and returns them.</p>
+<p>The final thing that must be provided to the BVODE solver is a means of evaluating the boundary conditions, i. e. a means of evaluating the residual functions, <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f_2\)</span>, given values for the dependent variables, <span class="math inline">\(y\)</span> and <span class="math inline">\(w\)</span>, at each of the boundaries, <span class="math inline">\(x=a\)</span> and <span class="math inline">\(x=b\)</span>. Again, this is commonly done by providing the name of another function or subroutine to the solver. That subroutine receives <span class="math inline">\(y \Big\rvert_{x=a}\)</span>, <span class="math inline">\(w \Big\rvert_{x=a}\)</span>, <span class="math inline">\(y \Big\rvert_{x=b}\)</span> and <span class="math inline">\(w \Big\rvert_{x=b}\)</span> as arguments. It then calculates the values of <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f_2\)</span> and returns them. In the present example, this second subroutine would receive <span class="math inline">\(C_A \Bigr\rvert_{z=0}\)</span>, <span class="math inline">\(C_A \Bigr\rvert_{z=L}\)</span>, <span class="math inline">\(w\Bigr\rvert_{z=0}\)</span>, and <span class="math inline">\(w\Bigr\rvert_{z=L}\)</span> as arguments, use Equations <a href="#eq-bvode-new-bc1" class="quarto-xref"><span>M.9</span></a> and <a href="#eq-bvode-new-bc2" class="quarto-xref"><span>M.10</span></a> to evaluate the residuals, and return them.</p>
 </section>
-<section id="a-simplified-description-of-how-the-bvodes-are-solved" class="level2" data-number="K.4">
-<h2 data-number="K.4" class="anchored" data-anchor-id="a-simplified-description-of-how-the-bvodes-are-solved"><span class="header-section-number">K.4</span> A Simplified Description of How the BVODEs are Solved</h2>
+<section id="a-simplified-description-of-how-the-bvodes-are-solved" class="level2" data-number="M.4">
+<h2 data-number="M.4" class="anchored" data-anchor-id="a-simplified-description-of-how-the-bvodes-are-solved"><span class="header-section-number">M.4</span> A Simplified Description of How the BVODEs are Solved</h2>
 <p>The description in this section is highly simplified, and it leaves out some details. It is intended only to provide a sense of how BVODEs are solved numerically. To start, the solver uses the information provided to it to divide the <span class="math inline">\(x\)</span> range into many small intervals. It uses an approximating polynomial, e. g. <span class="math inline">\(y = m_1x^3 + m_2x^2 + m_3x + m_4\)</span>, to approximate each dependent variable in each of the intervals. That is, the values of <span class="math inline">\(m_1\)</span>, <span class="math inline">\(m_2\)</span>, <span class="math inline">\(m_3\)</span>, and <span class="math inline">\(m_4\)</span> will be different for each dependent variable and in each interval. At this point those values are unknown, and solving the BVODEs equates to finding those values. Note that <span class="math inline">\(\frac{dy}{dx}\)</span> can also be approximated by taking the derivative of the approximating polynomial. The equations used to find the values of the coefficients are based on requirements that the solution must meet.</p>
 <ul>
 <li>At the boundary between any two intervals, the approximating polynomials on each side must yield the same value of <span class="math inline">\(y\)</span>.</li>
-<li>At the two ends of the range of <span class="math inline">\(x\)</span>, the approximating polynomials must satisfy the boundary conditions in Equations <a href="#eq-bvode-bc1"><span>K.5</span></a> and <a href="#eq-bvode-bc2"><span>K.6</span></a>.</li>
-<li>At any point within an interval, the approximating functions must obey the ODEs, Equations <a href="#eq-bvode-new-var"><span>K.7</span></a> and <a href="#eq-bvode-new-ode"><span>K.8</span></a>.
+<li>At the two ends of the range of <span class="math inline">\(x\)</span>, the approximating polynomials must satisfy the boundary conditions in Equations <a href="#eq-bvode-bc1" class="quarto-xref"><span>M.5</span></a> and <a href="#eq-bvode-bc2" class="quarto-xref"><span>M.6</span></a>.</li>
+<li>At any point within an interval, the approximating functions must obey the ODEs, Equations <a href="#eq-bvode-new-var" class="quarto-xref"><span>M.7</span></a> and <a href="#eq-bvode-new-ode" class="quarto-xref"><span>M.8</span></a>.
 <ul>
 <li>There is an infinite number of points within the interval, so to meet this requirement distinct points within each interval, called collocation points, are chosen and this requirement is applied at those points. Typically, the collocation points include the two ends of the interval and as many equally-spaced points in between as are needed to calculate the values of <span class="math inline">\(m_1\)</span>, <span class="math inline">\(m_2\)</span>, <span class="math inline">\(m_3\)</span>, and <span class="math inline">\(m_4\)</span> for every dependent variable in every interval.</li>
 </ul></li>
 </ul>
-<p>Applying those requirements leads to a set of non-linear equations that needs to be solved to find the values of <span class="math inline">\(m_1\)</span>, <span class="math inline">\(m_2\)</span>, <span class="math inline">\(m_3\)</span>, and <span class="math inline">\(m_4\)</span> for every dependent variable in every interval. See <a href="apndx_solve_ates.html">Appendix&nbsp;<span>H</span></a> for an overview of how that is accomplished. Doing so requires an initial guess for the values; the solver generates the guess using the guess for the value of <span class="math inline">\(y\)</span> that is provided to it.</p>
+<p>Applying those requirements leads to a set of non-linear equations that needs to be solved to find the values of <span class="math inline">\(m_1\)</span>, <span class="math inline">\(m_2\)</span>, <span class="math inline">\(m_3\)</span>, and <span class="math inline">\(m_4\)</span> for every dependent variable in every interval. See <a href="apndx_solve_ates.html" class="quarto-xref">Appendix&nbsp;<span>I</span></a> for an overview of how that is accomplished. Doing so requires an initial guess for the values; the solver generates the guess using the guess for the value of <span class="math inline">\(y\)</span> that is provided to it.</p>
 </section>
-<section id="cautions-related-to-numerical-solution" class="level2" data-number="K.5">
-<h2 data-number="K.5" class="anchored" data-anchor-id="cautions-related-to-numerical-solution"><span class="header-section-number">K.5</span> Cautions Related to Numerical Solution</h2>
+<section id="cautions-related-to-numerical-solution" class="level2" data-number="M.5">
+<h2 data-number="M.5" class="anchored" data-anchor-id="cautions-related-to-numerical-solution"><span class="header-section-number">M.5</span> Cautions Related to Numerical Solution</h2>
 <p>The process of dividing the range of <span class="math inline">\(x\)</span> into intervals is sometimes called <em>mesh generation</em>. The presentation here implied that the intervals were equally sized, but this is not required. If the solution varies very stronly in one part of the range of <span class="math inline">\(x\)</span> and not in other parts, it is possible to use smaller intervals where it is varying strongly and larger intervals elsewhere. This can increase the accuracy of the result without increasing the amount of computation required.</p>
 <p>A related caution is that some solvers will adjust the number of intervals in order to maintain accuracy. As such, the number of intervals returned by the solver should not be assumed to equal the number specified in the call to the solver.</p>
 <p>It won’t be encountered in <em>Reaction Engineering Basics</em>, but when BVODEs are written in cylindrical or spherical coordinates, a term may contain <span class="math inline">\(x^{-1}\)</span>. Then, if the range of <span class="math inline">\(x\)</span> includes <span class="math inline">\(0\)</span>, that term will become infinite at that point. This is known as a singularity. If the BVODEs have such a singluarity, there are methods that have not been discussed here that can be used to solve them.</p>
 </section>
-<section id="symbols-used-in-this-appendix" class="level2" data-number="K.6">
-<h2 data-number="K.6" class="anchored" data-anchor-id="symbols-used-in-this-appendix"><span class="header-section-number">K.6</span> Symbols Used in this Appendix</h2>
+<section id="symbols-used-in-this-appendix" class="level2" data-number="M.6">
+<h2 data-number="M.6" class="anchored" data-anchor-id="symbols-used-in-this-appendix"><span class="header-section-number">M.6</span> Symbols Used in this Appendix</h2>
 <table class="table">
 <colgroup>
 <col style="width: 20%">
@@ -703,10 +749,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -716,8 +779,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -729,7 +801,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -773,6 +968,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -798,6 +994,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -859,17 +1081,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./apndx_estimate_parameters.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span>
+      <a href="./apndx_estimate_parameters.html" class="pagination-link" aria-label="Parameter Estimation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./apndx_solve_daes.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 

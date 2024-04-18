@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.551">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Reaction Engineering Basics - 18&nbsp; Generation and Analysis of Kinetics Data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./section_6_bstr_data_analysis.html" rel="next">
+<link href="./section_6_intro.html" rel="prev">
+<link href="./Graphics/BuffaloBadger_16_16.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
+    <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics"> 
+<span class="menu-text">Reaction Engineering Basics</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/SCoRE"> 
+<span class="menu-text">SCoRE</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/ToTaL_Engineering"> 
+<span class="menu-text">ToTaL Engineering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/The_Sett"> 
+<span class="menu-text">The Sett</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./section_6_intro.html">Kinetics Data Analysis</a></li><li class="breadcrumb-item"><a href="./section_6_data_generation.html"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_1_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Basic Information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_intro_and_defs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Reactions, Reactors, and Reaction Engineering</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_safety_and_ethics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Reaction Engineering Ethics and Safety</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_1_reaction_progress.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Measures of Reaction Progress</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_2_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Rate Expressions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_2_rates_and_expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Reaction Rates and Rate Expressions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_2_mechanisms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reaction Mechanisms and Mechanistic Rate Expressions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ideal Reactor Models</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_3_design_equations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reactor Design Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_3_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Modeling Functions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Design of Non-Continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_5_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kinetics Data Analysis</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_data_generation.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="./section_7_intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Modeling Non-Ideal Reactors</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_axial_dispersion_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Axial Dispersion Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_segregated_flow_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Segregated Flow Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_7_zoned_model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Zoned Reactor Models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_useful_eqns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Frequently Used Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#procedure-for-developing-a-rate-expression" id="toc-procedure-for-developing-a-rate-expression" class="nav-link active" data-scroll-target="#procedure-for-developing-a-rate-expression"><span class="header-section-number">18.1</span> Procedure for Developing a Rate Expression</a></li>
+  <li><a href="#design-of-kinetics-experiments" id="toc-design-of-kinetics-experiments" class="nav-link" data-scroll-target="#design-of-kinetics-experiments"><span class="header-section-number">18.2</span> Design of Kinetics Experiments</a></li>
+  <li><a href="#parameter-estimation" id="toc-parameter-estimation" class="nav-link" data-scroll-target="#parameter-estimation"><span class="header-section-number">18.3</span> Parameter Estimation</a>
+  <ul class="collapse">
+  <li><a href="#estimation-of-rate-expression-parameters" id="toc-estimation-of-rate-expression-parameters" class="nav-link" data-scroll-target="#estimation-of-rate-expression-parameters"><span class="header-section-number">18.3.1</span> Estimation of Rate Expression Parameters</a></li>
+  <li><a href="#estimation-of-the-rate-coefficient-parameters" id="toc-estimation-of-the-rate-coefficient-parameters" class="nav-link" data-scroll-target="#estimation-of-the-rate-coefficient-parameters"><span class="header-section-number">18.3.2</span> Estimation of the Rate Coefficient Parameters</a></li>
+  </ul></li>
+  <li><a href="#accuracy-assessment" id="toc-accuracy-assessment" class="nav-link" data-scroll-target="#accuracy-assessment"><span class="header-section-number">18.4</span> Accuracy Assessment</a></li>
+  <li><a href="#deciding-whether-to-accept-the-proposed-rate-expression" id="toc-deciding-whether-to-accept-the-proposed-rate-expression" class="nav-link" data-scroll-target="#deciding-whether-to-accept-the-proposed-rate-expression"><span class="header-section-number">18.5</span> Deciding Whether to Accept the Proposed Rate Expression</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">18.6</span> Example</a>
+  <ul class="collapse">
+  <li><a href="#sec-example_18_1" id="toc-sec-example_18_1" class="nav-link" data-scroll-target="#sec-example_18_1"><span class="header-section-number">18.6.1</span> Design of Kinetics Experiments</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-sec-6_kin_data_gen" id="toc-symbols-used-in-sec-6_kin_data_gen" class="nav-link" data-scroll-target="#symbols-used-in-sec-6_kin_data_gen"><span class="header-section-number">18.7</span> Symbols Used in <span>Chapter 18</span></a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./section_6_intro.html">Kinetics Data Analysis</a></li><li class="breadcrumb-item"><a href="./section_6_data_generation.html"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-6_kin_data_gen" class="quarto-section-identifier"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<em>Reaction Engineering Basics</em> is not yet complete
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>The contents in this part of <em>Reaction Engineering Basics</em> are from an earlier draft. They will be completely revised in the final version of the book.</p>
+</div>
+</div>
+</div>
+<p>If the rate of a reaction has been studied previously, an expression for the rate of that reaction may be available. When a rate expression is not available, it is necessary to develop one. In this situation, the mathematical form of the rate expression is not known. Whatever rate expression is eventually developed will contain kinetics parameters that also are unknown. Kinetics data are needed to develop a rate expression because theory alone cannot provide the mathematical form of the rate expression nor the values of the kinetics parameters that appear in it.</p>
+<p>Reaction rates depend upon temperature, pressure and composition. Temperature can be measured using thermometers or thermocouples. Pressure can be measured using manometers or a wide variety of pressure gauges. Fluid composition can be measured using gas chromatography, mass spectrometry or many other instruments. The same is not true for reaction rates. There isn’t a meter, gauge, or instrument that one can put in or attach to a chemical reactor to measure the rate of the reaction or reactions going on within it.</p>
+<p>Since rates cannot be measured directly, changes in composition (or something related to composition) that occur in chemical reactors are measured instead. Those changes are measured experimentally at different reactor temperatures, pressures and compositions, resulting in a set of experimental kinetics data. Three different approaches can be used to analyze those data and develop a rate expression. This brief chapter considers the design of kinetics experiments and presents an overview of the three approaches that can be used to analyze the data generated in those experiments. Before doing so, it is useful to recall the process used to develop rate expressions that was presented in <a href="section_2_rates_and_expressions.html" class="quarto-xref"><span>Chapter 4</span></a>.</p>
+<section id="procedure-for-developing-a-rate-expression" class="level2" data-number="18.1">
+<h2 data-number="18.1" class="anchored" data-anchor-id="procedure-for-developing-a-rate-expression"><span class="header-section-number">18.1</span> Procedure for Developing a Rate Expression</h2>
+<p>The following sequence of events is representative of the process for development of a rate expression for a reaction when one isn’t available.</p>
+<ol type="1">
+<li>A preliminary analysis, perhaps including a few preliminary experiments, is performed to establish the range of conditions (temperature, pressure and composition) over which the rate expression will be used.</li>
+<li>A laboratory reactor is selected to be used to generate kinetics data.</li>
+<li>A set of kinetics experiments using that reactor is specified, and the experiments are performed to generate a kinetics data set.</li>
+<li>A mathematical form is proposed for the rate expression.</li>
+<li>The values of all unknown parameters appearing in the proposed rate expression are estimated using the experimental data set.</li>
+<li>The accuracy of the proposed rate expression is assessed.</li>
+<li>One of the following decisions is made.
+<ol type="a">
+<li>Accept the rate expression.</li>
+<li>Perform additional experiments and reassess the proposed rate expression using steps 5 through 7.</li>
+<li>Reject the proposed rate expression, propose another rate expression with a different mathematical form, and assess the new rate expressions using steps 5 through 7.</li>
+</ol></li>
+</ol>
+<p>The identification of the reaction and the preliminary analysis (step 1) can be driven by a variety of factors including a perceived business opportunity, regulatory mandates, etc. The selection of a reactor to use in kinetics experiments (step 2) is briefly considered in Chapters <a href="section_6_bstr_data_analysis.html" class="quarto-xref"><span>19</span></a>, <a href="section_6_cstr_data_analysis.html" class="quarto-xref"><span>20</span></a>, and <a href="section_6_pfr_data_analysis.html" class="quarto-xref"><span>21</span></a>. Chapters <a href="section_2_rates_and_expressions.html" class="quarto-xref"><span>4</span></a> and <a href="section_2_mechanisms.html" class="quarto-xref"><span>5</span></a> described how a mathematical form of the rate expression can be postulated empirically, theoretically or mechanistically. The remaining sub-sections of this chapter present a general overview of the design of kinetics experiments (step 3), parameter estimation (step 5), accuracy assessment (step 6), and deciding whether to accept the rate expression (step 7).</p>
+</section>
+<section id="design-of-kinetics-experiments" class="level2" data-number="18.2">
+<h2 data-number="18.2" class="anchored" data-anchor-id="design-of-kinetics-experiments"><span class="header-section-number">18.2</span> Design of Kinetics Experiments</h2>
+<p>The preliminary analysis establishes a range of temperature, pressure and composition that is suitable and appropriate for running the reaction. The purpose of kinetics experiments is to generate experimental data that span that range of temperature, pressure and composition with sufficient resolution to capture how temperature, pressure, and composition affect the rate.</p>
+<p>The nature of kinetics experiments is relatively straightforward. Selected reactor inputs are adjusted to pre-determined values, and then an output from the reactor, also called the response, is measured. The first step in designing kinetics experiments is to decide which reactor inputs to adjust so that the experiments will span the desired range of temperature, pressure and composition. The inputs that will be adjusted in the experiments can be referred to as factors.</p>
+<p>The first factor to consider is the temperature. Kinetics data are typically generated using small, laboratory-scale reactors. Through the use of a temperature controller, it is usually possible to design the experimental reactor so that it will operate isothermally at a temperature chosen by the reactor operator. A temperature controller is a device that continually monitors the temperature of the reacting fluid and adjusts the amount of heating or cooling provided to the reactor so that the temperature remains constant at the chosen value.</p>
+<p>Typically reaction rates are much more sensitive to temperature than to pressure and composition. The Arrhenius expression indicates an exponential dependence of the rate upon inverse temperature. This is much stronger than the composition dependence found in most rate expressions. Consequently, if composition and temperature are varied simultaneously, the strong temperature effect may mask weaker composition effects. This has two consequences related to kinetics experiments.</p>
+<p>First, if at all possible, the reactor should operate isothermally during kinetics experiments. If the temperature is varying, either with time or with location in the reactor, the strong temperature effects may mask weaker composition effects in every single experiment, making it extremely difficult to differentiate between the two. Operating the reactor isothermally eliminates that difficulty. Secondly, it is preferrable to use “blocks” of isothermal experiments where all of the experiments in each block are run at the same temperature and each block uses a different temperature. Then within any one block only the pressure and composition are varying and their effect is more easily ascertained.</p>
+<p>The second factor to consider is the pressure. For liquid-phase reactions the pressure often does not affect the rate and does not need to be adjusted. For gas-phase reactions it usually is straightforward to adjust the system pressure from experiment to experiment. Many different reactor inputs can affect the third factor, namely the composition of the reacting fluid. For example, in a BSTR experiment the composition can be altered by changing the initial molar amount of one or more reagents and by changing the reaction time. In a flow reactor the composition can be altered by changing the amounts or inlet flow rates of each reagent, inlet concentrations and total flow rate. It is important to vary the amounts of reactants <em>and products</em> when performing kinetics experiments.</p>
+<p>Once a set of factors has been identified, that is, once it has been decided which reactor inputs will be adjusted from experiment to experiment, it is necessary to identify the response that will be measured in the experiments. It should be some easily measurable quantity that is related to the change in the composition from start to finish (or inlet to outlet). There are many possibilities including the outlet concentration of a reagent, the conversion of a reactant, an outlet mole fraction of a reagent, etc.</p>
+<p>Once the response and the adjusted inputs have been chosen, a set of “levels” must be chosen for each of the inputs. These are the values to which the inputs will be adjusted during the experiments. For example, it might be decided to use four temperature levels of 100, 110, 120 and 130 °C. That means that a set of experiments will be conducted at 100 °C, another set at 110 °C, and so on. Things that must be considered when choosing the levels for each input include the time that is available for doing the experiments and the cost of the experiments (purchase of reagents, salaries for technicians performing the experiments, etc.). Sometimes there can be a trade off between the resolution of the experimental data and the time/cost of the experiments. A design with more levels should capture the effect of changing an adjusted input more fully, but it will require more experimental time and cost more. A design with fewer levels will reduce the experimental time required and cost less, but it may not fully capture the effects of changing temperature, pressure, and composition.</p>
+<p>The kinetics experiments entail adjusting each of the inputs to one of its levels, measuring the corresponding response, adjusting one or more of the inputs to a different one of it levels, measuring the response, etc. The final decision in experimental design involves which combinations of levels to use to generate the kinetics data. There are a few ways to do this. A common one, sometimes called a <strong>full factorial design</strong>, simply includes every possible combination of the input levels. <a href="#sec-example_18_1" class="quarto-xref">Example&nbsp;<span>18.6.1</span></a> illustrates full factorial design of kinetics experiments.</p>
+</section>
+<section id="parameter-estimation" class="level2" data-number="18.3">
+<h2 data-number="18.3" class="anchored" data-anchor-id="parameter-estimation"><span class="header-section-number">18.3</span> Parameter Estimation</h2>
+<p>It is helpful at this point to make a subtle, but important distinction between what will be called “rate expression parameters” and “rate coefficient parameters.” <strong>Rate expression parameters</strong> are unknown quantities that appear in the rate expression and either are constant or vary <em>only</em> with temperature. An example is a rate coefficient, <span class="math inline">\(k\)</span>. <strong>Rate coefficient parameters</strong> are unknown constants that appear in expressions for the temperature dependence of rate expression parameters. Examples are the Arrhenius pre-exponential factor, <span class="math inline">\(k_0\)</span>, and activation energy, <span class="math inline">\(E\)</span>, which appear in the Arrhenius expression for the temperature dependence of a rate coefficient.</p>
+<p>The experimental design described above will lead to a data set where every experiment was performed at one of the chosen temperature levels. For analysis purposes, the data are broken into “blocks” such that all of the experiments at the first temperature level are placed in one block. All of the experiments at the second temperature level are placed in a second block, and so on. Once the data have been grouped into blocks like this, data analysis proceeds in two stages. In the first stage, each data block is processed separately to estimate the values of the rate expression parameters at that block temperature.</p>
+<p>The result of the first stage of analysis is a set of values for each <em>rate expression parameter</em> at each of the experimental temperature levels. In the second stage of analysis, those results are analyzed to estimate the <em>rate coefficient parameters</em>. For example, the first stage of analysis may yield estimated values for a rate coefficient, <span class="math inline">\(k\)</span>, at each experimental temperature level. In the second stage of analysis those <span class="math inline">\(k\)</span> <em>vs</em>. <span class="math inline">\(T\)</span> data are processed to estimate the Arrhenius parameters, <span class="math inline">\(k_0\)</span> and <span class="math inline">\(E\)</span>.</p>
+<section id="estimation-of-rate-expression-parameters" class="level3" data-number="18.3.1">
+<h3 data-number="18.3.1" class="anchored" data-anchor-id="estimation-of-rate-expression-parameters"><span class="header-section-number">18.3.1</span> Estimation of Rate Expression Parameters</h3>
+<p>The first stage of analysis starts by writing a model for the reactor (i.e.&nbsp;the design equations) and substituting the rate expression into that model. Assuming that each kinetics experiments was isothermal, the mole balance design equations can be solved independently of energy and momentum balances. Consequently for kinetics data analysis the reactor model consists of only mole balances.</p>
+<p>The rate expression is substituted into the mole balances. If the experiments were performed in same-temperature blocks, then the data for each block will be analyzed separately. For the analysis of a same-temperature data block, the rate expression should be written in terms of the rate expression parameters. In other words, the rate expression should contain <span class="math inline">\(k\)</span>, and not <span class="math inline">\(k_0 \exp{\left( \frac{-E}{RT} \right)}\)</span>. If the experiments did not result in same-temperature blocks of data, then the full data set will be analyzed all at once, and the rate expression should be written using the rate coefficient parameters. That is, the rate coefficient should be written as <span class="math inline">\(k_0 \exp{\left( \frac{-E}{RT} \right)}\)</span>, and not just <span class="math inline">\(k\)</span>.</p>
+<p>After the rate expression has been substituted into the reactor model, the reactor model can predict the response for each experiment if it is provided with the values of the rate expression or rate coefficient parameters. As such, the reactor model can be fit to the experimental data. This is accomplished by varying the parameter values so as to find the the ones that minimize the difference between the model-predicted responses for the experiments and the experimentally measured responses.</p>
+<p>The fitting of the reactor model to the experimental data is accomplished using parameter estimation software. There are many different software packages for parameter estimation, and a few different ways to go about the task. Three common ways of fitting a reactor model to experimental data are considered here. They involve (a) using a response function, (b) using a linearized model, and (c) using an approximate model.</p>
+<p><strong>Using a Response Function</strong></p>
+<p><a href="section_3_reactor_models.html" class="quarto-xref"><span>Chapter 7</span></a> described the structure of a response function. Briefly, the response function contains all of the quantities that appear in the design equations that are <em>known and constant</em>. The arguments passed to a response function as input can vary depending upon the nature of the analysis being performed. In the case of kinetics data analysis, the response function is passed the values of the adjusted inputs for all of the experiments being analyzed, and it is passed values for the rate expression parameters to be estimated. For each experiment (i. e. for each set of adjusted inputs) the response function solves the design equations numerically. Then it calculates the model-predicted value of the measured response. Finally the resulting model-predicted experimental responses for all of the experiments are returned as a vector.</p>
+<p>To process an experimental data block, parameter estimation software is used. As noted in <a href="section_3_reactor_models.html" class="quarto-xref"><span>Chapter 7</span></a>, the parameter estimation software one chooses to use will expect the response function to have a specific number of input argument, it will expect each argument to be of a given type (scalar, vector, matrix), and it will expect the arguments to appear in the function call in a specific order. When the response function is created, it must conform to those expectations.</p>
+<p>As an example, in the Python computer language a function named <code>curve_fit</code> can be used to perform parameter estimation. When <code>curve_fit</code> is called, the response function is passed to it as an argument. The <code>curve_fit</code> function expects that the first argument to the response function will be a matrix containing <em>all</em> of the experimentally adjusted inputs. Each row in the matrix corresponds to one of the adjusted inputs and each column corresponds to one of the experiments. <code>curve_fit</code> further expects that the next arguments will be the unknown rate expression parameters to be estimated, each as a separate argument. Finally, <code>curve_fit</code> expects that the response function will return a <em>row</em> vector where the columns contain the values of the response predicted by the reactor model for each of the experiments. In contrast, the Matlab parameter estimation function named <code>nlinfit</code> expects the response function passed to it to have two arguments. The first is a column vector containing <em>all</em> of the rate expresion parameters and the second is again a matrix containing <em>all</em> of the experimentally adjusted inputs. <code>nlinfit</code> expects the response function to return a <em>column</em> vector that contains the model-predicted responses.</p>
+<p>To estimate the parameters for one of the experimental data blocks, one writes a computer code that calls the parameter estimation software, typically passing as arguments the response function, the adjusted inputs, the experimentally measured responses, and a guess for the rate expression parameters to be estimated. The parameter estimation software then returns the best values of the rate expression parameters.</p>
+<p>Perhaps the most important aspects of using a response function to estimate rate expression parameters are that it can <em>always</em> be used, and it does not introduce any inaccuracies. Among its downsides, it requires writing code, having access to parameter estimation software, and, in most cases, making a guess for the values of the rate expression parameters.</p>
+<p><strong>Using a Linearized Model</strong></p>
+<p>It is sometimes possible to linearize the reactor model and then use linear least squares for parameter estimation. As described in <a href="section_3_design_equations.html" class="quarto-xref"><span>Chapter 6</span></a> and shown in [fix example cross-ref], when a single reaction takes place in an isothermal reactor, the composition of the reacting fluid can be modeled using a single mole balance on any one reactant or product. To use this approach to parameter estimation, a single mole balance on one of the reactants or products <em>must be used</em> to model the reactor. Additionally, if the mole balance is an initial value ordinary differential equation (IVODE), it must be solved analytically to obtain an algebraic-transcendental equation (ATE). For steady-state CSTRs, the reactor model will already be an ATE.</p>
+<p>The ATE model then must be rearranged so that by defining new variables and parameters it becomes a linear equation like that shown in <a href="#eq-linear_equation" class="quarto-xref">Equation&nbsp;<span>18.1</span></a>, where <span class="math inline">\(y\)</span> and the <span class="math inline">\(x_i\)</span> represent the new variables and <span class="math inline">\(m_i\)</span> and <span class="math inline">\(b\)</span> represent the new parameters. The rate expression parameters <em>do not</em> appear in the defining equations for the new variables. Additionally, a <em>unique</em> combination of the rate expression parameters must appear in the defining equation for each slope, <span class="math inline">\(m_i\)</span>, and the intercept, <span class="math inline">\(b\)</span>. That means that if there is only one rate expression parameter, the linearized reactor model is of the form, <span class="math inline">\(y=mx\)</span>, and if there are two rate expression parameters the linearized reactor model has the form <span class="math inline">\(y=mx+b\)</span>. Generally, when there are <span class="math inline">\(n+1\)</span> rate expression parameters, the form will be as shown in <a href="#eq-linear_equation" class="quarto-xref">Equation&nbsp;<span>18.1</span></a>.</p>
+<p><span id="eq-linear_equation"><span class="math display">\[
+y = m_1x_1 + m_2x_2 + \cdots + m_nx_n + b
+\tag{18.1}\]</span></span></p>
+<p>The adjusted inputs and the measured responses are used to calculate the values of the new variables, <span class="math inline">\(y\)</span> and <span class="math inline">\(x_1\)</span> through <span class="math inline">\(x_n\)</span>, for each experiment. <a href="#eq-linear_equation" class="quarto-xref">Equation&nbsp;<span>18.1</span></a> is then fit to the new variables, e. g. using linear least-squares. If the linearized reactor model has the form <span class="math inline">\(y=mx\)</span> or <span class="math inline">\(y=mx+b\)</span>, a spreadsheet can be used to calculate the values of <span class="math inline">\(y\)</span> and <span class="math inline">\(x\)</span>, plot the results and fit a linear equation to them. Most spreadsheet programs can be used to estimate <span class="math inline">\(m\)</span> and <span class="math inline">\(b\)</span> by adding a trendline to a plot of <span class="math inline">\(y\)</span> <em>vs</em>. <span class="math inline">\(x\)</span> and displaying the equation for the trendline on the plot.</p>
+<p>If the model has two or more <span class="math inline">\(x_i\)</span> variables, linear least squares fitting still can be used, and the calculation of the new variables and fitting the model to them still can be performed using most spreadsheet programs. Plotting the results, however, is often not possible or useful.</p>
+<p>In any case, after estimating the best values for the slopes, <span class="math inline">\(m_i\)</span>, and intercept, <span class="math inline">\(b\)</span>, their defining equations are used to calculate the best values of the rate expression parameters.</p>
+<p>Importantly, it is <em>not always possible</em> to analytically solve mole balances that are IVODEs and it is <em>not always possible</em> to linearize an ATE model equation. As such, <strong>this approach cannot always be used</strong>. When it can be used, it offers the advantages of using a spreadsheet to analyze the data instead of writing code and it does not require a guess for the values of the rate expression parameters.</p>
+<p><strong>Using an Approximate Model (Differential Analysis)</strong></p>
+<p>The third approach to the analysis of a block of experimental kinetics data can only be used when the data are from a BSTR or PFR. The mole balances for a BSTR or a steady-state PFR are IVODEs. In this approach, a single mole balance on one of the reactants or products again is used. In contrast to the first two approaches, that IVODE is <em>not</em> solved directly. Instead, the value of the derivative is approximated, for example using finite differences (see <a href="apndx_prereq_knowledge.html" class="quarto-xref">Appendix&nbsp;<span>B</span></a>). The resulting approximate mole balance is an algebraic-transcendental equation (ATE) that typically is then linearized and fit to the experimental data as described above. This approach is also referred to as differential data analysis.</p>
+<p>There isn’t any real advantage to this approach today, because it is easy to solve the IVODE form of the mole balance numerically using a computer. In the past, however, computers were not as readily available and it was often necessary to solve the mole balance analytically. By using this approach, solving the IVODE mole balance was avoided. While this makes the analysis more tractable, it is not as accurate as solving the IVODE form of the mole balance. Today differential analysis is sometimes used for a quick, preliminary analysis of kinetics data, but <strong>the other approaches described in this section are preferred</strong>.</p>
+</section>
+<section id="estimation-of-the-rate-coefficient-parameters" class="level3" data-number="18.3.2">
+<h3 data-number="18.3.2" class="anchored" data-anchor-id="estimation-of-the-rate-coefficient-parameters"><span class="header-section-number">18.3.2</span> Estimation of the Rate Coefficient Parameters</h3>
+<p>If the experimental data consist of blocks of same-temperature data, parameter estimation can be applied to each block separately. After doing so, values for each of the rate expression parameters will have been estimated at every temperature level that was studied. The second stage of the analysis involves modeling the temperature dependence of each of those parameters.</p>
+<p>This is relatively easy for rate coefficients and for unknown equilibrium constants that are being treated like rate expression parameters. Both of those kinds of rate expression parameters are expected to exhibit Arrhenius-like temperature dependence, <a href="section_2_rates_and_expressions.html#eq-arrhenius" class="quarto-xref">Equation&nbsp;<span>4.8</span></a> and <a href="section_2_rates_and_expressions.html#eq-equil_like_arrhenius" class="quarto-xref">Equation&nbsp;<span>4.12</span></a>. <a href="section_2_rates_and_expressions.html#sec-example_4_4" class="quarto-xref">Example&nbsp;<span>4.5.4</span></a> illustrates the determination of the pre-exponential factor, <span class="math inline">\(k_{0,j}\)</span>, and activation energy, <span class="math inline">\(E_j\)</span>, using <span class="math inline">\(k\)</span> <em>vs</em>. <span class="math inline">\(T\)</span> data. The determination of <span class="math inline">\(K_{0,j}\)</span> and <span class="math inline">\(\Delta H^0_j\)</span> in <a href="section_2_rates_and_expressions.html#eq-equil_like_arrhenius" class="quarto-xref">Equation&nbsp;<span>4.12</span></a> using <span class="math inline">\(K\)</span> <em>vs</em>. <span class="math inline">\(T\)</span> data is analogous.</p>
+<p>Modeling the temperature dependence of other types of rate expression parameters such as the exponents in a power-law rate expression is more difficult. Power-law rate expressions are empirical, so there isn’t any theory that predicts how power-law exponents should vary with temperature. Plotting them <em>versus</em> temperature may show that they can be treated as constant, or it may suggest some functional form such as linear or exponential. If an expression for the temperature dependence of empirical rate expression parameters like these cannot be developed, it may be necessary to leave them in tabular form and interpolate to find values at temperatures other than the levels studied in the kinetics experiments. This greatly reduces the utility of the rate expression for reaction engineering purposes.</p>
+</section>
+</section>
+<section id="accuracy-assessment" class="level2" data-number="18.4">
+<h2 data-number="18.4" class="anchored" data-anchor-id="accuracy-assessment"><span class="header-section-number">18.4</span> Accuracy Assessment</h2>
+<p>Accuracy must be assessed each time parameter estimation is performed. That is, accuracy should be assessed after the estimation of the rate expression parameters at each temperature. It should also be assessed after estimation of rate coefficient parameters. For the proposed rate expression to be accepted, the accuracy should be high in <em>all</em> assessments.</p>
+<p>All of the approaches described above for performing parameter estimation can also be made to yield additional statistics that are useful for assessing the accuracy of the resulting rate expression. These include some measure of the uncertainty in each of the estimated parameters (typically the standard error or a 95% confidence interval) and the coefficient of determination, <span class="math inline">\(R^2\)</span>. The following criteria indicate an accurate rate expression.</p>
+<ul>
+<li>The coefficient of determination, <span class="math inline">\(R^2\)</span>, is close to 1.0.</li>
+<li>The uncertainty in each parameter is small relative to its value.
+<ul>
+<li>The standard error for the parameter is small relative to its value.</li>
+<li>The upper and lower extremes of the 95% confidence interval for the parameter are close to the estimated value of the parameter.</li>
+</ul></li>
+</ul>
+<p>Graphical assessment of model accuracy is also possible. For <strong>linear models with two parameters</strong>, this was discussed in <a href="section_2_rates_and_expressions.html" class="quarto-xref"><span>Chapter 4</span></a> and illustrated in <a href="section_2_rates_and_expressions.html#sec-example_4_4" class="quarto-xref">Example&nbsp;<span>4.5.4</span></a>. Spreadsheet programs can perform the parameter estimation and generate a <strong>model plot</strong>, <span class="math inline">\(y\)</span> <em>vs</em>. <span class="math inline">\(x\)</span> of the linearized equation, with a trendline as described above. If the rate expression is accurate, the experimental data in the model plot will scatter randomly about the trendline. The deviations from the line will be small and there will not be any systematic deviations about the trendline.</p>
+<p>For every parameter estimation method the resulting parameters can be used to calculate the model-predicted response for each experimental data point. A <strong>parity plot</strong> of the experimental responses <em>vs</em>. the model-predicted responses can be constructed. Additionally, the difference between each experimental response and the corresponding model-predicted response, i. e. the residuals, can be calculated and plotted against each of the adjusted input variables to get <strong>a set of residuals plots</strong>. In graphical assessment using these plots, the following criteria suggest that the model is accurate.</p>
+<ul>
+<li>The points in the parity plot are all close to a diagonal line (<span class="math inline">\(y_{\text{expt}} = y_{\text{model}}\)</span>).</li>
+<li>In each residuals plot, the points scatter randomly about zero (the horizontal axis), and no systematic deviations are apparent.</li>
+</ul>
+</section>
+<section id="deciding-whether-to-accept-the-proposed-rate-expression" class="level2" data-number="18.5">
+<h2 data-number="18.5" class="anchored" data-anchor-id="deciding-whether-to-accept-the-proposed-rate-expression"><span class="header-section-number">18.5</span> Deciding Whether to Accept the Proposed Rate Expression</h2>
+<p>The final step in kinetics data analysis involves <strong>making a decision</strong> to accept, reassess with additional data, or reject the proposed rate expression. In the end, this is a judgement call. This becomes easier as a reaction engineer gains experience. The intended use of the rate expression, and more importantly the potential consequences of accepting an inaccurate rate expression, should be given serious consideration when making this decision. That is, if accepting an inaccurate rate expression might result in severe personal injury, significant property damage or catastrophic financial loss, the rate expression should be very, very accurate if it is accepted. If the consequences of accepting an inaccurate rate expression are less severe, somewhat lower accuracy may be deemed acceptable.</p>
+</section>
+<section id="example" class="level2" data-number="18.6">
+<h2 data-number="18.6" class="anchored" data-anchor-id="example"><span class="header-section-number">18.6</span> Example</h2>
+<section id="sec-example_18_1" class="level3" data-number="18.6.1">
+<h3 data-number="18.6.1" class="anchored" data-anchor-id="sec-example_18_1"><span class="header-section-number">18.6.1</span> Design of Kinetics Experiments</h3>
+<p>A rate expression for liquid-phase reaction (1) is needed for the design of a new batch reactor process. Preliminary studies suggest that a temperature in the range of 65 to 90 °C will be needed. At lower temperatures the reaction proceeds to slowly, and at higher temperatures undesired side reactions begin to occur. At a temperature of ca. 80 °C, it takes approximately 30 minutes for the reaction to go to completion. The preliminary experiments suggest that the reaction is irreversible and that the rate is not affected by the concentration of the product, Z. It is expected that the reactant, A, will be available at concentrations between 0.8 and 1.2 M. A perfectly mixed, 1 L BSTR is available for kinetics experiments. The reactor has a sampling port that allows the concentration of A to be measured while the reaction is taking place. Design a set of experiments to generate kinetics data that can be used to develop a rate expression.</p>
+<p><span class="math display">\[
+A \rightarrow Z \tag{1}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I am asked to design kinetics experiments, so I need to decide which variables will be adjusted in the experiments. I further need to decide how many levels to use for each adjusted variable and what those levels should be. The problem states that the rate expression developed using these data will be used to design a new process, so I want to be sure to generate a sizeable data set that spans the expected ranges of the adjusted variables and also captures the effects of each of them upon the response. Based upon the information presented in the problem statement, the experimental response here will be the concentration of A.</p>
+<p>Reaction rates can be affected by the temperature and the concentration of each reagent present. Here the problem states that the rate is not affected by the concentration of Z, so the temperature and the concentration of A should vary from one experiment to the next. The reactor is isothermal, so the temperature can be adjusted directly in the experiments. The concentration of A will change as the reaction proceeds. This suggests two ways to vary the concentration of A from experiment to experiment. The first is to adjust the initial concentration of A and the second is to adjust the time at which the response is measured. Longer times will lead to smaller concentrations of A because at longer times more of the A will have reacted. I will use both the initial concentration of A and the reaction time as adjusted variables.</p>
+<p>Next I need to decide how many levels to use for each adjusted variable and what those levels should be. Normally I would use levels that span a slightly wider range than the range where the rate expression will be used. Here, however, I’m told that the rate is too low below 65 °C and undesirable reactions occur above 90 °C, so I will choose levels that just span that range. The range only spans 25 °C, so four temperature levels seem reasonable, as does spacing them equally across the range.</p>
+<p>I want to span a range of concentrations that is slightly wider than the expected range where the rate expression will be used. Three initial concentration levels of 0.5, 1.0, and 1.5 M will do so. Then, in order to ensure that the data are sensitive to the effect of the concentration of A, I will use six levels of reaction time. Noting that at 80 °C it takes 30 min for the reaction to go to completion, spacing the reaction times 5 minutes apart will lead to samples that span a wide range of conversions.</p>
+</div>
+</div>
+</div>
+<p><strong>Experimental Design</strong></p>
+<p>Three reactor inputs will be adjusted in the experiments: the temperature, <span class="math inline">\(T\)</span>, the initial concentration of A, <span class="math inline">\(C_{A,0}\)</span>, and the reaction time, <span class="math inline">\(t\)</span>. The temperature levels will be 65, 73, 82, and 90 °C; the initial concentration levels will be 0.5, 1.0, and 1.5 M; the reaction time levels will be 5, 10, 15, 20, 25, and 30 min. All possible combinations of these levels will be studied giving a total of 72 experimental data points.</p>
+<p>It will not be necessary to perform 72 experiments, however. Using a reactor at 65 °C with an initial concentration of A equal to 0.5 M, six responses can be recorded in the experiment (at reaction times of 5, 10, 15, 20, 25, and 30 min). The number of experiments needed to record all 72 responses is 12. The initial conditions for those 12 experiments are shown in <a href="#tbl-example_18_1" class="quarto-xref">Table&nbsp;<span>18.1</span></a>. Each experiment in the table will yield responses at all six reaction time levels.</p>
+<div id="tbl-example_18_1" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_18_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;18.1: Initial conditions for kinetics experiments.
+</figcaption>
+<div aria-describedby="tbl-example_18_1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 30%">
+<col style="width: 35%">
+<col style="width: 35%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Experiment</th>
+<th style="text-align: center;">T (°C)</th>
+<th style="text-align: center;">C<sub>A,0</sub> (M)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">65</td>
+<td style="text-align: center;">0.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">2</td>
+<td style="text-align: center;">65</td>
+<td style="text-align: center;">1.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">65</td>
+<td style="text-align: center;">1.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">73</td>
+<td style="text-align: center;">0.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">73</td>
+<td style="text-align: center;">1.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">6</td>
+<td style="text-align: center;">73</td>
+<td style="text-align: center;">1.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">82</td>
+<td style="text-align: center;">0.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">8</td>
+<td style="text-align: center;">82</td>
+<td style="text-align: center;">1.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">9</td>
+<td style="text-align: center;">82</td>
+<td style="text-align: center;">1.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">10</td>
+<td style="text-align: center;">90</td>
+<td style="text-align: center;">0.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">11</td>
+<td style="text-align: center;">90</td>
+<td style="text-align: center;">1.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">12</td>
+<td style="text-align: center;">90</td>
+<td style="text-align: center;">1.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Some readers might have difficulty with this problem because it relies upon an understanding of how BSTR kinetics experiments are performed and the data they generate, and that information has not been presented yet. BSTR kinetics experiments are considered in <a href="section_6_bstr_data_analysis.html" class="quarto-xref"><span>Chapter 19</span></a>. The important aspects of this example are that it was first necessary to decide which reactor model input variables to adjust, and then it was necessary to decide how many levels of each variable to use and what those levels should be. After doing that, the experimental design simply involves performing an experiment at every combination of the adjusted variable levels.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="symbols-used-in-sec-6_kin_data_gen" class="level2" data-number="18.7">
+<h2 data-number="18.7" class="anchored" data-anchor-id="symbols-used-in-sec-6_kin_data_gen"><span class="header-section-number">18.7</span> Symbols Used in <a href="#sec-6_kin_data_gen" class="quarto-xref"><span>Chapter 18</span></a></h2>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(b\)</span></td>
+<td style="text-align: left;">The intercept, a unique combination of the kinetics parameters, resulting from the linearization of the reactor model.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(m_i\)</span></td>
+<td style="text-align: left;">A slope, some unique combination of the kinetics parameters resulting from the linearization of the reactor model.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(x_i\)</span></td>
+<td style="text-align: left;">Some combination of the experimentally adjusted inputs and the experimental response defined so that the resulting reactor model is a linear equation.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(y_{\text{expt}}\)</span></td>
+<td style="text-align: left;">Experimentally measured response.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(y\)</span></td>
+<td style="text-align: left;">Some combination of the experimentally adjusted inputs and the experimental response defined so that the resulting reactor model is a linear equation.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(y_{\text{model}}\)</span></td>
+<td style="text-align: left;">Model-predicted response.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(R^2\)</span></td>
+<td style="text-align: left;">Coefficient of determination.</td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./section_6_intro.html" class="pagination-link" aria-label="Kinetics Data Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Kinetics Data Analysis</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./section_6_bstr_data_analysis.html" class="pagination-link" aria-label="Analysis of Kinetics Data from a BSTR">
+        <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

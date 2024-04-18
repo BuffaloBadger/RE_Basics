@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Reaction Engineering Basics - Appendix E — Collision Theory</title>
+<title>Reaction Engineering Basics - Appendix F — Collision Theory</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -32,6 +32,7 @@ ul.task-list li input[type="checkbox"] {
 <meta name="quarto:offset" content="./">
 <link href="./apndx_transition_state_theory.html" rel="next">
 <link href="./apndx_heat_exchange.html" rel="prev">
+<link href="./Graphics/BuffaloBadger_16_16.png" rel="icon" type="image/png">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -47,7 +48,12 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -56,6 +62,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -65,15 +72,42 @@ ul.task-list li input[type="checkbox"] {
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 </head>
 
 <body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
     <img src="./Graphics/Banner.png" alt="" class="navbar-logo">
     </a>
@@ -85,46 +119,51 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/total_ps.html" rel="" target="">
- <span class="menu-text">ToTaL PS</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics"> 
+<span class="menu-text">Reaction Engineering Basics</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics" rel="" target="">
- <span class="menu-text">Reaction Engineering Basics</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/SCoRE"> 
+<span class="menu-text">SCoRE</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="http://buffalobadger.github.io/about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="http://buffalobadger.github.io/ToTaL_Engineering"> 
+<span class="menu-text">ToTaL Engineering</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/The_Sett"> 
+<span class="menu-text">The Sett</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools ms-auto">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_prereq_knowledge.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_collision_theory.html"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Collision Theory</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
-        <i class="bi bi-search"></i>
-      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_collision_theory.html"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
     </div>
   </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
-        <div class="mt-2 flex-shrink-0 align-items-center">
-        <div class="sidebar-search">
-        <div id="quarto-search" class="" title="Search"></div>
-        </div>
-        </div>
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
@@ -188,7 +227,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_3_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Reactor Models</span></a>
+ <span class="menu-text">Ideal Reactor Models</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -202,8 +241,8 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_3_response_function.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Response Functions</span></span></a>
+  <a href="./section_3_reactor_models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Reactor Modeling Functions</span></span></a>
   </div>
 </li>
       </ul>
@@ -211,7 +250,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_4_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Kinetics Data Analysis</span></a>
+ <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -219,26 +258,44 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_data_generation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  <a href="./section_4_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
+  <a href="./section_4_bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
+  <a href="./section_4_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_4_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  <a href="./section_4_non_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Design of Non-Continuous Reactors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_4_continuous_design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
   </div>
 </li>
       </ul>
@@ -246,7 +303,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_5_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Isolated Ideal Reactors</span></a>
+ <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -254,44 +311,20 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_reaction_engineering_tasks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Response, Optimization and Design of Reactors</span></span></a>
+  <a href="./section_5_reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_bstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  <a href="./section_5_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_5_sbstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_non_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Design of Non-continuous Reactors</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_cstr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_pfr_analysis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./section_5_continuous_design.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Design of Continuous Reactors</span></span></a>
+  <a href="./section_5_recycle_pfr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
   </div>
 </li>
       </ul>
@@ -299,7 +332,7 @@ ul.task-list li input[type="checkbox"] {
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="./section_6_intro.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Modeling Ideal Reactor Systems</span></a>
+ <span class="menu-text">Kinetics Data Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -307,20 +340,26 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_reactor_networks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  <a href="./section_6_data_generation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_thermally_backmixed_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Thermally Back-mixed PFRs</span></span></a>
+  <a href="./section_6_bstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a BSTR</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./section_6_recycle_pfr.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Recycle PFRs</span></span></a>
+  <a href="./section_6_cstr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a CSTR</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./section_6_pfr_data_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Analysis of Kinetics Data from a PFR</span></span></a>
   </div>
 </li>
       </ul>
@@ -371,74 +410,80 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./apndx_useful_eqns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Frequently Used Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./apndx_prereq_knowledge.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Prerequisite Knowledge</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_nomenclature.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Acronyms, Notation, and Sign Conventions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_reaction_thermo.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reaction Thermodynamics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_heat_exchange.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
+ <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_collision_theory.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_transition_state_theory.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
+ <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_ideal_reactor_models.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
+ <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Ideal Reactor Models</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ates.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">H</span>&nbsp; <span class="chapter-title">Solving Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Algebraic/Transcendental Equations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_ivodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">I</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">J</span>&nbsp; <span class="chapter-title">Solving Initial-Value ODEs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./apndx_solve_daes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+ <span class="menu-text"><span class="chapter-number">K</span>&nbsp; <span class="chapter-title">Solving Differential-Algebraic Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_estimate_parameters.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">L</span>&nbsp; <span class="chapter-title">Parameter Estimation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apndx_solve_bvodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">M</span>&nbsp; <span class="chapter-title">Solving Boundary-Value ODEs</span></span></a>
   </div>
 </li>
       </ul>
@@ -446,27 +491,27 @@ ul.task-list li input[type="checkbox"] {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#the-kinetic-theory-of-gases" id="toc-the-kinetic-theory-of-gases" class="nav-link active" data-scroll-target="#the-kinetic-theory-of-gases"><span class="header-section-number">E.1</span> The Kinetic Theory of Gases</a></li>
-  <li><a href="#the-boltzmann-distribution" id="toc-the-boltzmann-distribution" class="nav-link" data-scroll-target="#the-boltzmann-distribution"><span class="header-section-number">E.2</span> The Boltzmann Distribution</a></li>
-  <li><a href="#collision-theory" id="toc-collision-theory" class="nav-link" data-scroll-target="#collision-theory"><span class="header-section-number">E.3</span> Collision Theory</a></li>
-  <li><a href="#limitations-of-collision-theory" id="toc-limitations-of-collision-theory" class="nav-link" data-scroll-target="#limitations-of-collision-theory"><span class="header-section-number">E.4</span> Limitations of Collision Theory</a></li>
-  <li><a href="#symbols-used-in-this-appendix" id="toc-symbols-used-in-this-appendix" class="nav-link" data-scroll-target="#symbols-used-in-this-appendix"><span class="header-section-number">E.5</span> Symbols Used in this Appendix</a></li>
+  <li><a href="#the-kinetic-theory-of-gases" id="toc-the-kinetic-theory-of-gases" class="nav-link active" data-scroll-target="#the-kinetic-theory-of-gases"><span class="header-section-number">F.1</span> The Kinetic Theory of Gases</a></li>
+  <li><a href="#the-boltzmann-distribution" id="toc-the-boltzmann-distribution" class="nav-link" data-scroll-target="#the-boltzmann-distribution"><span class="header-section-number">F.2</span> The Boltzmann Distribution</a></li>
+  <li><a href="#collision-theory" id="toc-collision-theory" class="nav-link" data-scroll-target="#collision-theory"><span class="header-section-number">F.3</span> Collision Theory</a></li>
+  <li><a href="#limitations-of-collision-theory" id="toc-limitations-of-collision-theory" class="nav-link" data-scroll-target="#limitations-of-collision-theory"><span class="header-section-number">F.4</span> Limitations of Collision Theory</a></li>
+  <li><a href="#symbols-used-in-this-appendix" id="toc-symbols-used-in-this-appendix" class="nav-link" data-scroll-target="#symbols-used-in-this-appendix"><span class="header-section-number">F.5</span> Symbols Used in this Appendix</a></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./apndx_useful_eqns.html">Appendices</a></li><li class="breadcrumb-item"><a href="./apndx_collision_theory.html"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Collision Theory</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-apndx_collision_theory" class="quarto-section-identifier">Appendix E — Collision Theory</span></h1>
+<h1 class="title"><span id="sec-apndx_collision_theory" class="quarto-section-identifier">Appendix F — Collision Theory</span></h1>
 </div>
 
 
@@ -479,63 +524,69 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
 
-<p>Because elementary reactions are exact descriptions of a single molecular event, it is possible to develop theories for how they occur. In this appendix, a theory for the rates of elementary reactions known as collision theory will be presented. It is based upon the kinetic theory of gases, so clearly, it applies to elementary gas phase reactions. <a href="apndx_transition_state_theory.html">Appendix&nbsp;<span>F</span></a> presents an alternative theory known as transition state theory.</p>
-<section id="the-kinetic-theory-of-gases" class="level2" data-number="E.1">
-<h2 data-number="E.1" class="anchored" data-anchor-id="the-kinetic-theory-of-gases"><span class="header-section-number">E.1</span> The Kinetic Theory of Gases</h2>
-<p>The kinetic theory of gases treats a gas as a large number of particles which are small compared to the distance between them. They are assumed to be in constant motion, with the full mass of each particle located at a point that is moving in space. Each kind of molecule has its own collision radius. Beyond their collision radii, the molecules exert no forces on each other, but when the distance between two molecules equals the sum of those molecules’ collision radii, they exert an infinite repulsive force on each other. This is commonly described by saying the molecules behave as hard spheres when they collide, but there is a significant difference. Hard spheres can have angular momentum due to spin, and they can transfer angular momentum when they collide. In the kinetic theory of gases, the mass of the molecules is all located at a point, so they cannot have angular momentum. Collisions between molecules are assumed to be perfectly elastic. This means that when two gas molecules collide there is no change in the total translational kinetic energy. As <a href="#fig-collision">Figure&nbsp;<span>E.1</span></a> (a) shows, an A molecule and a B molecule will collide when the distance between their centers equals the sum of their collision radii.</p>
-<div id="fig-collision" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="./Graphics/collisions.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;E.1: Collisions According to the Kinetic Theory of Gases (a) Two point masses collide when the distance between them equals the sum of their collision radii. (b) As one point mass travels through space, it sweeps out a cylindrical volume.</figcaption>
+
+<p>Because elementary reactions are exact descriptions of a single molecular event, it is possible to develop theories for how they occur. In this appendix, a theory for the rates of elementary reactions known as collision theory will be presented. It is based upon the kinetic theory of gases, so clearly, it applies to elementary gas phase reactions. <a href="apndx_transition_state_theory.html" class="quarto-xref">Appendix&nbsp;<span>G</span></a> presents an alternative theory known as transition state theory.</p>
+<section id="the-kinetic-theory-of-gases" class="level2" data-number="F.1">
+<h2 data-number="F.1" class="anchored" data-anchor-id="the-kinetic-theory-of-gases"><span class="header-section-number">F.1</span> The Kinetic Theory of Gases</h2>
+<p>The kinetic theory of gases treats a gas as a large number of particles which are small compared to the distance between them. They are assumed to be in constant motion, with the full mass of each particle located at a point that is moving in space. Each kind of molecule has its own collision radius. Beyond their collision radii, the molecules exert no forces on each other, but when the distance between two molecules equals the sum of those molecules’ collision radii, they exert an infinite repulsive force on each other. This is commonly described by saying the molecules behave as hard spheres when they collide, but there is a significant difference. Hard spheres can have angular momentum due to spin, and they can transfer angular momentum when they collide. In the kinetic theory of gases, the mass of the molecules is all located at a point, so they cannot have angular momentum. Collisions between molecules are assumed to be perfectly elastic. This means that when two gas molecules collide there is no change in the total translational kinetic energy. As <a href="#fig-collision" class="quarto-xref">Figure&nbsp;<span>F.1</span></a> (a) shows, an A molecule and a B molecule will collide when the distance between their centers equals the sum of their collision radii.</p>
+<div id="fig-collision" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-collision-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="./Graphics/collisions.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-collision-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;F.1: Collisions According to the Kinetic Theory of Gases (a) Two point masses collide when the distance between them equals the sum of their collision radii. (b) As one point mass travels through space, it sweeps out a cylindrical volume.
+</figcaption>
 </figure>
 </div>
 </section>
-<section id="the-boltzmann-distribution" class="level2" data-number="E.2">
-<h2 data-number="E.2" class="anchored" data-anchor-id="the-boltzmann-distribution"><span class="header-section-number">E.2</span> The Boltzmann Distribution</h2>
-<p>As the name implies, the basic assumption of collision theory is that reaction takes place as a result of collisions between molecules. The development of collision theory begins with the Boltzmann distribution (sometimes called the Maxwell-Boltzmann distribution) which describes how available energy is distributed within a collection of molecules. For a gas at a given temperature, the Boltzmann distribution tells how many molecules will have a velocity, <span class="math inline">\(u\)</span>, which lies in the interval from <span class="math inline">\(u\)</span> to <span class="math inline">\(u + du\)</span>. For a system which contains both A molecules and B molecules, a Boltzmann distribution of the velocities of A molecules, relative to one B molecule, is given in <a href="#eq-boltzmann">Equation&nbsp;<span>E.1</span></a>. The reduced mass, <span class="math inline">\(\mu\)</span>, that appears in the Boltzmann distribution is defined in <a href="#eq-red-mass">Equation&nbsp;<span>E.2</span></a>.</p>
+<section id="the-boltzmann-distribution" class="level2" data-number="F.2">
+<h2 data-number="F.2" class="anchored" data-anchor-id="the-boltzmann-distribution"><span class="header-section-number">F.2</span> The Boltzmann Distribution</h2>
+<p>As the name implies, the basic assumption of collision theory is that reaction takes place as a result of collisions between molecules. The development of collision theory begins with the Boltzmann distribution (sometimes called the Maxwell-Boltzmann distribution) which describes how available energy is distributed within a collection of molecules. For a gas at a given temperature, the Boltzmann distribution tells how many molecules will have a velocity, <span class="math inline">\(u\)</span>, which lies in the interval from <span class="math inline">\(u\)</span> to <span class="math inline">\(u + du\)</span>. For a system which contains both A molecules and B molecules, a Boltzmann distribution of the velocities of A molecules, relative to one B molecule, is given in <a href="#eq-boltzmann" class="quarto-xref">Equation&nbsp;<span>F.1</span></a>. The reduced mass, <span class="math inline">\(\mu\)</span>, that appears in the Boltzmann distribution is defined in <a href="#eq-red-mass" class="quarto-xref">Equation&nbsp;<span>F.2</span></a>.</p>
 <p><span id="eq-boltzmann"><span class="math display">\[
 dN_A = \left(4\pi N_A^*u^2\right)\left(\frac{\mu}{2\pi k_BT}\right)^{3/2} \exp{\left(\frac{-\mu u^2}{2k_BT}\right)}du
-\tag{E.1}\]</span></span></p>
+\tag{F.1}\]</span></span></p>
 <p><span id="eq-red-mass"><span class="math display">\[
 \mu = \frac{m_Am_B}{m_A + m_B}
-\tag{E.2}\]</span></span></p>
+\tag{F.2}\]</span></span></p>
 </section>
-<section id="collision-theory" class="level2" data-number="E.3">
-<h2 data-number="E.3" class="anchored" data-anchor-id="collision-theory"><span class="header-section-number">E.3</span> Collision Theory</h2>
-<p>The kinetic theory of gases doesn’t include any attractive or repulsive forces between molecules except at the instant they collide. As a consequence, when an A molecule travels through space (between collisions) its center traces out a straight line (not a curve). This straight line can be used as the axis of a cylinder with a radius equal to the sum of the collision radii of an A molecule and a B molecule, <a href="#fig-collision">Figure&nbsp;<span>E.1</span></a> (b). Thus as the A molecule travels through space it sweeps out a cylindrical volume and a collision will occur if a B molecule has its center within this cylinder. The cross-sectional area of this cylinder is called the collision cross-section, <span class="math inline">\(\sigma_{AB}\)</span>. The collision cross section is calculated using <a href="#eq-cross-section">Equation&nbsp;<span>E.3</span></a>.</p>
+<section id="collision-theory" class="level2" data-number="F.3">
+<h2 data-number="F.3" class="anchored" data-anchor-id="collision-theory"><span class="header-section-number">F.3</span> Collision Theory</h2>
+<p>The kinetic theory of gases doesn’t include any attractive or repulsive forces between molecules except at the instant they collide. As a consequence, when an A molecule travels through space (between collisions) its center traces out a straight line (not a curve). This straight line can be used as the axis of a cylinder with a radius equal to the sum of the collision radii of an A molecule and a B molecule, <a href="#fig-collision" class="quarto-xref">Figure&nbsp;<span>F.1</span></a> (b). Thus as the A molecule travels through space it sweeps out a cylindrical volume and a collision will occur if a B molecule has its center within this cylinder. The cross-sectional area of this cylinder is called the collision cross-section, <span class="math inline">\(\sigma_{AB}\)</span>. The collision cross section is calculated using <a href="#eq-cross-section" class="quarto-xref">Equation&nbsp;<span>F.3</span></a>.</p>
 <p><span id="eq-cross-section"><span class="math display">\[
 \sigma _{AB}=\pi \left(R_A + R_B\right)^2
-\tag{E.3}\]</span></span></p>
-<p>It is next assumed that B molecules are uniformly distributed throughout space. If <span class="math inline">\(N_B^*\)</span> equals the number of B molecules per unit volume, then on average, there will be one B molecule in a volume, <span class="math inline">\(V_B^*\)</span>, as given by <a href="#eq-vol-per-B">Equation&nbsp;<span>E.4</span></a>.</p>
+\tag{F.3}\]</span></span></p>
+<p>It is next assumed that B molecules are uniformly distributed throughout space. If <span class="math inline">\(N_B^*\)</span> equals the number of B molecules per unit volume, then on average, there will be one B molecule in a volume, <span class="math inline">\(V_B^*\)</span>, as given by <a href="#eq-vol-per-B" class="quarto-xref">Equation&nbsp;<span>F.4</span></a>.</p>
 <p><span id="eq-vol-per-B"><span class="math display">\[
 V_B^* = \frac{1}{N_B^*}
-\tag{E.4}\]</span></span></p>
-<p>The cylindrical volume swept out by a single A molecule before it collides with a B molecule will equal <span class="math inline">\(V_B^*\)</span>. The distance, <span class="math inline">\(L\)</span>, traveled by the A molecule before it undergoes collision can then be found using the formula for the volume of a cylinder, <a href="#eq-cylinder-length">Equation&nbsp;<span>E.5</span></a>.</p>
+\tag{F.4}\]</span></span></p>
+<p>The cylindrical volume swept out by a single A molecule before it collides with a B molecule will equal <span class="math inline">\(V_B^*\)</span>. The distance, <span class="math inline">\(L\)</span>, traveled by the A molecule before it undergoes collision can then be found using the formula for the volume of a cylinder, <a href="#eq-cylinder-length" class="quarto-xref">Equation&nbsp;<span>F.5</span></a>.</p>
 <p><span id="eq-cylinder-length"><span class="math display">\[
 L=\frac{V_B^*}{\sigma _{AB}}
-\tag{E.5}\]</span></span></p>
-<p>The amount of time, <span class="math inline">\(t\)</span>, it takes the A molecule to travel the distance <span class="math inline">\(L\)</span> can be found from its velocity, <span class="math inline">\(u\)</span>, relative to the B molecule with which it collides using <a href="#eq-time-to-collision">Equation&nbsp;<span>E.6</span></a> which is a simple rearrangement of the definition of a velocity.</p>
+\tag{F.5}\]</span></span></p>
+<p>The amount of time, <span class="math inline">\(t\)</span>, it takes the A molecule to travel the distance <span class="math inline">\(L\)</span> can be found from its velocity, <span class="math inline">\(u\)</span>, relative to the B molecule with which it collides using <a href="#eq-time-to-collision" class="quarto-xref">Equation&nbsp;<span>F.6</span></a> which is a simple rearrangement of the definition of a velocity.</p>
 <p><span id="eq-time-to-collision"><span class="math display">\[
 t=\frac{L}{u}
-\tag{E.6}\]</span></span></p>
-<p>Thus, <a href="#eq-time-to-collision">Equation&nbsp;<span>E.6</span></a> can be used to find how long it takes, on average, for an A molecule to collide with a single B molecule. Substituting <a href="#eq-cylinder-length">Equation&nbsp;<span>E.5</span></a> into <a href="#eq-time-to-collision">Equation&nbsp;<span>E.6</span></a> leads to <a href="#eq-single-coll-time">Equation&nbsp;<span>E.7</span></a> for the amount of time, <span class="math inline">\(t_{\text{single}}\)</span>, required for an A molecule to have a single collision with a B molecule.</p>
+\tag{F.6}\]</span></span></p>
+<p>Thus, <a href="#eq-time-to-collision" class="quarto-xref">Equation&nbsp;<span>F.6</span></a> can be used to find how long it takes, on average, for an A molecule to collide with a single B molecule. Substituting <a href="#eq-cylinder-length" class="quarto-xref">Equation&nbsp;<span>F.5</span></a> into <a href="#eq-time-to-collision" class="quarto-xref">Equation&nbsp;<span>F.6</span></a> leads to <a href="#eq-single-coll-time" class="quarto-xref">Equation&nbsp;<span>F.7</span></a> for the amount of time, <span class="math inline">\(t_{\text{single}}\)</span>, required for an A molecule to have a single collision with a B molecule.</p>
 <p><span id="eq-single-coll-time"><span class="math display">\[
 t_{\text{single}}=\frac{V_B^*}{u\sigma _{AB}}
-\tag{E.7}\]</span></span></p>
-<p>The time calculated using <a href="#eq-single-coll-time">Equation&nbsp;<span>E.7</span></a> is the period of the collisions of the A molecule with B molecules. The frequency of collisions of a single A molecule with a B molecule is equal to the reciprocal of this period. This frequency is only for collisions between the single A molecule under consideration and a B molecule. If <span class="math inline">\(\nu\)</span> is used to represent frequency, the frequency of collisions of <em>a single A molecule</em> moving with a velocity, <span class="math inline">\(u\)</span>, is then given by <a href="#eq-freq-single">Equation&nbsp;<span>E.8</span></a>.</p>
+\tag{F.7}\]</span></span></p>
+<p>The time calculated using <a href="#eq-single-coll-time" class="quarto-xref">Equation&nbsp;<span>F.7</span></a> is the period of the collisions of the A molecule with B molecules. The frequency of collisions of a single A molecule with a B molecule is equal to the reciprocal of this period. This frequency is only for collisions between the single A molecule under consideration and a B molecule. If <span class="math inline">\(\nu\)</span> is used to represent frequency, the frequency of collisions of <em>a single A molecule</em> moving with a velocity, <span class="math inline">\(u\)</span>, is then given by <a href="#eq-freq-single" class="quarto-xref">Equation&nbsp;<span>F.8</span></a>.</p>
 <p><span id="eq-freq-single"><span class="math display">\[
 \nu_{\text{single,u}} = \frac{u\sigma _{AB}}{V_B^*}
-\tag{E.8}\]</span></span></p>
-<p>The frequency of collisions involving <em>all A molecules</em> that are moving with one particular velocity, <span class="math inline">\(u\)</span>, is found by multiplying the frequency of collisions for a single A molecule by the total number of A molecules that are moving with that velocity, <a href="#eq-freq-all">Equation&nbsp;<span>E.9</span></a>.</p>
+\tag{F.8}\]</span></span></p>
+<p>The frequency of collisions involving <em>all A molecules</em> that are moving with one particular velocity, <span class="math inline">\(u\)</span>, is found by multiplying the frequency of collisions for a single A molecule by the total number of A molecules that are moving with that velocity, <a href="#eq-freq-all" class="quarto-xref">Equation&nbsp;<span>F.9</span></a>.</p>
 <p><span class="math display">\[
 \begin{pmatrix}\text{frequency of collisions}\\\text{involving all A molecules}\\\text{that have a velocity of } u \end{pmatrix} =  \begin{pmatrix}\text{frequency of collisions}\\\text{of a single A molecule}\\\text{that has a velocity of } u \end{pmatrix}\begin{pmatrix}\text{number of A}\\\text{molecules that}\\\text{have a velocity of } u \end{pmatrix}
 \]</span></p>
 <p><span id="eq-freq-all"><span class="math display">\[
 \nu_{\text{all,u}} = \frac{u\sigma _{AB}}{V_B^*}dN_A^*
-\tag{E.9}\]</span></span></p>
-<p>The frequency of <em>all</em> collisions between A molecules and B molecules (i. e. with <em>any</em> velocity) is found by summing <a href="#eq-freq-all">Equation&nbsp;<span>E.9</span></a> over all possible velocities. To do this, the Boltzmann distribution function, <a href="#eq-boltzmann">Equation&nbsp;<span>E.1</span></a>, is substituted into <a href="#eq-freq-all">Equation&nbsp;<span>E.9</span></a> along with substitution of <a href="#eq-vol-per-B">Equation&nbsp;<span>E.4</span></a>. Since the velocity distribution is continuous, the summation takes the form of an integral over all possible velocities. The frequency of all collisions between A and B molecules is often called a collision number. The symbol <span class="math inline">\(Z_{AB}^{\prime}\)</span> is used here to represent the frequency of all collisions between A molecules and B molecules, <a href="#eq-coll-number">Equation&nbsp;<span>E.10</span></a>.</p>
+\tag{F.9}\]</span></span></p>
+<p>The frequency of <em>all</em> collisions between A molecules and B molecules (i. e. with <em>any</em> velocity) is found by summing <a href="#eq-freq-all" class="quarto-xref">Equation&nbsp;<span>F.9</span></a> over all possible velocities. To do this, the Boltzmann distribution function, <a href="#eq-boltzmann" class="quarto-xref">Equation&nbsp;<span>F.1</span></a>, is substituted into <a href="#eq-freq-all" class="quarto-xref">Equation&nbsp;<span>F.9</span></a> along with substitution of <a href="#eq-vol-per-B" class="quarto-xref">Equation&nbsp;<span>F.4</span></a>. Since the velocity distribution is continuous, the summation takes the form of an integral over all possible velocities. The frequency of all collisions between A and B molecules is often called a collision number. The symbol <span class="math inline">\(Z_{AB}^{\prime}\)</span> is used here to represent the frequency of all collisions between A molecules and B molecules, <a href="#eq-coll-number" class="quarto-xref">Equation&nbsp;<span>F.10</span></a>.</p>
 <p><span class="math display">\[
 Z_{AB}^{\prime}=\sum_u \nu_{\text{all,u}} = \sum_u \left(\frac{u\sigma _{AB}}{V_B^*}dN_A^*\right)
 \]</span></p>
@@ -544,18 +595,18 @@ Z_{AB}^{\prime}=\int_{u=0}^{u=\infty}\left(4\pi N_A^*N_B^*u^3\sigma _{AB}\right)
 \]</span></p>
 <p><span id="eq-coll-number"><span class="math display">\[
 Z_{AB}^{\prime}=N_A^*N_B^*\sigma _{AB}\sqrt{\frac{8k_BT}{\pi \mu}}
-\tag{E.10}\]</span></span></p>
-<p>Some of the collisions between the A molecules and the B molecules will involve very small relative velocities along the centerline between the molecules. These are cases that involve a glancing collision. Therefore, it is next assumed that there must be some minimum relative velocity along the centerline between the molecules if a collision is going to lead to reaction. Collisions which have at least this minimum velocity associated with them can be called <em>reactive collisions</em>, and their frequency can be represented by <span class="math inline">\(Z_{AB}\)</span> (no prime). The frequency of collisions involving a velocity equal to or greater than some minimum, <span class="math inline">\(u_0\)</span>, can be found by replacing the lower limit of the integral above with <span class="math inline">\(u_0\)</span>, leading to <a href="#eq-reactive-col-number-AB">Equation&nbsp;<span>E.11</span></a> for <span class="math inline">\(Z_{AB}\)</span>, where <span class="math inline">\(\epsilon_0\)</span> is the energy corresponding to the relative velocity, <span class="math inline">\(u_0\)</span>.</p>
+\tag{F.10}\]</span></span></p>
+<p>Some of the collisions between the A molecules and the B molecules will involve very small relative velocities along the centerline between the molecules. These are cases that involve a glancing collision. Therefore, it is next assumed that there must be some minimum relative velocity along the centerline between the molecules if a collision is going to lead to reaction. Collisions which have at least this minimum velocity associated with them can be called <em>reactive collisions</em>, and their frequency can be represented by <span class="math inline">\(Z_{AB}\)</span> (no prime). The frequency of collisions involving a velocity equal to or greater than some minimum, <span class="math inline">\(u_0\)</span>, can be found by replacing the lower limit of the integral above with <span class="math inline">\(u_0\)</span>, leading to <a href="#eq-reactive-col-number-AB" class="quarto-xref">Equation&nbsp;<span>F.11</span></a> for <span class="math inline">\(Z_{AB}\)</span>, where <span class="math inline">\(\epsilon_0\)</span> is the energy corresponding to the relative velocity, <span class="math inline">\(u_0\)</span>.</p>
 <p><span id="eq-reactive-col-number-AB"><span class="math display">\[
 Z_{AB}=N_A^*N_B^*\sigma _{AB}\sqrt{\frac{8k_BT}{\pi \mu}}\exp{\left(\frac{-\epsilon_0}{k_BT}\right)}
-\tag{E.11}\]</span></span></p>
-<p>An analysis similar to the one just presented can be done for collisions between two A molecules. The primary difference is that one must be careful not to double-count the collisions. The resulting expression for the reactive collision frequency, <span class="math inline">\(Z_{AA}\)</span>, is given in <a href="#eq-reactive-col-number-AA">Equation&nbsp;<span>E.12</span></a>. The analysis of a collision between three molecules, A, B, and C, requires a slight modification. The probability that all three molecules are in contact simultaneously is extremely small. Therefore, a collision is considered to have occurred whenever the centers of all three molecules are within a distance <span class="math inline">\(l\)</span> of each other. The resulting expression for the reactive three-body collision frequency, <span class="math inline">\(Z_{ABC}\)</span>, is given in <a href="#eq-reactive-col-number-ABC">Equation&nbsp;<span>E.13</span></a>.</p>
+\tag{F.11}\]</span></span></p>
+<p>An analysis similar to the one just presented can be done for collisions between two A molecules. The primary difference is that one must be careful not to double-count the collisions. The resulting expression for the reactive collision frequency, <span class="math inline">\(Z_{AA}\)</span>, is given in <a href="#eq-reactive-col-number-AA" class="quarto-xref">Equation&nbsp;<span>F.12</span></a>. The analysis of a collision between three molecules, A, B, and C, requires a slight modification. The probability that all three molecules are in contact simultaneously is extremely small. Therefore, a collision is considered to have occurred whenever the centers of all three molecules are within a distance <span class="math inline">\(l\)</span> of each other. The resulting expression for the reactive three-body collision frequency, <span class="math inline">\(Z_{ABC}\)</span>, is given in <a href="#eq-reactive-col-number-ABC" class="quarto-xref">Equation&nbsp;<span>F.13</span></a>.</p>
 <p><span id="eq-reactive-col-number-AA"><span class="math display">\[
 Z_{AA}=\left(N_A^*\right)\sigma _{AA}\sqrt{\frac{2k_BT}{\pi \mu}}\exp{\left(\frac{-\epsilon_0}{k_BT}\right)}
-\tag{E.12}\]</span></span></p>
+\tag{F.12}\]</span></span></p>
 <p><span id="eq-reactive-col-number-ABC"><span class="math display">\[
 Z_{ABC}=8N_A^*N_B^*N_C^*\sigma _{AB}\sigma _{BC}l\sqrt{\frac{2k_BT}{\pi}}\left( \frac{1}{\mu_{AB}} -\frac{1}{\mu_{BC}} \right)\exp{\left(\frac{-\epsilon_0}{k_BT}\right)}
-\tag{E.13}\]</span></span></p>
+\tag{F.13}\]</span></span></p>
 <p>To this point, all the equations have been developed on the basis of molecules. Through the use of Avogadro’s number, <span class="math inline">\(N_{Av}\)</span>, each quantity appearing in the equations above can be converted to molar units.</p>
 <p><span class="math display">\[
 \epsilon_0 = \frac{E}{N_{Av}}
@@ -569,29 +620,29 @@ N_i^*= N_{Av}C_i
 <p><span class="math display">\[
 Z_{AB}= N_{Av}r_{j,f}
 \]</span></p>
-<p>Substituting into Equations <a href="#eq-reactive-col-number-AB"><span>E.11</span></a>, <a href="#eq-reactive-col-number-AA"><span>E.12</span></a> and <a href="#eq-reactive-col-number-ABC"><span>E.13</span></a> gives Equations <a href="#eq-forward-rate-AB"><span>E.14</span></a>, <a href="#eq-forward-rate-AA"><span>E.15</span></a> and <a href="#eq-forward-rate-ABC"><span>E.16</span></a> for the generalized <em>forward rates</em> of bimolecular A-B reactions, bimolecular A-A reactions, and termolecular A-B-C reactions, respectively. It should be noted that these expressions only give the rate of the reaction in the forward direction, as indicated by the <span class="math inline">\(f\)</span> appended to the subscript on the rate, <span class="math inline">\(r\)</span>.</p>
+<p>Substituting into Equations <a href="#eq-reactive-col-number-AB" class="quarto-xref"><span>F.11</span></a>, <a href="#eq-reactive-col-number-AA" class="quarto-xref"><span>F.12</span></a> and <a href="#eq-reactive-col-number-ABC" class="quarto-xref"><span>F.13</span></a> gives Equations <a href="#eq-forward-rate-AB" class="quarto-xref"><span>F.14</span></a>, <a href="#eq-forward-rate-AA" class="quarto-xref"><span>F.15</span></a> and <a href="#eq-forward-rate-ABC" class="quarto-xref"><span>F.16</span></a> for the generalized <em>forward rates</em> of bimolecular A-B reactions, bimolecular A-A reactions, and termolecular A-B-C reactions, respectively. It should be noted that these expressions only give the rate of the reaction in the forward direction, as indicated by the <span class="math inline">\(f\)</span> appended to the subscript on the rate, <span class="math inline">\(r\)</span>.</p>
 <p><span id="eq-forward-rate-AB"><span class="math display">\[
 r_{AB,f}=N_{Av}\sigma _{AB}C_AC_B\sqrt{\frac{8k_BT}{\pi \mu}}\exp{\left(\frac{-E_j}{RT}\right)}
-\tag{E.14}\]</span></span></p>
+\tag{F.14}\]</span></span></p>
 <p><span id="eq-forward-rate-AA"><span class="math display">\[
 r_{AA,f}=N_{Av}\sigma _{AA}C_A^2\sqrt{\frac{2k_BT}{\pi \mu}}\exp{\left(\frac{-E_j}{RT}\right)}
-\tag{E.15}\]</span></span></p>
+\tag{F.15}\]</span></span></p>
 <p><span id="eq-forward-rate-ABC"><span class="math display">\[
 \begin{align}
 r_{ABC,f} &amp;= 8N_{Av}\sigma _{AB}\sigma _{BC}IC_AC_BC_C\sqrt{\frac{2k_BT}{\pi}} \\
 &amp; \times \left( \frac{1}{\mu_{AB}} -\frac{1}{\mu_{BC}} \right)\exp{\left(\frac{-E_j}{RT}\right)}
 \end{align}
-\tag{E.16}\]</span></span></p>
+\tag{F.16}\]</span></span></p>
 <p>Real molecules are not spheres. For an asymmetrical molecule, it may be necessary for the collision to take place in one part of the molecule in order to have reaction take place. If the colliding molecules are not oriented properly, necessary bonds can’t form and reaction can’t occur. The collision theory does not account for this kind of steric (geometric) limitation. If a reaction does have steric limitations, a constant is introduced into the rate expressions above. This constant, called a <em>steric factor</em>, is equal to the fraction of the collisions that have the orientation necessary for reaction to take place.</p>
-<p>If the constants in the rate expressions above are unknown, they can be treated as adjustable parameters that are used to fit the rate expression to experimental data. In order to do so, groups of constants in the expressions above must be lumped together into single constants. Doing results in a single collision theory rate expression for the forward rate of an elementary reaction, <a href="#eq-gen-forward-rate">Equation&nbsp;<span>E.17</span></a>, irrespective of whether it is a bimolecular A-B reaction, a bimolecular A-A reaction or a termolecular A-B-C reaction. Note that the stoichiometric coefficients of the reactants in that equation, <span class="math inline">\(\nu_{i,j}\)</span>, are negative numbers so the resulting exponents on the concentrations are positive.</p>
+<p>If the constants in the rate expressions above are unknown, they can be treated as adjustable parameters that are used to fit the rate expression to experimental data. In order to do so, groups of constants in the expressions above must be lumped together into single constants. Doing results in a single collision theory rate expression for the forward rate of an elementary reaction, <a href="#eq-gen-forward-rate" class="quarto-xref">Equation&nbsp;<span>F.17</span></a>, irrespective of whether it is a bimolecular A-B reaction, a bimolecular A-A reaction or a termolecular A-B-C reaction. Note that the stoichiometric coefficients of the reactants in that equation, <span class="math inline">\(\nu_{i,j}\)</span>, are negative numbers so the resulting exponents on the concentrations are positive.</p>
 <p><span id="eq-gen-forward-rate"><span class="math display">\[
 r_{j,f} = k_{0,j,f}\sqrt{T}\exp{\left(\frac{-E_{j,f}}{RT}\right)}\prod_{i_r} C_{i_r}^{-\nu_{i_u,j}}
-\tag{E.17}\]</span></span></p>
-<p>Generally the <em>net</em> rate of reaction is more useful than the rate in the forward direction only. It is straightforward to generate an expression for the net rate of reaction. The definition of forward and reverse is completely arbitrary, so <a href="#eq-gen-forward-rate">Equation&nbsp;<span>E.17</span></a> can be used to generate an expression for the rate in the reverse direction, too.</p>
+\tag{F.17}\]</span></span></p>
+<p>Generally the <em>net</em> rate of reaction is more useful than the rate in the forward direction only. It is straightforward to generate an expression for the net rate of reaction. The definition of forward and reverse is completely arbitrary, so <a href="#eq-gen-forward-rate" class="quarto-xref">Equation&nbsp;<span>F.17</span></a> can be used to generate an expression for the rate in the reverse direction, too.</p>
 <p><span id="eq-gen-reverse-rate"><span class="math display">\[
 r_{j,r} = k_{0,j,r}\sqrt{T}\exp{\left(\frac{-E_{j,r}}{RT}\right)}\prod_{i_p} C_{i_p}^{\nu_{i_p,j}}
-\tag{E.18}\]</span></span></p>
-<p>When the reaction reaches thermodynamic equilibrium, its net rate will equal zero, and as a consequence, the rate in the forward direction will equal the rate in the reverse direction. Thus, the two uni-directional rates can be set equal to each other while simultaneously recognizing that this is true only when the concentrations are equal to the equilibrium concentrations. Rearrangement of the resulting equation reveals that the ratio of the forward to the reverse rate coefficients must equal the concentration equilibrium constant for the elementary reaction, <a href="#eq-coeff-ratio">Equation&nbsp;<span>E.19</span></a>.</p>
+\tag{F.18}\]</span></span></p>
+<p>When the reaction reaches thermodynamic equilibrium, its net rate will equal zero, and as a consequence, the rate in the forward direction will equal the rate in the reverse direction. Thus, the two uni-directional rates can be set equal to each other while simultaneously recognizing that this is true only when the concentrations are equal to the equilibrium concentrations. Rearrangement of the resulting equation reveals that the ratio of the forward to the reverse rate coefficients must equal the concentration equilibrium constant for the elementary reaction, <a href="#eq-coeff-ratio" class="quarto-xref">Equation&nbsp;<span>F.19</span></a>.</p>
 <p><span class="math display">\[
 r_{j,f}\Bigr\rvert_\text{equilibrium} = r_{j,r}\Bigr\rvert_\text{equilibrium}
 \]</span></p>
@@ -603,8 +654,8 @@ k_{0,j,f}\sqrt{T}\exp{\left(\frac{-E_{j,f}}{RT}\right)}\prod_{i_r} C_{i_r}^{-\nu
 \]</span></p>
 <p><span id="eq-coeff-ratio"><span class="math display">\[
 \frac{k_{0,j,f}\sqrt{T}\exp{\left(\frac{-E_{j,f}}{RT}\right)}}{k_{0,j,r}\sqrt{T}\exp{\left(\frac{-E_{j,r}}{RT}\right)}} = K_{j,eq_c}
-\tag{E.19}\]</span></span></p>
-<p>An expression for the net rate of reaction according to collision theory is found by taking the difference between the forward and reverse rates. This can be written using the reverse rate coefficient, as in <a href="#eq-net-rate-as-diff">Equation&nbsp;<span>E.20</span></a> or using the equilibrium constant, as in <a href="#eq-net-rate-with-eq-K">Equation&nbsp;<span>E.21</span></a>. The two forms are equivalent.</p>
+\tag{F.19}\]</span></span></p>
+<p>An expression for the net rate of reaction according to collision theory is found by taking the difference between the forward and reverse rates. This can be written using the reverse rate coefficient, as in <a href="#eq-net-rate-as-diff" class="quarto-xref">Equation&nbsp;<span>F.20</span></a> or using the equilibrium constant, as in <a href="#eq-net-rate-with-eq-K" class="quarto-xref">Equation&nbsp;<span>F.21</span></a>. The two forms are equivalent.</p>
 <p><span class="math display">\[
 r_j = r_{j,f} - r_{j,r}
 \]</span></p>
@@ -612,21 +663,21 @@ r_j = r_{j,f} - r_{j,r}
 \begin{align}
 r_j &amp;= k_{0,j,f}\sqrt{T}\exp{\left(\frac{-E_{j,f}}{RT}\right)}\prod_{i_r} C_{i_r}^{-\nu_{i_r,j}} \\&amp;- k_{0,j,r}\sqrt{T}\exp{\left(\frac{-E_{j,r}}{RT}\right)}\prod_{i_p} C_{i_p}^{\nu_{i_p,j}}
 \end{align}
-\tag{E.20}\]</span></span></p>
+\tag{F.20}\]</span></span></p>
 <p><span id="eq-net-rate-with-eq-K"><span class="math display">\[
 r_j = k_{0,j,f}\sqrt{T}\exp{\left(\frac{-E_{j,f}}{RT}\right)}\left(\prod_{i_r} C_{i_r}^{-\nu_{i_r,j}}\right)\left(1-\frac{\displaystyle \prod_i C_i^{\nu_{i,j}}}{K_{j,eq_c}}\right)
-\tag{E.21}\]</span></span></p>
-<p>It is often convenient to use partial pressures as the composition variables in a gas phase reaction system. Equations <a href="#eq-net-rate-as-diff"><span>E.20</span></a> and <a href="#eq-net-rate-with-eq-K"><span>E.21</span></a> can be easily converted so that partial pressures replace the concentrations. Since Equations <a href="#eq-net-rate-as-diff"><span>E.20</span></a> and <a href="#eq-net-rate-with-eq-K"><span>E.21</span></a> were derived assuming ideal gas type behavior, the concentrations and partial pressures are simply related via the ideal gas law, <a href="#eq-conc-to-pressure">Equation&nbsp;<span>E.22</span></a>. Substitution of <a href="#eq-conc-to-pressure">Equation&nbsp;<span>E.22</span></a> into Equation <a href="#eq-net-rate-as-diff"><span>E.20</span></a> or <a href="#eq-net-rate-with-eq-K"><span>E.21</span></a> leads, in a straightforward manner, to a rate expression in terms of partial pressures instead of concentrations.</p>
+\tag{F.21}\]</span></span></p>
+<p>It is often convenient to use partial pressures as the composition variables in a gas phase reaction system. Equations <a href="#eq-net-rate-as-diff" class="quarto-xref"><span>F.20</span></a> and <a href="#eq-net-rate-with-eq-K" class="quarto-xref"><span>F.21</span></a> can be easily converted so that partial pressures replace the concentrations. Since Equations <a href="#eq-net-rate-as-diff" class="quarto-xref"><span>F.20</span></a> and <a href="#eq-net-rate-with-eq-K" class="quarto-xref"><span>F.21</span></a> were derived assuming ideal gas type behavior, the concentrations and partial pressures are simply related via the ideal gas law, <a href="#eq-conc-to-pressure" class="quarto-xref">Equation&nbsp;<span>F.22</span></a>. Substitution of <a href="#eq-conc-to-pressure" class="quarto-xref">Equation&nbsp;<span>F.22</span></a> into Equation <a href="#eq-net-rate-as-diff" class="quarto-xref"><span>F.20</span></a> or <a href="#eq-net-rate-with-eq-K" class="quarto-xref"><span>F.21</span></a> leads, in a straightforward manner, to a rate expression in terms of partial pressures instead of concentrations.</p>
 <p><span id="eq-conc-to-pressure"><span class="math display">\[
 C_i=\frac{n_i}{V}=\frac{P_i}{RT}
-\tag{E.22}\]</span></span></p>
+\tag{F.22}\]</span></span></p>
 </section>
-<section id="limitations-of-collision-theory" class="level2" data-number="E.4">
-<h2 data-number="E.4" class="anchored" data-anchor-id="limitations-of-collision-theory"><span class="header-section-number">E.4</span> Limitations of Collision Theory</h2>
+<section id="limitations-of-collision-theory" class="level2" data-number="F.4">
+<h2 data-number="F.4" class="anchored" data-anchor-id="limitations-of-collision-theory"><span class="header-section-number">F.4</span> Limitations of Collision Theory</h2>
 <p>Collision theory as presented here is sometimes referred to as simple collision theory. It offers a simple molecular view of how reactions take place, and it can be useful for making rough approximations of the values of pre-exponential factors. There are several shortcomings of simple collision theory. First, the point-mass assumption is very limiting; it ignores internal motions within molecules and the energy associated with those internal motions. A second shortcoming is the absence of attractive and repulsive forces between molecules. In a real system, a molecule that is passing close to a second molecule may be attracted by it, causing it to travel in a curved path and collide with that molecule instead of continuing past it on a straight line path. Another shortcoming is the absence of orientation requirements for reaction to occur. Simple collision theory does not offer an easy way to estimate the activation energy, and it strictly applies only to gas phase reactions. There are also reactions for which the observed rate is higher than that predicted by the collision theory, and this can’t be explained by steric effects because they should lower the reaction rate, not raise it. There are more advanced formulations of collision theory that address the shortcomings enumerated here. Since these advanced formulations use more accurate representations of the molecules, they are often referred to as molecular reaction dynamics models.</p>
 </section>
-<section id="symbols-used-in-this-appendix" class="level2" data-number="E.5">
-<h2 data-number="E.5" class="anchored" data-anchor-id="symbols-used-in-this-appendix"><span class="header-section-number">E.5</span> Symbols Used in this Appendix</h2>
+<section id="symbols-used-in-this-appendix" class="level2" data-number="F.5">
+<h2 data-number="F.5" class="anchored" data-anchor-id="symbols-used-in-this-appendix"><span class="header-section-number">F.5</span> Symbols Used in this Appendix</h2>
 <table class="table">
 <colgroup>
 <col style="width: 20%">
@@ -870,10 +921,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -883,8 +951,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -896,7 +973,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -940,6 +1140,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -965,6 +1166,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1026,17 +1253,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="./apndx_heat_exchange.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span>
+      <a href="./apndx_heat_exchange.html" class="pagination-link" aria-label="Reactor Heat Exchange">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">E</span>&nbsp; <span class="chapter-title">Reactor Heat Exchange</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./apndx_transition_state_theory.html" class="pagination-link">
-        <span class="nav-page-text"><span class="chapter-number">F</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./apndx_transition_state_theory.html" class="pagination-link" aria-label="Transition State Theory">
+        <span class="nav-page-text"><span class="chapter-number">G</span>&nbsp; <span class="chapter-title">Transition State Theory</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
+
 
 
 
