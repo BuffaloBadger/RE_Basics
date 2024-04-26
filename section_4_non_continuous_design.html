@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -469,7 +498,21 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#bstr-design-objectives" id="toc-bstr-design-objectives" class="nav-link active" data-scroll-target="#bstr-design-objectives"><span class="header-section-number">11.1</span> BSTR Design Objectives</a></li>
+  <li><a href="#design-principles-and-scale" id="toc-design-principles-and-scale" class="nav-link active" data-scroll-target="#design-principles-and-scale"><span class="header-section-number">11.1</span> Design Principles and Scale</a></li>
+  <li><a href="#preliminary-reactor-design" id="toc-preliminary-reactor-design" class="nav-link" data-scroll-target="#preliminary-reactor-design"><span class="header-section-number">11.2</span> Preliminary Reactor Design</a>
+  <ul class="collapse">
+  <li><a href="#design-task-characteristics" id="toc-design-task-characteristics" class="nav-link" data-scroll-target="#design-task-characteristics"><span class="header-section-number">11.2.1</span> Design Task Characteristics</a></li>
+  <li><a href="#choice-of-the-reactor-type" id="toc-choice-of-the-reactor-type" class="nav-link" data-scroll-target="#choice-of-the-reactor-type"><span class="header-section-number">11.2.2</span> Choice of the Reactor Type</a></li>
+  <li><a href="#reactor-metrics-as-economic-indicators" id="toc-reactor-metrics-as-economic-indicators" class="nav-link" data-scroll-target="#reactor-metrics-as-economic-indicators"><span class="header-section-number">11.2.3</span> Reactor Metrics as Economic Indicators</a></li>
+  <li><a href="#specification-of-the-missing-reactor-model-parameters" id="toc-specification-of-the-missing-reactor-model-parameters" class="nav-link" data-scroll-target="#specification-of-the-missing-reactor-model-parameters"><span class="header-section-number">11.2.4</span> Specification of the Missing Reactor Model Parameters</a></li>
+  <li><a href="#comparing-fully-specified-reactors" id="toc-comparing-fully-specified-reactors" class="nav-link" data-scroll-target="#comparing-fully-specified-reactors"><span class="header-section-number">11.2.5</span> Comparing Fully Specified Reactors</a></li>
+  <li><a href="#preliminary-design-constraints" id="toc-preliminary-design-constraints" class="nav-link" data-scroll-target="#preliminary-design-constraints"><span class="header-section-number">11.2.6</span> Preliminary Design Constraints</a></li>
+  </ul></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">11.3</span> Example</a>
+  <ul class="collapse">
+  <li><a href="#preliminary-reactor-design-for-an-autocatalytic-reaction" id="toc-preliminary-reactor-design-for-an-autocatalytic-reaction" class="nav-link" data-scroll-target="#preliminary-reactor-design-for-an-autocatalytic-reaction"><span class="header-section-number">11.3.1</span> Preliminary Reactor Design for an Autocatalytic Reaction</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-sec-4_non_continuous_design" id="toc-symbols-used-in-sec-4_non_continuous_design" class="nav-link" data-scroll-target="#symbols-used-in-sec-4_non_continuous_design"><span class="header-section-number">11.4</span> Symbols Used in <span>Chapter 11</span></a></li>
   </ul>
 </nav>
     </div>
@@ -495,10 +538,217 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This chapter will be added as soon as I finish writing it.</p>
-<section id="bstr-design-objectives" class="level2" data-number="11.1">
-<h2 data-number="11.1" class="anchored" data-anchor-id="bstr-design-objectives"><span class="header-section-number">11.1</span> BSTR Design Objectives</h2>
-<p>As noted in <a href="section_4_reaction_engineering_tasks.html" class="quarto-xref"><span>Chapter 8</span></a>, design assignments typically do not fully specify the reactor system or its operation. They require the engineer find a set of system and process specifications that optimize some financial objective such as maximizing the rate of profit. That can entail calculation of fixed and operating costs, etc. together with reactor modeling. These types of design problems are beyond the scope of <em>Reaction Engineering Basics</em>. However, for illustrative purposes, reactor and process parameters can be used as indicators of these costs. For an isolated BSTR a few of the reactor and process parameters that might be used as economic indicators include the system volume (smaller is better), the processing time (shorter is better), the net production rate, <a href="section_4_bstr_analysis.html#eq-bstr_net_rate" class="quarto-xref">Equation&nbsp;<span>9.1</span></a>, (larger is better), heat requirements (smaller is better), and selectivity or yield of one of the products. These indicators can be minimized or maximized using other reactor and process parameters including initial composition, temperature, reaction time, etc. Design assignments involving BSTRs are considered in <a href="#sec-4_non_continuous_design" class="quarto-xref"><span>Chapter 11</span></a>.</p>
+<p><a href="section_4_reaction_engineering_tasks.html" class="quarto-xref"><span>Chapter 8</span></a> describes and differentiates between response, optimization, and design tasks. <a href="section_4_bstr_analysis.html" class="quarto-xref"><span>Chapter 9</span></a> and <a href="section_4_sbstr_analysis.html" class="quarto-xref"><span>Chapter 10</span></a> examine the modeling of two kinds of non-continuous, ideal reactors: BSTRs and SBSTRs. They illustrate the use of the reactor design equations for those non-continuous reactors to complete reaction engineering assignments involving response and optimization tasks. This chapter introduces design tasks for non-continuous ideal reactors.</p>
+<p>Reactor design is an advanced aspect of reaction engineering. This chapter is a very basic introduction to reactor design. Its intent is to make the reader aware that many reaction engineering assignments are open-ended and do not have a single “correct” answer like those considered in Chapters <a href="section_4_bstr_analysis.html" class="quarto-xref"><span>9</span></a> and <a href="section_4_sbstr_analysis.html" class="quarto-xref"><span>10</span></a>. Unlike those assignments, reactor design assignments can provide opportunities for a reaction engineer to be very creative and not simply follow some “cookie-cutter” approach to completing assignments. They can lead to discovery of innovative ways to operate reactors and the invention of new kinds of reactors.</p>
+<section id="design-principles-and-scale" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="design-principles-and-scale"><span class="header-section-number">11.1</span> Design Principles and Scale</h2>
+<p>Design assignments can vary in scale from design of a single reactor to design of an entire process. There are principles that should guide the design no matter the scale. Among the more important principles, the process should be safe to operate, it should comply with all governmental regulations, it should not have unfavorable or unjust environmental and societal impacts, and it should be profitable.</p>
+<p>Chemical reactors are virtually always one part of a larger process. At the largest scale, reactive process design starts with a decision to build a process from scratch. The decision to do this would be informed by some number of preliminary analyses of the market for the products from the process, the economic potential of the process, the technical feasibility of the process, etc. Full reactive process design will involve a team comprising members with expertise in finance, planning, procurement, law, construction, chemistry, engineering, safety, etc. The members with engineering expertise would include a reaction engineer among other engineering specializations such as process design, separations, control, heating and cooling, etc.</p>
+<p>Some of the economic factors that must be evaluated as part of the process design are capital costs (one time expenses to purchase the necessary equipment, etc.), operating costs (including labor, utilities, feedstock costs, waste disposal, etc.), maintenance costs, licensing costs (e. g. royalties for use of patented technology), income the process will generate and the return on investment. Business and legal activities include choosing the site for the process, securing necessary permits, licensing any necessary technology, identifying all regulatory restrictions that apply to the process, purchasing the equipment as specified by the design engineers, and others. The engineering team lays out the piping and processing equipment and designs the individual components, making sure that they are all properly and efficiently integrated. Specific tasks that a reaction engineer would be involved in include selecting the type of reactor(s) to be used, sizing the reactor(s) and specifying operational prameters (heating and cooling, feed temperature and composition, etc.), specifying turn-around tasks and timing for non-continuous processes, and developing procedures for start-up, operation, shut-down, and various possible emergencies.</p>
+<p>Participation in a full reactive process design of the kind just described requires much deeper knowledge of reaction engineering and much more reaction engineering experience than most readers of this book are likely to possess. <strong>Preliminary design involves a more limited scope</strong>. A preliminary reactor design might be one of the factors that go into the decision to build the full process. This chapter considers preliminary design that only includes the reactor.</p>
+</section>
+<section id="preliminary-reactor-design" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="preliminary-reactor-design"><span class="header-section-number">11.2</span> Preliminary Reactor Design</h2>
+<p>A review of the examples in Chapters <a href="section_4_bstr_analysis.html" class="quarto-xref"><span>9</span></a> and <a href="section_4_sbstr_analysis.html" class="quarto-xref"><span>10</span></a> will reveal that simply analyzing a reactor requires a relatively shallow level of understanding of reactor performance and a relatively low level of thinking. That is, if one learns how to generate and simplify the reactor design equations for a given system along with some important definitions, modeling the reactor always follows the same general steps. (Write and simplify the design equations, specify the initial and final values, write ancillary equations needed to evaluate the derivatives at the start of an integration step, write ancillary equations to calculate the initial and final values, solve the reactor design equations, and write ancillary equations and use them to calculate any other quantities of interest.) When one has that minimum level of knowledge and knows the steps to follow to solve the design equations, response and optimization tasks can be completed without too much additional thought or understanding.</p>
+<p>Looking at the discussion that follows many of the examples in Chapters <a href="section_4_bstr_analysis.html" class="quarto-xref"><span>9</span></a> and <a href="section_4_sbstr_analysis.html" class="quarto-xref"><span>10</span></a>, and particularly at the qualitative analyses, reveals a deeper level of understanding and a higher level of thinking. At that level, physical explanations for observed phenomena are sought and developed. That is, those discussions seek to <em>explain</em> in physical (not mathematical) terms why a graph has a given shape or passes through a minimum or maximum, or why increasing the inlet temperature or inlet flow rate affects the output in the way that it does. It requires deeper knowledge (e. g. what factors can cause temperature or reaction rate to change) and higher level of thinking (e. g. which of those factors are at play or important at a given point in the process; how will the importance of those factors change over the course of processing; how are those factors related to the reactor inputs).</p>
+<p>It can be argued that reactor design requires an even deeper level of understanding of reactor performance and an eveh higher level of thinking. During reactor design the reaction engineer isn’t trying to explain an observed reactor response. Rather, the engineer needs to <em>predict</em> how to cause a desired reactor response by altering the reactor, what goes into it, and how it is operated. When a reaction engineer lacks an appropriate level of understanding or has not learned to think at an appropriate level, their design strategy can devolve to the point of trial and error which is at best inefficient and at worst, ineffective.</p>
+<section id="design-task-characteristics" class="level3" data-number="11.2.1">
+<h3 data-number="11.2.1" class="anchored" data-anchor-id="design-task-characteristics"><span class="header-section-number">11.2.1</span> Design Task Characteristics</h3>
+<p>The aspect of design tasks that differentiates them from response and optimization tasks is that a design task begins with an <strong>underspecifed reactor process</strong>. For BSTRs and SBSTRs the reactor design equations are a set of IVODEs with time as the independent variable. As explained in <a href="apndx_solve_ivodes.html" class="quarto-xref"><span>Appendix J</span></a>, a set of IVODEs can be solved either to find the values of the dependent variables over time or the value of an unknown constant together with the values of the dependent variables over time. Quite simply, an underspecified reactor process does not provide enough information to solve the reactor design equations.</p>
+<p>Recall from <a href="apndx_solve_ivodes.html" class="quarto-xref"><span>Appendix J</span></a> that when a set of IVODEs is solved to find the values of the dependent variables over time the following must be known: the initial values of the independent and dependent variables, the final value of one variable, and the value of every other quantity that appears in the design equations. When the set of IVODEs is solved for the value of an unknown constant, together with the values of the dependent variables over time, a second final value must be known.</p>
+<p>The quantities that must be known when solving the IVODEs can be referred to collectively as the reactor model parameters. From this perspective, the distinguishing characteristic of a design assignment is that some of the reactor model parameters are not known, and the purpose of the design assignment is to find the “best” values for those parameters.</p>
+</section>
+<section id="choice-of-the-reactor-type" class="level3" data-number="11.2.2">
+<h3 data-number="11.2.2" class="anchored" data-anchor-id="choice-of-the-reactor-type"><span class="header-section-number">11.2.2</span> Choice of the Reactor Type</h3>
+<p>As already mentioned, reactor design tasks begin with an underspecified reactor. In almost all cases, the assignment identifies the chemical to be produced, but very often it <strong>does not specify the type of reactor</strong> to be used. If the type of reactor to use is not specified, that is the first decision a design engineer needs to make. This chapter only considers the design of non-continuous reactors, so the choice boils down to a BSTR or an SBSTR. This choice was discussed in Chapters <a href="section_4_bstr_analysis.html" class="quarto-xref"><span>9</span></a> and <a href="section_4_sbstr_analysis.html" class="quarto-xref"><span>10</span></a>. <a href="section_4_sbstr_analysis.html" class="quarto-xref"><span>Chapter 10</span></a> identified three situations where an SBSTR can offer a clear advantage over a BSTR: fast, highly exothermic reactions, reactions where the selectivity is strongly affected by the relative amounts of the reactants, and reversible reactions where a product can be selectivity removed. If one of these situations clearly pertains, the choice to use an SBSTR is obvious.</p>
+<p>When the choice between a BSTR and an SBSTR isn’t clear, the engineer might initially select a BSTR and begin the design process. The operation of a BSTR is slightly less detailed than an SBSTR because it isn’t necessary to start, control and stop flow going into the reactor. As such, using a BSTR simplifies operation slightly and perhaps reduces labor costs compared to an SBSTR. As the design calculations proceed, the engineer may find that an SBSTR would be more appropriate, in which case the use of a BSTR can be abandoned, and replaced with design of an SBSTR. If the engineer had initially selected an SBSTR and successfully completed a preliminary design for it, they wouldn’t know whether a BSTR could accomplish the same task more easily or economically.</p>
+</section>
+<section id="reactor-metrics-as-economic-indicators" class="level3" data-number="11.2.3">
+<h3 data-number="11.2.3" class="anchored" data-anchor-id="reactor-metrics-as-economic-indicators"><span class="header-section-number">11.2.3</span> Reactor Metrics as Economic Indicators</h3>
+<p>The reactor design equations needed to model the reactor, and therefore identity of the reactor model parameters, are known once the type of reactor has been specified. The design assignment will specify some, but not all, of the values of the reactor model parameters. The design engineer must specify all of the missing reactor model parameters to create a fully specified reactor model. Before considering ways of doing that, it is helpful to understand how the fully specified reactor model will be used.</p>
+<p>One of the primary goals of process design is to arrive at a fully specified reactor that will yield greatest rate of financial profit while satisfying the specifications included in the design assignment. At the preliminary design stage there are still too many unknowns for that sort of financial analysis. Instead, reactor metrics (reactor parameters and outputs) that are related to profit are used to assess and compare fully specified reactors.</p>
+<p>For example, the capital and operating costs for a reactor often scale with its volume. In that case, one of the goals of the preliminary design would be to minimize the reactor volume while satisfying the specifications in the design assignment. Similarly, the use of steam or another medium for heating and the use of chilled water or another coolant have associated costs, and the amount of each heat exchange fluid used can serve as a cost indicator. The selling price of the product may depend upon its purity, and production of hazardous wastes can add to operating costs. In both of these cases, conversion and selectivity may be important metrics that are related to process profit. Any reactor design assignment is likely to have several metrics that are related to the economics of the reactor process.</p>
+<p>Typically the engineer will choose any one of the metrics as the key metric. The key metric would be the one that the engineer thinks will have the greatest effect upon the economics of the process. The engineer then would specify the missing reactor model parameters such that the fully specified model represents an optimization task where the key metric will be minimized or maximized, as appropriate.</p>
+</section>
+<section id="specification-of-the-missing-reactor-model-parameters" class="level3" data-number="11.2.4">
+<h3 data-number="11.2.4" class="anchored" data-anchor-id="specification-of-the-missing-reactor-model-parameters"><span class="header-section-number">11.2.4</span> Specification of the Missing Reactor Model Parameters</h3>
+<p>In order to solve the reactor design equations and calculate the important reactor metrics, all of the missing reactor model parameters must be specified. As mentioned above, one reactor metric can be identified as the key metric. The key metric could be a reactor model parameter, such as the reactor volume, or it could be the final value of a variable, such as the final value of the amount of reactant from which the conversion could be calculated. In either case, the key metric will be maximized (or minimized, as appropriate). Thus, if the key metric is one of the missing reactor model parameters, it would be specified by saying it has the largest (or smallest) value possible.</p>
+<p>The second way in which a missing reactor model parameter can be specified is by saying it is an optimization parameter. This means that its value is the value that results in key metric having the largest (or smallest) value possible. In other words, the key metric will be maximized or minimized with respect to the optimization parameters. Often, the optimization parameters are also economically important reactor metrics. Clearly, the engineer must have an understanding of reaction engineering that allows them to identify which of the missing reactor model parameters can significanly affect the key metric in order to use this type of specification effectively.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>There can only be one key metric that is being maximized or minimized. The optimization tasks illustrated in Chapters <a href="section_4_bstr_analysis.html" class="quarto-xref"><span>9</span></a> and <a href="section_4_sbstr_analysis.html" class="quarto-xref"><span>10</span></a> involved minimizing or maximizing a key metric with respect to a single optimization parameter and possibly a single constraint. However computer functions are readily available for maximizing or minimizing the key metric with respect to <strong>multiple optimization parameters</strong> and subject to multiple constraints (see below).</p>
+</div>
+</div>
+</div>
+<p>The other way of specifying a missing reactor model parameter is to assign a fixed value to it. Once all of the missing reactor model parameters have been specified, the key metric can be minimized or maximized using the fully specified reactor model. Doing so will yield the final values of the variables and the values of the key metric and the optimization paramters. At this point all of the economically important reactor metrics will be known or can be calculated.</p>
+</section>
+<section id="comparing-fully-specified-reactors" class="level3" data-number="11.2.5">
+<h3 data-number="11.2.5" class="anchored" data-anchor-id="comparing-fully-specified-reactors"><span class="header-section-number">11.2.5</span> Comparing Fully Specified Reactors</h3>
+<p>As just described, all of the economically important reactor metrics will be known or can be calculated after the missing reactor model parameters are specified and the key metric is maximized or minimized. In the simplest design assignments, this might be all that is needed.</p>
+<p>It may happen that when the key metric is minimized, one or more of the other economically important metrics has a large and unfavorable value. In design assignments, a trade-off between the economically important metrics is often observed. That is, as one important metric is optimized, another important metric changes in an unfavorable way. Sometime in this situation, the engineer might decide to analyze the same fully specified reactor system multiple times, maximizing a different metric each time. This can provide useful insight into the magnitude of the coupling between the important metrics.</p>
+<p>At this point, guided by insight, knowledge and intuition, the engineer might elect to specify the missing reactor model parameters in a totally different way and see how the important metrics change and how they compare to the first fully specified reactor. The results might inspire or suggest yet more ways to specify the missing reactor model parameters.</p>
+<p>Ultimately the engineer selects one of the fully specified reactors as the one that is most preferred. A few of the other fully specified reactors may be designated as alternatives, pointing out the trade-offs between the economically important reactor metrics. The quantity or quantities chosen as key metrics, the other quantities identified as economically important metrics, and the different ways the engineer specified the missing reactor model parameters leading up to the selection of the preferred and alternative reactor systems can be referred to as that engineer’s <strong>design strategy</strong>.</p>
+</section>
+<section id="preliminary-design-constraints" class="level3" data-number="11.2.6">
+<h3 data-number="11.2.6" class="anchored" data-anchor-id="preliminary-design-constraints"><span class="header-section-number">11.2.6</span> Preliminary Design Constraints</h3>
+<p>The engineer may not have complete freedom when specifying the missing reactor model parameters. Other considerations may constrain their freedom. For example, there may be temperature limits on various process streams. These might include a maximum allowed reaction temperature (to prevent undesired reactions, phase changes in the reactor, or catalyst deactivation), a maximum outlet temperature on chilled water, or a maximum final temperature for a batch process. Safety can also impose other constraints such as a maximum temperature and/or pressure that feed and product piping can withstand, composition limits to avoid danger of explosion, etc. If anything is being discharged to the atmosphere or waterways, regulations may restrict composition.</p>
+<p>The design specifications often set the net production rate (see <a href="section_4_bstr_analysis.html#eq-bstr_net_rate" class="quarto-xref">Equation&nbsp;<span>9.1</span></a>) or equivalently, the total volume to be processed and the total time during which that must happen. For a non-continuous process, this establishes a relationship between the volume per batch (i. e. the reactor volume) and the total time per batch. Specifically, both the volume per batch and the time per batch are related to the number of batches, <a href="#eq-vol_and_time_per_batch" class="quarto-xref">Equation&nbsp;<span>11.1</span></a>.</p>
+<p><span id="eq-vol_and_time_per_batch"><span class="math display">\[
+N_{batches} = \frac{V_{total}}{V_{batch}} = \frac{t_{total}}{t_{batch}}
+\tag{11.1}\]</span></span></p>
+<p>If the design assignment specifies the net production rate, but does not fix either the volume per batch or the time per batch, then the design engineer can specify one or the other. If the reaction engineer specifies the volume per batch, the time per batch is constrained as shown in <a href="#eq-time_per_batch_constraint" class="quarto-xref">Equation&nbsp;<span>11.2</span></a>, and if the engineer specifies the time per batch, the volume per batch is constrained as shonw in <a href="#eq-volume_per_batch_constraint" class="quarto-xref">Equation&nbsp;<span>11.3</span></a>. Equations <a href="#eq-vol_and_time_per_batch" class="quarto-xref"><span>11.1</span></a>, <a href="#eq-time_per_batch_constraint" class="quarto-xref"><span>11.2</span></a>, and <a href="#eq-volume_per_batch_constraint" class="quarto-xref"><span>11.3</span></a> are written in terms of the volume being processed, but any measure of the amount to be processed could be used.</p>
+<p><span id="eq-time_per_batch_constraint"><span class="math display">\[
+N_{batches} = \frac{V_{total}}{V_{batch}} \qquad \Rightarrow \qquad t_{batch} \le \frac{t_{total}}{N_{batches}}
+\tag{11.2}\]</span></span></p>
+<p><span id="eq-volume_per_batch_constraint"><span class="math display">\[
+N_{batches} = \frac{t_{total}}{t_{batch}} \qquad \Rightarrow \qquad V_{batch} \ge \frac{V_{total}}{N_{batches}}
+\tag{11.3}\]</span></span></p>
+<p>Constraints often do not apply directly to the specifications that the engineer adds to the design specifications. Instead, they indirectly limit the choices the engineer can make. That is, after the engineer specifies the missing reactor model parameters, the reactor model equations must be solved in order to determine whether any of the constraints are violated. Computer functions that perform constrained, multi-parameter optimization are available in many software packages.</p>
+</section>
+</section>
+<section id="example" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="example"><span class="header-section-number">11.3</span> Example</h2>
+<p>Readers who have assimilated the knowledge and skills from Chapters <a href="section_4_bstr_analysis.html" class="quarto-xref"><span>9</span></a> and <a href="section_4_sbstr_analysis.html" class="quarto-xref"><span>10</span></a> are capable of non-continuous reactor analysis. This chapter emphasizes design strategy, not analysis. More specifically, the focus is on choosing the reactor type, identifying a key reactor metric and other economically important metrics, and specifying the missing reactor model parameters.</p>
+<p>For this reason, the example provided here does not include any calculations. Instead, it focuses on the engineer’s thought processes and the resulting design strategy the engineer develops. The engineer may revise or expand their design strategy as they proceed through the analyses, but since analysis is not included in these examples, that aspect of the design process is not illustrated.</p>
+<p>Even though it is quite simple, the following example describes one engineer’s thinking and the design strategy that engineer develops based on that thinking. A different engineer might think differently and develop a different design strategy. Assuming they are competent, both engineers will arrive at a preliminary design that satisfies the design specifications, but their preliminary designs may be different from each other. It is critially important for readers to recognize that <strong>this example is <u>not</u> a “cook book” for what <u>you</u> should be thinking while developing <u>your</u> design strategy</strong>, but rather an example of what one engineer <u>might</u> be thinking as they develop <u>their</u> design strategy. Since the engineer’s thinking is the essence of this example the usual “Click Here to See What an Expert Might be Thinking at this Point” callouts are not used.</p>
+<section id="preliminary-reactor-design-for-an-autocatalytic-reaction" class="level3" data-number="11.3.1">
+<h3 data-number="11.3.1" class="anchored" data-anchor-id="preliminary-reactor-design-for-an-autocatalytic-reaction"><span class="header-section-number">11.3.1</span> Preliminary Reactor Design for an Autocatalytic Reaction</h3>
+<p><strong>Background</strong>: A specialty chemical company is considering producing reagent Z in a non-continuous process. A preliminary marketing study suggests yearly sales of 30,000 gal per year might be expected if the purity is 99% or greater. The proposed process would produce Z three times per year with each production period lasting four-weeks. The reactor would be used for other purposes the rest of the time. Chilled water at 18 °C is available as is saturated steam at 50 psi. Storage tanks will be used to hold the 99% pure product between the time it is produced and the time it is sold.</p>
+<p>Z can be produced from reagent A which is available in essentially pure form at ambient temperature (20 °C). The reversible, exothermic, autocatalytic reaction, <span class="math inline">\(A + Z \rightarrow 2Z\)</span>, is first order in A and in Z. In the absence of Z, the rate is very small. When both A and Z are present, the rate is measurable at 20 °C. The reaction is moderately exothermic. Reagents A and Z are liquids and form an ideal solution. The product, Z, has the lower boiling point, 96 °C. A rate expression and all necessary thermochemical data are available.</p>
+<p><strong>Assignment</strong>: Perform a preliminary design of a reactor that can be used as described above.</p>
+<hr>
+<section id="design-strategy" class="level4" data-number="11.3.1.1">
+<h4 data-number="11.3.1.1" class="anchored" data-anchor-id="design-strategy"><span class="header-section-number">11.3.1.1</span> Design Strategy</h4>
+<p>As the engineer who was given this assignment, here’s what I’m thinking:</p>
+<ul>
+<li>For this non-continuous process, I could use either a BSTR or an SBSTR.
+<ul>
+<li>The reaction is exothermic, so if the temperature cannot be safely controlled, I will have to use an SBSTR.</li>
+<li>I’ll start my analysis assuming the reactor operates as a BSTR.</li>
+</ul></li>
+<li>I’ll use one week as the basis for my calculations.
+<ul>
+<li>30,000 gal must be processed over 12 weeks or 2500 gal per week.</li>
+</ul></li>
+<li>I’ll assume that capital and operating costs scale with the reactor volume, in which case I’ll want to minimize the volume of the reactor.
+<ul>
+<li>The resulting volume will impose an upper limit constraint on the processing time, <a href="#eq-time_per_batch_constraint" class="quarto-xref">Equation&nbsp;<span>11.2</span></a>.</li>
+</ul></li>
+<li>I want the rate to be as large as possible at all times.</li>
+<li>Having some Z present initially is essential for an acceptable rate.
+<ul>
+<li>This suggests that during turnaround the reactor should not be emptied completely.</li>
+</ul></li>
+<li>The reaction is exothermic; the temperature will rise continually if no cooling is provided.
+<ul>
+<li>I’ll assume that some cooling will be necessary, but I’d like to use as little cooling water as possible to reduce operating costs.</li>
+<li>Since the reaction rate is “measurable” at ambient conditions, I’ll assume no heating is necessary.</li>
+</ul></li>
+<li>The conversion must be at least 99%.</li>
+<li>To provide a margin of safety and keep the product from boiling (at 96 °C), I’ll specify a maximum temperature of 90 °C.</li>
+<li>The product that is left in the reactor during turnaround will be hot and the A that is added to it will be at 20 °C (ambient temperature)
+<ul>
+<li>The initial temperature will depend upon the relative amounts of A and Z.</li>
+</ul></li>
+<li>For cooling I’ll assume the reactor is jacketed and that the jacket volume and heat transfer area are geometrically related to the volume.
+<ul>
+<li>I’ll assume that I can determine that relationship along with the heat transfer coefficient from stirred tank vendor literature.</li>
+</ul></li>
+<li>If the temperature cannot be controlled below 90 °C, I’ll switch to using an SBSTR.</li>
+</ul>
+<p>Based upon my thinking above, here is my <strong>design strategy</strong>.</p>
+<ol type="1">
+<li>Assume the reactor is a jacketed BSTR with a volume, <span class="math inline">\(V\)</span>.
+<ol type="a">
+<li>Use stirred tank manufacturer’s literature to estimate the jacket volume, heat transfer area and heat transfer coefficient.</li>
+<li>Assume that chilled water flows into the jacket at 18 °C with a flow rate of <span class="math inline">\(\dot{m}_{ex}\)</span>.</li>
+</ol></li>
+<li>At the end of processing <span class="math inline">\(X\)</span>% of the reactor contents are removed and transferred to storage.
+<ol type="a">
+<li>the turnaround time needed for this can be estimated.</li>
+</ol></li>
+<li>To start a batch, a sufficient amount of pure A at 20 °C to fill the reactor is added instantaneously.
+<ol type="a">
+<li>Assuming perfect mixing, the initial temperature and molar amounts of A and Z can be calculated.</li>
+</ol></li>
+<li>The processing ends when the conversion of A reaches 99%.</li>
+</ol>
+<p>Using the reactor design equations for this system, the reactor volume can be minimized with respect to <span class="math inline">\(\dot{m}_{ex}\)</span> and <span class="math inline">\(X\)</span> subject to the constraints that the temperature is below 90 °C at all times and that the processing time satisfies <a href="#eq-time_per_batch_constraint" class="quarto-xref">Equation&nbsp;<span>11.2</span></a>.</p>
+<p>The reactor volume is the key metric to be minimized. The coolant flow rate is also an economically important metric that should be as small as possible.</p>
+<p>It may not prove possible to meet the design specifications and satisfy the constraints using my initial specifications for the missing reactor model parameters. Whether or not it is possible, the following modifications of the system should be analyzed.</p>
+<ul>
+<li>During turnaround, partially cool the fluid that is not removed from the reactor prior to adding the fresh feed and starting the next batch.</li>
+<li>Drain the jacket during turnaround and initially operate the reactor adiabatically, starting the coolant flow when the temperature reaches <span class="math inline">\(T_1\)</span>, with <span class="math inline">\(T_1\)</span> as an additional optimization parameter.</li>
+<li>Operate as an SBSTR, adding the fresh feed at a steady rate, <span class="math inline">\(V_{in}\)</span>, with <span class="math inline">\(V_{in}\)</span> as an additional optimization parameter.</li>
+</ul>
+<p>The minimized volumes for each system should be compared and the one with the smalles <span class="math inline">\(V\)</span> should be reported as the preferred design. If any of the other designs have a volume close to the volume of the preferred design, but with a coolant usage much smaller than the preferred design, they should be reported as alternative designs.</p>
+</section>
+<section id="discussion" class="level4" data-number="11.3.1.2">
+<h4 data-number="11.3.1.2" class="anchored" data-anchor-id="discussion"><span class="header-section-number">11.3.1.2</span> Discussion</h4>
+<p>This was a very simple example, and many details were not included in the design strategy. One thing to note is that by minimizing with respect to the coolant flow rate, the possibliity that no cooling is necessary is included. In that case the optimim coolant flow rate would be essentially zero.</p>
+<p>The total volume to be processed per week in this example is 2500 gal. It is important to recognize that the minimized volume, <span class="math inline">\(V\)</span> that is found using the design equations is the total reactor volume. However, at the start of the process <span class="math inline">\(X\)</span>% of that volume was not fresh feed. Also, the time per batch is the processing time plus the turnaround time. As a result, the constraint on the processing time is given by equation (1).</p>
+<p><span class="math display">\[
+t_{batch} \le \frac{t_{total}}{N_{batches}}
+\]</span></p>
+<p><span class="math display">\[
+N_{batches} = \frac{2500\text{ gal}}{\left(1 - \frac{X}{100}\right)V}
+\]</span></p>
+<p><span class="math display">\[
+t_{turnaround} + t_{processing} \le \frac{1\text{ week}}{2500\text{ gal}}\left(1 - \frac{X}{100}\right)V
+\]</span></p>
+<p><span class="math display">\[
+t_{processing} \le \frac{1\text{ week}}{2500\text{ gal}}\left(1 - \frac{X}{100}\right)V - t_{turnaround} \tag{1}
+\]</span></p>
+<p>There are a lot of “what-if’s” associated this assignment. For example, what if, with no cooling, the heat of reaction only caused the temperature to rise to 50 °C? In that case, it might be beneficial to use heat to raise the initial temperature. That would lead to a higher rate, and consequently a smaller reactor. (Of course the costs associated with the heating would need to be offset by the lower capital and operating costs due to a smaller volume.) A good design engineer is constantly asking <em>and answering</em> these what-if’s as one means of refining and improving their design strategy.</p>
+</section>
+</section>
+</section>
+<section id="symbols-used-in-sec-4_non_continuous_design" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="symbols-used-in-sec-4_non_continuous_design"><span class="header-section-number">11.4</span> Symbols Used in <a href="#sec-4_non_continuous_design" class="quarto-xref"><span>Chapter 11</span></a></h2>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(t_{batch}\)</span></td>
+<td style="text-align: left;">Total time (processing plus turnaround) per batch.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(t_{total}\)</span></td>
+<td style="text-align: left;">Total time available for processing the total volume of feed.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(N_{batches}\)</span></td>
+<td style="text-align: left;">Number of batches.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(V_{batch}\)</span></td>
+<td style="text-align: left;">Volume of feed to be processsed per batch.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(V_{total}\)</span></td>
+<td style="text-align: left;">Total volume of feed to be processsed.</td>
+</tr>
+</tbody>
+</table>
 
 
 </section>
