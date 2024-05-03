@@ -38,22 +38,31 @@ heat gen vs. heat abs plot
 
 ## Examples
 
-### Response of a SS CSTR {#sec-example_12_7_1}
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+source('~/Libraries/R/fmt_tibble_col.R')
+```
 
-{{< include ../RE_Basics_Examples/reb_12_7_1/narrative.qmd >}}
+### Response of a Steady-State CSTR {#sec-example_12_7_1}
 
-{{< include ../RE_Basics_Examples/reb_12_7_1/equations.qmd >}}
+{{< include examples/reb_12_7_1/narrative.qmd >}}
+
+{{< include examples/reb_12_7_1/equations.qmd >}}
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-identify problem type, describe variable naming
+This assignment describes a single CSTR and how it operates. No other equipment is mentioned, so this assignment involves analysis of an isolated ideal CSTR. To sumarize the assignment, I'll assign appropriate variable names to each of the quantities provided in the narrative. I know that I'll need the gas constant, so I'll add that, too.
 :::
 
 #### Assignment Summary
 
-**Given and Known Constants**: $k_{0,1}$ = 10.2 gal mol^-1^ min^-1^, $k_{0,2}$ = 17.0 gal mol^-1^ min^-1^, $E_1$ = 15.3 kJ mol^-1^, $E_2$ = 23.7 kJ mol^-1^, $C_{A,in}$ = 10 mol gal^-1^, $C_{B,in}$ = 12 mol gal^-1^, $T_{in}$ = 350 K, $V$ = 25 gal, $\dot{V}_{in}$ = 12.5 gal min^-1^, $\Delta H_1 \big\vert_{298 \text{ K}}$ =  -12.0 kJ mol^-1^, $\Delta H_2 \big\vert_{298 \text{ K}}$ = -21.3 kJ mol^-1^, $\hat{C}_{p,A}$ = 85 J mol^-1^ K^-1^, $\hat{C}_{p,B}$ = 125 J mol^-1^ K^-1^, $\hat{C}_{p,D}$ = 200 J mol^-1^ K^-1^, and $\hat{C}_{p,U}$ = 170 J mol^-1^ K^-1^.
+**Given and Known Constants**: $k_{0,1}$ = 10.2 gal mol^-1^ min^-1^, $k_{0,2}$ = 17.0 gal mol^-1^ min^-1^, $E_1$ = 15.3 kJ mol^-1^, $E_2$ = 23.7 kJ mol^-1^, $C_{A,in}$ = 10 mol gal^-1^, $C_{B,in}$ = 12 mol gal^-1^, $T_{in}$ = 350 K, $V$ = 25 gal, $\dot{V}_{in}$ = 12.5 gal min^-1^, $\Delta H_1 \big\vert_{298 \text{ K}}$ =  -12.0 kJ mol^-1^, $\Delta H_2 \big\vert_{298 \text{ K}}$ = -21.3 kJ mol^-1^, $\hat{C}_{p,A}$ = 85 J mol^-1^ K^-1^, $\hat{C}_{p,B}$ = 125 J mol^-1^ K^-1^, $\hat{C}_{p,D}$ = 200 J mol^-1^ K^-1^, $\hat{C}_{p,U}$ = 170 J mol^-1^ K^-1^, and $R$ = 8.314 J mol^-1^ K^-1^.
 
 **Reactor System**: Adiabatic, steady-state CSTR 
 
@@ -63,31 +72,44 @@ identify problem type, describe variable naming
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-generate design equations as residuals
+Reactor design equations are always needed when modeling a reactor, and the design equation must always include mole balances. Here the reactor operates at steady-state, so the general mole balance is given by @eq-cstr_ss_mole_balance. Two reactions are taking place, so the summation expands to two terms. Only A and B are flowing into the reactor, so $\dot{n}_{D,in}$ and $\dot{n}_{U,in}$ are equal to zero.
+
+$$
+0 = \dot n_{i,in} - \dot n_i + \cancelto{V\left(\nu_{i,1}r_1 + \nu_{i,2}r_2\right)}{V \sum_j \nu_{i,j}r_j}
+$$
+
+The reactor is not isothermal, so an energy balance must also be included among the reactor design equations. For a steady-state CSTR the general energy balance is given by @eq-cstr_ss_energy_balance. This reactor is adiabatic, so the rate of heat transfer is equal to zero. There are no shafts or moving boundaries that are doing work, so the rate of doing work is also equal to zero. Only A and B flow into the reactor, so the sum over the reagents reduces to two terms. Also, since the heat capacities are constant, the integral can be evaluated. Finally, there are two reactions taking place, so the final sum expands to two terms.
+
+$$
+0 = \cancelto{0}{\dot Q} - \cancelto{0}{\dot W} - \cancelto{\left(\dot{n}_{A,in}\hat{C}_{p,A} + \dot{n}_{B,in}\hat{C}_{p,B}\right)}{\sum_i\dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT} - \cancelto{V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right)}{V\sum_j r_j \Delta H_j}
+$$
+
+This reactor is adiabatic, so there isn't a heat exchange fluid to write an energy balance for.
+
 :::
 
 **Reactor Design Equations**
 
-Mole balance design equations for A, B, D, and U are presented in equations (5) through (8), and an energy balance on the reacting fluid is given in equation (9).
+Mole balance design equations for A, B, D, and U are presented in equations (5) through (8), and an energy balance on the reacting fluid is given in equation (9), all in the form of residual expressions. These equations can be solved to find the outlet molar flow rates and temperature, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$.
 
 $$
-0 = \dot n_{A,in} - \dot n_A + V \left( -r_1 - r_2\right)\tag{5}
-$$
-
-$$
-0 = \dot n_{B,in} - \dot n_B + V \left( -r_1 - r_2\right)\tag{6}
+0 = \dot n_{A,in} - \dot n_A + V \left( -r_1 - r_2\right) = \epsilon_1 \tag{5}
 $$
 
 $$
-0 = - \dot n_D + V r_1\tag{7}
+0 = \dot n_{B,in} - \dot n_B + V \left( -r_1 - r_2\right) = \epsilon_2 \tag{6}
 $$
 
 $$
-0 = - \dot n_U + V r_2\tag{8}
+0 = - \dot n_D + V r_1 = \epsilon_3 \tag{7}
 $$
 
 $$
-0 = \left( \dot{n}_{A,in}\hat C_{p,A} + \dot{n}_{B,in}\hat C_{p,B}\right) \left(T - T_{in}\right)  + V\left( r_1 \Delta H_1 + r_2 \Delta H_2\right)\tag{9}
+0 = - \dot n_U + V r_2 = \epsilon_4 \tag{8}
+$$
+
+$$
+0 = -\left( \dot{n}_{A,in}\hat C_{p,A} + \dot{n}_{B,in}\hat C_{p,B}\right) \left(T - T_{in}\right)  + V\left( r_1 \Delta H_1 + r_2 \Delta H_2\right) = \epsilon_5 \tag{9}
 $$
 
 :::{.callout-tip collapse="true"}
@@ -95,7 +117,32 @@ $$
 
 In order to solve the ATEs numerically I'll need to do two things: calculate the values of the residuals for each guess and provide an initial guess.
 
-Starting with evaluating the residuals, I'll need to evaluate them each time a new guess for the solution is generated. At that point, guesses for each of the unknowns will be available along with the given and known constants. I will need to calculate any other quantities that appear in the residuals expressions.
+Starting with evaluating the residuals, I'll need to evaluate them each time a new guess for the solution is generated. At that point, guesses for each of the unknowns ($\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$) will be available along with the given and known constants. I will need to calculate any other quantities that appear in the residuals expressions. Examination of equations (5) through (9) shows that I'll need to write equations for calculating the inlet molar flow rates of A and B, the reaction rates, and the heats of reaction. (Note that the assignment narrative provided the standard heats of reaction at 298K, but it did not indicate that the heats were constant with temperature.)
+
+The inlet molar flow rates of A and B can be found using the defining equation for concentration in a flow system.
+
+$$
+C_{i,in} = \frac{\dot{n}_{i,in}}{\dot{V}_{in}} \qquad \Rightarrow \qquad \dot{n}_{i,in} = C_{i,in}\dot{V}_{in}
+$$
+
+The reaction rates can be calculated using the rate expressions, equations (3) and (4), but that introduces the rate coefficients and concentrations of A and B which must be calculated. The rate coefficients can be calculated using the Arrhenius expression , @eq-arrhenius.
+
+$$
+k_j = k_{0,j} \exp{\left(  \frac{-E_j}{RT} \right)}
+$$
+
+The concentrations can be calculated using their definitions. The reacting fluid here is an ideal liquid, so the inlet and outlet volumetric flow rates will be equal.
+
+$$
+C_{i} = \frac{\dot{n}_i}{\dot{V}} = \frac{\dot{n}_i}{\dot{V}_{in}}
+$$
+
+Finally, the heats of reaction can be calculated using @eq-deltaH-T. Here, the heat capacities are constant, so they can be taken outside of the integrals and the integrals can be evaluated.
+
+$$
+\Delta H_j^0 = \Delta H_j^0\Bigr\rvert_{T=298K} + \cancelto{\left(\sum_i \nu_{i,j}\hat{C}_{p,i}\right)\left(T - 298\text{ K}\right)}{\sum_i \left( \nu_{i,j} \int_{298\text{ K}}^T \hat C_{p,i}dT \right)}
+$$
+
 :::
 
 **Ancillary Equations for Evaluating the Residuals**
@@ -109,11 +156,11 @@ $$
 $$
 
 $$
-k_1 = k_{0,1} \exp{\frac{-E_1}{RT}}\tag{12}
+k_1 = k_{0,1} \exp{\left(\frac{-E_1}{RT}\right)}\tag{12}
 $$
 
 $$
-k_2 = k_{0,2} \exp{\frac{-E_2}{RT}}\tag{13}
+k_2 = k_{0,2} \exp{\left(\frac{-E_2}{RT}\right)}\tag{13}
 $$
 
 $$
@@ -134,6 +181,192 @@ $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
+When I solve the ATEs numerically, I'll also need to provide an initial guess for the solution. I have no idea what the outlet molar flow rates or the outlet temperature will equal. To start, I'll simply guess that half of the A remains along with an equal amount of B, and that the amounts of D and U are one-tenth the initial amount of A. (These are just guesses; they don't need to be stoichiometrically consistent.) I expect that the temperature will have the greatest effect with respect to the ATE solver converging, so I'll just guess that the temperature increases by 10 K. If the ATE solver does fail to converge, I'll have to revise these guesses.
+
+At this point, the reactor design equations can be solved numerically to find the unknowns, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$. In addition to the outlet temperature, the conversion of the limiting reagent and the selectivity for D over U are of interest in this assignment.
+
+The inlet concentration of A is smaller than that of B, so A is the limiting reagent. Its conversion can be calculated using the defining equation for conversion in a flow system. The calculation of the selectivity is straightforward.
+:::
+
+**Ancillary Equations for Calculating the Quantities of Interest**
+
+Solving the reactor design equations yields $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$. The conversion of A and the selectivity for D over U can be calculated using equations (16) and (17).
+
+$$
+f_A = \frac{\dot{n}_{A,in} - \dot{n}_A}{\dot{n}_{A,in}} \tag{18}
+$$
+
+$$
+S_{D/U} = \frac{\dot{n}_D}{\dot{n}_U} \tag{19}
+$$
+
+**Calculations Summary**
+
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the residuals
+	a. $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$ will be available.
+	b. calculate $\dot{n}_{A,in}$, $\dot{n}_{A,in}$, $k_1$, $k_2$, $C_A$, and $C_B$ using equations (10) through (15).
+	c. calculate $r_1$ and $r_2$ using equations (3) and (4).
+	d. calculate $\epsilon_1$, $\epsilon_2$, $\epsilon_3$, $\epsilon_4$, $\epsilon_5$ using equations (5) through (9).
+3. When it is necessary to calculate the quantities of interest, [list]
+	a. $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$ will be available.
+	b. calculate $f_A$ and $S_{D/U}$ using equations (18) and (19)
+
+#### Numerical implementation of the Solution
+
+1. Make the given and known constants available for use in all functions.
+2. Write a residuals function that
+	a. receives guess values for $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$,
+	b. evaluates the residuals as described in step 2 of the calculations summary, and
+	c. returns the values of the residuals.
+3. Write a reactor model function that
+	a. receives, as an argument, an initial guess for the unknowns, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$,
+	c. gets a solution for the ATEs by calling an ATE solver and passing the following information to it
+		i. the initial guess and
+		ii. the name of the residuals function from step 2 above,
+	d, checks that the solver converged, and
+	e. returns the values returned by the ATE solver.
+6. Perform the analysis by
+	a. setting an initial guess for the unknowns
+	b. getting $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$ by calling the reactor model function from step 3 above with the initial guess as the argument,
+	c. calculates the quantities of interest as described in step 3 of the calculations summary, and
+	d. displays the results.
+
+#### Results and Discussion
+
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv('examples/reb_12_7_1/results.csv')
+df <- fmt_tibble_col(df, 2, 3, 3, 2)
+```
+
+The calculations were performed as described above. The conversion of A is `r df$value[1]` `r df$units[1]`, the selectivity is `r df$value[2]` `r df$units[2]`, and the outlet temperature is `r df$value[3]` `r df$units[3]`.
+
+The instantaneous selectivity is defined in @eq-def_inst_select. Applying that definition to this system yields equation (20). According to that equation, the only way to increase the selectivity is to increase $k_1$ or decrease $k_2$. The only way to change the rate coefficients is by changing the temperature, but changing the temperature will change both rate coefficients.
+
+$$
+S_{D/U} =  \frac{r_D}{r_U} = \frac{k_1 C_AC_B}{k_2 C_AC_B} = \frac{k_1}{k_2} = \frac{k_{0,1} \exp{\left(\frac{-E_1}{RT}\right)}}{k_{0,2} \exp{\left(\frac{-E_2}{RT}\right)}}  \tag{20}
+$$
+
+The activation energy for reaction (2) is larger than that for reaction (1), so increasing the temperature will increase $k_2$ more than $k_1$, resulting in a lower selectivity for D over U. Thus, the selectivity for D over U can be increased by decreasing the temperature. However, if everything else remains fixed, decreasing the temperature will decrease the conversion. That is, decreasing the temperature will increase the selectivity but decrease the conversion while increasing the temperature will decrease the selectivity but increase the conversion.
+
+To verify this prediction, the feed temperature was decreased to 325 K and the calculations were repeated. The selectivity did indeed increase to `r df$value[5]` `r df$units[5]`, and the conversion decreased to `r df$value[4]` `r df$units[4]`. Increasing the temperature to 375 K gives a selectivity of `r df$value[8]` `r df$units[8]` and a conversion of `r df$value[7]` `r df$units[7]`.
+
+::: {.callout-note appearance="simple"}
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_14.html).
+:::
+
+### Gas Phase Reaction in an Adiabatic, Steady-Stage CSTR{#sec-example_12_7_2}
+
+{{< include examples/reb_12_7_2/narrative.qmd >}}
+
+{{< include examples/reb_12_7_2/equations.qmd >}}
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+identify problem type, describe variable naming
+:::
+
+#### Assignment Summary
+
+**Given and Known Constants**: $y_{A,in}$ = 0.1, $y_{Bin}$ = 0.65, $y_{I,in}$ = 0.25, $T_{in}$ = 165 °C, $P$ = 5 atm, $y_{A,max}$ = 0.001, $\tau$ = 0.5 min, $k_{0,1}$ = 1.37 x 10^5^ m^3^ mol^-1^ min^-1^, $E_1$ = 11,100 cal mol^-1^, $\Delta H_1$ = -7200 cal mol^-1^, $\hat{C}_{p,A}$ = 7.6 cal mol^-1^ K^-1^, $\hat{C}_{p,B}$ = 8.2 cal mol^-1^ K^-1^, $\hat{C}_{p,I}$ = 4.3 cal mol^-1^ K^-1^, and $\hat{C}_{p,Z}$ = 13.8 cal mol^-1^ K^-1^, $R$ = 1.987 cal mol^-1^ K^-1^ = 8.206 x 10^-5^ m^3^ atm mol^-1^ K^-1^, $R$ = 1.987 cal mol^-1^ K^-1^ = 8.206 x 10^-5^ m^3^ atm mol^-1^ K^-1^.
+
+**Reactor System**: Adiabatic, steady-state CSTR
+
+**Quantities of Interest**: $y_A$, $y_B$, $y_I$, $y_Z$, and $T$
+
+#### Mathematical Formulation of the Solution
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+generate design equations as residuals
+
+@eq-cstr_ss_mole_balance
+
+$$
+0 = \dot n_{i,in} - \dot n_i + V \sum_j \nu_{i,j}r_j
+$$
+
+@eq-cstr_ss_energy_balance
+
+$$
+0 = \dot Q - \dot W - \sum_i\dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT - V\sum_j r_j \Delta H_j
+$$
+
+:::
+
+**Reactor Design Equations**
+
+Residual expressions corresponding to mole balance design equations for A, B, I, and Z are presented in equations (3) - (6). The energy balance on the reacting gas is given as a residual expression in equation (7).
+
+$$
+0 = \dot n_{A,in} - \dot n_A - Vr_1 = \epsilon_1 \tag{3}
+$$
+
+$$
+0 = \dot n_{B,in} - \dot n_B - Vr_1 = \epsilon_2 \tag{4}
+$$
+
+$$
+0 = \dot n_{I,in} - \dot n_I = \epsilon_3 \tag{5}
+$$
+
+$$
+0 = - \dot n_Z + Vr_1 = \epsilon_4 \tag{6}
+$$
+
+$$
+0 = \left(\dot{n}_{A,in}\hat{C}_{p,A} + \dot{n}_{B,in}\hat{C}_{p,B} + \dot{n}_{I,in}\hat{C}_{p,I} \right)\left(T - T_{in}\right) - Vr_1 \Delta H_1 = \epsilon_5 \tag{7}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the ATEs numerically I'll need to do two things: calculate the values of the residuals for each guess and provide an initial guess.
+
+Starting with evaluating the residuals, I'll need to evaluate them each time a new guess for the solution is generated. At that point, guesses for each of the unknowns will be available along with the given and known constants. I will need to calculate any other quantities that appear in the residuals expressions.
+:::
+
+**Ancillary Equations for Evaluating the Residuals**
+
+$$
+V = 1 \text{ m}^3 \text{ basis}
+$$
+
+$$
+\dot{V}_{in} = \frac{V}{\tau} \tag{8}
+$$
+
+$$
+\dot{n}_{A,in} = y_{A,in}\frac{P\dot{V}_{in}}{RT} \tag{9}
+$$
+
+$$
+\dot{n}_{B,in} = y_{B,in}\frac{P\dot{V}_{in}}{RT} \tag{9}
+$$
+
+$$
+\dot{n}_{I,in} = y_{I,in}\frac{P\dot{V}_{in}}{RT} \tag{9}
+$$
+
+$$
+k_1 = k_{0,1}\exp{\left(\frac{-E_1}{RT}\right)} \tag{10}
+$$
+
+$$
+C_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z}\frac{P}{RT} \tag{11}
+$$
+
+$$
+C_B = \frac{\dot{n}_B}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z}\frac{P}{RT} \tag{12}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
 When I solve the ATEs numerically, I'll also need to provide an initial guess for the solution....
 :::
 
@@ -149,11 +382,23 @@ develop equations needed to calculate quantities of interest
 Solving the reactor design equations yields [list unknowns]. 
 
 $$
-f_A = \frac{\dot{n}_{A,in} - \dot{n}_A}{\dot{n}_{A,in}} \tag{16}
+\tau_{opt} = \underset{\tau}{\arg\max}\left( \dot{n}_Z \right) \tag{13}
 $$
 
 $$
-S_{D/U} = \frac{\dot{n}_D}{\dot{n}_U} \tag{17}
+y_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z} \tag{14}
+$$
+
+$$
+y_B = \frac{\dot{n}_B}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z} \tag{15}
+$$
+
+$$
+y_I = \frac{\dot{n}_I}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z} \tag{16}
+$$
+
+$$
+y_Z = \frac{\dot{n}_Z}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z} \tag{17}
 $$
 
 **Calculations Summary**
@@ -189,22 +434,26 @@ $$
 
 #### Results and Discussion
 
-The calculations were performed as described above.
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv('examples/reb_12_7_2/results.csv')
+df <- fmt_tibble_col(df, 2, 3, 3, 2)
+```
 
+The calculations were performed as described above. The outlet gas temperature is `r df$value[5]` `r df$units[5]` and the outlet composition is `r df$value[1]``r df$units[1]` A, `r df$value[2]``r df$units[2]` B, `r df$value[3]``r df$units[3]` I, and `r df$value[4]``r df$units[4]` Z.
 
-<!--
 ::: {.callout-note appearance="simple"}
 ## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
-Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](URL).
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_14.html).
 :::
--->
 
 
-### Selectivity in a SS CSTR{#sec-example_12_7_2}
+### Maximizing Conversion for a Reversible Reaction in a Steady-State CSTR{#sec-example_12_7_3}
 
-{{< include ../RE_Basics_Examples/reb_12_7_2/narrative.qmd >}}
+{{< include examples/reb_12_7_3/narrative.qmd >}}
 
-{{< include ../RE_Basics_Examples/reb_12_7_2/equations.qmd >}}
+{{< include examples/reb_12_7_3/equations.qmd >}}
 
 ---
 
@@ -215,18 +464,152 @@ identify problem type, describe variable naming
 
 #### Assignment Summary
 
-**Given and Known Constants**: 
+**Given and Known Constants**: $V$ = 0.5 m^3^, $\dot{n}_{A,in}$ = 70 mol s^-1^, $\dot{n}_{B,in}$ 1500 mol s^-1^, $\dot{V}_{in}$ = 40 L s^-1^ $k_{0,1}$ = 1.2 x 10^9^ m^3^ mol^-1^ s^-1^, $E_1$ = 25.8 kcal mol^-1^, $K_{0.1}$ = 4.2 x 10^-18^ m^3^ mol^-1^, $\Delta H_1$ = -22.4 kcal mol^-1^ $\hat{C}_{p,A}$ = 412 J mol^-1^ K^-1^, $\hat{C}_{p,B}$ = 75.5 J mol^-1^ K^-1^, $\hat{C}_{p,Z}$ = 512 J mol^-1^ K^-1^, and $R$ = 1.987 cal mol^-1^ K^-1^.
 
-**Reactor System**: 
+**Reactor System**: Adiabatic, steady-state CSTR
 
-**Quantities of Interest**: 
+**Quantities of Interest**: $\underset{T_{in}}{\arg\max}\left( f_A \right)$
 
+#### Mathematical Formulation of the Solution
 
-### Cell Growth and Washout in a CSTR{#sec-example_12_7_3}
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+generate design equations as residuals
 
-{{< include ../RE_Basics_Examples/reb_12_7_3/narrative.qmd >}}
+@eq-cstr_ss_mole_balance 
 
-{{< include ../RE_Basics_Examples/reb_12_7_3/equations.qmd >}}
+$$
+0 = \dot n_{i,in} - \dot n_i + V \sum_j \nu_{i,j}r_j
+$$
+
+@eq-cstr_ss_energy_balance
+
+$$
+0 = \dot Q - \dot W - \sum_i\dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT - V\sum_j r_j \Delta H_j
+$$
+
+:::
+
+**Reactor Design Equations**
+
+Residual expressions corresponding to mole balance design equations for A, B, and Z are presented in equations (4), (5), and (6). A residual expression corresponding to the energy balance on the reacting fluid is given in equation (7).
+
+$$
+0 = \dot n_{A,in} - \dot n_A - Vr_1 = \epsilon_1 \tag{4}
+$$
+
+$$
+0 = \dot n_{B,in} - \dot n_B - Vr_1 = \epsilon_2 \tag{5}
+$$
+
+$$
+0 = - \dot n_Z + Vr_1 = \epsilon_3 \tag{6}
+$$
+
+$$
+0 = -\left(\dot{n}_{A,in} \hat{C}_{p,A} + \dot{n}_{B,in} \hat{C}_{p,B} \right)\left( T - T_{in}\right) - Vr_1 \Delta H_1 = \epsilon_4 \tag{7}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the ATEs numerically I'll need to do two things: calculate the values of the residuals for each guess and provide an initial guess.
+
+Starting with evaluating the residuals, I'll need to evaluate them each time a new guess for the solution is generated. At that point, guesses for each of the unknowns will be available along with the given and known constants. I will need to calculate any other quantities that appear in the residuals expressions.
+:::
+
+**Ancillary Equations for Evaluating the Residuals**
+
+$$
+k_1 = k_{0,1} \exp{\left(  \frac{-E_1}{RT} \right)} \tag{8}
+$$
+
+$$
+C_A = \frac{n_A}{\dot{V}_{in}} \tag{9}
+$$
+
+$$
+C_B = \frac{n_B}{\dot{V}_{in}} \tag{10}
+$$
+
+$$
+C_Z = \frac{n_Z}{\dot{V}_{in}} \tag{11}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+When I solve the ATEs numerically, I'll also need to provide an initial guess for the solution....
+:::
+
+**Ancillary Equations for Calculating the Initial Guess**
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+develop equations needed to calculate quantities of interest
+:::
+
+**Ancillary Equations for Calculating the Quantities of Interest**
+
+Solving the reactor design equations yields [list unknowns]. 
+
+$$
+f_A = \frac{\dot{n}_{A,in} - \dot{n}_A}{\dot{n}_{A,in}} \tag{12}
+$$
+
+**Calculations Summary**
+
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the residuals
+	a. [list of variables] will be available.
+	b. 
+3. When it is necessary to calculate the quantities of interest, [list]
+	a. [list of variables] will be available.
+	b. 
+
+#### Numerical implementation of the Solution
+
+1. Make the given and known constants available for use in all functions.
+2. Write a residuals function that
+	a. receives guess values for [list of variable],
+	b. evaluates the residuals as described in step 2 of the calculations summary, and
+	c. returns the values of the residuals.
+3. Write a reactor model function that
+	a. ...
+	b. defines an initial guess for the unknowns, [list of variables],
+	c. gets a set of values of the unknowns that solve the ATEs by calling an ATE solver and passing the following information to it
+		i. the initial guess and
+		ii. the name of the residuals function from step 2 above,
+	d, checks that the solver converged, and
+	e. returns the values returned by the ATE solver.
+6. Perform the analysis by
+	a. ...
+	b. getting [list of variables] by calling the reactor model function from step 3 above,
+	c. calculates the quantities of interest as described in step 3 of the calculations summary,
+	d. ....
+
+#### Results and Discussion
+
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv('examples/reb_12_7_3/results.csv')
+df <- fmt_tibble_col(df, 2, 3, 3, 2)
+```
+
+The calculations were performed as described above. The conversion is plotted as a function of the feed temperature in @fig-example_12_7_3_figure. The maximum conversion, `r df$value[2]` `r df$units[2]`, occurs at an inlet temperature of `r df$value[1]` `r df$units[1]`. When that inlet temperature is used, the outlet temperature is `r df$value[3]` `r df$units[3]`.
+
+![Variation in the conversion as the inlet temperature changes.](examples/reb_12_7_3/fA_vs_Tin.png){#fig-example_12_7_3_figure width="70%"}
+
+::: {.callout-note appearance="simple"}
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_15.html).
+:::
+
+### Multiple Steady States in a CSTR{#sec-example_12_7_4}
+
+{{< include examples/reb_12_7_4/narrative.qmd >}}
+
+{{< include examples/reb_12_7_4/equations.qmd >}}
 
 ---
 
@@ -237,40 +620,176 @@ identify problem type, describe variable naming
 
 #### Assignment Summary
 
-**Given and Known Constants**: 
+**Given and Known Constants**: $V$ = 500 cm^3^, $\dot{V}_{in}$ = 1.0 cm^3^ s^-1^, $C_{A,in}$ = 0.015 mol cm^-3^, $C_{B,in}$ = 0.015 mol cm^-3^, $T_{in}$ = 50 °C, $\tilde{C}_p$ = 0.35 cal g^-1^ K^-1^, $\rho$ = 0.93 gm cm^-3^, $\Delta H_1$ = -20 kJ mol^-1^, $k_{0,1}$ = 3.24 x 10^12^ cm^3^ mol^-1^ s^-1^, $E_1$ = 105.0 kJ mol^-1^, and $R$ = 8.314 J mol^-1^ K^-1^.
 
-**Reactor System**: 
+**Reactor System**: Adiabatic, steady-state CSTR
 
-**Quantities of Interest**: 
+**Quantities of Interest**: $f_A$ and $T$ for each of 3 steady states
 
-
-### Multiple SSs in a CSTR{#sec-example_12_7_4}
-
-{{< include ../RE_Basics_Examples/reb_12_7_4/narrative.qmd >}}
-
-{{< include ../RE_Basics_Examples/reb_12_7_4/equations.qmd >}}
-
----
+#### Mathematical Formulation of the Solution
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-identify problem type, describe variable naming
+generate design equations as residuals
+
+@eq-cstr_ss_mole_balance 
+
+$$
+0 = \dot n_{i,in} - \dot n_i + V \sum_j \nu_{i,j}r_j
+$$
+
+@eq-cstr_ss_energy_balance
+
+$$
+0 = \dot Q - \dot W - \sum_i\dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT - V\sum_j r_j \Delta H_j
+$$
+
 :::
 
-#### Assignment Summary
+**Reactor Design Equations**
 
-**Given and Known Constants**: 
+Mole balance design equations for [reagents] are presented in equations (numbers). The energy balance on the reacting fluid is given in equation (number). An energy balance on the heat exchange fluid is shown in equation (number).
 
-**Reactor System**: 
+$$
+0 = \dot n_{A,in} - \dot n_A - Vr_1 = \epsilon_1 \tag{3}
+$$
 
-**Quantities of Interest**: 
+$$
+0 = \dot n_{B,in} - \dot n_B - Vr_1 = \epsilon_2 \tag{4}
+$$
 
+$$
+0 = - \dot n_Y + Vr_1 = \epsilon_3 \tag{5}
+$$
+
+$$
+0 = - \dot n_Z + Vr_1 = \epsilon_4 \tag{6}
+$$
+
+$$
+0 = -\dot{V}_{in} \rho \tilde{C}_p \left( T - T_{in}\right) - Vr_1 \Delta H_1 = \epsilon_5 \tag{7}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the ATEs numerically I'll need to do two things: calculate the values of the residuals for each guess and provide an initial guess.
+
+Starting with evaluating the residuals, I'll need to evaluate them each time a new guess for the solution is generated. At that point, guesses for each of the unknowns will be available along with the given and known constants. I will need to calculate any other quantities that appear in the residuals expressions.
+:::
+
+**Ancillary Equations for Evaluating the Residuals**
+
+$$
+\dot{n}_{A,in} = \dot{V}_{in} C_{A,in} \tag{8}
+$$
+
+$$
+\dot{n}_{B,in} = \dot{V}_{in} C_{B,in} \tag{8}
+$$
+
+$$
+k_1 = k_{0,1} \exp{\left( \frac{-E_!}{RT} \right)} \tag{9}
+$$
+
+$$
+C_A = \frac{\dot n_A}{\dot{V}_{in}} \tag{10}
+$$
+
+$$
+C_B = \frac{\dot n_B}{\dot{V}_{in}} \tag{11}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+When I solve the ATEs numerically, I'll also need to provide an initial guess for the solution....
+:::
+
+**Ancillary Equations for Calculating the Initial Guess**
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+develop equations needed to calculate quantities of interest
+:::
+
+**Ancillary Equations for Calculating the Quantities of Interest**
+
+Solving the reactor design equations yields [list unknowns].
+
+$$
+f_A = \frac{\dot{n}_{A,in} - \dot n_A}{\dot{n}_{A,in}} \tag{12}
+$$
+
+**Calculations Summary**
+
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the residuals
+	a. [list of variables] will be available.
+	b. 
+3. When it is necessary to calculate the quantities of interest, [list]
+	a. [list of variables] will be available.
+	b. 
+
+#### Numerical implementation of the Solution
+
+1. Make the given and known constants available for use in all functions.
+2. Write a residuals function that
+	a. receives guess values for [list of variable],
+	b. evaluates the residuals as described in step 2 of the calculations summary, and
+	c. returns the values of the residuals.
+3. Write a reactor model function that
+	a. ...
+	b. defines an initial guess for the unknowns, [list of variables],
+	c. gets a set of values of the unknowns that solve the ATEs by calling an ATE solver and passing the following information to it
+		i. the initial guess and
+		ii. the name of the residuals function from step 2 above,
+	d, checks that the solver converged, and
+	e. returns the values returned by the ATE solver.
+6. Perform the analysis by
+	a. ...
+	b. getting [list of variables] by calling the reactor model function from step 3 above,
+	c. calculates the quantities of interest as described in step 3 of the calculations summary,
+	d. ....
+
+#### Results and Discussion
+
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv('examples/reb_12_7_4/results.csv')
+df <- fmt_tibble_col(df, 1:2, 3, 3, 2)
+df2 <- read.csv('examples/reb_12_7_4/discussion_results.csv')
+df2 <- fmt_tibble_col(df2, 2, 3, 3, 2)
+```
+
+The calculations were performed as described above.
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_12_7_4_results
+#| tbl-cap: Steady-State Conversions and Outlet Temperatures
+kbl(df, format = "markdown", align = "cc", col.names = c("Conversion (%)", "Temperature (°C)"))
+```
+
+add discussion The extinction point is `r df2$value[1]` `r df2$units[1]` and the ignition point is `r df2$value[2]` `r df2$units[2]`.
+
+![Steady-state outlet temperature as a function of inlet temperature.](examples/reb_12_7_4/T_vs_Tin.png){#fig-example_12_7_4_T_vs_Tin width="70%"}
+
+![Steady-state conversion as a function of inlet temperature.](examples/reb_12_7_4/f_vs_Tin.png){#fig-example_12_7_4_f_vs_Tin width="70%"}
+
+::: {.callout-note appearance="simple"}
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_16.html).
+:::
 
 ### Start-Up of a CSTR{#sec-example_12_7_5}
 
-{{< include ../RE_Basics_Examples/reb_12_7_5/narrative.qmd >}}
+{{< include examples/reb_12_7_5/narrative.qmd >}}
 
-{{< include ../RE_Basics_Examples/reb_12_7_5/equations.qmd >}}
+{{< include examples/reb_12_7_5/data.qmd >}}
+
+{{< include examples/reb_12_7_5/equations.qmd >}}
 
 ---
 
@@ -281,18 +800,211 @@ identify problem type, describe variable naming
 
 #### Assignment Summary
 
-**Given and Known Constants**: 
+**Given and Known Constants**: $V$ = 10 gal, $V_e$ = 1.25 gal, $C_{B,0}$ = 3 mol gal^-1^, $T_0$ = (20 + 273.15) K, $\dot V_{in}$ = 0.5 gal min^-1^, $C_{A,in}$ = 7.5 mol gal^-1^, $C_{B,in}$ = 3 mol gal^-1^, $T_{in}$ = (50 + 273.15) K, $T_{e,0}$ = $T_{e,in}$ = = (20 + 273.15) K, $\dot m_{e,in}$ = 250 g min^-1^, $U$ = 190 cal ft^-2^ min^-1^ K^-1^, $A$ = 4 ft^2^, $P$ = 1 atm, $\rho_e$ = 1 g cm^-3^, $\tilde C_{p,e}$ = 1 cal g^-1^ K^-1^, $\breve C_p$ = 1600 cal gal^-1^ K^-1^, $k_{0,j}$ in Table 1, $E_j$ in Table 1, $\Delta H_j$ in Table 1, $t_f$ = 30 min, and $R$ = 1.987 cal mol^-1^ K^-1^.
 
-**Reactor System**: 
+**Reactor System**: Transient, cooled CSTR
 
-**Quantities of Interest**: 
+**Quantities of Interest**: $T\left(t\right)$, $T_{ex}\left(t\right)$, and $C_B\left(t\right)$ as graphs.
 
+#### Mathematical Formulation of the Solution
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+generate design equations
+:::
+
+**Reactor Design Equations**
+
+Mole balance design equations for [reagents] are presented in equations (numbers). The energy balance on the reacting fluid is given in equation (number). An energy balance on the heat exchange fluid is shown in equation (number).
+
+$$
+\frac{V}{\dot V}\frac{d\dot n_A}{dt} = \dot n_{A,in} - \dot n_A - V\left(r_1 + r_2 + r_3\right) \tag{4}
+$$
+
+$$
+\frac{V}{\dot V}\frac{d\dot n_B}{dt} = \dot n_{B,in} - \dot n_B - V\left(r_1 + r_2 + r_3\right) \tag{5}
+$$
+
+$$
+\frac{V}{\dot V}\frac{d\dot n_W}{dt} = - \dot n_W + Vr_1 \tag{6}
+$$
+
+$$
+\frac{V}{\dot V}\frac{d\dot n_Z}{dt} = - \dot n_Z + V\left(r_1 + r_2 + r_3\right) \tag{7}
+$$
+
+$$
+\frac{V}{\dot V}\frac{d\dot n_X}{dt} = - \dot n_X + Vr_2 \tag{8}
+$$
+
+$$
+\frac{V}{\dot V}\frac{d\dot n_Y}{dt} = - \dot n_Y + Vr_3 \tag{9}
+$$
+
+$$
+V \breve C_p \frac{dT}{dt} = \dot{Q} - \dot V_{in} \breve C_p \left(T - T_{in}\right) - V \left( r_1\Delta H_1 + r_2\Delta H_2 + r_3\Delta H_3 \right) \tag{10}
+$$
+
+$$
+\rho_e V_e \tilde C_{p,e}\frac{dT_e}{dt} = \dot Q_e - \dot m_e \tilde C_{p,e} \left( T_e - T_{e,in} \right) \tag{11}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+check number of ivodes and deps
+:::
+
+differential ideal gas law
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+define initial values and stopping criterion
+:::
+
+**Initial Values and Stopping Criterion**
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $$ | $$ | $$ |
+| $$ | $$ | |
+  
+: Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example_x_y_z_initial_values}
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_x_y_z_initial_values.
+
+I'll start by writing the design equations in the form of derivative expressions (see @sec-apndx....
+
+I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
+:::
+
+**Ancillary Equations for Evaluating the Derivatives**
+
+$$
+r_1 = k_{0,1}\exp{\left(\frac{-E_1}{RT}\right)}C_AC_B \tag{12}
+$$
+
+$$
+r_2 = k_{0,2}\exp{\left(\frac{-E_2}{RT}\right)}C_AC_B \tag{13}
+$$
+
+$$
+r_3 = k_{0,3}\exp{\left(\frac{-E_3}{RT}\right)}C_AC_B \tag{14}
+$$
+
+$$
+C_A = \frac{\dot n_A}{\dot V} \quad \quad C_B = \frac{\dot n_B}{\dot V} \tag{15}
+$$
+
+$$
+\dot V = \dot V_{in} \tag{16}
+$$
+
+$$
+\dot n_{A,in} = \dot V_{in}C_{A,in} \quad \quad \dot n_{B,in} = \dot V_{in}C_{B,in} \tag{17}
+$$
+
+$$
+\dot Q = -\dot Q_e = UA\left(T_e - T\right) \tag{18}
+$$
+
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_x_y_z_initial_values....
+:::
+
+**Ancillary Equations for Calculating the Initial and Final Values**
+
+$$
+\dot n_B\Bigr\rvert_{t=0} = \dot V C_{B,0} \tag{20}
+$$
+
+$$
+T\Bigr\rvert_{t=0} = T_0 \tag{21}
+$$
+
+$$
+T_e\Bigr\rvert_{t=0} = T_{e,0} \tag{22}
+$$
+
+$$
+t = t_f \tag{23}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+develop equations needed to calculate quantities of interest
+:::
+
+**Ancillary Equations for Calculating the Quantities of Interest**
+
+Solving the reactor design equations yields [list independent and dependent variables]. 
+
+**Calculations Summary**
+
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the derivatives
+	a. [list of variables] will be available.
+	b. 
+3. When it is necessary to calculate the initial and final values in @tbl-example_x_y_z_initial_values
+	a. [list of variables] are known constants.
+	b. 
+4. When it is necessary to evaluate the residual corresponding to [variable]
+    a. a guess for [variable] will be available for use in all equations.
+    b. 
+5. When it is necessary to calculate the quantities of interest, [list]
+	a. corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values will be available.
+	b. 
+
+#### Numerical implementation of the Solution
+
+1. Make the given and known constants available for use in all functions.
+2. Define a variable to hold [unknown constant] and make it available to all functions.
+3. Write a derivatives function that
+	a. receives the independent and dependent variables, [list], as arguments,
+	b. evaluates the derivatives as described in step 2 of the calculations summary, and 
+	c. returns the values of the derivatives, [list].
+4. Write a residuals function that
+	a. receives a guess for [variable] and makes it available to all functions,
+	b. evaluates the residual as described in step 4 of the calculations summary, and
+	c. returns the value of [variable].
+5. Write a reactor model function that
+	a. ...
+	b. calculates the initial and final values in @tbl-example_x_y_z_initial_values as described in step 3 of the calculations summary,
+	c. gets corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example_x_y_z_initial_values and
+		ii. the name of the derivatives function from step 3 above,
+	d, checks that the solver successfully solved the IVODEs, and
+	e. returns the values returned by the IVODE solver.
+6. Perform the analysis by
+	a. ...
+	b. getting corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling the reactor model function from step 5 above,
+	c. calculates the quantities of interest as described in step 5 of the calculations summary,
+	d. ....
+
+#### Results and Discussion
+
+The calculations were performed as described above.
+
+![Reacting Fluid Temperature During the First 30 Minutes of Startup](examples/reb_12_7_5/T_vs_t.png){#fig-example_12_7_5_T_vs_t width="80%"}
+
+![Cooling Water Temperature During the First 30 Minutes of Startup](examples/reb_12_7_5/Te_vs_t.png){#fig-example_12_7_5_Te_vs_t width="80%"}
+
+![Concentration of Reagent B During the First 30 Minutes of Startup](examples/reb_12_7_5/CB_vs_t.png){#fig-example_12_7_5_CB_vs_t width="80%"}
+
+::: {.callout-note appearance="simple"}
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_17.html).
+:::
 
 ### Transient Responses in a CSTR{#sec-example_12_7_6}
 
-{{< include ../RE_Basics_Examples/reb_12_7_6/narrative.qmd >}}
+{{< include examples/reb_12_7_6/narrative.qmd >}}
 
-{{< include ../RE_Basics_Examples/reb_12_7_6/equations.qmd >}}
+{{< include examples/reb_12_7_6/equations.qmd >}}
 
 ---
 
