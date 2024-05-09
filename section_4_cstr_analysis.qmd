@@ -188,7 +188,7 @@ Other types of parametric sensitivity and methods for identifying them are typic
 
 ## Examples
 
-The first four examples in this section involve steady-state CSTRs. [Example -@sec-example_12_7_1] and [Example -@sec-example_12_7_2] illustrate steady-state CSTR response tasks. The former involves two liquid-phase reactions while the second involves a gas phase reaction. [Example -@sec-example_12_7_3] presents the solution of an optimization task involving a steady-state CSTR. [Example -@sec-example_12_7_4] features a steady-state CSTR where three steady states are possible. Start-up of a CSTR, a transient process, is analyzed in [Example -@sec-example_12_7_5]. Finally, [Example -@sec-example_12_7_6] follows three transients that result when an operating parameter of a steady-state CSTR is perturbed. In the first analysis the CSTR is operating at an unstable steady state, and when it is perturbed, the transient ends when it reaches a different, stable steady state. The other two analyses illustrate ignition and extinction.
+The first four examples in this section involve steady-state CSTRs. [Example -@sec-example_12_7_1] and [Example -@sec-example_12_7_2] illustrate steady-state CSTR response tasks. The former involves two liquid-phase reactions while the second involves a gas phase reaction. In [Example -@sec-example_12_7_1] the assignment is to calculate the reactor output, while in [Example -@sec-example_12_7_2] the assignment is to calculate the input needed to achieve a specified output. [Example -@sec-example_12_7_3] presents the solution of an optimization task involving a steady-state CSTR. [Example -@sec-example_12_7_4] features a steady-state CSTR where three steady states are possible. Start-up of a CSTR, a transient process, is analyzed in [Example -@sec-example_12_7_5]. Finally, [Example -@sec-example_12_7_6] follows three transients that result when an operating parameter of a steady-state CSTR is perturbed. In the first analysis the CSTR is operating at an unstable steady state, and when it is perturbed, the transient ends when it reaches a different, stable steady state. The other two analyses illustrate ignition and extinction.
 
 ```{r}
 #| echo: false
@@ -430,17 +430,17 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This assignment involves an isolated CSTR that operates at steady-state. To summarize the assignment, I'll assign an appropriate variable symbol to each quantity provided in the assignment narrative. This is a gas phase system, so I'll add values of the ideal gas law in both energy and pressure-volume units.
+This assignment involves an isolated CSTR that operates at steady-state. To summarize the assignment, I'll assign an appropriate variable symbol to each quantity provided in the assignment narrative. This is a gas phase system, so I'll add values of the ideal gas law in both energy and pressure-volume units. I'll use a subscripted "in" to designate inlet quantities, and I won't use an extra subscript for outlet quantities.
 
 :::
 
 #### Assignment Summary
 
-**Given and Known Constants**: $y_{A,in}$ = 0.1, $y_{Bin}$ = 0.65, $y_{I,in}$ = 0.25, $T_{in}$ = 165 °C, $P$ = 5 atm, $y_{A,max}$ = 0.001, $\tau$ = 0.5 min, $k_{0,1}$ = 1.37 x 10^5^ m^3^ mol^-1^ min^-1^, $E_1$ = 11,100 cal mol^-1^, $\Delta H_1$ = –7200 cal mol^-1^, $\hat{C}_{p,A}$ = 7.6 cal mol^-1^ K^-1^, $\hat{C}_{p,B}$ = 8.2 cal mol^-1^ K^-1^, $\hat{C}_{p,I}$ = 4.3 cal mol^-1^ K^-1^, and $\hat{C}_{p,Z}$ = 13.8 cal mol^-1^ K^-1^, and $R$ = 1.987 cal mol^-1^ K^-1^ = 8.206 x 10^-5^ m^3^ atm mol^-1^ K^-1^.
+**Given and Known Constants**: $y_{A,in}$ = 0.1, $y_{Bin}$ = 0.65, $y_{I,in}$ = 0.25, $T_{in}$ = 165 °C, $P$ = 5 atm, $y_A$ = 0.001, $k_{0,1}$ = 1.37 x 10^5^ m^3^ mol^-1^ min^-1^, $E_1$ = 11,100 cal mol^-1^, $\Delta H_1$ = –7200 cal mol^-1^, $\hat{C}_{p,A}$ = 7.6 cal mol^-1^ K^-1^, $\hat{C}_{p,B}$ = 8.2 cal mol^-1^ K^-1^, $\hat{C}_{p,I}$ = 4.3 cal mol^-1^ K^-1^, and $\hat{C}_{p,Z}$ = 13.8 cal mol^-1^ K^-1^, and $R$ = 1.987 cal mol^-1^ K^-1^ = 8.206 x 10^-5^ m^3^ atm mol^-1^ K^-1^.
 
 **Reactor System**: Adiabatic, steady-state CSTR
 
-**Quantities of Interest**: $y_A$, $y_B$, $y_I$, $y_Z$, and $T$
+**Quantities of Interest**: $\tau$ and $T$
 
 #### Mathematical Formulation of the Solution
 
@@ -494,23 +494,29 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I will solve reactor design equations for the unknown outlet molar flow rates and the outlet temperature. In order to solve the ATEs numerically I'll need to do two things: calculate the values of the residuals for each guess and provide an initial guess.
-
-I'll need to evaluate the residuals each time a new guess for the solution is generated. At that point, values for each of the unknowns will be available along with the given and known constants. I will need to calculate any other quantities that appear in the residual expressions. Looking at equations (3) through (7) I see that for this assignment I'll need to calculate the volume, $V$, inlet molar flow rates, $\dot{n}_{i,in}$, and rate, $r_1$.
-
-Looking back at the assignment summary, I see that all of the given and known quantities are intensive. That is, they do not establish the size of the system. In that situation I am free to choose a basis for my calculations. I'll use a reactor fluid volume of 1 m^3^ as my basis. Having chosen a reactor volume, I can calculate the inlet volumetric flow rate using the given space time, @eq-space_time.
+At this point I have five reactor design equations, so I can solve them to find five unknown quantities. Usually I solve for the outlet molar flow rates and the outlet temperature, but in this assignment I'm given the outlet mole fraction of A. That means that I can calculate the outlet molar flow of A using its outlet mole fraction. Also, the assignment is to find the space time, but the space time doesn't appear in the design equations. However, the volume does appear in the design equations, it is unknown, and it is related to the space time. So I'll solve the five reactor design equations for $V$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$, and then, knowing $V$, I'll calculate the space time using @eq-space_time.
 
 $$
-\tau = \frac{V}{\dot V_{in}} \qquad \Rightarrow \qquad \dot{V}_{in} = \frac{V}{\tau}
+\tau = \frac{V}{\dot V_{in}}
 $$
 
-The assignment provides inlet mole fractions along with the pressure and inlet temperature. Having calculated the inlet volumetric flow rate, I can use the ideal gas law to calculate the inlet molar flow rates. The inlet mole fractions of A, B, and I sum to 1, so the inlet mole fraction of Z must equal zero.
+To do that, I'll need to know the inlet volumetric flow rate, but the inlet volumetric flow rate isn't given in the assignment. Looking more carefully at the assignment summary, I see that all of the given and known quantities are intensive. That is, they do not establish the size of the system. In that situation I am free to choose the value of one extensive quantity as a basis for my calculations. I'll use an inlet volumetric flow rate of 1 m^3^ min^-1^ as my basis. That way I'll be able to calculate the space time after solving the design equations for $V$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$.
+
+In order to solve the ATEs numerically I'll need to do two things: calculate the values of the residuals for each guess and provide an initial guess. I'll need to evaluate the residuals each time a new guess for the solution is generated. At that point, values for each of the unknowns ($V$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$) will be available along with the given and known constants. I will need to calculate any other quantities that appear in the residual expressions. Looking at equations (3) through (7) I see that for this assignment I'll need to calculate the inlet molar flow rates, $\dot{n}_{i,in}$, the outlet molar flow rate of A, $\dot{n}_A$, and the rate, $r_1$.
+
+ Having chosen an inlet volumetric flow rate, I can use the ideal gas law to calculate the inlet molar flow rates. The inlet mole fractions of A, B, and I sum to 1, so the inlet mole fraction of Z must equal zero.
 
 $$
 \dot{n}_{i,in} = y_{i,in}\frac{P\dot{V}_{in}}{RT}
 $$
 
-The rate can be calculated using equaion (2), but to do that I must calculate the rate coefficient and the outlet concentrations of A and B. The former can be accomplished using the Arrhenius expression, @eq-arrhenius, and for the outlet concentrations I can again use the ideal gas law. I need to use the outlet temperature when calculating the rate coefficient.
+The outlet molar flow rate of A can be calculated using its known outlet mole fraction.
+
+$$
+y_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z} \qquad \Rightarrow \qquad \dot{n}_A = \frac{\left(\dot{n}_B + \dot{n}_I + \dot{n}_Z\right)y_A}{1-y_A}
+$$
+
+The rate can be calculated using equaion (2), but to do that I must calculate the rate coefficient and the outlet concentrations of A and B. The former can be accomplished using the outlet temperature in the Arrhenius expression, @eq-arrhenius. For the outlet concentrations I can again use the ideal gas law.
 
 $$
 k_j = k_{0,j} \exp{\left(  \frac{-E_j}{RT_{in}} \right)}
@@ -525,11 +531,7 @@ $$
 **Ancillary Equations for Evaluating the Residuals**
 
 $$
-V = 1 \text{ m}^3 \left(\text{basis}\right)
-$$
-
-$$
-\dot{V}_{in} = \frac{V}{\tau} \tag{8}
+\dot{V}_{in} = 1 \text{ m}^3 \text{ min}^{-1} \left(\text{basis}\right) \tag{8}
 $$
 
 $$
@@ -545,68 +547,59 @@ $$
 $$
 
 $$
-k_1 = k_{0,1}\exp{\left(\frac{-E_1}{RT}\right)} \tag{12}
+\dot{n}_A = \frac{\left(\dot{n}_B + \dot{n}_I + \dot{n}_Z\right)y_A}{1-y_A} \tag{12}
 $$
 
 $$
-C_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z}\frac{P}{RT} \tag{13}
+k_1 = k_{0,1}\exp{\left(\frac{-E_1}{RT}\right)} \tag{13}
 $$
 
 $$
-C_B = \frac{\dot{n}_B}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z}\frac{P}{RT} \tag{14}
+C_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z}\frac{P}{RT} \tag{14}
+$$
+
+$$
+C_B = \frac{\dot{n}_B}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z}\frac{P}{RT} \tag{15}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-When I solve the ATEs numerically, I'll also need to provide an initial guess for the solution. I know that the molar flow rates of A and B will decrease and that of Z will increase, but I don't know by how much. The reaction is exothermic and the reactor is adiabatic, so I know the temperature will increase, but again I don't know by how much. I'll start with small guesses for the changes. If the ATE solver doesn't converge (and I can't find any typos or other errors in my computer code), I'll try changing the guesses until it does.
+When I solve the ATEs numerically, I'll also need to provide an initial guess for the solution. I'll just guess that the volume is 1 m^3^. I know that the molar flow rate of B will decrease and that of Z will increase, but I don't know by how much. The reaction is exothermic and the reactor is adiabatic, so I know the temperature will increase, but again I don't know by how much. I'll start with small guesses for the changes. If the ATE solver doesn't converge (and I can't find any typos or other errors in my computer code), I'll try changing the guesses until it does.
 
-When it does converge, the outlet molar flow rates and temperature, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$ will be known. $T$ is one of the quantities of interest. The others are the outlet mole fractions of the reagents. They can be calculated using the definition of a mole fraction.
+When it does converge, the outlet molar flow rates and temperature, $V$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$ will be known. $T$ is one of the quantities of interest. The other is the space time which can be calculated using its defining equation.
 
 :::
 
 **Ancillary Equations for Calculating the Quantities of Interest**
 
-Solving the reactor design equations yields $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$. The mole fractions of A, B, I, and Z can be calculated using equations (15) - (18).
+Solving the reactor design equations yields $V$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$. The space time can be calculated using equation (15).
 
 $$
-y_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z} \tag{15}
-$$
-
-$$
-y_B = \frac{\dot{n}_B}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z} \tag{16}
-$$
-
-$$
-y_I = \frac{\dot{n}_I}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z} \tag{17}
-$$
-
-$$
-y_Z = \frac{\dot{n}_Z}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z} \tag{18}
+\tau = \frac{V}{\dot V_{in}} \tag{16}
 $$
 
 **Calculations Summary**
 
-1. Substitute given and known constants into all equations.
+1. Substitute the basis, equation (8), given and known constants into all equations.
 2. When it is necessary to evaluate the residuals
-	a. $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$ will be available, and the basis ,$V$, will have been chosen and made available.
-	b. calculate $\dot{V}_{in}$ using equation (8)
-	c. calculate $\dot{n}_{A,in}$, $\dot{n}_{B,in}$, $\dot{n}_{I,in}$, $k_1$, $C_A$ and $C_B$ using equations (9) through (14)
+	a. $V$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$ will be available.
+	b. calculate $\dot{n}_{A,in}$, $\dot{n}_A$, $\dot{n}_{B,in}$, $\dot{n}_{I,in}$, $k_1$, $C_A$ and $C_B$ using equations (9) through (15)
 	d. calculate $r_1$ using equation (2)
 	e. evaluate the residuals, $\epsilon_1$ through $\epsilon_5$ using equations (3) through (7)
-3. When it is necessary to calculate the quantities of interest, $y_A$, $y_B$, $y_I$, and $y_Z$,
-	a. $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$ will be available.
-	b. calculate $y_A$, $y_B$, $y_I$, and $y_Z$ using equations (15) through (18).
+3. When it is necessary to calculate the quantities of interest, $\tau$ and $T$,
+	a. $V$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$ will be available.
+	b. calculate $\tau$ using equation (16).
 
 #### Numerical implementation of the Solution
 
 1. Make the given and known constants and the chosen basis available for use in all functions.
 2. Write a residuals function that
-	a. receives guess values for $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$,
+	a. receives guess values for $V$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$,
 	b. evaluates the residuals as described in step 2 of the calculations summary, and
 	c. returns the values of the residuals.
 3. Write a reactor model function that
-	a. receives an initial guess for the unknowns, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$,
+	a. receives an initial guess for the unknowns, $V$, $\dot{n}_B$, $\dot{n}_I$, $\dot{n}_Z$, and $T$,
 	b. gets a solution of the ATEs by calling an ATE solver and passing the following information to it
 		i. the initial guess and
 		ii. the name of the residuals function from step 2 above,
@@ -627,7 +620,7 @@ df <- read.csv('examples/reb_12_7_2/results.csv')
 df <- fmt_tibble_col(df, 2, 3, 3, 2)
 ```
 
-The calculations were performed as described above. The outlet gas temperature is `r df$value[5]` `r df$units[5]` and the outlet composition is `r df$value[1]``r df$units[1]` A, `r df$value[2]``r df$units[2]` B, `r df$value[3]``r df$units[3]` I, and `r df$value[4]``r df$units[4]` Z. This analysis was quite straightforward, and the results are as would be expected on the basis of a qualitative analysis.
+The calculations were performed as described above. The necessary space time is `r df$value[1]` `r df$units[1]`, and the outlet gas temperature is `r df$value[2]` `r df$units[2]`. This analysis was quite straightforward, and as expected on the basis of a qualitative analysis, the temperature did increase.
 
 :::{.callout-note collapse="false"}
 ## Note
