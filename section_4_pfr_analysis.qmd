@@ -35,7 +35,9 @@ source("~/Libraries/R/fmt_tibble_col.R")
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-identify problem type, describe variable naming
+
+This assignment describes an isolated PFR and the manner in which it operates and asks questions about the reactor outputs. For analysis purposes, it isn't part of a larger system, so I will need to create a model for the reactor and use it to answer the questions. I'll summarize the assignment by assigning an appropriate variable symbol to each quantity provided in the narrative. I'll use a subscripted "in" to denote quantities that apply at the inlet to the reactor.
+
 :::
 
 #### Assignment Summary
@@ -51,17 +53,25 @@ identify problem type, describe variable naming
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-@eq-pfr_ss_mol_balance
+I need to generate the reactor design equations needed to model this PFR as discussed in @sec-3_design_eqns. Mole balances are always included among the reactor design equations. I will write mole balances on each of the reagents in the system, A, B, and Z. The PFR operates at steady-state, so I'll start with the general steady-state PFR given in @eq-pfr_ss_mol_balance. There is only one reaction taking place, so the summation reduces to a single term. 
 
 $$
-\frac{d \dot{n}_i}{d z}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j
+\frac{d \dot{n}_i}{d z}  =\frac{\pi D^2}{4}\cancelto{\nu_{i,1}r_1}{\sum_j \nu_{i,j}r_j}
 $$
 
-@eq-pfr_ss_energy_balance
+This reactor is not isothermal, so the mole balances must be solved simultaneously with an energy balance on the reacting gas. To generate that equation, I'll start from the general form of the steady-state PFR energy balance, @eq-pfr_ss_energy_balance. There are three reagents present in the reactor, so the first summation expands to three terms. Again, there is only one reaction taking place, so the final summation reduces to a single term. Knowing that I will be solving the design equations numerically, I'll rearrange the equation into the form of a derivative expression.
 
 $$
-\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right) \frac{d T}{d z} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+\cancelto{\left( \dot{n}_A \hat{C}_{p,A} + \dot{n}_B \hat{C}_{p,B} + \dot{n}_Z \hat{C}_{p,Z}  \right)}{\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right)} \frac{d T}{d z} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\cancelto{r_1 \Delta H_1}{\sum_j r_j \Delta H_j}
 $$
+
+$$
+\frac{d T}{d z} = \frac{\pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}r_1 \Delta H_1}{\dot{n}_A \hat{C}_{p,A} + \dot{n}_B \hat{C}_{p,B} + \dot{n}_Z \hat{C}_{p,Z}}
+$$
+
+The PFR is being heated using the latent heat of a heat exchange fluid. Because only the latent heat is involved, the temperature of the exchange fluid is constant. That means that I can solve the other mole and energy balances independently of an energy balance on the heat exchange fluid. (In this assignment I'm not provide with sufficient information to write the exchange fluid energy balance, but neither does the assignment ask for anything that would need to be calculated using it.)
+
+Finally, for PFRs a momentum balance is needed to account for pressure drop along the length of the reactor. In this assignment, however, it is noted that pressure drop is negligible, so a momentum balance is not needed.
 
 :::
 
@@ -87,14 +97,11 @@ $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-check number of ivodes and deps
-:::
 
-differential ideal gas law
+The reactor design equations consist of four IVODEs and they contain four dependent variables, so there isn't a need to either eliminate a dependent variable or add an IVODE. However, in order to solve the design equations numerically, initial values and a stopping criterion are needed.
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-define initial values and stopping criterion
+I can define $z=0$ to be the inlet to the reactor. The initial values are then simply the values of the depedent variables at the reactor inlet. The length of the reactor is provided, so that can serve as the stopping criterion.
+
 :::
 
 **Initial Values and Stopping Criterion**
@@ -107,16 +114,21 @@ define initial values and stopping criterion
 | $\dot{n}_Z$ | $0$ | |
 | $T$ | $T_{in}$ | |
   
-: Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example__initial_values}
+: Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example_13_7_1_initial_values}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example__initial_values.
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_13_7_1_initial_values.
 
-I'll start by writing the design equations in the form of derivative expressions (see @sec-apndx....
+I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent ($z$) and dependent ($\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$) variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions, equations (3) through (6).
 
-I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
+Looking at those equations I see that I'll need to calculate the rate, $r_1$. I can use the rate expression, equation (2), to do that, but that wiill require me to calculate the rate coefficient, $k_1$, and the partial pressures of A and B. The Arrhenius expression, @eq-arrhenius, can be used for the former and the defining equation for partial pressure for the latter.
+
+$$
+P_i = y_iP = \frac{\dot{n}_i}{\sum_i\dot{n}_i}
+$$
+
 :::
 
 **Ancillary Equations for Evaluating the Derivatives**
@@ -135,7 +147,7 @@ $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example__initial_values....
+When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_13_7_1_initial_values....
 :::
 
 **Ancillary Equations for Calculating the Initial and Final Values**
@@ -167,7 +179,7 @@ $$
 2. When it is necessary to evaluate the derivatives
 	a. [list of variables] will be available.
 	b. 
-3. When it is necessary to calculate the initial and final values in @tbl-example__initial_values
+3. When it is necessary to calculate the initial and final values in @tbl-example_13_7_1_initial_values
 	a. [list of variables] are known constants.
 	b. 
 4. When it is necessary to evaluate the residual corresponding to [variable]
@@ -191,9 +203,9 @@ $$
 	c. returns the value of [variable].
 5. Write a reactor model function that
 	a. ...
-	b. calculates the initial and final values in @tbl-example__initial_values as described in step 3 of the calculations summary,
+	b. calculates the initial and final values in @tbl-example_13_7_1_initial_values as described in step 3 of the calculations summary,
 	c. gets corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
-		i. the initial values and stopping criterion in @tbl-example__initial_values and
+		i. the initial values and stopping criterion in @tbl-example_13_7_1_initial_values and
 		ii. the name of the derivatives function from step 3 above,
 	d, checks that the solver successfully solved the IVODEs, and
 	e. returns the values returned by the IVODE solver.
