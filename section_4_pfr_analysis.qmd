@@ -1,3 +1,223 @@
 # PFR Analysis {#sec-4_pfr_analysis}
 
-This chapter will be added as soon as I finish writing it.
+## PFR Characteristics
+
+## PFR Operation
+
+## Qualitative Analysis of Steady-State Reaction in a PFR
+
+## PFR Design Equations
+
+## PFR Reaction Fronts
+
+## Packed Bed PFRs
+
+## Examples
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(readxl)
+source("~/Libraries/R/fmt_tibble_col.R")
+```
+
+
+### Steady-State Conversion in a Gas-Phase PFR
+
+{{< include examples/reb_13_7_1/narrative.qmd >}}
+
+{{< include examples/reb_13_7_1/equations.qmd >}}
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+identify problem type, describe variable naming
+:::
+
+#### Assignment Summary
+
+**Given and Known Constants**: $\Delta H_1$ = 44.8 kJ mol^-1^, $k_{0,1}$ = 7.22 x 10^6^ mol atm^-2^ cm^-3^ s^-1^, $E_1$ = 84.1 kJ mol^-1^, $L$ = 10 ft, $D$ = 1 in, $T_{ex}$ = 200 °C, $U$ = 7.48 x 10^4^ J h^-1^ ft^-2^ K^-1^, $y_{A,in}$ = 0.60, $y_{B,in}$ =  0.40, $\dot{V}_{in}$ = 282 L min^-1^, $P$ = 2.5 atm, $T_{in}$ = 175 °C, $\hat{C}_{p,A}$ = 18.0 cal mol^-1^ K^-1^, $\hat{C}_{p,B}$ = 12.25 cal mol^-1^ K^-1^, $\hat{C}_{p,Z}$ = 21.2 cal mol^-1^ K^-1^, and $R$ = 8.314 J mol^-1^ K^-1^ = 0.08206 L atm mol^-1^ K^-1^.
+
+**Reactor System**: Heated, steady-state PFR
+
+**Quantities of Interest**: $T \big\vert_{z=L}$ and $f_B$
+
+#### Mathematical Formulation of the Solution
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+@eq-pfr_ss_mol_balance
+
+$$
+\frac{d \dot{n}_i}{d z}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j
+$$
+
+@eq-pfr_ss_energy_balance
+
+$$
+\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right) \frac{d T}{d z} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+$$
+
+:::
+
+**Reactor Design Equations**
+
+Mole balance design equations for A, B, and Z are presented in equations (3) - (5). The energy balance on the reacting gas is given in equation (6).
+
+$$
+\frac{d \dot{n}_A}{dz} = -\frac{\pi D^2}{4}r_1 \tag{3}
+$$
+
+$$
+\frac{d \dot{n}_B}{dz} = -\frac{\pi D^2}{4}r_1 \tag{4}
+$$
+
+$$
+\frac{d \dot{n}_Z}{dz} = \frac{\pi D^2}{4}r_1 \tag{5}
+$$
+
+$$
+\frac{d T}{d z} = \frac{\pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}r_1 \Delta H_1}{\left( \dot{n}_A \hat{C}_{p,A} + \dot{n}_B \hat{C}_{p,B} + \dot{n}_Z \hat{C}_{p,Z} \right)} \tag{6}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+check number of ivodes and deps
+:::
+
+differential ideal gas law
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+define initial values and stopping criterion
+:::
+
+**Initial Values and Stopping Criterion**
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $z$ | $0$ | $L$ |
+| $\dot{n}_A$ | $\dot{n}_{A,in}$ | |
+| $\dot{n}_B$ | $\dot{n}_{B,in}$ | |
+| $\dot{n}_Z$ | $0$ | |
+| $T$ | $T_{in}$ | |
+  
+: Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example__initial_values}
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example__initial_values.
+
+I'll start by writing the design equations in the form of derivative expressions (see @sec-apndx....
+
+I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
+:::
+
+**Ancillary Equations for Evaluating the Derivatives**
+
+$$
+k_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)} \tag{7}
+$$
+
+$$
+P_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_Z}P \tag{8}
+$$
+
+$$
+P_B = \frac{\dot{n}_B}{\dot{n}_A + \dot{n}_B + \dot{n}_Z}P \tag{9}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example__initial_values....
+:::
+
+**Ancillary Equations for Calculating the Initial and Final Values**
+
+$$
+\dot{n}_{A,in} = y_{A,in}\frac{P\dot{V}_{in}}{RT_{in}}\tag{10}
+$$
+
+$$
+\dot{n}_{B,in} = y_{B,in}\frac{P\dot{V}_{in}}{RT_{in}}\tag{11}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+develop equations needed to calculate quantities of interest
+:::
+
+**Ancillary Equations for Calculating the Quantities of Interest**
+
+Solving the reactor design equations yields [list independent and dependent variables]. 
+
+$$
+f_B = \frac{\dot{n}_{B,in} - \dot{n}_B}{\dot{n}_{B,in}}\tag{12}
+$$
+
+**Calculations Summary**
+
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the derivatives
+	a. [list of variables] will be available.
+	b. 
+3. When it is necessary to calculate the initial and final values in @tbl-example__initial_values
+	a. [list of variables] are known constants.
+	b. 
+4. When it is necessary to evaluate the residual corresponding to [variable]
+    a. a guess for [variable] will be available for use in all equations.
+    b. 
+5. When it is necessary to calculate the quantities of interest, [list]
+	a. corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values will be available.
+	b. 
+
+#### Numerical implementation of the Solution
+
+1. Make the given and known constants available for use in all functions.
+2. Define a variable to hold [unknown constant] and make it available to all functions.
+3. Write a derivatives function that
+	a. receives the independent and dependent variables, [list], as arguments,
+	b. evaluates the derivatives as described in step 2 of the calculations summary, and 
+	c. returns the values of the derivatives, [list].
+4. Write a residuals function that
+	a. receives a guess for [variable] and makes it available to all functions,
+	b. evaluates the residual as described in step 4 of the calculations summary, and
+	c. returns the value of [variable].
+5. Write a reactor model function that
+	a. ...
+	b. calculates the initial and final values in @tbl-example__initial_values as described in step 3 of the calculations summary,
+	c. gets corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example__initial_values and
+		ii. the name of the derivatives function from step 3 above,
+	d, checks that the solver successfully solved the IVODEs, and
+	e. returns the values returned by the IVODE solver.
+6. Perform the analysis by
+	a. ...
+	b. getting corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling the reactor model function from step 5 above,
+	c. calculates the quantities of interest as described in step 5 of the calculations summary,
+	d. ....
+
+#### Results and Discussion
+
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv("examples/reb_13_7_1/results.csv") 
+df <- fmt_tibble_col(df, 2, 3, 3, 1)
+```
+
+The calculations were performed as described above. The outlet temperature is `r df$value[1]` `r df$units[1]` and the conversion of B is `r df$value[2]` `r df$units[2]`.
+
+
+::: {.callout-note appearance="simple"}
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_19.html).
+:::
+
+## Symbols Used in [Chapter -@sec-4_pfr_analysis]
