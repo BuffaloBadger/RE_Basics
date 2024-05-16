@@ -24,6 +24,7 @@ library(readxl)
 source("~/Libraries/R/fmt_tibble_col.R")
 ```
 
+This chapter includes six examples involving the analysis of an isolated PFR. The first three examples illustrate response tasks involving steady-state PFRs. [Example -@sec-example_13_7_1] involves a gas phase reaction with negligible pressure drop while in [Example -@sec-example_13_7_3] the momentum balance is used. In [Example -@sec-example_13_7_2] the required feed temperature for a liquid-phase reaction is calculated. [Example -@sec-example_13_7_4] illustrates an optimization task for a gas-phase reaction with negligible pressure drop. [Example -@sec-example_13_7_5] analyzes the start-up of the PFR from [Example -@sec-example_13_7_2] where the transient takes the form of a front that propgates along the length of the reactor. A packed-bed PFR with concentration gradients within the catalyst pores is considered in [Example -@sec-example_13_7_6].
 
 ### Steady-State Conversion in a Gas-Phase PFR {#sec-example_13_7_1}
 
@@ -147,7 +148,13 @@ $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_13_7_1_initial_values....
+
+When I solve the IVODEs numerically, I'll also need to calculate the initial and final values in @tbl-example_13_7_1_initial_values. The reactor length and feed temperature are given in the assignment narrative. The narrative also provides the inlet mole fractions of A and B and the inlet volumetric flow rate. The ideal gas law can be used to calculate the total inlet molar flow rate which can be multiplied by each reagent mole fraction to calculate the inlet molar flow of that reagent.
+
+$$
+\dot{n}_{i,in} = y_{i,in} \dot{n}_{total,in} =  y_{i,in} \frac{P\dot{V}_{in}}{RT_{in}}
+$$
+
 :::
 
 **Ancillary Equations for Calculating the Initial and Final Values**
@@ -162,12 +169,14 @@ $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-develop equations needed to calculate quantities of interest
+
+At this point the reactor design equations can be solved to get corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$ spanning the range from their initial (inlet) values to their final (outlte) values. The outlet temperature is one of the quantities of interest. The other, namely the fractional conversion of B can be calculated using its defining equation for an open system, @eq-conversion_def_open.
+
 :::
 
 **Ancillary Equations for Calculating the Quantities of Interest**
 
-Solving the reactor design equations yields [list independent and dependent variables]. 
+Solving the reactor design equations yields $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$ as functions of $z$ between 0 and $L$. The conversion of B can be calculated using equation (12).
 
 $$
 f_B = \frac{\dot{n}_{B,in} - \dot{n}_B}{\dot{n}_{B,in}}\tag{12}
@@ -177,43 +186,33 @@ $$
 
 1. Substitute given and known constants into all equations.
 2. When it is necessary to evaluate the derivatives
-	a. [list of variables] will be available.
-	b. 
+	a. $z$, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$ will be available
+	b. calculate $k_1$, $P_A$, and $P_B$ using equtions (7) - (9).
+	c. calculate $r_1$ using equation (2).
+	d. evaluate the derivatives using equations (3) - (6).
 3. When it is necessary to calculate the initial and final values in @tbl-example_13_7_1_initial_values
-	a. [list of variables] are known constants.
-	b. 
-4. When it is necessary to evaluate the residual corresponding to [variable]
-    a. a guess for [variable] will be available for use in all equations.
-    b. 
-5. When it is necessary to calculate the quantities of interest, [list]
-	a. corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values will be available.
-	b. 
+	a. $T_{in}$ and $L$ are known constants.
+	b. calculate $\dot{n}_{A,in}$ and $\dot{n}_{B,in}$ using equations (10) and (11).
+4. When it is necessary to calculate the quantities of interest, $T \big\vert_{z=L}$ and $f_B$
+	a. corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$, spanning the range from their initial values to their final values will be available.
+	b. calculate $f_B$ using equation (12).
 
 #### Numerical implementation of the Solution
 
 1. Make the given and known constants available for use in all functions.
-2. Define a variable to hold [unknown constant] and make it available to all functions.
-3. Write a derivatives function that
-	a. receives the independent and dependent variables, [list], as arguments,
-	b. evaluates the derivatives as described in step 2 of the calculations summary, and 
-	c. returns the values of the derivatives, [list].
-4. Write a residuals function that
-	a. receives a guess for [variable] and makes it available to all functions,
-	b. evaluates the residual as described in step 4 of the calculations summary, and
-	c. returns the value of [variable].
-5. Write a reactor model function that
-	a. ...
-	b. calculates the initial and final values in @tbl-example_13_7_1_initial_values as described in step 3 of the calculations summary,
-	c. gets corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+2. Write a derivatives function that
+	a. receives the independent and dependent variables, $z$, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$, as arguments,
+	b. evaluates the derivatives as described in step 2 of the calculations summary, and returns them.
+3. Write a reactor model function that
+	a. calculates the initial and final values in @tbl-example_13_7_1_initial_values as described in step 3 of the calculations summary,
+	b. gets corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
 		i. the initial values and stopping criterion in @tbl-example_13_7_1_initial_values and
-		ii. the name of the derivatives function from step 3 above,
-	d, checks that the solver successfully solved the IVODEs, and
-	e. returns the values returned by the IVODE solver.
-6. Perform the analysis by
-	a. ...
-	b. getting corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling the reactor model function from step 5 above,
-	c. calculates the quantities of interest as described in step 5 of the calculations summary,
-	d. ....
+		ii. the name of the derivatives function from step 2 above,
+	c, checks that the solver successfully solved the IVODEs, and
+	d. returns the values returned by the IVODE solver.
+4. Perform the analysis by
+	a. getting corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$, spanning the range from their initial values to their final values by calling the reactor model function from step 3 above,
+	c. calculating the quantities of interest as described in step 4 of the calculations summary,
 
 #### Results and Discussion
 
@@ -224,8 +223,9 @@ df <- read.csv("examples/reb_13_7_1/results.csv")
 df <- fmt_tibble_col(df, 2, 3, 3, 1)
 ```
 
-The calculations were performed as described above. The outlet temperature is `r df$value[1]` `r df$units[1]` and the conversion of B is `r df$value[2]` `r df$units[2]`.
+The calculations were performed as described above. The outlet temperature is `r df$value[1]` `r df$units[1]` and the conversion of B is `r df$value[2]` `r df$units[2]`. Apparently the rate of heat transfer to the reactor from the vapor condensing on the outside of the reactor wall is less than the heat absorbed by the endothermic reaction. The feed enters at 175 °C, and despite the heat being supplied by the 200 °C heat exchange fluid, the reacting fluid temperature drops to `r df$value[1]` `r df$units[1]` by the time it reaches the reactor outlet.
 
+As the temperature drops, the reaction rate decreases. If heat was not being supplied, the temperature would have dropped even lower resulting in a lower conversion at the reactor outlet. 
 
 ::: {.callout-note appearance="simple"}
 ## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
@@ -264,24 +264,45 @@ generate design equations
 
 Mole balance design equations for [reagents] are presented in equations (numbers). The energy balance on the reacting fluid is given in equation (number). An energy balance on the heat exchange fluid is shown in equation (number).
 
+$$
+\frac{d \dot{n}_A}{dz} = - \frac{\pi D^2}{4}r_1
+$$
+
+$$
+\frac{d \dot{n}_B}{dz} = - \frac{\pi D^2}{4}r_1
+$$
+
+$$
+\frac{d \dot{n}_Y}{dz} = \frac{\pi D^2}{4}r_1
+$$
+
+$$
+\frac{d \dot{n}_Z}{dz} = \frac{\pi D^2}{4}r_1
+$$
+
+$$
+\frac{d T}{d z} =  - \frac{{\frac{\pi D^2}{4}r_1 \Delta H_1}}{\dot{n}_A \hat{C}_{p,A} + \dot{n}_B \hat{C}_{p,B} + \dot{n}_Y \hat{C}_{p,Y} + \dot{n}_Z \hat{C}_{p,Z}}
+$$
+
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
+
 check number of ivodes and deps
-:::
 
-differential ideal gas law
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
 define initial values and stopping criterion
+
 :::
 
 **Initial Values and Stopping Criterion**
 
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
-| $$ | $$ | $$ |
-| $$ | $$ | |
+| $z$ | $0$ | $L$ |
+| $\dot{n}_A$ | $\dot{n}_{A,in}$ | |
+| $\dot{n}_B$ | $\dot{n}_{B,in}$ | |
+| $\dot{n}_Y$ | $0$ | |
+| $\dot{n}_Z$ | $0$ | |
+| $T$ | $T_{in}$ | |
   
 : Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example_13_7_2_initial_values}
 
@@ -297,7 +318,17 @@ I'll need to evaluate the derivatives at the start of each integration step. At 
 
 **Ancillary Equations for Evaluating the Derivatives**
 
+$$
+k_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)}
+$$
 
+$$
+C_A = \frac{\dot{n}_A}{\dot{V}_{in}}
+$$
+
+$$
+C_B = \frac{\dot{n}_B}{\dot{V}_{in}}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -306,7 +337,17 @@ When I solve the IVODEs numerically, I'll also need to know the initial and fina
 
 **Ancillary Equations for Calculating the Initial and Final Values**
 
+$$
+\dot{n}_{A,in} = \dot{V}_{in}C_{A,in}
+$$
 
+$$
+\dot{n}_{B,in} = \dot{V}_{in}C_{B,in}
+$$
+
+$$
+0 = \dot{n}_A \big \vert_{z=L} - \dot{n}_{A,in}\left( 1 - f_A \right) = \epsilon
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -411,24 +452,50 @@ $$
 
 Mole balance design equations for [reagents] are presented in equations (numbers). The energy balance on the reacting fluid is given in equation (number). An energy balance on the heat exchange fluid is shown in equation (number).
 
+$$
+\frac{d \dot{n}_A}{dz} = - \frac{\pi D^2}{4}r_1
+$$
+
+$$
+\frac{d \dot{n}_Y}{dz} = \frac{\pi D^2}{4}r_1
+$$
+
+$$
+\frac{d \dot{n}_Z}{dz} = 3\frac{\pi D^2}{4}r_1
+$$
+
+$$
+\frac{d \dot{n}_I}{dz} = 0.0
+$$
+
+$$
+\frac{d T}{d z} =  \frac{\pi DU \left(T_{ex} - T\right)-{\frac{\pi D^2}{4}r_1 \Delta H_1}}{\dot{n}_A \hat{C}_{p,A} + \dot{n}_B \hat{C}_{p,I} + \dot{n}_Y \hat{C}_{p,Y} + \dot{n}_Z \hat{C}_{p,Z}}
+$$
+
+$$
+\frac{{dP}}{{dz}} =  - \frac{{1 - \varepsilon }}{{{\varepsilon ^3}}}\frac{{{G^2}}}{{\rho {\Phi _s}{D_p}}}\left[ {\frac{{150\left( {1 - \varepsilon } \right)\mu }}{{{\Phi _s}{D_p}G}} + 1.75} \right]
+$$
+
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
-check number of ivodes and deps
-:::
 
 differential ideal gas law
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
 define initial values and stopping criterion
+
 :::
 
 **Initial Values and Stopping Criterion**
 
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
-| $$ | $$ | $$ |
-| $$ | $$ | |
+| $z$ | $0$ | $L$ |
+| $\dot{n}_A$ | $\dot{n}_{A,in}$ | |
+| $\dot{n}_Y$ | $0$ | |
+| $\dot{n}_Z$ | $0$ | |
+| $\dot{n}_I$ | $\dot{n}_{I,in}$ | |
+| $T$ | $T_{in}$ | |
+| $P$ | $P_{in}$ | |
   
 : Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example_13_7_3_initial_values}
 
@@ -444,7 +511,33 @@ I'll need to evaluate the derivatives at the start of each integration step. At 
 
 **Ancillary Equations for Evaluating the Derivatives**
 
+$$
+k_{1,f} = k_{0,f} \exp{\left( \frac{-E_f}{RT} \right)}
+$$
 
+$$
+k_{1,r} = k_{0,r} \exp{\left( \frac{-E_r}{RT} \right)}
+$$
+
+$$
+P_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_Y + \dot{n}_Z + \dot{n}_I}P
+$$
+
+$$
+P_Y = \frac{\dot{n}_Y}{\dot{n}_A + \dot{n}_Y + \dot{n}_Z + \dot{n}_I}P
+$$
+
+$$
+P_Z = \frac{\dot{n}_Z}{\dot{n}_A + \dot{n}_Y + \dot{n}_Z + \dot{n}_I}P
+$$
+
+$$
+G = \frac{4\dot{m}_{in}}{\pi D^2}
+$$
+
+$$
+\rho = \frac{\dot{m}_{in}P}{\left( \dot{n}_A + \dot{n}_Y + \dot{n}_Z + \dot{n}_I \right)RT}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -453,6 +546,13 @@ When I solve the IVODEs numerically, I'll also need to know the initial and fina
 
 **Ancillary Equations for Calculating the Initial and Final Values**
 
+$$
+\dot{n}_{A,in} = y_{A,in}\frac{P\dot{V}_{in}}{RT}
+$$
+
+$$
+\dot{n}_{I,in} = y_{I,in}\frac{P\dot{V}_{in}}{RT}
+$$
 
 
 :::{.callout-tip collapse="true"}
@@ -462,7 +562,11 @@ develop equations needed to calculate quantities of interest
 
 **Ancillary Equations for Calculating the Quantities of Interest**
 
-Solving the reactor design equations yields [list independent and dependent variables]. 
+Solving the reactor design equations yields [list independent and dependent variables].
+
+$$
+f_A = \frac{\dot{n}_{A,in} - \dot{n}_A}{\dot{n}_{A,in}}
+$$
 
 **Calculations Summary**
 
@@ -554,24 +658,50 @@ generate design equations
 
 Mole balance design equations for [reagents] are presented in equations (numbers). The energy balance on the reacting fluid is given in equation (number). An energy balance on the heat exchange fluid is shown in equation (number).
 
+$$
+\frac{d \dot{n}_{CO}}{dV} = - r_1
+$$
+
+$$
+\frac{d \dot{n}_{H_2O}}{dV} = - r_1
+$$
+
+$$
+\frac{d \dot{n}_{CO_2}}{dV} = r_1
+$$
+
+$$
+\frac{d \dot{n}_{H_2}}{dV} = r_1
+$$
+
+$$
+\frac{d \dot{n}_I}{dV} = 0.0
+$$
+
+$$
+\frac{d T}{dV} =  \frac{-r_1 \Delta H_1}{\dot{n}_{CO} \hat{C}_{p,CO} + \dot{n}_{H_2O} \hat{C}_{p,H_2O} + \dot{n}_{CO_2} \hat{C}_{p,CO_2} + \dot{n}_{H_2} \hat{C}_{p,H_2} + \dot{n}_I \hat{C}_{p,I}}
+$$
+
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
+
 check number of ivodes and deps
-:::
-
 differential ideal gas law
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
 define initial values and stopping criterion
+
 :::
 
 **Initial Values and Stopping Criterion**
 
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
-| $$ | $$ | $$ |
-| $$ | $$ | |
+| $V$ | $0$ | |
+| $\dot{n}_{CO}$ | $\dot{n}_{CO,in}$ | $\dot{n}_{CO,out}$ |
+| $\dot{n}_{H_2O}$ | $\dot{n}_{H_2O,in}$ | |
+| $\dot{n}_{CO_2}$ | $\dot{n}_{CO_2,in}$ | |
+| $\dot{n}_{H_2}$ | $\dot{n}_{H_2,in}$ | |
+| $\dot{n}_I$ | $\dot{n}_{I,in}$ | |
+| $T$ | $T_{in}$ | |
   
 : Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example_13_7_4_initial_values}
 
@@ -587,7 +717,25 @@ I'll need to evaluate the derivatives at the start of each integration step. At 
 
 **Ancillary Equations for Evaluating the Derivatives**
 
+$$
+k_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)}
+$$
 
+$$
+P_{CO} = \frac{\dot{n}_{CO}}{\dot{n}_{CO} + \dot{n}_{H_2O} + \dot{n}_{CO_2} + \dot{n}_{H_2} + \dot{n}_I}P
+$$
+
+$$
+P_{H_2O} = \frac{\dot{n}_{H_2O}}{\dot{n}_{CO} + \dot{n}_{H_2O} + \dot{n}_{CO_2} + \dot{n}_{H_2} + \dot{n}_I}P
+$$
+
+$$
+P_{CO_2} = \frac{\dot{n}_{CO_2}}{\dot{n}_{CO} + \dot{n}_{H_2O} + \dot{n}_{CO_2} + \dot{n}_{H_2} + \dot{n}_I}P
+$$
+
+$$
+P_{H_2} = \frac{\dot{n}_{H_2}}{\dot{n}_{CO} + \dot{n}_{H_2O} + \dot{n}_{CO_2} + \dot{n}_{H_2} + \dot{n}_I}P
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -596,7 +744,9 @@ When I solve the IVODEs numerically, I'll also need to know the initial and fina
 
 **Ancillary Equations for Calculating the Initial and Final Values**
 
-
+$$
+\dot{n}_{CO,out} = \dot{n}_{CO,in} \left( 1 - f_{CO} \right)
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -818,6 +968,176 @@ Concentration (blue) and temperature (red) profiles 0.131, 0.262, 0.393, and 0,5
 Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_21.html).
 :::
 
-### Example 6 {#sec-example_13_7_6}
+### Gas-Phase Reaction in a Packed-Bed PFR with Internal Concentration Gradients {#sec-example_13_7_6}
+
+{{< include examples/reb_13_7_6/narrative.qmd >}}
+
+{{< include examples/reb_13_7_6/equations.qmd >}}
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+identify problem type, describe variable naming
+:::
+
+#### Assignment Summary
+
+**Given and Known Constants**: 
+
+**Reactor System**: 
+
+**Quantities of Interest**: 
+
+#### Mathematical Formulation of the Solution
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+generate design equations
+:::
+
+**Reactor Design Equations**
+
+Mole balance design equations for [reagents] are presented in equations (numbers). The energy balance on the reacting fluid is given in equation (number). An energy balance on the heat exchange fluid is shown in equation (number).
+
+$$
+\frac{\dot{n}_A}{dz} = - \frac{\pi D^2}{4}\left(1-\varepsilon \right)\eta r_1 \tag{3}
+$$
+
+$$
+\frac{\dot{n}_Z}{dz} = \frac{\pi D^2}{4}\left(1-\varepsilon \right)\eta r_1 \tag{4}
+$$
+
+$$
+\frac{{dP}}{{dz}} =  - \frac{{1 - \varepsilon }}{{{\varepsilon ^3}}}\frac{{{G^2}}}{{\rho {\Phi _s}{D_p}}}\left[ {\frac{{150\left( {1 - \varepsilon } \right)\mu }}{{{\Phi _s}{D_p}G}} + 1.75} \right]
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+check number of ivodes and deps
+
+
+define initial values and stopping criterion
+
+:::
+
+**Initial Values and Stopping Criterion**
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $z$ | $0$ | |
+| $\dot{n}_A$ | $\dot{n}_{A,in}$ | $\dot{n}_{A,out}$ |
+| $\dot{n}_Z$ | $0$ | |
+| $P$ | $P_{in}$ | |
+  
+: Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example_13_7_6_initial_values}
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_13_7_6_initial_values.
+
+I'll start by writing the design equations in the form of derivative expressions (see @sec-apndx....
+
+I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
+:::
+
+**Ancillary Equations for Evaluating the Derivatives**
+
+$$
+\phi = R_{\text{part}}\sqrt{\frac{k}{D_{eA}}} \tag{777}
+$$
+
+$$
+\eta = \frac{3}{\phi}\left( \frac{1}{\tanh{\phi}} - \frac{1}{\phi} \right) \tag{778}
+$$
+
+$$
+C_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_Z}\frac{P}{RT} \tag{?}
+$$
+
+$$
+G = \frac{4\dot{m}}{\pi D^2}
+$$
+
+$$
+\rho = \frac{\dot{m}_{in}P}{\left( \dot{n}_A + \dot{n}_Z \right)RT}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_13_7_6_initial_values....
+:::
+
+**Ancillary Equations for Calculating the Initial and Final Values**
+
+$$
+\dot{n}_{A,in} = \frac{\dot{V}_{in}P_{in}}{RT_{in}}
+$$
+
+$$
+\dot{n}_{A,out} = \dot{n}_{A,in} \left( 1 - f_A \right)
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+develop equations needed to calculate quantities of interest
+:::
+
+**Ancillary Equations for Calculating the Quantities of Interest**
+
+Solving the reactor design equations yields [list independent and dependent variables]. 
+
+**Calculations Summary**
+
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the derivatives
+	a. [list of variables] will be available.
+	b. 
+3. When it is necessary to calculate the initial and final values in @tbl-example_13_7_6_initial_values
+	a. [list of variables] are known constants.
+	b. 
+4. When it is necessary to evaluate the residual corresponding to [variable]
+    a. a guess for [variable] will be available for use in all equations.
+    b. 
+5. When it is necessary to calculate the quantities of interest, [list]
+	a. corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values will be available.
+	b. 
+
+#### Numerical implementation of the Solution
+
+1. Make the given and known constants available for use in all functions.
+2. Define a variable to hold [unknown constant] and make it available to all functions.
+3. Write a derivatives function that
+	a. receives the independent and dependent variables, [list], as arguments,
+	b. evaluates the derivatives as described in step 2 of the calculations summary, and 
+	c. returns the values of the derivatives, [list].
+4. Write a residuals function that
+	a. receives a guess for [variable] and makes it available to all functions,
+	b. evaluates the residual as described in step 4 of the calculations summary, and
+	c. returns the value of [variable].
+5. Write a reactor model function that
+	a. ...
+	b. calculates the initial and final values in @tbl-example_13_7_6_initial_values as described in step 3 of the calculations summary,
+	c. gets corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example_13_7_6_initial_values and
+		ii. the name of the derivatives function from step 3 above,
+	d, checks that the solver successfully solved the IVODEs, and
+	e. returns the values returned by the IVODE solver.
+6. Perform the analysis by
+	a. ...
+	b. getting corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling the reactor model function from step 5 above,
+	c. calculates the quantities of interest as described in step 5 of the calculations summary,
+	d. ....
+
+#### Results and Discussion
+
+The calculations were performed as described above.
+
+::: {.callout-note appearance="simple"}
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_22.html).
+:::
 
 ## Symbols Used in [Chapter -@sec-4_pfr_analysis]
