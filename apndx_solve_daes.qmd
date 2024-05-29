@@ -1,205 +1,270 @@
 # Solving Differential-Algebraic Equations {#sec-apndx_solve_daes}
 
-A set of differential-algebraic equations (DAEs) includes two subsets of equations. One subset contains differential equations and the other contains ATEs. Generally, a special computer function (a DAE solver) is needed to solve them numerically. This is *not* the case in *Reaction Engineering Basics*. **The DAEs encountered in *Reaction Engineering Basics* can be solved by using an IVODE solver within the residuals function passed to an ATE solver**. That is possible because in the DAEs in *Reaction Engineering Basics*, unknown quantities in the ATEs are initial or final values for the IVODEs, but they do not appear within the IVODEs.
+A set of differential-algebraic equations (DAEs) includes two subsets of equations. One subset contains differential equations and the other contains ATEs. Only one type of DAEs are important in *Reaction Engineering Basics*, and they can be solved using the same solvers as are used for ATEs and IVODEs (see @sec-apndx_solve_ates and @sec-apndx_solve_ivodes).
 
-## Mathematical Formulation of the Solution {#sec-form_soln_daes}
+## DAEs in *Reaction Engineering Basics*
 
-To illustrate, suppose the DAEs consist of two ATEs, Equations [-@eq-ate1_in_daes] and [-@eq-ate2_in_daes], and two IVODEs, Equations [-@eq-ivode1_in_daes] and [-@eq-ivode2_in_daes]. In those equations $y_{1,0}$ and $y_{2,0}$ represent the initial values of the dependent variables in the IVODEs and $y_1\big\vert_{x_f}$ and $y_2\big\vert_{x_f}$ represent the final values of the dependent variables in the IVODEs.
+@sec-apndx_solve_ivodes describes how to solve IVODEs with an unknown initial value or when an unknown constant appears in the IVODEs. In essence, an implicit ATE is written for the unknown initial value or constant. Then that implicit ATE is solved together with the IVODEs. The solution of a set of DAEs as described here uses a very similar approach.
 
-$$
-0 = f_1\left(y_{1,0}, y_{2,0}, y_1\big\vert_{x_f}, y_2\big\vert_{x_f} \right)
-$$ {#eq-ate1_in_daes}
+In *Reaction Engineering Basics* the IVODE subset of the DAEs will always be the reactor design equations for a PFR. The ATE subset of the DAEs will be mole and energy balances on other equipment associated with the PFR. Specifically the ATEs will be mole and energy balances on a heat exchanger when analyzing a thermally back-mixed PFR or mole and energy balances on a stream mixer and a stream splitter when analyzing a recycle PFR.
 
-$$
-0 = f_2\left(y_{1,0}, y_{2,0}, y_1\big\vert_{x_f}, y_2\big\vert_{x_f} \right)
-$$ {#eq-ate2_in_daes}
+## Mathematical Formulation of the Solution of DAEs {#sec-form_soln_daes}
 
-$$
-\frac{dy_1}{dx} = f_3\left(x, y_1, y_2\right)
-$$ {#eq-ivode1_in_daes}
+After summarizing the assignment, the mathematical formulation of the solution begins with writing the PFR reactor design equations and identifying the initial values and stopping criterion that will be used when solving them. The next step is to write mole and energy balances on the heat exchanger or on the stream splitter and stream mixer. The PFR reactor design equations will be IVODEs and the other mole and energy balances will be ATEs that together make up the set of DAEs being solved.
 
-$$
-\frac{dy_2}{dx} = f_4\left(x, y_1, y_2\right)
-$$ {#eq-ivode2_in_daes}
+The solution of the DAEs starts with the ATEs. The number of unknown quantities appearing in the ATEs will be greater than the number of ATEs. The unknown quantities will include initial values of the IVODE dependent variables, final values of the IVODE dependent variables, and other unknown quantities. **The key to solving the DAEs** is that the ATEs are solved to find the unknown IVODE *initial* values and the other unknown quantities. It is critically important that **the ATEs are not solved to find the unknown IVODE *final* values**.
 
-The initial and final values of the independent variable in the IVODEs, $x_0$ and $x_f$, are known, but the other initial values,$y_{1,0}$ and $y_{2,0}$, are not known, so the IVODEs cannot be solved directly. There are two ATEs, but they contain four unknowns. However, as explained in @sec-apndx_solve_ates, the ATEs can be solved for $y_{1,0}$ and $y_{2,0}$ if $y_1\big\vert_{x_f}$ and $y_2\big\vert_{x_f}$ are expressed in terms of $y_{1,0}$ and $y_{2,0}$. In fact, the IVODEs do exactly that: given values of $y_{1,0}$ and $y_{2,0}$, the IVODEs can be solved to find $y_1\big\vert_{x_f}$ and $y_2\big\vert_{x_f}$.
+As described in @sec-apndx_solve_ates, when an ATE solver is used to solve the ATEs numerically, it must be provided with two things. The first is an initial guess for the solution of the ATEs. The second is a residuals function. The residuals function must accept a guess for the solution as an argument. It must use that guess to calculate the values of any remaining unknown quantities appearing in the residuals expressions, evaluate the residuals, and return their values.
 
-Thus, the key to solving the DAEs is to formulate the solution of the ATEs using the *initial* values of the dependent variables in the IVODEs as the unknowns. Following the formulation presented in @sec-apndx_math_formulation_ates, the two ATEs, Equations [-@eq-ate1_in_daes] and [-@eq-ate2_in_daes], can be solved to find the two unknowns, $y_{1,0}$ and $y_{2,0}$ as follows.
+So, for this type of DAEs, when the residuals function receives a guess for the solution of the ATEs, that guess will include values for the IVODE initial values. Using those initial values, the IVODEs can be solved numerically to get the IVODE final values. Then, using those final values, the residuals can be evaluated and returned.
 
-1. Solve Equations [-@eq-ivode1_in_daes] and [-@eq-ivode2_in_daes] to express $y_1\big\vert_{x_f}$ and $y_2\big\vert_{x_f}$ in terms of $y_{1,0}$ and $y_{2,0}$.
-2. Substitute the results for $y_1\big\vert_{x_f}$ and $y_2\big\vert_{x_f}$ in Equations [-@eq-ate1_in_daes] and [-@eq-ate2_in_daes].
-3. Solve Equations [-@eq-ate1_in_daes] and [-@eq-ate2_in_daes] for $y_{1,0}$ and $y_{2,0}$.
-4. Knowing the initial values, solve Equations [-@eq-ivode1_in_daes] and [-@eq-ivode2_in_daes] for $y_1\big\vert_{x_f}$ and $y_2\big\vert_{x_f}$.
+The key point is that the IVODEs are solved numerically [within]{.underline} the residuals function, because within the residuals function the necessary initial values are available. The numerical solution of the IVODEs can be accomplished exactly as described in @sec-apndx_solve_ivodes.
 
-## Numerical Implementation of the Solution {#sec-impl_soln_daes}
+## Numerical Implementation of the Solution of DAEs {#sec-impl_soln_daes}
 
-If the solution was being implemented analytically, the first step would not be possible in most situations. In contrast, the numerical implementation of the solution is relatively straightforward.
+The numerical implementation of the solution entails writing code similar to that used with solving ATEs (@sec-apndx_solve_ates) and IVODEs (@sec-apndx_solve_ivodes). Some of the code calls the ATE and IVODE solvers, and some of the code is called by those solvers. The specifics of writing the code will depend upon the mathematics software being used and programmer preferences. Here it is assumed that the code is split into several functions, each of which performs a specific task. There are many other, equally valid ways to structure the code. The function structure used herein is described below.
 
-* When solving the IVODEs in the steps that follow, use the known final value of the independent variable as the stopping criterion.
-* Choose the initial values of the dependent variables in the IVODEs as the unknowns to be found by solving the ATEs.
-* Write a residuals function that receives a guess for those initial values and
-    * uses that guess to solve the IVODEs numerically and get the corresponding final values of the IVODEs,
-    * evaluates the residuals corresponding to the ATEs (Equations [-@eq-ate1_in_daes] and [-@eq-ate2_in_daes] here), and
-    * returns the values of the residuals
-* Define an initial guess for the initial values of the dependent variables in the IVODEs
-* Call an ATE solver, passing the residuals function and the initial guess as arguments to find the initial values of the dependent variables from the IVODEs
-* Knowing the initial values of the dependent variables, call an IVODE solver to calculate their final values.
+other equipment model function
+: receives an initial guess for the solution of the mole and energy balances on equipment other than the reactor (i. e. the ATEs), calls an ATE solver, passing the initial guess and the name of the residuals function (below), checks that the ATE solver converged, and returns one solution of the ATEs.
 
-## Example {#sec-example_K}
+residuals function
+: receives a guess for the solution of the ATEs, calls the reactor model function to solve the IVODEs using the guess, uses the results to evaluate and return the residuals corresponding to the ATEs.
 
-{{< include ../RE_Basics_Examples/reb_K_3/problem_statement.qmd >}}
+reactor model function
+: receives the initial values, sets the stopping criterion, calls an IVODE solver, and returns corresponding sets of values of the independent variable and each of the dependent variables spanning the range from their initial value to their final value.
 
-```{r}
-#| echo: false
-#| output: false
-path_to_data <- './Data/'
-path_to_results <- '../RE_Basics_Examples/reb_K/python/results/'
-path_to_figures <- './Graphics/'
-```
+derivatives function
+: receives the values of the independent and dependent variables at the start of an integration step, uses them to evaluate the derivatives and returns their values.
 
----
+top-level code (and/or a master calculations function)
+: establishes a mechanism for making quantities available to all functions, sets an initial guess for the solution of the other equipment ATEs, calls the other equipment model function to get a solution of the ATEs, and perfroms any additional calculations that are necessary.
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The first step in completing a reaction engineering assignment, @sec-3_reactor_model_func, is summarizing it. Here, symbols have been assigned to all constants and the quantities, so I can simply list the information.
-
-:::
-
-### Assignment Summary
-
-**Given and Known Constants**: $D$ = 5 cm, $\Delta H$ = -14,000 cal mol^-1^, $\dot{V}$ = 1150 cm^3^ min^-1^, $\breve{C}_p$ = 1.3 cal cm^-3^ K^-1^, $R_R$ = 1.3, $\dot{n}_{A,feed}$ = 1.0 mol min^-1^, $L$ = 50 cm, $T_{feed}$ = 300 K, $k_0$ = 4.2 x 10^15^ cm^3^ mol^-1^ min^-1^, and $E$ = 18,000 cal mol^-1^.
-
-**Reactor System**: Adiabatic, steady-state, recycle PFR.
-
-**Quantities of Interest**: $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$.
-
-### Mathematical Formulation of the Solution
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-@sec-form_soln_daes states that the key to solving a set of DAEs is to formulate the solution of the ATEs, and to consider the initial values for the IVODEs as the unknowns in the ATEs, so I will follow that advice here. There are 3 ATEs, equations (4), (5), and (6), and 3 unknown initial values, $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$, so no additional model equations are needed.
-
-:::
-
-**Model Equations**:
-
-Equations (4) through (6) will be solved to find the values of $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$.
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-Before the ATEs can be solved, every quantity other than the unknowns must be expressed in terms of known constants and the unknowns. In this example, there are four such quantities: $r$, $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$.
-
-The narrative provides equation (7), which can be used to eliminate $r$. The other quantities can be eliminated by solving the IVODEs, equations (1) through (3). There are 3 IVODEs, and they contain 3 dependent variables, $\dot{n}_A$, $\dot{n}_Z$, and $T$, so it is not necessary to add IVODEs or eliminate dependent variables.
-
-:::
-
-**Ancillary Equations for Calculating the Residuals**:
-
-The rate expression for $r$, is given, equation (7). The final values in equations (4) through (6) can be calculated by solving equations (1), (2), and (3) using the initial values and stopping criterion in @tbl-example_K_3_initial_values.
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-Before the IVODEs can be solved, any unknown constants appearing in them must be calculated and any variables other than the independent variables must be eliminated from them. Here there are no unknown constants in the IVODEs, and the only variable that needs to be eliminated is $r$.
-
-:::
-
-The rate expression, $r$, can also be used with calculating the derivatives in equations (1) through (3).
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-It is also necessary to calculate the initial and final values before the IVODEs can be solved. Here, the initial and final values of $z$ are known, and the other initial values will be provided by the ATE solver. Consequently no ancillary equations are needed to to calculate the initial and final values.
-
-Solving the ATEs will yield three of the quantities of interest, namely $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$. Once that is done, the other quantities of interest can be calculated by solving the IVODEs. Thus, no additional ancillary equations are need to calculate the quantities of interest. 
-
-:::
-
-Given the information above, equations (4) through (6) can be solved to find $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$. After doing that, equations (1) through (3) can be solved to find $r$, $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$.
-
-**Solution Procedure**:
-
-1. Substitute the given and known quantities in all equations.
-2. Substitute equation (7) for $r$ in equations (1), through (6).
-3. Express $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$ in terms of $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$ by solving equations (1) - (3) using the initial values and stopping criterion in @tbl-example_K_3_initial_values.
-4. Substitute the results from step 3 into the ATEs, equations (4) through (6), and solve for $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$.
-5. Use the results from step 4 and the initial values and stopping criterion in @tbl-example_K_3_initial_values to solve equations (1) through (3) for $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$.
-
-### Numerical Implementation of the Solution
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-@sec-impl_soln_daes describes the numerical implementation of the solution of a set of DAEs. It requires the numerical solution of ATEs, as described in @sec-apndx_solve_ates and the numerical solution of IVODEs, as described in @sec-apndx_solve_ivodes. The ATEs are already written in the form of residuals and the IVODEs are written in the form of derivatives expressions, so no additional equations are needed.
-
-I will need a guess for the unknowns in the ATEs. I'm simply going to guess that both inlet flows are equal to the known flow rate of A into the system. The reaction is exothermic, so I'm going to guess a temperature 5 K greater tnan the inlet value. If I knew more about the configuration of the system, I might be able to make more educated guesses, but I don't have that information. If the ATE solver doesn't converge, I'll just have to play around with these guesses until it does.
-
-:::
-
-Create a model function that will perform the calculations, and within that function
-
-1. make the given and known constants available for use in all equations,
-2. write a derivatives function that
-    a. receives values of $\dot{n}_{A}$, $\dot{n}_{Z}$, and $T$ as input,
-    b. calculates $r$ using equation (7), and
-    c. calculates and returns the values of the derivatives using equations (1) through (3),
-3. write a residuals function that
-    a. receives values of $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$ as input,
-    b. defines initial values and a stopping criterion using @tbl-example_K_3_initial_values,
-    c. calls an IVODE solver, passing the derivatives function (step 2), initial values and stopping criterion (step 3b) to get the final values, $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$, and
-    d. evaluates and returns the residuals (the left sides of equations (4) through (6)),
-4. define an initial guess for $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$,
-5. call an ATE solver, passing the residuals function (step 3) and the initial guess (step 4) to get the desired values of $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$,
-6. use the results from step 5 to define initial values and a stopping criterion using @tbl-example_K_3_initial_values, and
-7. call an IVODE solver, passing the derivatives function (step 2), initial values and stopping criterion (step 6) to get the desired final values, $\dot{n}_A\big\vert_{z=L}$, $\dot{n}_Z\big\vert_{z=L}$, and $T\big\vert_{z=L}$.
-
-### Results and Discussion
+## Example Solution of a Set of DAEs for a Recycle PFR {#sec-example_K}
 
 ```{r}
 #| echo: false
 #| output: false
 library(tidyverse)
 source("~/Libraries/R/fmt_tibble_col.R")
-df <- read.csv("../RE_Basics_Examples/reb_K_3/python/results/reb_K_3_results.csv")
+```
+
+{{< include examples/reb_K_4_1/narrative.qmd >}}
+
+![Schematic representation of a recycle PFR.](Graphics/recycle_pfr.png){#fig-example_K_4_1_schematic width="60%"}
+
+### Mathematical Formulation of the Solution
+
+The engineer then generated the reactor design equations, (2), (3), and (4); the initial values and stopping criterion in @tbl-example_K_4_1_initial_values; the mole and energy balances on the stream splitter, equations (5), (6), and (7); and the mole and energy balances on the stream mixer, equations (8), (9), (10), and (11).
+
+**Reactor Design Equations**
+
+$$
+\frac{d\dot{n}_A}{dz} = - \frac{\pi D^2}{4}r \tag{2}
+$$
+
+$$
+\frac{d\dot{n}_Z}{dz} =  \frac{\pi D^2}{4}r \tag{3}
+$$
+
+$$
+\frac{dT}{dz} = - \frac{\pi D^2}{4}\frac{r\Delta H}{\dot{V}_{in} \breve{C}_p} \tag{4}
+$$
+
+**Initial Values and Stopping Criterion**
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $z$ | $0$ | $L$ |
+| $\dot{n}_A$ | $\dot{n}_{A,in}$ | |
+| $\dot{n}_Z$ | $\dot{n}_{Z,in}$ | |
+| $T$ | $T_{in}$ | |
+  
+: Initial values and stopping criterion for solving the IVODEs, equations (1) through (3). {#tbl-example_K_4_1_initial_values}
+
+**Stream Splitter and Stream Mixer Design Equations**
+
+$$
+\dot{n}_{A,feed} + \dot{n}_{A,r} - \dot{n}_{A,in}  = 0 = \epsilon_1 \tag{5}
+$$
+
+$$
+\dot{n}_{Z,feed} + \dot{n}_{Z,r} - \dot{n}_{Z,in}  = 0 = \epsilon_2 \tag{6}
+$$
+
+$$
+\dot{V}_{feed} \breve{C}_p \left( T_{in} - T_{feed} \right) + \dot{V}_{r} \breve{C}_p \left( T_{in} - T_{r} \right) = 0 = \epsilon_3 \tag{7}
+$$
+
+$$
+\dot{n}_{A,out} - \dot{n}_{A,r} - \dot{n}_{A,prod}  = 0 = \epsilon_4 \tag{8}
+$$
+
+$$
+\dot{n}_{Z,out} - \dot{n}_{Z,r} - \dot{n}_{Z,prod}  = 0 = \epsilon_5 \tag{9}
+$$
+
+$$
+T_{out} - T_r = 0 = \epsilon_6 \tag{10}
+$$
+
+$$
+T_{out} - T_{prod} = 0 = \epsilon_7 \tag{11}
+$$
+
+The engineer noted that when the derivatives were evaluated at the start of each integration step, the rate would need to be calculated, and wrote the ancillary equation, (12), for doing so. He added equations (13), (14), and (15) because they are needed to calculate $\dot{V}_{in}$ which appears in the rate expression. The engineer also noted that the flow rates of the recycle stream will be needed to evaluate the residuals. They are related to the product stream flow rates through the recycle ratio, equations (16), and (17).
+
+**Ancillary Equations for Evaluating the Derivatives**
+
+$$
+r = k_0 \exp{\left( \frac{-E}{RT} \right)}\frac{\dot{n}_A\dot{n}_Z}{\dot{V}_{in}^2} \tag{12}
+$$
+
+$$
+\dot{V}_{feed} = \dot{V}_{prod} \tag{13}
+$$
+
+$$
+\dot{V}_{r} = R_R \dot{V}_{prod} \tag{14}
+$$
+
+$$
+\dot{V}_{in} = \dot{V}_{feed} + \dot{V}_{r} \tag{15}
+$$
+
+**Ancillary Equations for Evaluating the Residuals**
+
+$$
+\dot{n}_{A,r} = R_R \dot{n}_{A,prod} \tag{16}
+$$
+
+$$
+\dot{n}_{Z,r} = R_R \dot{n}_{Z,prod} \tag{17}
+$$
+
+### Assignment
+
+Complete the numerical formulation of the solution, and then implement it numerically.
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I know that when solving DAEs of this type, the IVODEs will be solved within the residuals function for the ATEs, so I'll start by considering the solution of the ATEs. There are 7 ATEs, equations (5) through (11), but they contain 13 unknown quantities: $\dot{n}_{A,r}$, $\dot{n}_{A,in}$, $\dot{n}_{Z,r}$, $\dot{n}_{Z,in}$, $T_{in}$, $\dot{V}_r$, $\dot{T}_r$, $\dot{n}_{A,out}$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,out}$, $\dot{n}_{Z,prod}$, $T_{out}$, and $T_{prod}$. I can find 7 of the unknown quantities by solving the ATEs. The others will need to be calculated at the point where the residuals need to be evaluated.
+
+I also know that the initial IVODE values in @tbl-example_K_4_1_initial_values must be among the 7 variables found by solving the ATEs, and the final IVODE values *cannot* be among them. I will solve the ATEs for $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, $T_{prod}$, and $T_r$.
+
+With that choice, at the point where the residuals need to be evaluated, I will have values for those 7 variables, but I'll need to calculate the other 6 unknown quantities. Since I'll know $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$, I can solve the PFR design equations for $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$. The resulting final values are then equal to $\dot{n}_{A,out}$, $\dot{n}_{Z,out}$, and $T_{out}$. Finally, I can use equations (13) through (16) to calculate $\dot{n}_{A,r}$, $\dot{n}_{Z,r}$, and $\dot{V}_r$.
+
+:::
+
+The ATEs, equations (5) through (11) can be solved numerically to find $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$. At the point where the residuals must be evaluated, the molar flow rates and temperature at the reactor outlet can be found by solving the PFR design equations numerically for corresponding values of $z$, $\dot{n_A}$, $\dot{n_Z}$, and $T$ that span the range from $z=0$ to $z=L$. The outlet values are then found using equations (17), (18), and (19).
+
+$$
+\dot{n}_{A,out} = \dot{n}_A \big\vert_{z=L} \tag{18}
+$$
+
+$$
+\dot{n}_{Z,out} = \dot{n}_Z \big\vert_{z=L} \tag{19}
+$$
+
+$$
+T_{out} = T \big\vert_{z=L} \tag{20}
+$$
+
+**Calculations Summary**:
+
+1. Substitute the given and known quantities in all equations.
+2. When it is necessary to evaluate the residuals
+    a. $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$ will be available
+    b. Solve the PFR design equations, (2) through (4), numerically to get corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_Z$ and $T$.
+    c. calculate $\dot{V}_{prod}$ using equation (13).
+    d. calculate $\dot{V}_r$ using equation (14).
+    e. calculate $\dot{V}_{in}$ using equation (15).
+    f. calculate $\dot{n}_{A,r}$, $\dot{n}_{Z,r}$, $\dot{n}_{A,out}$, $\dot{n}_{Z,out}$, and $T_{out}$ using equations (16) - (20).
+    g. evaluate the residuals, $\epsilon_1$ through $\epsilon_7$ using equations (5) through (11).
+3. When it is necessary to evaluate the derivatives
+    a. values of $z$, $\dot{n}_A$, $\dot{n}_Z$ and $T$ will be available.
+    b. calculate $\dot{V}_{prod}$ using equation (13).
+    c. calculate $\dot{V}_r$ using equation (14).
+    d. calculate $\dot{V}_{in}$ using equation (15).
+    e. calculate $r$ using equation (12).
+    f. evaluate the derivatives using equations (2), (3), and (4).
+
+
+### Numerical Implementation of the Solution
+
+1. Make the given and known constants available for use in all functions,
+2. Write a derivatives function that
+    a. receives values of $z$, $\dot{n}_{A}$, $\dot{n}_{Z}$, and $T$ as input,
+    b. calculates and returns the values of the derivatives as described in step 3 of the calculations summary
+3. Write a reactor model function that
+    a. receives $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$ as arguments,
+    b. gets corresponding sets of values of $z$, $\dot{n}_{A}$, $\dot{n}_{Z}$, and $T$ spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it:
+        i. the initial values and stopping criterion in @tbl-example_K_4_1_initial_values and
+        ii. the name of the derivatives function from step 2 above,
+    c. checks that the solver successfully solved the IVODEs, and
+    d. returns the values returned by the IVODE solver.
+4. Write a residuals function that
+    a. receives values of $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$ as arguments
+    b. calculates and returns the residuals as described in step 2 of the calculations summary.
+5. Write an other equipment model function that 
+    a. receives an initial guess ($\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$) for the solution of the ATEs
+    b. gets a solution of the ATEs by calling an ATE solver and passing the following information to it
+        i. the initial guess and
+        ii. the name of the residuals function from step 4 above,
+    c. checks that the solver converged, and
+    d. returns the values returned by the ATE solver.
+6. Perform the analysis by
+    a. setting an initial guess for $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$,
+    b. calling the other equipment model function from step 5 to get a solution ($\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$), and
+    c. displaying the results.
+
+### Results and Discussion
+
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv("examples/reb_K_4_1/results.csv")
 df <- fmt_tibble_col(df, 2, 3, 3, 1)
 ```
 
-The calculations were performed as described above and the results are shown in @tbl-apndx_K_3_2_results.
+The calculations were performed as described above and the results are shown in @tbl-apndx_K_4_1_results.
 
 ```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-apndx_K_3_2_results
+#| label: tbl-apndx_K_4_1_results
 #| tbl-cap: Results from solving the DAEs.
 library(kableExtra)
 library(knitr)
 kbl(df, format = "markdown", align = "cc")
 ```
 
-As noted in the introduction, the numerical solution of a set of DAEs generally requires using solver that is designed for that purpose. However, DAEs are only encountered a few times in *Reaction Engineering Basics*, and each time they are encountered, the mathematical formulation and numerical implementation of the solution can be accomplished in the same manner as illustrated in this example.
+The numerical solution of a set of DAEs generally requires using solver that is designed for that purpose. However, DAEs are only encountered a few times in *Reaction Engineering Basics*, and each time they are encountered, the mathematical formulation and numerical implementation of the solution can be accomplished in the same manner as illustrated in this example.
 
-<!--
 :::{.callout-note collapse="false"}
 ## Note
 
-Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](URL)
+The recycle stream provides backmixing of the product stream with the feed. This is similar to what happens in a CSTR. Recall that CSTRs sometimes can have multiple steady states. The same is true of a recycle PFR. In fact, the solution presented here is not the only solution.
 
 :::
--->
+
+::: {.callout-note appearance="simple"}
+
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/comp_daes.html)
+
+:::
 
 ## Symbols Used in @sec-apndx_solve_daes
 
 | Symbol | Meaning |
 |:-------|:--------|
-| $f$ | An unspecified function; an additional subscript is used to index the function if it is one of a set of functions. |
 | $k_0$ | Arrhenius pre-exponential factor; an additional subscript indexes the reaction. |
 | $\dot{n}$ | Molar flow rate; additional subscripts denote the reagent and identify the flow stream. |
 | $r$ | Reaction rate; additional subscripts index the reaction. |
-| $x$ | The independent variable in an IVODE; an additional subscripted $0$ denotes the initial value and an additional subscripted $f$ denotes the final value. |
-| $y$ | The dependent variable in an IVODE; an additional subscript is used to index the dependent variables if there are more than one IVODEs; a second subscripted $0$ denotes the initial value and a second subscripted $f$ denotes the final value. |
 | $z$ | Axial distance from the inlet of a PFR. |
 | $\breve{C}_p$ | Volumetric heat capacity. |
 | $D$ | PFR diameter. |
@@ -209,7 +274,7 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 | $R$ | Ideal gas constant. |
 | $R_R$ | Recycle ratio. |
 | $T$ | Temperature; an additional subscript denotes the flow stream. |
-| $\dot{V}$ | Volumetric flow rate. |
+| $\dot{V}$ | Volumetric flow rate; an additional subscript denotes the flow stream. |
 | $\Delta H$ | Heat of reaction; an additional subscript indexes the reaction. |
 
 : {tbl-colwidths="[20,80]"}
