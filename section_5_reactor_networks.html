@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -465,7 +494,27 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#reactor-networks" id="toc-reactor-networks" class="nav-link active" data-scroll-target="#reactor-networks"><span class="header-section-number">15.1</span> Reactor Networks</a></li>
+  <li><a href="#analysis-of-reactor-networks" id="toc-analysis-of-reactor-networks" class="nav-link" data-scroll-target="#analysis-of-reactor-networks"><span class="header-section-number">15.2</span> Analysis of Reactor Networks</a>
+  <ul class="collapse">
+  <li><a href="#qualitative-behavior-of-reactor-networks" id="toc-qualitative-behavior-of-reactor-networks" class="nav-link" data-scroll-target="#qualitative-behavior-of-reactor-networks"><span class="header-section-number">15.2.1</span> Qualitative Behavior of Reactor Networks</a></li>
+  <li><a href="#quantitative-analysis-of-reactor-networks" id="toc-quantitative-analysis-of-reactor-networks" class="nav-link" data-scroll-target="#quantitative-analysis-of-reactor-networks"><span class="header-section-number">15.2.2</span> Quantitative Analysis of Reactor Networks</a></li>
+  </ul></li>
+  <li><a href="#reasons-for-using-a-reactor-network" id="toc-reasons-for-using-a-reactor-network" class="nav-link" data-scroll-target="#reasons-for-using-a-reactor-network"><span class="header-section-number">15.3</span> Reasons for Using a Reactor Network</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples"><span class="header-section-number">15.4</span> Examples</a>
+  <ul class="collapse">
+  <li><a href="#sec-example_15_4_1" id="toc-sec-example_15_4_1" class="nav-link" data-scroll-target="#sec-example_15_4_1"><span class="header-section-number">15.4.1</span> Comparing a CSTR Followed by a PFR to a PFR Followed by a CSTR</a></li>
+  <li><a href="#water-gas-shift-in-series-pfrs-with-cooling-between-the-reactors" id="toc-water-gas-shift-in-series-pfrs-with-cooling-between-the-reactors" class="nav-link" data-scroll-target="#water-gas-shift-in-series-pfrs-with-cooling-between-the-reactors"><span class="header-section-number">15.4.2</span> Water-Gas Shift in Series PFRs with Cooling Between the Reactors</a></li>
+  <li><a href="#minimizing-the-total-volume-of-two-cstrs-in-series" id="toc-minimizing-the-total-volume-of-two-cstrs-in-series" class="nav-link" data-scroll-target="#minimizing-the-total-volume-of-two-cstrs-in-series"><span class="header-section-number">15.4.3</span> Minimizing the Total Volume of Two CSTRs in Series</a></li>
+  <li><a href="#maximizing-the-conversion-for-two-unequal-pfrs-in-parallel" id="toc-maximizing-the-conversion-for-two-unequal-pfrs-in-parallel" class="nav-link" data-scroll-target="#maximizing-the-conversion-for-two-unequal-pfrs-in-parallel"><span class="header-section-number">15.4.4</span> Maximizing the Conversion for Two Unequal PFRs in Parallel</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-chapter--sec-6_reactor_networks" id="toc-symbols-used-in-chapter--sec-6_reactor_networks" class="nav-link" data-scroll-target="#symbols-used-in-chapter--sec-6_reactor_networks"><span class="header-section-number">15.5</span> Symbols used in Chapter&nbsp;<span>15</span></a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -489,9 +538,545 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This chapter will be added as soon as I finish writing it.</p>
+<p>This chapter considers systems wherein two or more reactors are connected in some way and function together in the processing of a single feed stream. Reasons for using more than one reactor are discussed, and the qualitative and quantitative analyses of reactor networks are presented.</p>
+<section id="reactor-networks" class="level2" data-number="15.1">
+<h2 data-number="15.1" class="anchored" data-anchor-id="reactor-networks"><span class="header-section-number">15.1</span> Reactor Networks</h2>
+<p>In the preceding chapters, isolated reactors were considered. A chemical process can use more than one reactor to process a feed stream. The most common configurations of multiple reactors are series networks of reactors and parallel networks of reactors, as illustrated in <a href="#fig-reactor_networks" class="quarto-xref">Figure&nbsp;<span>15.1</span></a>. Panel (a) of that figure shows two CSTRs in series where the reactors are labeled R1 and R2. Series networks are not limited to two reactors; there can be any number of reactors as long as the outlet from each one becomes the feed to the next. Series networks of PFRs are equally possible.</p>
+<div id="fig-reactor_networks" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-reactor_networks-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row quarto-layout-valign-center">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-reactor_networks" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-series_reactors" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-series_reactors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/Two_Series_CSTRs.png" class="img-fluid figure-img" style="width:90.0%" data-ref-parent="fig-reactor_networks">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-series_reactors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Series
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-reactor_networks" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-parallel_reactors" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-parallel_reactors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/Two_Parallel_PFRs.png" class="img-fluid figure-img" style="width:90.0%" data-ref-parent="fig-reactor_networks">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-parallel_reactors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Parallel
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-reactor_networks-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.1: Schematic representation of CSTRs in series and PFRs in parallel. “R” denotes the reactors, “S” denotes stream splitters and “M” denotes stream mixers.
+</figcaption>
+</figure>
+</div>
+<p>The (b) panel of <a href="#fig-reactor_networks" class="quarto-xref">Figure&nbsp;<span>15.1</span></a> shows two PFRs, labeled R1 and R2, that are connected to form a parallel network. Again, there can be any number of reactors in a parallel network, as long as a single stream is split, and distributed among the reactors, and as long as the outlet streams from all of the reactors are mixed into a single product stream. In the figure, S is used to denote a stream splitter and M is used to denote a stream mixer. Parallel networks can also be created using CSTRs.</p>
+<p>Another possibility with series or parallel reactor networks is that the reactors might not be of the same type. For example an engineer could design a CSTR in series with a PFR with either of the two reactors first in the series network. Similarly, a CSTR in parallel with a PFR is also possible.</p>
+<p>Reactor networks that are neither series nor parallel are also possible. Such networks are not common in commercial processing. However, <a href="section_7_zoned_model.html" class="quarto-xref"><span>Chapter 24</span></a> shows how reactor networks can be used to model a single, non-ideal reactor. In that situation, the reactor network need not be a series or parallel network.</p>
+</section>
+<section id="analysis-of-reactor-networks" class="level2" data-number="15.2">
+<h2 data-number="15.2" class="anchored" data-anchor-id="analysis-of-reactor-networks"><span class="header-section-number">15.2</span> Analysis of Reactor Networks</h2>
+<section id="qualitative-behavior-of-reactor-networks" class="level3" data-number="15.2.1">
+<h3 data-number="15.2.1" class="anchored" data-anchor-id="qualitative-behavior-of-reactor-networks"><span class="header-section-number">15.2.1</span> Qualitative Behavior of Reactor Networks</h3>
+<p>A <strong>series network of adiabatic PFRs</strong> is equivalent to a single adiabatic PFR with a volume equal to the total volume of the series PFRs. If the individual PFRs are heated or cooled, or if there is heating or cooling between one PFR outlet and the next PFR inlet, it the performance of the network will be different from a single PFR with the same total volume.</p>
+<p>In a <strong>parallel network of equally-sized PFRs</strong> where the feed is evenly split among the reactors, the temperature and concentration profiles along the length of each reactor are the same as for the other reactors. This assumes that the PFRs are either adiabatic, or they all pass through a single shell within which a perfectly mixed exchange fluid flows. It won’t be true if the heat exchange is different in different reactors.</p>
+<p>A <strong>series network of isothermal or adiabatic CSTRs</strong> becomes equivalent to a single PFR with the same total volume as the number of CSTRs approaches infinity. A series network of CSTRs is sometimes referred to as a CSTR cascade. <a href="section_4_pfr_analysis.html#fig-pfr_bstr_analogy" class="quarto-xref">Figure&nbsp;<span>13.2</span></a> showed that because there is no mixing in the axial direction in a PFR, the fluid can be envisioned as small batch reactors that enter the reactor one after the other, with each batch reactor moving from the inlet to the outlet at a velocity equal to the velocity of the fluid flowing in the PFR. Another way to think of this is that the little BSTRs are stationary CSTRs, and the fluid moves from one to the next. Since each CSTR is differentially small, it is easy to understant why an infinite series of CSTRs is equivalent to a PFR.</p>
+<p>If each of the CSTRs in a series network are heated or cooled by exchange of heat with a perfectly mixed exchange fluid, the series will not approach the bahavior of a PFR as the number of CSTRs approaches infinity.</p>
+<p>In a <strong>parallel network of equally sized and equally cooled/heated CSTRs</strong>, if the feed is divided equally among the reactors, the contents of every reactor will be the same.</p>
+<p>Finally, if parallel reactors are used, the mixing streams of unequal conversion should be avoided. Doing so effectively undoes some of the reaction that has taken place because after mixing the effective conversion of the mixed stream will be lower than that in the stream with the higher conversion before mixing.</p>
+</section>
+<section id="quantitative-analysis-of-reactor-networks" class="level3" data-number="15.2.2">
+<h3 data-number="15.2.2" class="anchored" data-anchor-id="quantitative-analysis-of-reactor-networks"><span class="header-section-number">15.2.2</span> Quantitative Analysis of Reactor Networks</h3>
+<p>It is good practice to label each flow stream in the process and each piece of equipment. Variables representing flow rates, temperatures, pressures, etc. can then be subscripted using the labels to denote the stream or equipment to which the variable applies. Here, only steady-state operation will be considered. The only equipment that may be present in the networks considered here are stream splitters, stream mixers, and heat exchangers. Quantitative analysis of a reactor network requires writing the reactor design equations for each reactor in the network and writing mole and energy balances for every splitter, mixer and heat eachanger in the network.</p>
+<p>The analysis of any one of the reactors in a network is no different from the analysis of an isolated reactor. After all, it makes no difference in the analysis of a reactor whether the feed to that reactor is coming from a storage tank somewhere in the chemical plant or from the outlet of another reactor. Similarly, it makes no difference in the reactor analysis whether the product stream is sent to a distillation tower elsewhere in the chemical plant or to another reactor. Thus, the reactor design equations for each reactor are generated as described in <a href="section_3_design_equations.html" class="quarto-xref"><span>Chapter 6</span></a> and illustrated in Chapters <a href="section_4_cstr_analysis.html" class="quarto-xref"><span>12</span></a> and <a href="section_4_pfr_analysis.html" class="quarto-xref"><span>13</span></a>.</p>
+<p>A stream splitter will have one inlet stream and two or more outlet streams. A steady-state mole balance on reagent <span class="math inline">\(i\)</span> takes the form shown in <a href="#eq-splitter_mol_bal" class="quarto-xref">Equation&nbsp;<span>15.1</span></a> where <span class="math inline">\(N_{out}\)</span> denotes the number of outlet streams and “out” indexes those streams. It is important to recognize that the temperatures of all entering and leaving streams are equal. As such, instead of writing energy balances, the temperatures of each of the streams leaving the splitter can simply be set equal to the temperature of the stream entering the splitter, <a href="#eq-splitter_energy" class="quarto-xref">Equation&nbsp;<span>15.2</span></a>.</p>
+<p><span id="eq-splitter_mol_bal"><span class="math display">\[
+0 = \dot{n}_{i,in} - \sum_{N_{out}} \dot{n}_{i,out}
+\tag{15.1}\]</span></span></p>
+<p><span id="eq-splitter_energy"><span class="math display">\[
+T_{out} = T_{in} \text{ ; } \quad out = 1...N_{out}
+\tag{15.2}\]</span></span></p>
+<p>A stream mixer will have two or more inlet streams and one outlet stream. A steady-state mole balance on reagent <span class="math inline">\(i\)</span> takes the form shown in <a href="#eq-mixer_mol_bal" class="quarto-xref">Equation&nbsp;<span>15.3</span></a> where <span class="math inline">\(N_{in}\)</span> denotes the number of outlet streams and “in” indexes those streams. An energy balance takes the form shown in <a href="#eq-mixer_energy_bal" class="quarto-xref">Equation&nbsp;<span>15.4</span></a>. In both equations, <span class="math inline">\(\displaystyle \sum_{in}\)</span> denotes a summation of all of the inlet streams. For liquid flow streams, equivalent energy balances can be written in terms of the volumetric heat capacity or the gravimetric heat capacity, <a href="#eq-mixer_energy_volume" class="quarto-xref">Equation&nbsp;<span>15.5</span></a> and <a href="#eq-mixer_energy_mass" class="quarto-xref">Equation&nbsp;<span>15.6</span></a>.</p>
+<p><span id="eq-mixer_mol_bal"><span class="math display">\[
+0 = \dot{n}_{i,out} - \sum_{N_{in}} \dot{n}_{i,in}
+\tag{15.3}\]</span></span></p>
+<p><span id="eq-mixer_energy_bal"><span class="math display">\[
+0 = \sum_i \sum_{in} \left(\dot{n}_{i,in} \int_{T_{in}}^{T_{out}} \hat{C}_{p,i} dT \right)
+\tag{15.4}\]</span></span></p>
+<p><span id="eq-mixer_energy_volume"><span class="math display">\[
+0 = \sum_{in} \left(\dot{V}_{in} \int_{T_{in}}^{T_{out}} \breve{C}_p dT \right)
+\tag{15.5}\]</span></span></p>
+<p><span id="eq-mixer_energy_mass"><span class="math display">\[
+0 = \sum_{in} \left(\rho \dot{V}_{in} \int_{T_{in}}^{T_{out}} \tilde{C}_p dT \right)
+\tag{15.6}\]</span></span></p>
+<p>A simple heat exchanger, will have two streams that do not mix while flowing through it. Letting “h1” and “h2” denote those two streams, mole balances take the form shown in Equations <a href="#eq-heat_exchanger_mol_bal_1" class="quarto-xref"><span>15.7</span></a> and <a href="#eq-heat_exchanger_mol_bal_2" class="quarto-xref"><span>15.8</span></a>. An energy balance on the heat exchanger takes the form of <a href="#eq-heat_exchanger_energy_bal" class="quarto-xref">Equation&nbsp;<span>15.9</span></a> when written in terms of the molar heat capacities. For liquids, the energy balance alternatively can be written in terms of the volumetric heat capacity or the gravimetric heat capacity, <a href="#eq-heat_exchanger_energy_volume" class="quarto-xref">Equation&nbsp;<span>15.10</span></a> and <a href="#eq-heat_exchanger_energy_mass" class="quarto-xref">Equation&nbsp;<span>15.11</span></a>.</p>
+<p><span id="eq-heat_exchanger_mol_bal_1"><span class="math display">\[
+0 = \dot{n}_{i,h1,in} - \dot{n}_{i,h1,out}
+\tag{15.7}\]</span></span></p>
+<p><span id="eq-heat_exchanger_mol_bal_2"><span class="math display">\[
+0 = \dot{n}_{i,h2,in} - \dot{n}_{i,h2,out}
+\tag{15.8}\]</span></span></p>
+<p><span id="eq-heat_exchanger_energy_bal"><span class="math display">\[
+0 = \sum_i \left( \dot{n}_{i,h1,in} \int_{T_{h1,in}}^{T_{h1,out}}\hat{C}_{p,i} dT\right) + \sum_i \left( \dot{n}_{i,h2,in} \int_{T_{h2,in}}^{T_{h2,out}} \hat{C}_{p,i} dT\right)
+\tag{15.9}\]</span></span></p>
+<p><span id="eq-heat_exchanger_energy_volume"><span class="math display">\[
+0 = \dot{V}_{h1,in} \int_{T_{h1,in}}^{T_{h1,out}} \breve{C}_{p,h1} dT + \dot{V}_{h2,in} \int_{T_{h2,in}}^{T_{h2,out}} \breve{C}_{p,h2} dT
+\tag{15.10}\]</span></span></p>
+<p><span id="eq-heat_exchanger_energy_mass"><span class="math display">\[
+0 = \rho_{h1} \dot{V}_{h1,in} \int_{T_{h1,in}}^{T_{h1,out}} \tilde{C}_{p,h1} dT + \rho_{h2,in}\dot{V}_{h2,in} \int_{T_{h2,in}}^{T_{h2,out}} \tilde{C}_{p,h2} dT
+\tag{15.11}\]</span></span></p>
+<p>Once reactor design equations have been written for every reactor and mole and energy balances have been written for each heat exchanger, stream splitter and stream mixer, those equations need to be solved. The manner in which this is accomplished will depend upon the specific network being analyzed and the information that is known about that network. In some situations, it may be possible to solve the reactor design equations for the reactors and the mole and energy balances for the other equipment sequentially. In other situations the reactor design equations for one reactor may be coupled with the reactor design equations for another reactor or with the mole and energy balances for one or more of the other pieces of equipment. In thise cases, the coupled equations must be solved simultaneously.</p>
+<p>In other words, there isn’t a single “recipe” for solving the model equations. Once all of the equations have been formulated, they can be inspected to determine whether any of them can be solved independently of the others. If so, that can be done, after which it will be necessary to devise a strategy for solving the remaining equations.</p>
+</section>
+</section>
+<section id="reasons-for-using-a-reactor-network" class="level2" data-number="15.3">
+<h2 data-number="15.3" class="anchored" data-anchor-id="reasons-for-using-a-reactor-network"><span class="header-section-number">15.3</span> Reasons for Using a Reactor Network</h2>
+<p>There are different reasons why a reactor network might be used instead of a single reactor. One possibility is expanding the capacity of an existing chemical plant. If a company decides to substantially increase the amount of material they are processing, the existing reactor may not be able to accommodate the increase. Increasing the flow rate to process more reactant will lower the residence time, and that generally will lower the conversion, offsetting the increased flow. It would make sense to continue using the existing reactor and add a second reactor to the process rather than eliminating the existing reactor and replacing it with a single, larger reactor.</p>
+<p>In other cases, multiple reactors might be part of the original design. An example is the use of PFRs where it is necessary to heat or cool. It is quite common to use a large number of reactor tubes arranged in parallel, with a single shell surrounding all the tubes to provide heat transfer.</p>
+<p>When a single CSTR is used, the reaction takes place at the final composition and temperature. When a single PFR is used, the composition and temperature vary continuously from their inlet values to their outlet values. Another reason for using multiple reactors is to change the temperature <em>vs</em>. reaction time or composition <em>vs</em>. reaction time. As an example, if two PFRs in series are used, each with cooling by heat exchange with a perfectly mixed heat exchange fluid, the temperature <em>vs</em>. reaction time will be different from that of a single PFR. Sometimes it is possible to design a reactor network where the temperature <em>vs</em>. reaction time and/or composition <em>vs</em>. reaction time results in better performance than a single reactor. That is, a reactor network may require a smaller total reactor volume or it may offer better selectivity than a single reactor.</p>
+<p>Consider the difference between a single isothermal CSTR and two isothermal CSTRs in series. The single CSTR will operate at the final composition. For most reactions, this means that the rate will be small due to low concentration of reactant. When two CSTRs in series are used to convert an equal amount of reactant, the second CSTR will operate at the same final composition where the rate is low. However, the first CSTR will operate at a higher concentration of reactant and a correspondingly higher rate. Because part of the conversion is taking place at a higher rate, the total volume that is required will be smaller than a single CSTR where the rate is always low.</p>
+<p>If the reaction is exothermic and the reactor operates adiabatically, then the increase in temperature (and its tendency to increase the rate) will predominate over the decrease in reactant concentration (and its tendency to decrease the rate). A simple qualitative analysis will show that there will be a critical conversion, and a corresponding critical space time, where the rate reaches a maximum. If one were judicious in selecting the relative volumes of the two reactors in series, the first could be designed so that it operated at the critical space time where the reaction rate was at its maximum value. Then the second CSTR in series would be sized so that the desired overall conversion is achieved.</p>
+<p>There are also situations where it might make sense to use two different kinds of reactor in a network. For example, consider an autocatalytic reaction such as cell growth. If one wanted to use a plug flow reactor for cell growth, the feed stream would always need to contain cells and substrate. However, if a small CSTR was installed in series ahead of the PFR, only substrate would need to be supplied in the feed. As long as cells are growing in the CSTR, the substrate would mix with those growing cells, and the feed to the PFR would contain both cells and substrate.</p>
+</section>
+<section id="examples" class="level2" data-number="15.4">
+<h2 data-number="15.4" class="anchored" data-anchor-id="examples"><span class="header-section-number">15.4</span> Examples</h2>
+<p>intro</p>
+<section id="sec-example_15_4_1" class="level3" data-number="15.4.1">
+<h3 data-number="15.4.1" class="anchored" data-anchor-id="sec-example_15_4_1"><span class="header-section-number">15.4.1</span> Comparing a CSTR Followed by a PFR to a PFR Followed by a CSTR</h3>
+<p>A 350 L adiabatic CSTR and a 350 L adiabatic PFR are going to be connected in series and used to convert reagent A according to irreversible reactions (1) and (2), where D is the desired product and U is an undesired, low-value byproduct. The feed consists of an aqueous stream containing 2.5 mol A L<sup>-1</sup>, flowing at a rate of 100 L min<sup>-1</sup> at 38 °C. The liquid density may be assumed to be constant. The heat of reaction (1) is -21,500 cal mol<sup>-1</sup> and that of reaction (2) is -24,000 cal mol<sup>-1</sup>. The heat capacity of the solution is constant and equal to 1.0 cal cm<sup>-3</sup> K<sup>-1</sup>. The rate expressions for reactions (1) and (2) are given in equations (3), and (4), respectively. The pre-exponential factor for reaction (3) is 1.2 x 10<sup>5</sup> min<sup>-1</sup>, and the activation energy is 9100 cal mol<sup>-1</sup>. The Arrhenius parameters for reaction (4) are 2.17 x 10<sup>7</sup> L mol<sup>-1</sup> min<sup>-1</sup> and 13,400 cal mol<sup>-1</sup>. Compare the overall conversion of A and selectivity (mol D per mol U) for the configuration with the CSTR first to those with the PFR first.</p>
+<p><span class="math display">\[
+A \rightarrow D \tag{1}
+\]</span> <span class="math display">\[
+A \rightarrow U \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+r_1 = k_1 C_A \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+r_1 = k_1 C_A^2 \tag{4}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This assignment involves a network of two reactors in series. Before summarizing the assignment, I will make a simple schematic where I label the reactors and the flow streams. Then I can use the labels as I summarize the assignment.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary" class="level4" data-number="15.4.1.1">
+<h4 data-number="15.4.1.1" class="anchored" data-anchor-id="assignment-summary"><span class="header-section-number">15.4.1.1</span> Assignment Summary</h4>
+<p><strong>Network Schematic</strong></p>
+<div id="fig-example_15_4_1_schematic" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_15_4_1_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="examples/reb_15_4_1/network_schematic.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_15_4_1_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;15.2: Schematic representation of the reactor network.
+</figcaption>
+</figure>
+</div>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(V_{CSTR}\)</span> = 350 L, <span class="math inline">\(V_{PFR}\)</span> = 350 L, <span class="math inline">\(C_{A,0}\)</span> = 2.5 mol L<sup>-1</sup>, <span class="math inline">\(\dot{V}_0\)</span> = 100 L min<sup>-1</sup>, <span class="math inline">\(T_0\)</span> = 38 °C, <span class="math inline">\(\Delta H_1\)</span> = –21,500 cal mol<sup>-1</sup>, <span class="math inline">\(\Delta H_2\)</span> = –24,000 cal mol<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 1.0 cal cm<sup>-3</sup> K<sup>-1</sup>, <span class="math inline">\(k_{0,1}\)</span> = 1.2 x 10<sup>5</sup> min<sup>-1</sup>, <span class="math inline">\(E_1\)</span> = 9100 cal mol<sup>-1</sup>, <span class="math inline">\(k_{0,2}\)</span> = 2.17 x 10<sup>7</sup> L mol<sup>-1</sup> min<sup>-1</sup>, <span class="math inline">\(E_2\)</span> = 13400 cal mol<sup>-1</sup>.</p>
+<p><strong>Reactor Systems</strong>: (a) adiabatic CSTR (R1) followed in series by an adiabatic PFR (R2), and (b) adiabatic PFR (R1) followed in series by an adiabatic CSTR (R2)</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(f_A\)</span> and <span class="math inline">\(S_{D/U}\)</span></p>
+</section>
+<section id="mathematical-formulation-of-the-solution" class="level4" data-number="15.4.1.2">
+<h4 data-number="15.4.1.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution"><span class="header-section-number">15.4.1.2</span> Mathematical Formulation of the Solution</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I know I need to generate the reactor design equations for each of the reactors. There isn’t any other equipment in this network, so no other mole and energy balances are needed.</p>
+<p>The same reactor design equations will describe the CSTR irrespective of whether it is R1 or R2. However, the identy of the inlet and outlet streams will be different. To avoid writing two sets of CSTR design equations, I will use “in” to denote the stream flowing into the CSTR and “out” to denote the stream flowing out of the CSTR. Then, as I formulate the solution, I can set “in” equal to stream 0 for case a, and I can set it equal to stream 2 for case b.</p>
+<p>Both reactors are adiabatic, so I need mole balances and an energy balance for each reactor. There is no mention of pressure drop in the PFR, and I don’t have sufficient information to calculate it, so I will assume negligible pressure drop in the PFR.</p>
+<p>The general form of the steady-state CSTR mole balance is given in <a href="section_3_design_equations.html#eq-cstr_ss_mole_balance" class="quarto-xref">Equation&nbsp;<span>6.31</span></a>. Here there are two reactions, so the summation expands to two terms.</p>
+<p><span class="math display">\[
+0 = \dot{n}_{i,in} - \dot{n}_i + V \sum_j \nu_{i,j}r_j \Rightarrow \dot{n}_{i,in} - \dot{n}_{i,out} + V \left( \nu_{i,1}r_1 + \nu_{i,2}r_2\right)
+\]</span></p>
+<p>The general form of the steady-state CSTR energy balance is given in equation <a href="section_3_design_equations.html#eq-cstr_ss_energy_balance" class="quarto-xref">Equation&nbsp;<span>6.32</span></a>. In this system both the rate of heat transfer and the work are equal to zero, and the sensible heat term can be expressed in terms of the volumetric heat capacity given in the assignment narrative. At the same time, the constant heat capacity can be taken outside of the integral which can then be evaluated. As above, the summation over the reactions expands to two terms.</p>
+<p><span class="math display">\[
+\begin{align}
+0 &amp;= \cancelto{0}{\dot{Q}} - \cancelto{0}{\dot{W}} - \cancelto{\dot{V}_{in} \breve{C}_p \left( T_{out} - T_{in} \right)}{\sum_i\dot{n}_{i,in} \int_{T_{in}}^T \hat{C}_{p,i}dT} \\&amp;- \cancelto{V \left( r_1 \Delta H_1 + r_2 \Delta H_2 \right)}{V\sum_j r_j \Delta H_j}
+\end{align}
+\]</span></p>
+<p>The general form of the steady-state PFR mole balance is given in <a href="section_3_design_equations.html#eq-pfr_ss_mol_balance" class="quarto-xref">Equation&nbsp;<span>6.39</span></a>. Noting that <span class="math inline">\(dV = \frac{\pi D^2}{4}dz\)</span>, the equation can be rewritten using the volume as the independent variable. Again, there are two reactions, so the summation expands to two terms.</p>
+<p><span class="math display">\[
+\frac{d \dot{n}_i}{d z}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j \quad \Rightarrow \quad \frac{d \dot{n}_i}{dV} = \nu_{i,1}r_1 + \nu_{i,2}r_2
+\]</span></p>
+<p>The general form of the steady-state PFR energy balance is given in <a href="section_3_design_equations.html#eq-pfr_ss_energy_balance" class="quarto-xref">Equation&nbsp;<span>6.40</span></a>. The energy balance can also be rewritten using the volume as the independent variable. The reactor is adiabatic so the heat transfer term goes to zero. The sensible heat can be written in terms of the volumetric heat capacity, and the summation over the two reactions can be expanded.</p>
+<p><span class="math display">\[
+\cancelto{\dot{V} \breve{C}_p}{\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right)} \frac{d T}{d z} = \cancelto{0}{\pi D U\left( T_{ex} - T  \right)} - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+\]</span></p>
+<p><span class="math display">\[
+\frac{d T}{dV} = -\frac{r_1 \Delta H_1 + r_2 \Delta H_2}{\dot{V} \breve{C}_p}
+\]</span></p>
+<p>This is a liquid-phase system, so the volumetric flow rates of the three streams are all equal to <span class="math inline">\(\dot{V}_0\)</span>.</p>
+</div>
+</div>
+</div>
+<p><strong>Reactor Design Equations</strong></p>
+<p>Steady-state mole balance design equations for A, D, and U in the CSTR are presented in equations (5), (6), and (7). The steady-state CSTR energy balance on the reacting fluid is given in equation (8). Steady-state mole and energy balances for the PFR are presented in equations (9) through (12).</p>
+<p><span class="math display">\[
+0 = \dot{n}_{A,in} - \dot{n}_{A,out} + \left( -r_1 - r_2 \right)V_{CSTR} = \epsilon_1 \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{n}_{D,in} - \dot{n}_{D,out} + r_1V_{CSTR} = \epsilon_2 \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{n}_{U,in} - \dot{n}_{U,out} + r_2 V_{CSTR} = \epsilon_3 \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+0 = - \dot{V}_0 \breve{C}_p \left( T_{out} - T_{in} \right) - V_{CSTR} \left( r_1 \Delta H_1 + r_2 \Delta H_2 \right) = \epsilon_4 \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d \dot{n}_A}{dV} = -r_1 - r_2 \tag{9}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d \dot{n}_D}{dV} = r_1 \tag{10}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d \dot{n}_U}{dV} = r_2 \tag{11}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d T}{dV} = -\frac{r_1 \Delta H_1 + r_2 \Delta H_2}{\dot{V}_0 \breve{C}_p} \tag{12}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The number of dependent variables in the PFR design equations, four, is equal to the number of IVODEs, so it isn’t necessary to eliminate a dependent variable or add an IVODE. I do need initial values and a stopping criterion, however.</p>
+<p>I can define <span class="math inline">\(V_{PFR} = 0\)</span> to be the PFR inlet. In that case, the initial values are simply the molar flow rates and the temperature at that point. For case (a) they are the values for stream 1 and for case (b) they are the values for stream 2. (Note that stream 0 only contains A, so the flow rates of D and U are zero) In both cases, I know the total volume of the PFR and can use that as the stopping criterion.</p>
+</div>
+</div>
+</div>
+<p><strong>Initial Values and Stopping Criterion</strong></p>
+<div id="tbl-example_15_4_1_initial_values" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_15_4_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;15.1: Initial values and stopping criterion for solving equations (9) through (12) for each of the two network configurations.
+</figcaption>
+<div aria-describedby="tbl-example_15_4_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variable</th>
+<th style="text-align: center;">Initial Value for Case (a)</th>
+<th style="text-align: center;">Initial Value for Case (b)</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(V_{PFR}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,1}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,0}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_D\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{D,1}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_U\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{U,1}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Starting with case a where the CSTR is first, I will need to set the variables in equations (5) through (8) that are labeled “in” equal to the values for stream 0. That will leave the variables labeled “out”, <span class="math inline">\(r_4\)</span>, and <span class="math inline">\(r_2\)</span> as unknown. I can solve the four CSTR design equations for the four variables labeled “out.” In order to do so, I’ll need to provide an initial guess for the variables labeled “out,” and I’ll need to evaluate the residuals each time a new guess for the solution is generated. At that point, I will have values for every quantity in the residuals expressions, equations (5) through (8) except <span class="math inline">\(r_1\)</span> and <span class="math inline">\(r_2\)</span>.</p>
+<p>The rates can be calculated using the rate expressions provided as equations (3) and (4). Before I can use them, I’ll need to calculate <span class="math inline">\(k_1\)</span> and <span class="math inline">\(k_2\)</span>. I can do that using the Arrhenius expression, <a href="section_2_rates_and_expressions.html#eq-arrhenius" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>. I’ll also need to calculate the concentration of A to substitute in the rate expression. I can use the defining equation for concentration in an open system, <a href="section_1_intro_and_defs.html#eq-concentration_open" class="quarto-xref">Equation&nbsp;<span>1.15</span></a> to do that, remembering that the rate is evaluated at the outlet composition and temperature.</p>
+<p>After I solve the CSTR design equations, I can solve the PFR design equations for case a. The PFR design equations are IVODEs, so I’ll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in <a href="#tbl-example_15_4_1_initial_values" class="quarto-xref">Table&nbsp;<span>15.1</span></a>. Having solved the CSTR design equations, all of the initial and final values will be known.</p>
+<p>At the start of each integration step, the independent variable (<span class="math inline">\(V\)</span><span class="math inline">\() and the dependent variables (\)</span>_A$, <span class="math inline">\(\dot{n}_D\)</span>, <span class="math inline">\(\dot{n}_U\)</span>, and <span class="math inline">\(T\)</span>) will be known, as will the given and known constants listed above. I will need to calculate any other quantities that appear in the IVODE design equations. Here that means I’ll need to calculate the rates, and I can do so the same way as for the CSTR design equations.</p>
+<p>For case b, where the PFR is first, the initial and final values in <a href="#tbl-example_15_4_1_initial_values" class="quarto-xref">Table&nbsp;<span>15.1</span></a> will again be known. I’ll again need to evaluate the derivatives at the start of each integration step, and doing so will be the same as it was in case a.</p>
+<p>Then, having solved the PFR design equations, I will know the molar flow rates and temperature for stream 1, so the only unknowns in the CSTR residuals expressions will again be the variables labeled “out” and the two rates. Consequently, I can solve the CSTR design equations just as I did in case a, except that the rate must be evaluated at the conditions of stream 2.</p>
+<p>As noted when the reactor design equations were generated, this is a liquid phase system, so the volumetric flow rate is constant and equal to <span class="math inline">\(\dot{V}_0\)</span>.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Evaluating the Residuals for Case a</strong></p>
+<p><span class="math display">\[
+\dot{n}_{A,in} = \dot{n}_{A,0} = \dot{V}_0 C_{A,0} \tag{13}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{D,in} = \dot{n}_{D,0} = 0 \tag{14}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{U,in} = \dot{n}_{U,0} = 0 \tag{15}
+\]</span></p>
+<p><span class="math display">\[
+T_{in} = T_0 \tag{16}
+\]</span></p>
+<p><span class="math display">\[
+r_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT_1} \right)} \frac{\dot{n}_{A,1}}{\dot{V}_0} \tag{17}
+\]</span></p>
+<p><span class="math display">\[
+r_2 = k_{0,2} \exp{\left( \frac{-E_2}{RT_1} \right)} \left(\frac{\dot{n}_{A,1}}{\dot{V}_0}\right)^2 \tag{18}
+\]</span></p>
+<p><strong>Ancillary Equations for Evaluating the Residuals for Case b</strong></p>
+<p>At the point where equations (5) through (8) need to be solved in Case b, the PFR design equations will have been solved to find values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_D\)</span>, <span class="math inline">\(\dot{n}_U\)</span>, and <span class="math inline">\(T\)</span> spanning the range from their values at the PFR inlet to the PFR outlet. The ancillary equations for evaluating the CSTR residuals are then given in equations (19) through (24).</p>
+<p><span class="math display">\[
+\dot{n}_{A,in} = \dot{n}_{A,1} = \dot{n}_A \big\vert_{V=V_{PFR}} \tag{19}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{D,in} = \dot{n}_{D,1} = \dot{n}_D \big\vert_{V=V_{PFR}} \tag{20}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{U,in} = \dot{n}_{U,1} = \dot{n}_U \big\vert_{V=V_{PFR}} \tag{21}
+\]</span></p>
+<p><span class="math display">\[
+T_{in} = T_1 = T \big\vert_{V=V_{PFR}} \tag{22}
+\]</span></p>
+<p><span class="math display">\[
+r_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT_2} \right)} \frac{\dot{n}_{A,2}}{\dot{V}_0} \tag{23}
+\]</span></p>
+<p><span class="math display">\[
+r_2 = k_{0,2} \exp{\left( \frac{-E_2}{RT_2} \right)} \left(\frac{\dot{n}_{A,2}}{\dot{V}_0}\right)^2 \tag{24}
+\]</span></p>
+<p><strong>Ancillary Equations for Evaluating the Derivatives for Both Cases</strong></p>
+<p><span class="math display">\[
+r_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)} \frac{\dot{n}_A}{\dot{V}_0} \tag{25}
+\]</span></p>
+<p><span class="math display">\[
+r_2 = k_{0,2} \exp{\left( \frac{-E_2}{RT} \right)} \left(\frac{\dot{n}_A}{\dot{V}_0}\right)^2 \tag{26}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When the CSTR is first, case (a), the molar flows and temperature for stream 2 are found from the solution to the PFR design equations. When the PFR is first, the molar flows and temperature for stream 2 will be calculated when the CSTR design equations are solved. In both cases, the conversion and selectivity can then be calculated using their defining equations.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Calculating the Quantities of Interest</strong></p>
+<p>In case (a) the molar flows and temperature for stream 2 can be found from the solution of the PFR design equations as shown in equations (27) - (30). In case (b), the molar flows and temperature for stream 2 will have been found when the CSTR design equations were solved. In both cases the conversion and selectivity then can be calculated using equations (31) and (32).</p>
+<p><span class="math display">\[
+\dot{n}_{A,2} = \dot{n}_A \big\vert_{V=V_{PFR}} \tag{27}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{
+    D,2} = \dot{n}_D \big\vert_{V=V_{PFR}} \tag{28}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{U,2} = \dot{n}_U \big\vert_{V=V_{PFR}} \tag{29}
+\]</span></p>
+<p><span class="math display">\[
+T_2 = T \big\vert_{V=V_{PFR}} \tag{30}
+\]</span></p>
+<p><span class="math display">\[
+f_A = \frac{\dot{n}_{A,0} - \dot{n}_{A,2}}{\dot{n}_{A,0}} \tag{31}
+\]</span></p>
+<p><span class="math display">\[
+S_{D/U} = \frac{\dot{n}_{D,2}}{\dot{n}_{U,2}} \tag{32}
+\]</span></p>
+<p><strong>Calculations Summary</strong></p>
+<ol type="1">
+<li>Substitute given and known constants into all equations.</li>
+<li>When it is necessary to evaluate the derivatives
+<ol type="a">
+<li><span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_D\)</span>, <span class="math inline">\(\dot{n}_U\)</span>, and <span class="math inline">\(T\)</span> will be available.</li>
+<li>Calculate <span class="math inline">\(r_1\)</span> and <span class="math inline">\(r_2\)</span> using equations (25) and (26).</li>
+<li>Evaluate and return the derivatives using equations (9) through (12).</li>
+</ol></li>
+<li>When it is necessary to evaluate the residuals
+<ol type="a">
+<li>Set <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{D,in}\)</span>, <span class="math inline">\(\dot{n}_{U,in}\)</span>, and <span class="math inline">\(T_{in}\)</span> using equations (13) through (16) for Case a or (19) through (22) for Case b.</li>
+<li>Guesses for <span class="math inline">\(\dot{n}_{A,out}\)</span>, <span class="math inline">\(\dot{n}_{D,out}\)</span>, <span class="math inline">\(\dot{n}_{U,out}\)</span>, and <span class="math inline">\(T_{out}\)</span> will be available.</li>
+<li>Calculate <span class="math inline">\(r_1\)</span> and <span class="math inline">\(r_2\)</span> using equations (17) and (18) for case a or equations (23) and (24) for case b.</li>
+<li>Evaluate the residuals, <span class="math inline">\(epsilon_1\)</span>, <span class="math inline">\(epsilon_2\)</span>, <span class="math inline">\(epsilon_3\)</span>, and <span class="math inline">\(epsilon_4\)</span> using equations (5) through (8).</li>
+</ol></li>
+<li>When it is necessary to calculate the quantities of interest, [list]
+<ol type="a">
+<li>for Case a,
+<ol type="i">
+<li>corresponding sets of values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_D\)</span>, <span class="math inline">\(\dot{n}_U\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values will be available.</li>
+<li>calculate <span class="math inline">\(\dot{n}_{A,2}\)</span>, <span class="math inline">\(\dot{n}_{D,2}\)</span>, <span class="math inline">\(\dot{n}_{U,2}\)</span>, and <span class="math inline">\(T_2\)</span> using equations (27) through (30).</li>
+</ol></li>
+<li>calculate the conversion and selectivity using equations (31) and (32).</li>
+</ol></li>
+</ol>
+</section>
+<section id="numerical-implementation-of-the-solution" class="level4" data-number="15.4.1.3">
+<h4 data-number="15.4.1.3" class="anchored" data-anchor-id="numerical-implementation-of-the-solution"><span class="header-section-number">15.4.1.3</span> Numerical implementation of the Solution</h4>
+<ol type="1">
+<li>Make the given and known constants available for use in all functions.</li>
+<li>Define variables to hold <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{D,in}\)</span>, <span class="math inline">\(\dot{n}_{U,in}\)</span>, and <span class="math inline">\(T_{in}\)</span> and make them available to all functions.</li>
+<li>Write a derivatives function that
+<ol type="a">
+<li>receives the independent and dependent variables, <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_D\)</span>, <span class="math inline">\(\dot{n}_U\)</span>, and <span class="math inline">\(T\)</span>, as arguments,</li>
+<li>evaluates the derivatives as described in step 2 of the calculations summary, and returns them.</li>
+</ol></li>
+<li>Write a residuals function that
+<ol type="a">
+<li>receives a guess for <span class="math inline">\(\dot{n}_{A,out}\)</span>, <span class="math inline">\(\dot{n}_{D,out}\)</span>, <span class="math inline">\(\dot{n}_{U,out}\)</span>, and <span class="math inline">\(T_{out}\)</span>,</li>
+<li>evaluates the residual as described in step 3 of the calculations summary, and returns their values</li>
+</ol></li>
+<li>Write a cstr model function that
+<ol type="a">
+<li>receives the initial guess for <span class="math inline">\(\dot{n}_{A,out}\)</span>, <span class="math inline">\(\dot{n}_{D,out}\)</span>, <span class="math inline">\(\dot{n}_{U,out}\)</span>, and <span class="math inline">\(T_{out}\)</span>,</li>
+<li>calls an ATE solver passing the initial guess and the name of the residuals function from step 4 as arguments</li>
+<li>receives a solution of the CSTR design equations</li>
+<li>checks that the ATE solver converged, and</li>
+<li>returns the solution returned by the ATE solver.</li>
+</ol></li>
+<li>Write a pfr model function that
+<ol type="a">
+<li>receives the initial values in <a href="#tbl-example_15_4_1_initial_values" class="quarto-xref">Table&nbsp;<span>15.1</span></a> as an argument,</li>
+<li>gets corresponding sets of values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_D\)</span>, <span class="math inline">\(\dot{n}_U\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+<ol type="i">
+<li>the appropriate initial values and stopping criterion in <a href="#tbl-example_15_4_1_initial_values" class="quarto-xref">Table&nbsp;<span>15.1</span></a> and</li>
+<li>the name of the derivatives function from step 3 above, d, checks that the solver successfully solved the IVODEs, and</li>
+</ol></li>
+<li>returns the values returned by the IVODE solver.</li>
+</ol></li>
+<li>Perform the analysis by
+<ol type="a">
+<li>setting <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{D,in}\)</span>, <span class="math inline">\(\dot{n}_{U,in}\)</span>, and <span class="math inline">\(T_{in}\)</span> for Case a, equations (13) through (16),</li>
+<li>solving the CSTR design equations by calling the cstr model function from step 5,</li>
+<li>solving the PFR design equations by calling the pfr model function from step 6, passing the appropriate initial values from <a href="#tbl-example_15_4_1_initial_values" class="quarto-xref">Table&nbsp;<span>15.1</span></a> as an argument,</li>
+<li>calculating the quantities of interest for Case a as described in step 5 of the calculations summary,</li>
+<li>solving the PFR design equations by calling the pfr model function from step 6, passing the appropriate initial values from <a href="#tbl-example_15_4_1_initial_values" class="quarto-xref">Table&nbsp;<span>15.1</span></a> as an argument,</li>
+<li>setting <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{D,in}\)</span>, <span class="math inline">\(\dot{n}_{U,in}\)</span>, and <span class="math inline">\(T_{in}\)</span> for Case b, equations (19) through (22),</li>
+<li>solving the CSTR design equations by calling the cstr model function from step 5,</li>
+<li>calculating the quantities of interest for Case b as described in step 5 of the calculations summary, and</li>
+<li>displaying the results.</li>
+</ol></li>
+</ol>
+</section>
+<section id="results-and-discussion" class="level4" data-number="15.4.1.4">
+<h4 data-number="15.4.1.4" class="anchored" data-anchor-id="results-and-discussion"><span class="header-section-number">15.4.1.4</span> Results and Discussion</h4>
+<p>The calculations were performed as described above. When the CSTR is the first reactor, the conversion is 75% and the selectivity is 2.63 mol D per mol U. If the PFR is first, the conversion is 65.7% and the selectivity is 2.76 mol D per mol U. It would not have been possible to predict this trade-off using a qualitative analysis.</p>
+<p>The reactions are exothermic with typical kinetics, so a large rate, and correspondingly high conversion, is favored by high temperature and high reactant concentration. The reactions occur in parallel, and the instantaneous selectivity, <span class="math inline">\(S_{D/U}\)</span>, is the ratio of the desired to undesired reaction rates, as given in equation (33). Examination of that equation shows that high selectivity also is favored by high temperature (because <span class="math inline">\(E_2 - E_1\)</span> is a positive number), but by low reactant concentration (due to the <span class="math inline">\(\frac{1}{C_A}\)</span> term).</p>
+<p><span class="math display">\[
+S_{D/U} = \frac{r_D}{r_U} = \frac{k_{0,1} \exp{\left( \frac{-E_1}{RT_1} \right)}C_A}{k_{0,2} \exp{\left( \frac{-E_2}{RT_1} \right)} C_A^2} = \frac{k_{0,1}}{k_{0,2}} \exp{ \left( \frac{E_2 - E_1}{RT} \right)}\frac{1}{C_A} \tag{33}
+\]</span></p>
+<p>The two reactors have equal space times, so the reaction time in each of them is equal. If R1 is a CSTR, the concentration of A and temperature are constant at their outlet values.</p>
+<p>The results show that higher conversion and lower selectivity occur when the CSTR is first. That indicates that putting the PFR first lowers the average temperature (the conversion decreases) and the average reactant concentration (the selectivity increases). When the PFR is first</p>
+<p>If temperature was the only factor, and if one of the two reactor configurations resulted in a larger average temperature, both the conversion and the selectivity would be expected to increase. Hence, the trade-off between conversion and selectivity must be related to differences in the average reactant concentration. High concentration favors higher conversion and lower selectivity while lower concentration favors lower conversion and higher selectivity. The results show that higher conversion and lower selectivity occur when the CSTR is first. This suggests that for the operating parameters used in this system, the average concentration of A is larger when the CSTR is first.</p>
+<p>That may not be true for the same system operating at a different feed rate. For adiabatic operation the temperature will increase as the reaction proceeds while the concentration of reactant will decrease. This typically leads to a rate that initially increases, reaches a maximum value and then decreases (see the discussion for <a href="section_4_bstr_analysis.html#sec-example_9_6_1" class="quarto-xref">Example&nbsp;<span>9.6.1</span></a>).</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:blue">SC</span>o<span style="color:red">RE</span> Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in <a href="http://buffalobadger.github.io/SCoRE/class_24.html">SCoRE</a>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="water-gas-shift-in-series-pfrs-with-cooling-between-the-reactors" class="level3" data-number="15.4.2">
+<h3 data-number="15.4.2" class="anchored" data-anchor-id="water-gas-shift-in-series-pfrs-with-cooling-between-the-reactors"><span class="header-section-number">15.4.2</span> Water-Gas Shift in Series PFRs with Cooling Between the Reactors</h3>
+</section>
+<section id="minimizing-the-total-volume-of-two-cstrs-in-series" class="level3" data-number="15.4.3">
+<h3 data-number="15.4.3" class="anchored" data-anchor-id="minimizing-the-total-volume-of-two-cstrs-in-series"><span class="header-section-number">15.4.3</span> Minimizing the Total Volume of Two CSTRs in Series</h3>
+</section>
+<section id="maximizing-the-conversion-for-two-unequal-pfrs-in-parallel" class="level3" data-number="15.4.4">
+<h3 data-number="15.4.4" class="anchored" data-anchor-id="maximizing-the-conversion-for-two-unequal-pfrs-in-parallel"><span class="header-section-number">15.4.4</span> Maximizing the Conversion for Two Unequal PFRs in Parallel</h3>
+</section>
+</section>
+<section id="symbols-used-in-chapter--sec-6_reactor_networks" class="level2" data-number="15.5">
+<h2 data-number="15.5" class="anchored" data-anchor-id="symbols-used-in-chapter--sec-6_reactor_networks"><span class="header-section-number">15.5</span> Symbols used in <a href="#sec-6_reactor_networks" class="quarto-xref">Chapter&nbsp;<span>15</span></a></h2>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(x\)</span></td>
+<td style="text-align: left;">variable.</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
