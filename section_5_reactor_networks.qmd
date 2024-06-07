@@ -1,3 +1,465 @@
 # Reactor Networks {#sec-6_reactor_networks}
 
-This chapter will be added as soon as I finish writing it.
+This chapter considers systems wherein two or more reactors are connected in some way and function together in the processing of a single feed stream. Reasons for using more than one reactor are discussed, and the qualitative and quantitative analyses of reactor networks are presented.
+
+## Reactor Networks
+
+In the preceding chapters, isolated reactors were considered. A chemical process can use more than one reactor to process a feed stream. The most common configurations of multiple reactors are series networks of reactors and parallel networks of reactors, as illustrated in @fig-reactor_networks. Panel (a) of that figure shows two CSTRs in series where the reactors are labeled R1 and R2. Series networks are not limited to two reactors; there can be any number of reactors as long as the outlet from each one becomes the feed to the next. Series networks of PFRs are equally possible.
+
+::: {#fig-reactor_networks layout-ncol=2 layout-valign="center"}
+
+![Series](Graphics/Two_Series_CSTRs.png){#fig-series_reactors width="90%"}
+
+![Parallel](Graphics/Two_Parallel_PFRs.png){#fig-parallel_reactors width="90%"}
+
+Schematic representation of CSTRs in series and PFRs in parallel. "R" denotes the reactors, "S" denotes stream splitters and "M" denotes stream mixers.
+:::
+
+The (b) panel of @fig-reactor_networks shows two PFRs, labeled R1 and R2, that are connected to form a parallel network. Again, there can be any number of reactors in a parallel network, as long as a single stream is split, and distributed among the reactors, and as long as the outlet streams from all of the reactors are mixed into a single product stream. In the figure, S is used to denote a stream splitter and M is used to denote a stream mixer. Parallel networks can also be created using CSTRs.
+
+Another possibility with series or parallel reactor networks is that the reactors might not be of the same type. For example an engineer could design a CSTR in series with a PFR with either of the two reactors first in the series network. Similarly, a CSTR in parallel with a PFR is also possible.
+
+Reactor networks that are neither series nor parallel are also possible. Such networks are not common in commercial processing. However, @sec-7_zoned_reactor_models shows how reactor networks can be used to model a single, non-ideal reactor. In that situation, the reactor network need not be a series or parallel network.
+
+## Analysis of Reactor Networks
+
+### Qualitative Behavior of Reactor Networks
+
+A **series network of adiabatic PFRs** is equivalent to a single adiabatic PFR with a volume equal to the total volume of the series PFRs. If the individual PFRs are heated or cooled, or if there is heating or cooling between one PFR outlet and the next PFR inlet, the performance of the network will be different from a single PFR with the same total volume.
+
+In a **parallel network of equally-sized PFRs** where the feed is evenly split among the reactors, the temperature and concentration profiles along the length of each reactor are the same as for the other reactors. This assumes that the PFRs are either adiabatic, or they all pass through a single shell within which a perfectly mixed exchange fluid flows. It won't be true if the heat exchange is different in different reactors.
+
+A **series network of isothermal or adiabatic CSTRs** becomes equivalent to a single PFR with the same total volume as the number of CSTRs approaches infinity. A series network of CSTRs is sometimes referred to as a CSTR cascade. @fig-pfr_bstr_analogy showed that because there is no mixing in the axial direction in a PFR, the fluid can be envisioned as small batch reactors that enter the reactor one after the other, with each batch reactor moving from the inlet to the outlet at a velocity equal to the velocity of the fluid flowing in the PFR. Another way to think of this is that the little BSTRs are stationary CSTRs, and the fluid moves from one to the next. Since each CSTR is differentially small, it is easy to understant why an infinite series of CSTRs is equivalent to a PFR.
+
+If each of the CSTRs in a series network are heated or cooled by exchange of heat with a perfectly mixed exchange fluid, the series will not approach the bahavior of a PFR as the number of CSTRs approaches infinity.
+
+In a **parallel network of equally sized and equally cooled/heated CSTRs**, if the feed is divided equally among the reactors, the contents of every reactor will be the same.
+
+Finally, if parallel reactors are used, the mixing streams of unequal conversion should be avoided. Doing so effectively undoes some of the reaction that has taken place because after mixing the effective conversion of the mixed stream will be lower than that in the stream with the higher conversion before mixing.
+
+### Quantitative Analysis of Reactor Networks
+
+It is good practice to label each flow stream in the process and each piece of equipment. Variables representing flow rates, temperatures, pressures, etc. can then be subscripted using the labels to denote the stream or equipment to which the variable applies. Here, only steady-state operation will be considered. The only equipment that may be present in the networks considered here are stream splitters, stream mixers, and heat exchangers. Quantitative analysis of a reactor network requires writing the reactor design equations for each reactor in the network and writing mole and energy balances for every splitter, mixer and heat eachanger in the network.
+
+The analysis of any one of the reactors in a network is no different from the analysis of an isolated reactor. After all, it makes no difference in the analysis of a reactor whether the feed to that reactor is coming from a storage tank somewhere in the chemical plant or from the outlet of another reactor. Similarly, it makes no difference in the reactor analysis whether the product stream is sent to a distillation tower elsewhere in the chemical plant or to another reactor. Thus, the reactor design equations for each reactor are generated as described in @sec-3_design_eqns and illustrated in Chapters [-@sec-4_cstr_analysis] and [-@sec-4_pfr_analysis].
+
+A stream splitter will have one inlet stream and two or more outlet streams. A steady-state mole balance on reagent $i$ takes the form shown in @eq-splitter_mol_bal where $N_{out}$ denotes the number of outlet streams and "out" indexes those streams. It is important to recognize that the temperatures of all entering and leaving streams are equal. As such, instead of writing energy balances, the temperatures of each of the streams leaving the splitter can simply be set equal to the temperature of the stream entering the splitter, @eq-splitter_energy.
+
+$$
+0 = \dot{n}_{i,in} - \sum_{N_{out}} \dot{n}_{i,out}
+$$ {#eq-splitter_mol_bal}
+
+$$
+T_{out} = T_{in} \text{ ; } \quad out = 1...N_{out}
+$$ {#eq-splitter_energy}
+
+A stream mixer will have two or more inlet streams and one outlet stream. A steady-state mole balance on reagent $i$ takes the form shown in @eq-mixer_mol_bal where $N_{in}$ denotes the number of outlet streams and "in" indexes those streams. An energy balance takes the form shown in @eq-mixer_energy_bal. In both equations, $\displaystyle \sum_{in}$ denotes a summation of all of the inlet streams. For liquid flow streams, equivalent energy balances can be written in terms of the volumetric heat capacity or the gravimetric heat capacity, @eq-mixer_energy_volume and @eq-mixer_energy_mass.
+
+$$
+0 = \dot{n}_{i,out} - \sum_{N_{in}} \dot{n}_{i,in}
+$$ {#eq-mixer_mol_bal}
+
+$$
+0 = \sum_i \sum_{in} \left(\dot{n}_{i,in} \int_{T_{in}}^{T_{out}} \hat{C}_{p,i} dT \right)
+$$ {#eq-mixer_energy_bal}
+
+$$
+0 = \sum_{in} \left(\dot{V}_{in} \int_{T_{in}}^{T_{out}} \breve{C}_p dT \right)
+$$ {#eq-mixer_energy_volume}
+
+$$
+0 = \sum_{in} \left(\rho \dot{V}_{in} \int_{T_{in}}^{T_{out}} \tilde{C}_p dT \right)
+$$ {#eq-mixer_energy_mass}
+
+A simple heat exchanger, will have two streams that do not mix while flowing through it. Letting "h1" and "h2" denote those two streams, mole balances take the form shown in Equations [-@eq-heat_exchanger_mol_bal_1] and [-@eq-heat_exchanger_mol_bal_2]. An energy balance on the heat exchanger takes the form of @eq-heat_exchanger_energy_bal when written in terms of the molar heat capacities. For liquids, the energy balance alternatively can be written in terms of the volumetric heat capacity or the gravimetric heat capacity, @eq-heat_exchanger_energy_volume and @eq-heat_exchanger_energy_mass.
+
+$$
+0 = \dot{n}_{i,h1,in} - \dot{n}_{i,h1,out}
+$$ {#eq-heat_exchanger_mol_bal_1}
+
+$$
+0 = \dot{n}_{i,h2,in} - \dot{n}_{i,h2,out}
+$$ {#eq-heat_exchanger_mol_bal_2}
+
+$$
+0 = \sum_i \left( \dot{n}_{i,h1,in} \int_{T_{h1,in}}^{T_{h1,out}}\hat{C}_{p,i} dT\right) + \sum_i \left( \dot{n}_{i,h2,in} \int_{T_{h2,in}}^{T_{h2,out}} \hat{C}_{p,i} dT\right)
+$$ {#eq-heat_exchanger_energy_bal}
+
+$$
+0 = \dot{V}_{h1,in} \int_{T_{h1,in}}^{T_{h1,out}} \breve{C}_{p,h1} dT + \dot{V}_{h2,in} \int_{T_{h2,in}}^{T_{h2,out}} \breve{C}_{p,h2} dT
+$$ {#eq-heat_exchanger_energy_volume}
+
+$$
+0 = \rho_{h1} \dot{V}_{h1,in} \int_{T_{h1,in}}^{T_{h1,out}} \tilde{C}_{p,h1} dT + \rho_{h2,in}\dot{V}_{h2,in} \int_{T_{h2,in}}^{T_{h2,out}} \tilde{C}_{p,h2} dT
+$$ {#eq-heat_exchanger_energy_mass}
+
+Once reactor design equations have been written for every reactor and mole and energy balances have been written for each heat exchanger, stream splitter and stream mixer, those equations need to be solved. The manner in which this is accomplished will depend upon the specific network being analyzed and the information that is known about that network. In some situations, it may be possible to solve the reactor design equations for the reactors and the mole and energy balances for the other equipment sequentially. In other situations the reactor design equations for one reactor may be coupled with the reactor design equations for another reactor or with the mole and energy balances for one or more of the other pieces of equipment. In thise cases, the coupled equations must be solved simultaneously.
+
+In other words, there isn't a single "recipe" for solving the model equations. Once all of the equations have been formulated, they can be inspected to determine whether any of them can be solved independently of the others. If so, that can be done, after which it will be necessary to devise a strategy for solving the remaining equations.
+
+## Reasons for Using a Reactor Network
+
+There are different reasons why a reactor network might be used instead of a single reactor. One possibility is expanding the capacity of an existing chemical plant. If a company decides to substantially increase the amount of material they are processing, the existing reactor may not be able to accommodate the increase. Increasing the flow rate to process more reactant will lower the residence time, and that generally will lower the conversion, offsetting the increased flow. It would make sense to continue using the existing reactor and add a second reactor to the process rather than eliminating the existing reactor and replacing it with a single, larger reactor.
+
+In other cases, multiple reactors might be part of the original design. An example is the use of PFRs where it is necessary to heat or cool. It is quite common to use a large number of reactor tubes arranged in parallel, with a single shell surrounding all the tubes to provide heat transfer.
+
+As described in @sec-4_continuous_design, when a single CSTR is used, the reaction takes place at the final composition and temperature. When a single PFR is used, the composition and temperature vary continuously from their inlet values to their outlet values. Another reason for using multiple reactors is to change the temperature *vs*. reaction time or composition *vs*. reaction time. As an example, if two PFRs in series are used, each with cooling by heat exchange with a perfectly mixed heat exchange fluid, the temperature *vs*. reaction time will be different from that of a single PFR using the same exchange fluid. Sometimes it is possible to design a reactor network where the temperature *vs*. reaction time and/or composition *vs*. reaction time results in better performance than a single reactor. That is, a reactor network may require a smaller total reactor volume or it may offer better selectivity than a single reactor.
+
+Consider the difference between a single isothermal CSTR and two isothermal CSTRs in series. The single CSTR will operate at the final composition. For most reactions, this means that the rate will be small due to low concentration of reactant. When two CSTRs in series are used to convert an equal amount of reactant, the second CSTR will operate at the same final composition where the rate is low. However, the first CSTR will operate at a higher concentration of reactant and a correspondingly higher rate. Because part of the conversion is taking place at a higher rate, the total volume that is required will be smaller than a single CSTR where the rate is always low.
+
+If the reaction is exothermic and the reactor operates adiabatically, then the increase in temperature (and its tendency to increase the rate) will predominate over the decrease in reactant concentration (and its tendency to decrease the rate). A simple qualitative analysis will show that there will be a critical conversion, and a corresponding critical space time, where the rate reaches a maximum. If one were judicious in selecting the relative volumes of the two reactors in series, the first could be designed so that it operated at the critical space time where the reaction rate was at its maximum value. Then the second CSTR in series would be sized so that the desired overall conversion is achieved.
+
+There are also situations where it might make sense to use two different kinds of reactor in a network. For example, consider an autocatalytic reaction such as cell growth. If one wanted to use a plug flow reactor for cell growth, the feed stream would always need to contain cells and substrate. However, if a small CSTR was installed in series ahead of the PFR, only substrate would need to be supplied in the feed. As long as cells are growing in the CSTR, the substrate would mix with those growing cells, and the feed to the PFR would contain both cells and substrate.
+
+## Examples
+
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(readxl)
+source("~/Libraries/R/fmt_tibble_col.R")
+```
+
+intro
+
+### Comparing a CSTR Followed by a PFR to a PFR Followed by a CSTR {#sec-example_15_4_1}
+
+{{< include examples/reb_15_4_1/narrative.qmd >}}
+
+{{< include examples/reb_15_4_1/equations.qmd >}}
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+This assignment involves a network of two reactors in series. Before summarizing the assignment, I will make a simple schematic where I label the reactors and the flow streams. I'll use "R" with a number to denote the reactors and I'll simply number the streams. Then I can use the labels as I summarize the assignment.
+
+:::
+
+#### Assignment Summary
+
+**Network Schematic**
+
+![Schematic representation of the reactor network.](examples/reb_15_4_1/network_schematic.png){#fig-example_15_4_1_schematic width="70%"}
+
+**Given and Known Constants**: $V_{CSTR}$ = 350 L, $V_{PFR}$ = 350 L, $C_{A,0}$ = 2.5 mol L^-1^, $\dot{V}_0$ = 100 L min^-1^, $T_0$ = 38 °C, $\Delta H_1$ = –21,500 cal mol^-1^, $\Delta H_2$ = –24,000 cal mol^-1^, $\breve{C}_p$ = 1.0 cal cm^-3^ K^-1^, $k_{0,1}$ = 1.2 x 10^5^ min^-1^, $E_1$ = 9100 cal mol^-1^, $k_{0,2}$ = 2.17 x 10^7^ L mol^-1^ min^-1^, $E_2$ = 13400 cal mol^-1^.
+
+**Reactor Systems**: (a) adiabatic CSTR (R1) followed in series by an adiabatic PFR (R2), and (b) adiabatic PFR (R1) followed in series by an adiabatic CSTR (R2)
+
+**Quantities of Interest**: $f_A$ and $S_{D/U}$
+
+#### Mathematical Formulation of the Solution
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I know I need to generate the reactor design equations for each of the reactors. There isn't any other equipment in this network, so no other mole and energy balances are needed.
+
+The same reactor design equations will describe the CSTR irrespective of whether it is R1 or R2. However, the identy of the inlet and outlet streams will be different. To avoid writing two sets of CSTR design equations, I will use "in" to denote the stream flowing into the CSTR and "out" to denote the stream flowing out of the CSTR. Then, as I formulate the solution, I can set "in" equal to stream 0 for case (a), and I can set it equal to stream 2 for case (b).
+
+Both reactors are adiabatic, so I need mole balances and an energy balance for each reactor. There is no mention of pressure drop in the PFR, and I don't have sufficient information to calculate it, so I will assume negligible pressure drop in the PFR.
+
+The general form of the steady-state CSTR mole balance is given in @eq-cstr_ss_mole_balance. Here there are two reactions, so the summation expands to two terms.
+
+$$
+0 = \dot{n}_{i,in} - \dot{n}_i + V \sum_j \nu_{i,j}r_j \Rightarrow \dot{n}_{i,in} - \dot{n}_{i,out} + V \left( \nu_{i,1}r_1 + \nu_{i,2}r_2\right)
+$$
+
+The general form of the steady-state CSTR energy balance is given in equation @eq-cstr_ss_energy_balance. In this system both the rate of heat transfer and the work are equal to zero, and the sensible heat term can be expressed in terms of the volumetric heat capacity given in the assignment narrative. At the same time, the constant heat capacity can be taken outside of the integral which can then be evaluated. As above, the summation over the reactions expands to two terms.
+
+$$
+\begin{align}
+0 &= \cancelto{0}{\dot{Q}} - \cancelto{0}{\dot{W}} - \cancelto{\dot{V}_{in} \breve{C}_p \left( T_{out} - T_{in} \right)}{\sum_i\dot{n}_{i,in} \int_{T_{in}}^T \hat{C}_{p,i}dT} \\&- \cancelto{V \left( r_1 \Delta H_1 + r_2 \Delta H_2 \right)}{V\sum_j r_j \Delta H_j}
+\end{align}
+$$
+
+The general form of the steady-state PFR mole balance is given in @eq-pfr_ss_mol_balance. Noting that $dV = \frac{\pi D^2}{4}dz$, the equation can be rewritten using the volume as the independent variable. Again, there are two reactions, so the summation expands to two terms.
+
+$$
+\frac{d \dot{n}_i}{d z}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j \quad \Rightarrow \quad \frac{d \dot{n}_i}{dV} = \nu_{i,1}r_1 + \nu_{i,2}r_2
+$$
+
+The general form of the steady-state PFR energy balance is given in @eq-pfr_ss_energy_balance. The energy balance can also be rewritten using the volume as the independent variable. The reactor is adiabatic so the heat transfer term goes to zero. The sensible heat can be written in terms of the volumetric heat capacity, and the summation over the two reactions can be expanded.
+
+$$
+\cancelto{\dot{V} \breve{C}_p}{\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right)} \frac{d T}{d z} = \cancelto{0}{\pi D U\left( T_{ex} - T  \right)} - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+$$
+
+$$
+\frac{d T}{dV} = -\frac{r_1 \Delta H_1 + r_2 \Delta H_2}{\dot{V} \breve{C}_p}
+$$
+
+This is a liquid-phase system, so the volumetric flow rates of the three streams are all equal to $\dot{V}_0$.
+
+:::
+
+**Reactor Design Equations**
+
+Steady-state mole balance design equations for A, D, and U in the CSTR are presented in equations (5), (6), and (7). The steady-state CSTR energy balance on the reacting fluid is given in equation (8). Steady-state mole and energy balances for the PFR are presented in equations (9) through (12).
+
+$$
+0 = \dot{n}_{A,in} - \dot{n}_{A,out} + \left( -r_1 - r_2 \right)V_{CSTR} = \epsilon_1 \tag{5}
+$$
+
+$$
+0 = \dot{n}_{D,in} - \dot{n}_{D,out} + r_1V_{CSTR} = \epsilon_2 \tag{6}
+$$
+
+$$
+0 = \dot{n}_{U,in} - \dot{n}_{U,out} + r_2 V_{CSTR} = \epsilon_3 \tag{7}
+$$
+
+$$
+0 = - \dot{V}_0 \breve{C}_p \left( T_{out} - T_{in} \right) - V_{CSTR} \left( r_1 \Delta H_1 + r_2 \Delta H_2 \right) = \epsilon_4 \tag{8}
+$$
+
+$$
+\frac{d \dot{n}_A}{dV} = -r_1 - r_2 \tag{9}
+$$
+
+$$
+\frac{d \dot{n}_D}{dV} = r_1 \tag{10}
+$$
+
+$$
+\frac{d \dot{n}_U}{dV} = r_2 \tag{11}
+$$
+
+$$
+\frac{d T}{dV} = -\frac{r_1 \Delta H_1 + r_2 \Delta H_2}{\dot{V}_0 \breve{C}_p} \tag{12}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The number of dependent variables in the PFR design equations, four, is equal to the number of IVODEs, so it isn't necessary to eliminate a dependent variable or add an IVODE. I do need initial values and a stopping criterion, however.
+
+I can define $V_{PFR} = 0$ to be the PFR inlet. In that case, the initial values are simply the molar flow rates and the temperature at that point. For case (a) they are the values for stream 1 and for case (b) they are the values for stream 2. Stream 0 only contains A, so the flow rates of D and U are zero. In both cases, I know the total volume of the PFR and can use that as the stopping criterion.
+
+:::
+
+**Initial Values and Stopping Criterion**
+
+| Variable | Initial Value for Case (a) | Initial Value for Case (b) | Stopping Criterion |
+|:------:|:-------:|:-------:|:-------:|
+| $V$ | $0$ | $0$ | $V_{PFR}$ |
+| $\dot{n}_A$ | $\dot{n}_{A,1}$ | $\dot{n}_{A,0}$ | |
+| $\dot{n}_D$ | $\dot{n}_{D,1}$ | $0$ | |
+| $\dot{n}_U$ | $\dot{n}_{U,1}$ | $0$ | |
+| $T$ | $T_1$ | $T_0$ | |
+  
+: Initial values and stopping criterion for solving  equations (9) through (12) for each of the two network configurations. {#tbl-example_15_4_1_initial_values}
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Starting with case (a) where the CSTR is first, I will need to set the variables in equations (5) through (8) that are labeled "in" equal to the values for stream 0. That will leave the variables labeled "out", $r_1$, and $r_2$ as unknown. I can solve the four CSTR design equations for the four variables labeled "out." In order to do so, I'll need to provide an initial guess for the variables labeled "out," and I'll need to evaluate the residuals each time a new guess for the solution is generated. At that point, I will have values for every quantity in the residuals expressions, equations (5) through (8) except $r_1$ and $r_2$.
+
+The rates can be calculated using the rate expressions provided as equations (3) and (4). Before I can use them, I'll need to calculate $k_1$ and $k_2$. I can do that using the Arrhenius expression, @eq-arrhenius. I'll also need to calculate the concentration of A to substitute in the rate expression. I can use the defining equation for concentration in an open system, @eq-concentration_open to do that, remembering that the rate is evaluated at the outlet composition and temperature.
+
+After I solve the CSTR design equations, I can solve the PFR design equations for case (a). The PFR design equations are IVODEs, so I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_15_4_1_initial_values. Having solved the CSTR design equations and set stream 1 equal to the CSTR outlet stream, all of the initial and final values will be known.
+
+At the start of each integration step, the independent variable ($V$) and the dependent variables ($\dot{n}_A$, $\dot{n}_D$, $\dot{n}_U$, and $T$) will be known, as will the given and known constants listed in the assignment summary. I will need to calculate any other quantities that appear in the IVODE design equations. Here that means I'll need to calculate the rates, and I can do so the same way as for the CSTR design equations.
+
+For case (b), where the PFR is first, the initial and final values in @tbl-example_15_4_1_initial_values will again be known. I'll again need to evaluate the derivatives at the start of each integration step, and doing so will be the same as it was in case (a).
+
+Then, having solved the PFR design equations, I will know the molar flow rates and temperature for stream 1, so the only unknowns in the CSTR residuals expressions will again be the variables labeled "out" and the two rates. Consequently, I can solve the CSTR design equations just as I did in case (a), except that the rate must be evaluated at the conditions of stream 2.
+
+As noted when the reactor design equations were generated, this is a liquid phase system, so the volumetric flow rate is constant and equal to $\dot{V}_0$.
+
+:::
+
+**Ancillary Equations for Evaluating the Residuals for Case (a)**
+
+$$
+\dot{n}_{A,in} = \dot{n}_{A,0} = \dot{V}_0 C_{A,0} \tag{13}
+$$
+
+$$
+\dot{n}_{D,in} = \dot{n}_{D,0} = 0 \tag{14}
+$$
+
+$$
+\dot{n}_{U,in} = \dot{n}_{U,0} = 0 \tag{15}
+$$
+
+$$
+T_{in} = T_0 \tag{16}
+$$
+
+$$
+r_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT_1} \right)} \frac{\dot{n}_{A,1}}{\dot{V}_0} \tag{17}
+$$
+
+$$
+r_2 = k_{0,2} \exp{\left( \frac{-E_2}{RT_1} \right)} \left(\frac{\dot{n}_{A,1}}{\dot{V}_0}\right)^2 \tag{18}
+$$
+
+**Ancillary Equations for Evaluating the Residuals for Case (b)**
+
+At the point where equations (5) through (8) need to be solved in case (b), the PFR design equations will have been solved to find values of $V$, $\dot{n}_A$, $\dot{n}_D$, $\dot{n}_U$, and $T$ spanning the range from their values at the PFR inlet to the PFR outlet. The ancillary equations for evaluating the CSTR residuals are then given in equations (19) through (24).
+
+$$
+\dot{n}_{A,in} = \dot{n}_{A,1} = \dot{n}_A \big\vert_{V=V_{PFR}} \tag{19}
+$$
+
+$$
+\dot{n}_{D,in} = \dot{n}_{D,1} = \dot{n}_D \big\vert_{V=V_{PFR}} \tag{20}
+$$
+
+$$
+\dot{n}_{U,in} = \dot{n}_{U,1} = \dot{n}_U \big\vert_{V=V_{PFR}} \tag{21}
+$$
+
+$$
+T_{in} = T_1 = T \big\vert_{V=V_{PFR}} \tag{22}
+$$
+
+$$
+r_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT_2} \right)} \frac{\dot{n}_{A,2}}{\dot{V}_0} \tag{23}
+$$
+
+$$
+r_2 = k_{0,2} \exp{\left( \frac{-E_2}{RT_2} \right)} \left(\frac{\dot{n}_{A,2}}{\dot{V}_0}\right)^2 \tag{24}
+$$
+
+**Ancillary Equations for Evaluating the Derivatives for Both Cases**
+
+$$
+r_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)} \frac{\dot{n}_A}{\dot{V}_0} \tag{25}
+$$
+
+$$
+r_2 = k_{0,2} \exp{\left( \frac{-E_2}{RT} \right)} \left(\frac{\dot{n}_A}{\dot{V}_0}\right)^2 \tag{26}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+When the CSTR is first, case (a), the molar flows and temperature for stream 2 are found from the solution to the PFR design equations. When the PFR is first, the molar flows and temperature for stream 2 will be calculated when the CSTR design equations are solved. In both cases, the conversion and selectivity can then be calculated using their defining equations.
+
+:::
+
+**Ancillary Equations for Calculating the Quantities of Interest**
+
+In case (a) the molar flows and temperature for stream 2 can be found from the solution of the PFR design equations as shown in equations (27) - (30). In case (b), the molar flows and temperature for stream 2 will have been found when the CSTR design equations were solved. In both cases the conversion and selectivity then can be calculated using equations (31) and (32).
+
+$$
+\dot{n}_{A,2} = \dot{n}_A \big\vert_{V=V_{PFR}} \tag{27}
+$$
+
+$$
+\dot{n}_{
+    D,2} = \dot{n}_D \big\vert_{V=V_{PFR}} \tag{28}
+$$
+
+$$
+\dot{n}_{U,2} = \dot{n}_U \big\vert_{V=V_{PFR}} \tag{29}
+$$
+
+$$
+T_2 = T \big\vert_{V=V_{PFR}} \tag{30}
+$$
+
+$$
+f_A = \frac{\dot{n}_{A,0} - \dot{n}_{A,2}}{\dot{n}_{A,0}} \tag{31}
+$$
+
+$$
+S_{D/U} = \frac{\dot{n}_{D,2}}{\dot{n}_{U,2}} \tag{32}
+$$
+
+**Calculations Summary**
+
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the derivatives
+	a. $V$, $\dot{n}_A$, $\dot{n}_D$, $\dot{n}_U$, and $T$ will be available.
+	b. Calculate $r_1$ and $r_2$ using equations (25) and (26).
+    c. Evaluate and return the derivatives using equations (9) through (12).
+3. When it is necessary to evaluate the residuals
+	a. Set $\dot{n}_{A,in}$, $\dot{n}_{D,in}$, $\dot{n}_{U,in}$, and $T_{in}$ using equations (13) through (16) for case (a) or (19) through (22) for case (b).
+	b. Guesses for $\dot{n}_{A,out}$, $\dot{n}_{D,out}$, $\dot{n}_{U,out}$, and $T_{out}$ will be available.
+    c. Calculate $r_1$ and $r_2$ using equations (17) and (18) for case (a) or equations (23) and (24) for case (b).
+    d. Evaluate the residuals, $epsilon_1$, $epsilon_2$, $epsilon_3$, and $epsilon_4$ using equations (5) through (8).
+5. When it is necessary to calculate the quantities of interest, [list]
+	a. for case (a), 
+        i. corresponding sets of values of $V$, $\dot{n}_A$, $\dot{n}_D$, $\dot{n}_U$, and $T$, spanning the range from their initial values to their final values will be available.
+        ii. calculate $\dot{n}_{A,2}$, $\dot{n}_{D,2}$, $\dot{n}_{U,2}$, and $T_2$ using equations (27) through (30).
+	b. calculate the conversion and selectivity using equations (31) and (32).
+
+#### Numerical implementation of the Solution
+
+1. Make the given and known constants available for use in all functions.
+2. Define variables to hold $\dot{n}_{A,in}$, $\dot{n}_{D,in}$, $\dot{n}_{U,in}$, and $T_{in}$ and make them available to all functions.
+3. Write a derivatives function that
+	a. receives the independent and dependent variables, $V$, $\dot{n}_A$, $\dot{n}_D$, $\dot{n}_U$, and $T$, as arguments,
+	b. evaluates the derivatives as described in step 2 of the calculations summary, and returns them.
+4. Write a residuals function that
+	a. receives a guess for $\dot{n}_{A,out}$, $\dot{n}_{D,out}$, $\dot{n}_{U,out}$, and $T_{out}$,
+	b. evaluates the residual as described in step 3 of the calculations summary, and returns their values
+5. Write a cstr model function that
+	a. receives the initial guess for $\dot{n}_{A,out}$, $\dot{n}_{D,out}$, $\dot{n}_{U,out}$, and $T_{out}$,
+	b. calls an ATE solver passing the initial guess and the name of the residuals function from step 4 as arguments
+	c. receives a solution of the CSTR design equations
+	d. checks that the ATE solver converged, and
+	e. returns the solution returned by the ATE solver.
+6. Write a pfr model function that
+	a. receives the initial values in @tbl-example_15_4_1_initial_values as an argument,
+	c. gets corresponding sets of values of $V$, $\dot{n}_A$, $\dot{n}_D$, $\dot{n}_U$, and $T$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+		i. the appropriate initial values and stopping criterion in @tbl-example_15_4_1_initial_values and
+		ii. the name of the derivatives function from step 3 above,
+	d, checks that the solver successfully solved the IVODEs, and
+	e. returns the values returned by the IVODE solver.
+7. Perform the analysis by
+	a. setting $\dot{n}_{A,in}$, $\dot{n}_{D,in}$, $\dot{n}_{U,in}$, and $T_{in}$ for case (a), equations (13) through (16),
+	b. solving the CSTR design equations by calling the cstr model function from step 5,
+	c. solving the PFR design equations by calling the pfr model function from step 6, passing the appropriate initial values from @tbl-example_15_4_1_initial_values as an argument,
+	d. calculating the quantities of interest for case (a) as described in step 5 of the calculations summary,
+	e. solving the PFR design equations by calling the pfr model function from step 6, passing the appropriate initial values from @tbl-example_15_4_1_initial_values as an argument,
+	f. setting $\dot{n}_{A,in}$, $\dot{n}_{D,in}$, $\dot{n}_{U,in}$, and $T_{in}$ for case (b,) equations (19) through (22),
+	g. solving the CSTR design equations by calling the cstr model function from step 5,
+	h. calculating the quantities of interest for case (b) as described in step 5 of the calculations summary, and
+	i. displaying the results.
+
+#### Results and Discussion
+
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv("examples/reb_15_4_1/results.csv") 
+df <- fmt_tibble_col(df, 2, 3, 3, 1)
+```
+
+The calculations were performed as described above. When the CSTR is the first reactor, the conversion is `r df$value[1]``r df$units[1]` and the selectivity is `r df$value[2]` `r df$units[2]`. If the PFR is first, the conversion is `r df$value[4]``r df$units[4]` and the selectivity is `r df$value[5]` `r df$units[5]`. This trade-off might have been expected on the basis of some qualitative reasoning.
+
+The reactions are exothermic with typical kinetics, so a large rate, and correspondingly high conversion, is favored by high temperature and high reactant concentration. The reactions occur in parallel, and the instantaneous selectivity, $S_{D/U}$, is the ratio of the desired to undesired reaction rates, as given in equation (33). Examination of that equation shows that high selectivity also is favored by high temperature (because $E_2 - E_1$ is a positive number), but by low reactant concentration (due to the $\frac{1}{C_A}$ term).
+
+$$
+S_{D/U} = \frac{r_D}{r_U} = \frac{k_{0,1} \exp{\left( \frac{-E_1}{RT_1} \right)}C_A}{k_{0,2} \exp{\left( \frac{-E_2}{RT_1} \right)} C_A^2} = \frac{k_{0,1}}{k_{0,2}} \exp{ \left( \frac{E_2 - E_1}{RT} \right)}\frac{1}{C_A} \tag{33}
+$$
+
+The temperature and the composition within the reactors are coupled through the reactor design equations. It isn't possible to change one without affecting the other. When the type of the first reactor is changed, that affects the temperature and composition in both reactors. As such, it isn't surprising that there is a trade-off between conversion and selectivity. 
+
+::: {.callout-note appearance="simple"}
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_24.html).
+:::
+
+
+### Water-Gas Shift in Series PFRs with Cooling Between the Reactors
+
+### Minimizing the Total Volume of Two CSTRs in Series
+
+### Maximizing the Conversion for Two Unequal PFRs in Parallel
+
+## Symbols used in [Chapter -@sec-6_reactor_networks]
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $x$ | variable. |
+
+: {tbl-colwidths="[20,80]"}
