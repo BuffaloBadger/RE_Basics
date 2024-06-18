@@ -14,7 +14,7 @@ When a thermally backmixed PFR is used, it is sometimes possible for an exotherm
 
 ## Analysis of Thermally Backmixed PFRs
 
-In order to analyze a thermally backmixed PFR, reactor design equations must be generated for the PFR and mole and energy balances must be written for the heat exchanger. Here only steady state operation will be considered. The reactor design equations for a steady-state PFR, Equations [-@eq-pfr_ss_mol_balance] and [-@] eq-pfr_ss_energy_balance, were derived in @sec-apndx_ideal_reactor_models and discussed in @sec-4_pfr_analysis. Recall that these equations also can be written using the reactor volume as the dependent variable, and the sensible heat term can be written in terms of the volumetric or gravimetric heat capacity of the reacting fluid as a whole.
+In order to analyze a thermally backmixed PFR, the design equations must be generated for the PFR and the heat exchanger. Here only steady state operation will be considered. The reactor design equations for a steady-state PFR, Equations [-@eq-pfr_ss_mol_balance] and [-@] eq-pfr_ss_energy_balance, were derived in @sec-apndx_ideal_reactor_models and discussed in @sec-4_pfr_analysis. Recall that these equations also can be written using the reactor volume as the dependent variable, and the sensible heat term can be written in terms of the volumetric or gravimetric heat capacity of the reacting fluid as a whole.
 
 $$
 \frac{d \dot{n}_i}{d z}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j
@@ -24,44 +24,508 @@ $$
 \left(\sum_i \dot{n}_i \hat{C}_{p,i} \right) \frac{d T}{d z} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
 $$
 
-The mole and energy balance equations for a counter-current heat exchanger like that depicted in @fig-thermally_backmixed_pfr, Equations [-@eq-heat_exchanger_mol_bal_1], [-@eq-heat_exchanger_mol_bal_2], and [-@eq-heat_exchanger_energy_bal], were presented in @sec-5_reactor_networks. In terms of @fig-thermally_backmixed_pfr, stream h1 in those equations is the stream that enters the heat exchanger as stream 0 and leaves as stream 1 and stream h2 enters the heat exchanger  as stream 2 and leaves as stream 3. @sec-5_reactor_networks also showed versions of @eq-heat_exchanger_energy_bal that used the volumetric and gravimetric heat capacity of the fluid.
+The design equations for a counter-current heat exchanger like that depicted in @fig-thermally_backmixed_pfr were presented in @sec-5_reactor_networks. Only a brief re-cap is offered here. In terms of @fig-thermally_backmixed_pfr, stream 1 in the equations is the stream that enters the heat exchanger as stream 0 and leaves as stream 1 and stream 2 enters the heat exchanger as stream 2 and leaves as stream 3. Thus, the mole balances are trivial, and assuming no heat loss from the heat eachanger, the energy balance requires that the heat gained by the feed must equal the heat lost by the stream leaving the reactor as it passes through the heat exchanger. The sensible heats in the energy balance instead can be expressed in terms of the volumetric or gravimetric heat capacity of the reacting fluid as a whole, when appropriate.
 
 $$
-0 = \dot{n}_{i,h1,in} - \dot{n}_{i,h1,out}
+0 = \dot{n}_{i,0} - \dot{n}_{i,1}
+$$ 
+
+$$
+0 = \dot{n}_{i,2} - \dot{n}_{i,3}
 $$
 
 $$
-0 = \dot{n}_{i,h2,in} - \dot{n}_{i,h2,out}
+\sum_i \left( \dot{n}_{i,0} \int_{T_0}^{T_1}\hat{C}_{p,i} dT\right) = \sum_i \left( \dot{n}_{i2} \int_{T_3}^{T_2}\hat{C}_{p,i} dT\right)
 $$
 
-$$
-0 = \sum_i \left( \dot{n}_{i,h1,in} \int_{T_{h1,in}}^{T_{h1,out}}\hat{C}_{p,i} dT\right) + \sum_i \left( \dot{n}_{i,h2,in} \int_{T_{h2,in}}^{T_{h2,out}} \hat{C}_{p,i} dT\right)
-$$
-
-It was also noted in @sec-5_reactor_networks that when only two of the four stream temperaturs are known, an additional equation is needed. Often the expression for the rate of heat transfer through the wall of the heat exchanger, @eq-sensible_heat_area, is used. Alternatively, when analyzing a thermally backmixed PFR the cold approach, @eq-cold_approach, is sometimes specified instead. In @eq-cold_approach, stream hx can be either of the two streams flowing through the reactor.
+The rate of heat transfer can also be set equal to the rate at which the feed gains heat. 
 
 $$
-\dot{Q}_{hx} = UA\left( \frac{\left(T_{h_1,in} - T_{h_2,out}\right) - \left( T_{h_1,out} - T_{h_2,in} \right)}{\ln{\displaystyle\frac{T_{h_1,in} - T_{h_2,out}}{T_{h_1,out} - T_{h_2,in} }}} \right)
+\sum_i \left( \dot{n}_{i,0} \int_{T_0}^{T_1}\hat{C}_{p,i} dT\right) = U_{LM}A \Delta T_{LM}
+$$ 
+
 $$
+\sum_i \left( \dot{n}_{i,0} \int_{T_0}^{T_1}\hat{C}_{p,i} dT\right) = U_{AM}A \Delta T_{AM}
+$$ 
+
+$$
+\Delta T_{LM} = \frac{\left(T_3 - T_0\right) - \left( T_2 - T_1 \right)}{\ln{\left(\displaystyle\frac{T_3 - T_0}{T_2 - T_1 }\right)}}
+$$ 
+
+$$
+\Delta T_{AM} = \frac{\left(T_3 - T_0\right) + \left(T_2 - T_1\right)}{2}
+$$ 
+
+Alternatively, when analyzing a thermally backmixed PFR the cold approach, @eq-cold_approach, is sometimes specified instead of the heat transfer coefficient and area. 
 
 $$
 \Delta T_{cold} = T_3 - T_0
 $$ {#eq-cold_approach}
 
-A key point associated with the heat exchanger are that the two fluid streams do not mix. It should also be noted that the equations presented here are for a counter-current flow and for a heat transfer coefficient based on the log-mean temperature difference in the heat exchanger. Many other styles of heat exchanger might be used, in which case a good reference on heat transfer should be consulted. The focus here is on the reactor and reaction, not the details of the heat exchanger.
+A key point associated with the heat exchanger is that the two fluid streams do not mix. It should also be noted that the equations presented here are for a counter-current flow. Many other styles of heat exchanger might be used, in which case a good reference on heat transfer should be consulted. The focus here is on the reactor and reaction, not the details of the heat exchanger.
 
 ### Solving the Thermally Backmixed PFR Design Equations
 
+Most commonly with a system like that shown in @fig-thermally_backmixed_pfr, the composition of the feed, stream 0, is known, and consequently, the composition of stream 1 is also known. One of the four temperatures will also be known (commonly $T_0$). In many cases, it won’t be possible to solve the PFR design equations independently because $T_1$ will not be known. In that situation, the reactor design equations for the PFR and the mole and energy balances for the heat exchanger must be solved simultaneously. The PFR design equations are IVODEs while the heat exchanger balance equations are ATEs.
 
-Most commonly with a system like that shown in @fig-thermally_backmixed_pfr, the composition of stream 0 is known, and consequently, the composition of stream 1 is also known. One of the four temperatures will also be known (commonly $T_0$). In many cases, it won’t be possible to solve the PFR design equations independently because $T_1$ will not be known. In that situation, the reactor design equations for the PFR and the mole and energy balances for the heat exchanger must be solved simultaneously. The PFR design equations are IVODEs while the heat exchanger balance equations are ATEs. Together the reactor and heat exchanger balances constitute a set of differential-algebraic equations (DAEs). @sec-apndx_solve_daes describes the numerical solution of DAEs of this form.
+Together the reactor and heat exchanger balances constitute a set of differential-algebraic equations (DAEs). When they must be solved numerically, the mathematical formulation of the solution is different from solving sets of ATEs or sets of IVODEs. @sec-apndx_solve_daes describes the numerical solution of DAEs of this form in some detail. Essentially, the formulation begins with the ATE heat exchanger balances. The critical element of the formulation is that the temperature of stream 1 must be one of the unknowns to be found by solving the heat exchanger balances, and stream 2 must not be one of the unknowns. When that is the case, the PFR design equations can be solved *within* the function that evaluates the residuals for the heat exchanger balances. Again, see @sec-apndx_solve_daes for a more detailed description.
+
+### Multiplicity of Thermally Backmixed PFR Steady States
+
+[Chapter -@sec-multiplicity] showed that for a fixed set of operating parameters there may be more than one steady state. Without going into the mathematical details, when there is backmixing in a reactor, multiple steady states may occur. Put differently, when the input to a reactor can be affected by the output from that reactor, multiple steady states may be observed. In a thermally backmixed PFR, the input and output flow streams exchange energy. Consequently, the inlet temperature of a thermally backmixed PFR temperature is affected by its outlet temperature. All that to say that **multiple steady states are possible in thermally back-mixed PFRs**. The discussion following Example [-@sec-example_16_3_2] considers the steady-state multiplicity of thermally backmixed PFRs in greater detail.
 
 ## Examples
 
-This chapter presents two examples of the analysis of a thermally backmixed PFR. The first example illustrates an assignment where the conversion is specified and the reactor volume must be determined while in the second example the reactor volume is known and the final composition must be determined. The second example also illustrates a heat exchanger where the heat transfer coefficient based on the arithmetic mean temperature difference is known.
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(readxl)
+source("~/Libraries/R/fmt_tibble_col.R")
+```
+
+This chapter presents two examples of the analysis of a thermally backmixed PFR. The first example illustrates a simple response assignment where the conversion is specified and the reactor volume must be determined by solving the reactor design equations and the heat exchanger balances simultaneously. In the second example, where the reactor volume is known and the final composition must be determined, *multiple steady states* exist.
 
 ### Determining the Volume of a Thermally Backmixed PFR for a Specified Conversion. {#sec-example_16_3_1}
 
+{{< include examples/reb_16_3_1/narrative.qmd >}}
+
+{{< include examples/reb_16_3_1/equations.qmd >}}
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I will begin by sketching the reactor system and summarizing the assignment. The system consists of a thermally backmixed PFR like that in @fig-thermally_backmixed_pfr. I can use the stream labels as subscripts on variables to show the stream to which they apply.
+
+:::
+
+#### Assignment Summary
+
+**Reactor System Schematic**:
+
+![Schematic representation of the thermally-backmixed PFR.](Graphics/thermally_backmixed_pfr.png){#fig-example_16_3_1_schematic width="50%"}
+
+**Given and Known Constants**: $\dot{V}_0$ = 750 dm^3^ min^-1^, $C_{A,0}$ = 3.8 mol dm^-3^, $T_0$ = 25 °C, $\Delta H_1$ = -79.8 kJ mol^-1^, $\breve{C}_p$ = 987 cal L^-1^ K^-1^, $f_A$ = 80%, $U_{LM}A$ = 1500 kJ min^-1^ K^-1^, $k_{0,1}$ = 3.38 x 10^6^ min^-1^, $E_1$ = 50 kJ mol^-1^, $R$ = 8.314 x 10^-3^ kJ mol^-1^ K^-1^.
+
+**Reactor System**: Adiabatic, steady-state PFR with and without thermal backmixing.
+
+**Quantities of Interest**: $V_{PFR}$ with and without thermal backmixing.
+
+#### Mathematical Formulation of the Solution
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+There are two pieces of equipment in the reactor system: the PFR and the heat exchanger. If I'm going to model the system, I'll need to write the reactor design equations for the PFR and mole and energy balances on the heat exchanger. I'll start with the PFR design equations. There isn't an exchange fluid to write an energy balance for, and pressure drop is negligible, so the reactor design equations consist of mole balances on each reagent and an energy balance on the reacting fluid. The reactor operates at steady state, so the general form of the mole balance is given in @eq-pfr_ss_mol_balance.
+
+$$
+\frac{d \dot{n}_i}{d z}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j
+$$
+
+The assignment asks for the reactor volume, and I don't need the length and diameter separately because there isn't any heat transfer through the wall of the PFR, so I can rewrite the mole balance using the volume as the independent variable. At the same time, I can expand the summation over the reactions to a single term for the one reaction that is taking place.
+
+$$
+\frac{d \dot{n}_i}{\frac{\pi D^2}{4}dz}  = \frac{d \dot{n}_i}{dV} = \nu_{i,1}r_1
+$$
+
+The general form of the steady-state PFR energy balance is given in @eq-pfr_ss_energy_balance. Here, too, the balance can be rewritten using the volume as the independent variable, and the summation over the reactions can be expanded to a single term for the one reaction that is occurring. The reactor operates adiabatically, so the heat transfer term is equal to zero. The assignment provides the volumetric heat capacity, so the sensible heat term can be written in terms of it. Finally, I can rearrange the equation into the form of a derivative expression.
+
+$$
+\cancelto{\dot{V}\breve{C}_p}{\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right)} \frac{dT}{dz} = \cancelto{0}{\pi D U\left( T_{ex} - T  \right)} - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+$$
+
+$$
+\frac{dT}{\frac{\pi D^2}{4}dz} = \frac{dT}{dV} = - \frac{r_1 \Delta H_1}{\dot{V}\breve{C}_p}
+$$
+
+:::
+
+**Reactor Design Equations**
+
+Mole balance design equations on A and Z in the PFR are presented in equations (2) and (3), and an energy balance on the reacting fluid is given in equation (4).
+
+$$
+\frac{d \dot{n}_A}{dV} = -r_1 \tag{2}
+$$
+
+$$
+\frac{d \dot{n}_Z}{dV} = r_1 \tag{3}
+$$
+
+$$
+\frac{dT}{dV} = - \frac{r_1 \Delta H_1}{\dot{V}\breve{C}_p} \tag{4}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The PFR reactor design equations are IVODEs, and the number of dependent variables (three: $\dot{n}_A$, $\dot{n}_Z$, and $T$) is equal to the number of equations. That means I don't need to add an equation or eliminate a dependent variable, but I do need to specify initial values and a stopping criterion. Here I can define $V=0$ to be the PFR inlet, in which case the initial values are simply the values of the dependent variables at the reactor inlet.
+
+In this example, the feed does not contain reagent Z, and since there isn't any fluid mixing in the heat exchanger, the molar flow rate of Z in stream 1 will also equal zero. Similarly, the molar flow rate of reagent A in stream 1 will equal its flow rate in stream 0. Knowing that along with the fractional conversion of A, I can calculate the outlet molar flow rate of A and use it as the stopping criterion.
+
+:::
+
+**Initial Values and Stopping Criterion**
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $V$ | $0$ | |
+| $\dot{n}_A$ | $\dot{n}_{A,1}$ | $\dot{n}_{A,2}$ |
+| $\dot{n}_Z$ | $0$ | |
+| $T$ | $T_1$ | |
+  
+: Initial values and stopping criterion for solving  equations (2) through (4). {#tbl-example_16_3_1_initial_values}
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I also need mole and energy balances on the heat exchanger. The mole balances are trivial. I can write an energy balance that requires the heat gained by the feed as it flows from 0 to 1 must equal the heat lost by the converted fluid as it flows 2 to 3 in the schematic. I am given the volumetric heat capacity, so I'll express those energies using it, and I'll write the equation in the form of a resitual expression. I can also note that the reacting fluid is a liquid, so assuming it to be an ideal, incompressible mixture, the volumetric flow rate of streams 0, 1, 2, and 3 are all equal.
+
+$$
+\dot{V}_0 \breve{C}_p \left(T_1 - T_0 \right) = \dot{V}_0 \breve{C}_p \left(T_2 - T_3 \right) \qquad \Rightarrow \qquad 0 = \left(T_1 - T_0 \right) - \left(T_2 - T_3 \right)
+$$
+
+I am given the heat transfer coefficient, so I can also write an expression for the rate of heat transfer and set it equal to the rate at which heat is transferred to the feed stream, again in the form of a residual expression.
+
+$$
+0 =\dot{V}_0 \breve{C}_p \left(T_1 - T_0 \right) - U_{LM}A \Delta T_{LM}
+$$
+
+I can substitute the defining equation for a log-mean temperature difference into that equation. However, in this system the volumetric flow rate and the heat capacity are constants. As a consequence $T_3 - T_0$ will be equal to $T_2 - T_1$. (This can be seen by rearranging the energy balance above.) As pointed out in @sec-5_reactor_networks, when this is true, the log-mean temperature difference becomes indeterminate, and should be set equal to either of the two temperature differences.
+
+$$
+\frac{\left(T_3 - T_0 \right) - \left(T_2 - T_1 \right)}{\ln \left( \frac{T_3 - T_0}{T_2 - T_1} \right)} \qquad \underset{T_3 - T_0 = T_2 - T_1}{\Rightarrow} \qquad T_3 - T_0
+$$
+
+$$
+0 = \dot{V}_0 \breve{C}_p \left(T_1 - T_0 \right) - U_{LM}A \left(T_3 - T_0\right)
+$$
+
+:::
+
+**Heat Exchanger Design Equations**
+
+$$
+\dot{n}_{A,0} = \dot{n}_{A,1} \tag{5}
+$$
+
+$$
+\dot{n}_{Z,0} = \dot{n}_{Z,1} \tag{6}
+$$
+
+$$
+\dot{n}_{A,2} = \dot{n}_{A,3} \tag{7}
+$$
+
+$$
+\dot{n}_{Z,2} = \dot{n}_{Z,3} \tag{8}
+$$
+
+$$
+0 = \left(T_1 - T_0 \right) - \left(T_2 - T_3 \right) = \epsilon_1 \tag{9}
+$$
+
+$$
+0 = \dot{V}_0 \breve{C}_p \left(T_1 - T_0 \right) - U_{LM}A \left(T_3 - T_0\right) = \epsilon_2 \tag{10}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Since $T_0$ is known, I will solve the heat exchanger design equations, (9) and (10), for $T_1$ and $T_3$. To do so numerically, I will have to (a) provide an initial guess for those unknowns and (b) evaluate the residuals. At the point where I need to evaluate the residuals, I will have a guess for $T_1$ and $T_3$. So, to evaluate the residuals I'll need to calculate any other unknown quantities that appear in them. In this case, the only other unknown is $T_2$. Using the guess for $T_1$, I can solve the PFR design equations to find the outlet temperature, $T_2$.
+
+:::
+
+**Ancillary Equations for Evaluating the Heat Exchanger Residuals**
+
+Solving the PFR design equations, (2) - (4), will yield the molar flow rates of A and Z and the temperature within the PFR.
+
+$$
+T_2 = T \big\vert_{V_{PFR}} \tag{11}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_16_3_1_initial_values. At the start of each integration step, the independent variable $V$ and dependent variables $\dot{n}_A$, $\dot{n}_Z$, and $T$ will be known, as will the given and known constants listed in the assignment summary. I will need to calculate any other quantities that appear in the IVODE design equations (2) thorough (4).
+
+Here, the only quantity I'll need to calculate is the rate, $r_1$. I'm told that the reaction is first order in the concentrations of A, so I can write the rate expression.
+
+$$
+r_1 = kC_A
+$$
+
+Before I can evaluate the rate, I'll need to calculate $k$ and $C_A$. The former I can do with the Arrhenius expression, @eq-arrhenius, and the latter with the definition of concentration for a flow system, @eq-concentration_open. I noted earlier that since the fluid is an incompressible liquid, each of the flow rates is equal to $\dot{V}_0$.
+
+:::
+
+**Ancillary Equations for Evaluating the Derivatives**
+
+$$
+r_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)}\frac{\dot{n_A}}{\dot{V}_0} \tag{12}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+When I solve the IVODEs numerically, I'll also need to calculate the initial and final values in @tbl-example_16_3_1_initial_values. I will be solving the IVODE from within the function that evaluates the residuals, equations (9) and (10). At that point a value for $T_1$ will be available. The molar flow rate of A in the feed can be calculated using given information, and according to equation (5), that is equal to $\dot{n}_{A,1}$. Knowing the inlet molar flow rate of A, I can then calculate it's outlet molar flow rate from the specified conversion.
+
+:::
+
+**Ancillary Equations for Calculating the Initial and Final Values**
+
+$$
+\dot{n}_{A,0} = \dot{V}_0 C_{A,0} = \dot{n}_{A,1} \tag{13}
+$$
+
+$$
+\dot{n}_{A,2} = \dot{n}_{A,1} \left( 1 - f_A \right) \tag{14}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point the heat exchanger design equations can be solved numerically for $T_1$ and $T_3$. Using the resulting value of $T_1$, the PFR design equations can be solved numerically to get corresponding sets of values of $V$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ spanning the range from their initial (inlet) values to their final (outlet) values. The outlet value of $V$ is the requested PFR volume.
+
+:::
+
+**Ancillary Equations for Calculating the Quantities of Interest**
+
+Solving the heat exchanger design equations, (9) and (10), yields $T_1$ and $T_3$.Solving the reactor design equations using that value of $T_1$ yields corresponding sets of values of $V$, $\dot{n}_A$, $\dot{n}_Z$, and $T$.  The final value of $V$ is the PFR volume.
+
+**Calculations Summary**
+
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the derivatives
+	a. $V$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ will be available.
+	b. calculate $r_1$ using equation (12).
+	c. evaluate the derivatives, equations (2) - (4).
+3. When it is necessary to calculate the initial and final values in @tbl-example_16_3_1_initial_values
+	a. $\dot{n}_{A,0}$ is a known constant.
+	b. $T_1$ will be available.
+	c. calculate $\dot{n}_{A,1}$ and $\dot{n}_{A,2}$ using equations (13) and (14).
+4. When it is necessary to evaluate the residuals corresponding to equations (9) and (10).
+    a. a guess for $T_1$ and $T_3$ will be availables.
+    b. solve the PFR design equations using the initial and final values in @tbl-example_16_3_1_initial_values.
+	c. calculate $T_2$ using the results in equation (11).
+	d. evaluate the residuals, $\epsilon_1$ and $\epsilon_2$, using equations (9) and (10).
+5. When it is necessary to calculate the quantities of interest, $V_{PFR}$
+	a. corresponding sets of values of $V$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, spanning the range from their initial values to their final values will be available.
+	b. the final value of $V$ is $V_{PFR}$.
+
+#### Numerical implementation of the Solution
+
+1. Make the given and known constants available for use in all functions.
+2. Write a derivatives function that
+	a. receives the independent and dependent variables, $V$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, as arguments, and
+	b. evaluates the derivatives as described in step 2 of the calculations summary, and returns them.
+3. Write a reactor model function that
+	a. receives the value of $T_1$ as an argument
+	b. calculates the initial and final values in @tbl-example_16_3_1_initial_values as described in step 3 of the calculations summary,
+	c. gets corresponding sets of values of $V$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example_16_3_1_initial_values and
+		ii. the name of the derivatives function from step 2 above,
+	d, checks that the solver successfully solved the IVODEs, and
+	e. returns the values returned by the IVODE solver.
+4. Write a residuals function that
+	a. receives a guess for $T_1$ and $T_3$,
+	b. evaluates the residual as described in step 4 of the calculations summary, and
+	c. returns the values of $\epsilon_1$ and $\epsilon_2$.
+5. Perform the analysis by
+	a. calling the reactor model function from step 3 above, passing $T_0$ as an argument.
+		i. the final value of $V$ is the PFR volume without backmixing.
+	b. setting an initial guess for $T_1$ and $T_3$
+	c. calculating $T_1$ and $T_3$ by calling an IVODE solver, passing it the name of the residuals function from step 4 and the initial guess, and checking that the solver converged.
+	d. calling the reactor model function from step 3 above, passing the value of $T_1$ from the previous step as an argument.
+		i. the final value of $V$ is the PFR volume with backmixing.
+
+#### Results and Discussion
+
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv("examples/reb_16_3_1/results.csv") 
+df <- fmt_tibble_col(df, 2, 3, 3, 1)
+```
+
+The calculations were performed as described above. Without thermal backmixing the PFR volume is `r df$value[1]` `r df$units[1]`. When the PFR is thermally backmixed, its volume is `r df$value[3]` `r df$units[3]`. The reason for the difference is easy to understand. The key in either case is the inlet temperature. A higher inlet temperature results in a larger rate coefficient, and therefore a larger rate, near the inlet to the reactor. When the rate is larger, the reacting fluid needs less time in the reactor to reach the final conversion. The time in the reactor is the reactor volume divided by the volumetric flow rate, so when the reacting fluid requires less time in the reactor, the volume is smaller since the volumetric flow rate is constant.
+
+As discussed in @sec-4_continuous_design, the rate may decrease steadily as the fluid passes through the reactor, or it may rise, reach a maximum and then decrease, but in either case, the rate a given distance into the reactor will always be greater if the feed enters at a higher temperature. In this particular system, the outlet temperature from the PFR without backmixing is `r df$value[2]` `r df$units[2]` while that from the PFR with backmxing is `r df$value[4]` `r df$units[4]`.
+
+:::{.callout-note collapse="false"}
+## Note
+
+It was noted in this chapter that multiple steady states are possible in thermally backmixed PFRs. In this assignment, it wasn't necessary to worry about that because the design equations were being solved to find a reactor operating parameter, namely the volume. The output here was fixed, and there will only be one volume that results in the specified conversion. 
+
+Multiplicity becomes important when the reactor operating parameters are fixed and the design equations are being solved to find the outlet flows and temperatures. Indeed, if a reactor with the volume found in this assignment was operated as described in this assignment, there is a possibility that more than one conversion might be observed if multiple steady states are possible. If that were true, one of the observed conversions would be the 80% specified in this assignment. Example [-@sec-example_16_3_1] illustrates a situation where this is true and the discussion describes one way to determine whether multiple steady states are possible.
+
+:::
+
+::: {.callout-note appearance="simple"}
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_25.html).
+:::
+
 ### Conversion in a Thermally Backmixed PFR {#sec-example_16_3_2}
+
+{{< include examples/reb_16_3_2/narrative.qmd >}}
+
+{{< include examples/reb_16_3_2/equations.qmd >}}
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+identify problem type, describe variable naming, identify reactor operating mode
+
+:::
+
+#### Assignment Summary
+
+**Given and Known Constants**: 
+
+**Reactor System**: 
+
+**Quantities of Interest**: 
+
+#### Mathematical Formulation of the Solution
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+generate design equations
+
+:::
+
+**Reactor Design Equations**
+
+Mole balance design equations for [reagents] are presented in equations (numbers). The energy balance on the reacting fluid is given in equation (number). An energy balance on the heat exchange fluid is shown in equation (number). The momentum balance is given in equation (number).
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+check number of ivodes and deps, and if needed, generate IVODE from the differential ideal gas law
+
+:::
+
+A differential form of the ideal gas law, appropriate for this reactor system, is shown in equation (number).
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+define initial values and stopping criterion
+
+:::
+
+**Initial Values and Stopping Criterion**
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $$ | $$ | $$ |
+| $$ | $$ | |
+  
+: Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example_x_y_z_initial_values}
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_x_y_z_initial_values. At the start of each integration step, the independent variable (symbol) and dependent variables (list) will be known, as will the given and known constants listed above. I will need to calculate any other quantities that appear in the IVODE design equations (list).
+
+identify and generate ancillary equations
+
+:::
+
+**Ancillary Equations for Evaluating the Derivatives**
+
+
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+When I solve the IVODEs numerically, I'll also need to calculate the initial and final values in @tbl-example_x_y_z_initial_values....
+
+:::
+
+**Ancillary Equations for Calculating the Initial and Final Values**
+
+
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point the reactor design equations can be solved numerically to get corresponding sets of values of [list] spanning the range from their initial (inlet) values to their final (outlet) values.
+
+develop equations needed to calculate quantities of interest
+
+:::
+
+**Ancillary Equations for Calculating the Quantities of Interest**
+
+Solving the reactor design equations yields [list independent and dependent variables].  The quantities of interest....
+
+**Calculations Summary**
+
+1. Substitute given and known constants into all equations.
+2. When it is necessary to evaluate the derivatives
+	a. [list of variables] will be available.
+	b. 
+3. When it is necessary to calculate the initial and final values in @tbl-example_x_y_z_initial_values
+	a. [list of variables] are known constants.
+	b. 
+4. When it is necessary to evaluate the residual corresponding to [variable]
+    a. a guess for [variable] will be available for use in all equations.
+    b. 
+5. When it is necessary to calculate the quantities of interest, [list]
+	a. corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values will be available.
+	b. 
+
+#### Numerical implementation of the Solution
+
+1. Make the given and known constants available for use in all functions.
+2. Define a variable to hold [unknown constant] and make it available to all functions.
+3. Write a derivatives function that
+	a. receives the independent and dependent variables, [list], as arguments,
+	b. evaluates the derivatives as described in step 2 of the calculations summary, and returns them.
+4. Write a residuals function that
+	a. receives a guess for [variable] and makes it available to all functions,
+	b. evaluates the residual as described in step 4 of the calculations summary, and
+	c. returns the value of [variable].
+5. Write a reactor model function that
+	a. ...
+	b. calculates the initial and final values in @tbl-example_x_y_z_initial_values as described in step 3 of the calculations summary,
+	c. gets corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+		i. the initial values and stopping criterion in @tbl-example_x_y_z_initial_values and
+		ii. the name of the derivatives function from step 3 above,
+	d, checks that the solver successfully solved the IVODEs, and
+	e. returns the values returned by the IVODE solver.
+6. Perform the analysis by
+	a. ...
+	b. calling the reactor model function from step 5 above to get corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values,
+	c. calculating the quantities of interest as described in step 5 of the calculations summary,
+	d. ....
+
+#### Results and Discussion
+
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv("examples/reb_16_3_2/results.csv") 
+df <- fmt_tibble_col(df, 2, 3, 3, 1)
+```
+
+The calculations were performed as described above. At the specified operating conditions there are three steady-state conversions: `r df$value[2]`, `r df$value[3]`, and `r df$value[4]``r df$units[4]`. Without thermal backmixing the conversion is `r df$value[1]``r df$units[1]`.
+
+![PFR outlet temperature calculated using the PFR design equations and using the heat exchanger design equations. Each point where the curves cross is a steady state.](examples/reb_16_3_2/multiplicity_plot.png){#fig-example_16_3_2_multiplicity_plot width="70%"}
+
+::: {.callout-note appearance="simple"}
+## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_25.html).
+:::
 
 ## Symbols used in [Chapter -@sec-5_thermal_backmix_pfr]
 
