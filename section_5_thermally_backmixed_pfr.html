@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -465,14 +494,31 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#thermally-backmixed-pfrs" id="toc-thermally-backmixed-pfrs" class="nav-link active" data-scroll-target="#thermally-backmixed-pfrs"><span class="header-section-number">16.1</span> Thermally Backmixed PFRs</a></li>
+  <li><a href="#analysis-of-thermally-backmixed-pfrs" id="toc-analysis-of-thermally-backmixed-pfrs" class="nav-link" data-scroll-target="#analysis-of-thermally-backmixed-pfrs"><span class="header-section-number">16.2</span> Analysis of Thermally Backmixed PFRs</a>
+  <ul class="collapse">
+  <li><a href="#solving-the-thermally-backmixed-pfr-design-equations" id="toc-solving-the-thermally-backmixed-pfr-design-equations" class="nav-link" data-scroll-target="#solving-the-thermally-backmixed-pfr-design-equations"><span class="header-section-number">16.2.1</span> Solving the Thermally Backmixed PFR Design Equations</a></li>
+  <li><a href="#multiplicity-of-thermally-backmixed-pfr-steady-states" id="toc-multiplicity-of-thermally-backmixed-pfr-steady-states" class="nav-link" data-scroll-target="#multiplicity-of-thermally-backmixed-pfr-steady-states"><span class="header-section-number">16.2.2</span> Multiplicity of Thermally Backmixed PFR Steady States</a></li>
+  </ul></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples"><span class="header-section-number">16.3</span> Examples</a>
+  <ul class="collapse">
+  <li><a href="#sec-example_16_3_1" id="toc-sec-example_16_3_1" class="nav-link" data-scroll-target="#sec-example_16_3_1"><span class="header-section-number">16.3.1</span> Determining the Volume of a Thermally Backmixed PFR for a Specified Conversion.</a></li>
+  <li><a href="#sec-example_16_3_2" id="toc-sec-example_16_3_2" class="nav-link" data-scroll-target="#sec-example_16_3_2"><span class="header-section-number">16.3.2</span> Conversion in a Thermally Backmixed PFR</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-chapter--sec-5_thermal_backmix_pfr" id="toc-symbols-used-in-chapter--sec-5_thermal_backmix_pfr" class="nav-link" data-scroll-target="#symbols-used-in-chapter--sec-5_thermal_backmix_pfr"><span class="header-section-number">16.4</span> Symbols used in Chapter&nbsp;<span>16</span></a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./section_5_intro.html">Modeling Ideal Reactor Systems</a></li><li class="breadcrumb-item"><a href="./section_5_thermally_backmixed_pfr.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-6_thermal_backmix_pfr" class="quarto-section-identifier"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></h1>
+<h1 class="title"><span id="sec-5_thermal_backmix_pfr" class="quarto-section-identifier"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Thermally Back-Mixed PFRs</span></span></h1>
 </div>
 
 
@@ -489,9 +535,996 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This chapter will be added as soon as I finish writing it.</p>
+<p>In a PFR the composition and temperature vary continuously from the inlet to the outlet. When an exothermic reaction is taking place in an adiabatic PFR, the temperature equals the feed temperature at the inlet and continuously increases until it reaches the outlet temperature at the end of the reactor. In a thermally backmixed PFR, some of the heat released by the reaction is transferred to the feed entering the reactor. This is beneficial because the rate of most reactions increases with temperature.</p>
+<section id="thermally-backmixed-pfrs" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="thermally-backmixed-pfrs"><span class="header-section-number">16.1</span> Thermally Backmixed PFRs</h2>
+<p>When a typical exothermic reaction takes place in an adiabatic reactor, either a CSTR or a PFR, two competing effects are present. As the reaction proceeds, the temperature increases (a favorable effect, tending to increase the reaction rate) and the reactant concentration decreases (an unfavorable effect, tending to decrease the reaction rate). In many cases, the temperature effect predominates at lower conversions and the reactant concentration effect predominates at higher conversions. In a PFR, the reactant concentration decreases gradually (favorable behavior since it tends to keep the rate as high as possible), but the temperature also increases gradually (unfavorable behavior since the rate coefficient increases gradually). In a CSTR, the reactant concentration is low (equal to the final value) for the entire time the fluid reacts (unfavorable behavior since it tends to make the rate low), but the temperature is at its highest value throughout the time the fluid reacts (favorable behavior since it tends to make the rate high). Thus, neither a single CSTR nor a single PFR is ideally suited to an exothermic reaction.</p>
+<p>In <a href="section_5_reactor_networks.html" class="quarto-xref"><span>Chapter 15</span></a>, it was shown that using a cascade of CSTRs makes the CSTRs behave a little more like a PFR. Here, it will be seen that by augmenting a PFR with a heat exchanger, it is sometimes possible to impart CSTR-like thermal behavior to a PFR while retaining PFR-like behavior with respect to the composition. To see how this can be accomplished, examine <a href="#fig-thermally_backmixed_pfr" class="quarto-xref">Figure&nbsp;<span>16.1</span></a> which shows a heat exchanger connected to a PFR. There are two compartments in the heat exchange; the feed flows through one compartment and the product stream from the PFR flows through the other. The two compartments are physically separated by a wall (red), so there is no mass exchanged between the streams. However, it is possible for heat to be conducted through the (red) wall. In this way, as the feed flows through the lower compartment of the heat exchanger, heat is transferred to it from the PFR product stream flowing through the upper compartment. This is similar to what happens thermally in a CSTR where the complete back-mixing in the CSTR immediately heats the feed to the final outlet temperature. Due to the heat exchanger in <a href="#fig-thermally_backmixed_pfr" class="quarto-xref">Figure&nbsp;<span>16.1</span></a>, the PFR inlet temperature is higher and consequently, the rate at the PFR inlet is larger than it would be without the heat exchanger.</p>
+<div id="fig-thermally_backmixed_pfr" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-thermally_backmixed_pfr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/thermally_backmixed_pfr.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-thermally_backmixed_pfr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.1: Schematic representation of a thermally backmixed PFR.
+</figcaption>
+</figure>
+</div>
+<p>When a thermally backmixed PFR is used, it is sometimes possible for an exothermic reaction to occur auto-thermally. That is, with the heat exchanger the reaction can reach a high steady state conversion without the need to continually supply heat from another source. In contrast, the steady state conversion could be much, much lower without the heat exchanger. In particular, consider a situation where the feed, stream 0, is supplied at a temperature where the rate of reaction is very small. If this feed is admitted directly to the reactor, without a heat exchanger, very little reaction will occur and consequently very little heat of reaction will be released. As a result, the temperature will not rise significantly, and so the rate will remain small through the entire reactor. If the same feed is used, but it first passes through a heat exchanger as in <a href="#fig-thermally_backmixed_pfr" class="quarto-xref">Figure&nbsp;<span>16.1</span></a>, the feed will enter the reactor at a higher temperature where the rate is high enough to cause some reaction to occur. That, in turn will release more heat so that the rate is appreciable throughout the reactor. Of course, as the reactant is depleted, the rate will eventually decrease. Nonetheless, for a typical exothermic reaction taking place adiabatically, a thermally backmixed PFR like that shown in <a href="#fig-thermally_backmixed_pfr" class="quarto-xref">Figure&nbsp;<span>16.1</span></a> offers the best features of both a CSTR and a PFR: the feed is immediately heated, as in a CSTR, while the reactant concentration starts high and decreases gradually, as in a PFR.</p>
+</section>
+<section id="analysis-of-thermally-backmixed-pfrs" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="analysis-of-thermally-backmixed-pfrs"><span class="header-section-number">16.2</span> Analysis of Thermally Backmixed PFRs</h2>
+<p>In order to analyze a thermally backmixed PFR, the design equations must be generated for the PFR and the heat exchanger. Here only steady state operation will be considered. The reactor design equations for a steady-state PFR, Equations <a href="section_3_design_equations.html#eq-pfr_ss_mol_balance" class="quarto-xref"><span>6.39</span></a> and <a href="section_3_design_equations.html#eq-pfr_ss_energy_balance" class="quarto-xref"><span>6.40</span></a>, were derived in <a href="apndx_ideal_reactor_models.html" class="quarto-xref"><span>Appendix H</span></a> and discussed in <a href="section_4_pfr_analysis.html" class="quarto-xref"><span>Chapter 13</span></a>. Recall that these equations also can be written using the reactor volume as the dependent variable, and the sensible heat term can be written in terms of the volumetric or gravimetric heat capacity of the reacting fluid as a whole.</p>
+<p><span class="math display">\[
+\frac{d \dot{n}_i}{d z}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j
+\]</span></p>
+<p><span class="math display">\[
+\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right) \frac{d T}{d z} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+\]</span></p>
+<p>The design equations for a counter-current heat exchanger like that depicted in <a href="#fig-thermally_backmixed_pfr" class="quarto-xref">Figure&nbsp;<span>16.1</span></a> were presented in <a href="section_5_reactor_networks.html" class="quarto-xref"><span>Chapter 15</span></a>. Only a brief re-cap is offered here. In terms of <a href="#fig-thermally_backmixed_pfr" class="quarto-xref">Figure&nbsp;<span>16.1</span></a>, stream 1 in the equations is the stream that enters the heat exchanger as stream 0 and leaves as stream 1 and stream 2 enters the heat exchanger as stream 2 and leaves as stream 3. Thus, the mole balances are trivial, and assuming no heat loss from the heat eachanger, the energy balance requires that the heat gained by the feed must equal the heat lost by the stream leaving the reactor as it passes through the heat exchanger. The sensible heats in the energy balance instead can be expressed in terms of the volumetric or gravimetric heat capacity of the reacting fluid as a whole, when appropriate.</p>
+<p><span class="math display">\[
+0 = \dot{n}_{i,0} - \dot{n}_{i,1}
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{n}_{i,2} - \dot{n}_{i,3}
+\]</span></p>
+<p><span class="math display">\[
+\sum_i \left( \dot{n}_{i,0} \int_{T_0}^{T_1}\hat{C}_{p,i} dT\right) = \sum_i \left( \dot{n}_{i,2} \int_{T_3}^{T_2}\hat{C}_{p,i} dT\right)
+\]</span></p>
+<p>The rate of heat transfer can also be set equal to the rate at which the feed gains heat.</p>
+<p><span class="math display">\[
+\sum_i \left( \dot{n}_{i,0} \int_{T_0}^{T_1}\hat{C}_{p,i} dT\right) = U_{LM}A \Delta T_{LM}
+\]</span></p>
+<p><span class="math display">\[
+\sum_i \left( \dot{n}_{i,0} \int_{T_0}^{T_1}\hat{C}_{p,i} dT\right) = U_{AM}A \Delta T_{AM}
+\]</span></p>
+<p><span class="math display">\[
+\Delta T_{LM} = \frac{\left(T_3 - T_0\right) - \left( T_2 - T_1 \right)}{\ln{\left(\displaystyle\frac{T_3 - T_0}{T_2 - T_1 }\right)}}
+\]</span></p>
+<p><span class="math display">\[
+\Delta T_{AM} = \frac{\left(T_3 - T_0\right) + \left(T_2 - T_1\right)}{2}
+\]</span></p>
+<p>Alternatively, when analyzing a thermally backmixed PFR the cold approach, <a href="#eq-cold_approach" class="quarto-xref">Equation&nbsp;<span>16.1</span></a>, is sometimes specified instead of the heat transfer coefficient and area.</p>
+<p><span id="eq-cold_approach"><span class="math display">\[
+\Delta T_{cold} = T_3 - T_0
+\tag{16.1}\]</span></span></p>
+<p>A key point associated with the heat exchanger is that the two fluid streams do not mix. It should also be noted that the equations presented here are for a counter-current flow. Many other styles of heat exchanger might be used, in which case a good reference on heat transfer should be consulted. The focus here is on the reactor and reaction, not the details of the heat exchanger.</p>
+<section id="solving-the-thermally-backmixed-pfr-design-equations" class="level3" data-number="16.2.1">
+<h3 data-number="16.2.1" class="anchored" data-anchor-id="solving-the-thermally-backmixed-pfr-design-equations"><span class="header-section-number">16.2.1</span> Solving the Thermally Backmixed PFR Design Equations</h3>
+<p>Most commonly with a system like that shown in <a href="#fig-thermally_backmixed_pfr" class="quarto-xref">Figure&nbsp;<span>16.1</span></a>, the composition of the feed, stream 0, is known, and consequently, the composition of stream 1, but not its temperature, is also known. One of the four temperatures will also be known (commonly <span class="math inline">\(T_0\)</span>). In many cases, it won’t be possible to solve the PFR design equations independently because <span class="math inline">\(T_1\)</span> will not be known. In that situation, the reactor design equations for the PFR and the mole and energy balances for the heat exchanger must be solved simultaneously. The PFR design equations are IVODEs while the heat exchanger balance equations are ATEs.</p>
+<p>Together, the reactor and heat exchanger balances constitute a set of differential-algebraic equations (DAEs). When they must be solved numerically, the mathematical formulation of the solution is different from solving sets of ATEs or sets of IVODEs. <a href="apndx_solve_daes.html" class="quarto-xref"><span>Appendix K</span></a> describes the numerical solution of DAEs of this type in some detail. Essentially, the formulation begins with the ATE heat exchanger balances. The critical element of the formulation is that the temperature of stream 1 must be one of the unknowns to be found by solving the heat exchanger balances, and stream 2 must <u>not</u> be one of the unknowns. When that is the case, the PFR design equations can be solved <em>within</em> the function that evaluates the residuals for the heat exchanger balances. Again, see <a href="apndx_solve_daes.html" class="quarto-xref"><span>Appendix K</span></a> for a more detailed description.</p>
+</section>
+<section id="multiplicity-of-thermally-backmixed-pfr-steady-states" class="level3" data-number="16.2.2">
+<h3 data-number="16.2.2" class="anchored" data-anchor-id="multiplicity-of-thermally-backmixed-pfr-steady-states"><span class="header-section-number">16.2.2</span> Multiplicity of Thermally Backmixed PFR Steady States</h3>
+<p><a href="section_4_cstr_analysis.html#sec-multiplicity" class="quarto-xref">Chapter&nbsp;<span>12.5</span></a> showed that for a CSTR with a fixed set of operating parameters there may be more than one steady state. Without going into the mathematical details, when there is backmixing in a reactor, multiple steady states may occur. Put differently, when the input to a reactor can be affected by the output from that reactor, multiple steady states may be observed. In a thermally backmixed PFR, the input and output flow streams exchange energy. Consequently, the inlet temperature of a thermally backmixed PFR temperature is affected by its outlet temperature. All that to say that <strong>multiple steady states are possible in thermally back-mixed PFRs</strong>. The discussion following Example <a href="#sec-example_16_3_2" class="quarto-xref"><span>16.3.2</span></a> considers the steady-state multiplicity of thermally backmixed PFRs in greater detail.</p>
+</section>
+</section>
+<section id="examples" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="examples"><span class="header-section-number">16.3</span> Examples</h2>
+<p>This chapter presents two examples of the analysis of a thermally backmixed PFR. The first example illustrates a simple response assignment where the conversion is specified and the reactor volume must be determined by solving the reactor design equations and the heat exchanger balances simultaneously. In the second example, where the reactor volume is known and the final composition must be determined, <em>multiple steady states</em> exist.</p>
+<section id="sec-example_16_3_1" class="level3" data-number="16.3.1">
+<h3 data-number="16.3.1" class="anchored" data-anchor-id="sec-example_16_3_1"><span class="header-section-number">16.3.1</span> Determining the Volume of a Thermally Backmixed PFR for a Specified Conversion.</h3>
+<p>Reaction (1) takes place in an adiabatic, steady state PFR using 750 dm<sup>3</sup> min<sup>-1</sup> of a constant-density liquid solution containing the reactant at a concentration of 3.8 mol dm<sup>-3</sup> and a temperature of 25 °C. Pressure drop in the reactor is neglibible. The heat of reaction is -79.8 kJ mol<sup>-1</sup>, and may be assumed to be constant over the range of temperatures where this reactor operates. The heat capacity of the solution is equal to 987 cal L<sup>-1</sup> K<sup>-1</sup>, independent of composition and temperature. For a conversion of 80%, compare the required PFR volume without thermal backmixing to that with thermal backmixing, assuming a simple counter-current heat exchanger with U<sub>LM</sub>A = 1500 kJ min<sup>-1</sup> K<sup>-1</sup>. The rate is first order in the concentration of A, the Arrhenius pre-exponential factor is 3.38 x 10<sup>6</sup> min<sup>-1</sup>, and the activation energy is 50 kJ mol<sup>-1</sup>.</p>
+<p><span class="math display">\[
+A \rightarrow Z \tag{1}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I will begin by sketching the reactor system and summarizing the assignment. The system consists of a thermally backmixed PFR like that in <a href="#fig-thermally_backmixed_pfr" class="quarto-xref">Figure&nbsp;<span>16.1</span></a>. I can use the stream labels as subscripts on variables to show the stream to which they apply.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary" class="level4" data-number="16.3.1.1">
+<h4 data-number="16.3.1.1" class="anchored" data-anchor-id="assignment-summary"><span class="header-section-number">16.3.1.1</span> Assignment Summary</h4>
+<p><strong>Reactor System Schematic</strong>:</p>
+<div id="fig-example_16_3_1_schematic" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_16_3_1_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/thermally_backmixed_pfr.png" class="img-fluid figure-img" style="width:50.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_16_3_1_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.2: Schematic representation of the thermally-backmixed PFR.
+</figcaption>
+</figure>
+</div>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(\dot{V}_0\)</span> = 750 dm<sup>3</sup> min<sup>-1</sup>, <span class="math inline">\(C_{A,0}\)</span> = 3.8 mol dm<sup>-3</sup>, <span class="math inline">\(T_0\)</span> = 25 °C, <span class="math inline">\(\Delta H_1\)</span> = -79.8 kJ mol<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 987 cal L<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(f_A\)</span> = 80%, <span class="math inline">\(U_{LM}A\)</span> = 1500 kJ min<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(k_{0,1}\)</span> = 3.38 x 10<sup>6</sup> min<sup>-1</sup>, <span class="math inline">\(E_1\)</span> = 50 kJ mol<sup>-1</sup>, <span class="math inline">\(R\)</span> = 8.314 x 10<sup>-3</sup> kJ mol<sup>-1</sup> K<sup>-1</sup>.</p>
+<p><strong>Reactor System</strong>: Adiabatic, steady-state PFR with and without thermal backmixing.</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(V_{PFR}\)</span> with and without thermal backmixing.</p>
+</section>
+<section id="mathematical-formulation-of-the-solution" class="level4" data-number="16.3.1.2">
+<h4 data-number="16.3.1.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution"><span class="header-section-number">16.3.1.2</span> Mathematical Formulation of the Solution</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>There are two pieces of equipment in the reactor system: the PFR and the heat exchanger. If I’m going to model the system, I’ll need to write the reactor design equations for the PFR and for the heat exchanger. I’ll start with the PFR design equations. There isn’t an exchange fluid to write an energy balance for, and pressure drop is negligible, so the reactor design equations consist of mole balances on each reagent and an energy balance on the reacting fluid. The reactor operates at steady state, so the general form of the mole balance is given in <a href="section_3_design_equations.html#eq-pfr_ss_mol_balance" class="quarto-xref">Equation&nbsp;<span>6.39</span></a>.</p>
+<p><span class="math display">\[
+\frac{d \dot{n}_i}{d z}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j
+\]</span></p>
+<p>The assignment asks for the reactor volume, and I don’t need the length and diameter separately because there isn’t any heat transfer through the wall of the PFR, so I can rewrite the mole balance using the volume as the independent variable. At the same time, I can expand the summation over the reactions to a single term for the one reaction that is taking place.</p>
+<p><span class="math display">\[
+\frac{d \dot{n}_i}{\frac{\pi D^2}{4}dz}  = \frac{d \dot{n}_i}{dV} = \nu_{i,1}r_1
+\]</span></p>
+<p>The general form of the steady-state PFR energy balance is given in <a href="section_3_design_equations.html#eq-pfr_ss_energy_balance" class="quarto-xref">Equation&nbsp;<span>6.40</span></a>. Here, too, the balance can be rewritten using the volume as the independent variable, and the summation over the reactions can be expanded to a single term for the one reaction that is occurring. The reactor operates adiabatically, so the heat transfer term is equal to zero. The assignment provides the volumetric heat capacity, so the sensible heat term can be written in terms of it. Finally, I can rearrange the equation into the form of a derivative expression.</p>
+<p><span class="math display">\[
+\cancelto{\dot{V}\breve{C}_p}{\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right)} \frac{dT}{dz} = \cancelto{0}{\pi D U\left( T_{ex} - T  \right)} - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+\]</span></p>
+<p><span class="math display">\[
+\frac{dT}{\frac{\pi D^2}{4}dz} = \frac{dT}{dV} = - \frac{r_1 \Delta H_1}{\dot{V}\breve{C}_p}
+\]</span></p>
+</div>
+</div>
+</div>
+<p><strong>Reactor Design Equations</strong></p>
+<p>Mole balance design equations on A and Z in the PFR are presented in equations (2) and (3), and an energy balance on the reacting fluid is given in equation (4).</p>
+<p><span class="math display">\[
+\frac{d \dot{n}_A}{dV} = -r_1 \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d \dot{n}_Z}{dV} = r_1 \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dT}{dV} = - \frac{r_1 \Delta H_1}{\dot{V}\breve{C}_p} \tag{4}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The PFR reactor design equations are IVODEs, and the number of dependent variables (three: <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>) is equal to the number of equations. That means I don’t need to add an equation or eliminate a dependent variable, but I do need to specify initial values and a stopping criterion. Here I can define <span class="math inline">\(V=0\)</span> to be the PFR inlet, in which case the initial values are simply the values of the dependent variables at the reactor inlet.</p>
+<p>In this example, the feed does not contain reagent Z, and since there isn’t any fluid mixing in the heat exchanger, the molar flow rate of Z in stream 1 will also equal zero. Similarly, the molar flow rate of reagent A in stream 1 will equal its flow rate in stream 0. Knowing that along with the fractional conversion of A, I can calculate the outlet molar flow rate of A and use it as the stopping criterion.</p>
+</div>
+</div>
+</div>
+<p><strong>Initial Values and Stopping Criterion</strong></p>
+<div id="tbl-example_16_3_1_initial_values" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_16_3_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;16.1: Initial values and stopping criterion for solving equations (2) through (4).
+</figcaption>
+<div aria-describedby="tbl-example_16_3_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,1}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,2}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_1\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I also need mole and energy balances on the heat exchanger. The mole balances are trivial. I can write an energy balance that requires the heat gained by the feed as it flows from 0 to 1 must equal the heat lost by the converted fluid as it flows 2 to 3 in the schematic. I am given the volumetric heat capacity, so I’ll express those energies using it, and I’ll write the equation in the form of a resitual expression. I can also note that the reacting fluid is a liquid, so assuming it to be an ideal, incompressible mixture, the volumetric flow rate of streams 0, 1, 2, and 3 are all equal.</p>
+<p><span class="math display">\[
+\cancel{\dot{V}_0 \breve{C}_p} \left(T_1 - T_0 \right) = \cancel{\dot{V}_0 \breve{C}_p} \left(T_2 - T_3 \right) \qquad \Rightarrow \qquad 0 = \left(T_1 - T_0 \right) - \left(T_2 - T_3 \right)
+\]</span></p>
+<p>I am given the heat transfer coefficient, so I can also write an expression for the rate of heat transfer and set it equal to the rate at which heat is transferred to the feed stream, again in the form of a residual expression.</p>
+<p><span class="math display">\[
+0 =\dot{V}_0 \breve{C}_p \left(T_1 - T_0 \right) - U_{LM}A \Delta T_{LM}
+\]</span></p>
+<p>I can substitute the defining equation for a log-mean temperature difference into that equation. However, in this system the volumetric flow rate and the heat capacity are constants. As a consequence <span class="math inline">\(T_3 - T_0\)</span> will be equal to <span class="math inline">\(T_2 - T_1\)</span>. (This can be seen by rearranging the energy balance above.) As pointed out in <a href="section_5_reactor_networks.html" class="quarto-xref"><span>Chapter 15</span></a>, when this is true, the log-mean temperature difference becomes indeterminate, and should be set equal to either of the two temperature differences.</p>
+<p><span class="math display">\[
+\frac{\left(T_3 - T_0 \right) - \left(T_2 - T_1 \right)}{\ln \left( \frac{T_3 - T_0}{T_2 - T_1} \right)} \qquad \underset{T_3 - T_0 = T_2 - T_1}{\Rightarrow} \qquad T_3 - T_0
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{V}_0 \breve{C}_p \left(T_1 - T_0 \right) - U_{LM}A \left(T_3 - T_0\right)
+\]</span></p>
+</div>
+</div>
+</div>
+<p><strong>Heat Exchanger Design Equations</strong></p>
+<p><span class="math display">\[
+\dot{n}_{A,0} = \dot{n}_{A,1} \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,0} = \dot{n}_{Z,1} \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{A,2} = \dot{n}_{A,3} \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,2} = \dot{n}_{Z,3} \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+0 = \left(T_1 - T_0 \right) - \left(T_2 - T_3 \right) = \epsilon_1 \tag{9}
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{V}_0 \breve{C}_p \left(T_1 - T_0 \right) - U_{LM}A \left(T_3 - T_0\right) = \epsilon_2 \tag{10}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>There are two heat exchanger design equations (9) and (10). That means I can solve them to find two unknown quantities. Examining those equations I see that they contain three unknown quantities: <span class="math inline">\(T_1\)</span>, <span class="math inline">\(T_2\)</span>, and <span class="math inline">\(T_3\)</span>. As described in <a href="apndx_solve_daes.html" class="quarto-xref"><span>Appendix K</span></a>, I will solve the heat exchanger design equations, (9) and (10), for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span>. To do so numerically, I will have to (a) provide an initial guess for those unknowns and (b) evaluate the residuals. At the point where I need to evaluate the residuals, I will have a guess for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span>. So, to evaluate the residuals I’ll need to calculate any other unknown quantities that appear in them. In this case, the only other unknown is <span class="math inline">\(T_2\)</span>. <span class="math inline">\(T_1\)</span> is one of the initial values I need for solving the PFR design equations, so using the guess for <span class="math inline">\(T_1\)</span>, I can solve the PFR design equations to find the outlet temperature, <span class="math inline">\(T_2\)</span>.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Evaluating the Heat Exchanger Residuals</strong></p>
+<p>Solving the PFR design equations, (2) - (4), will yield the molar flow rates of A and Z and the temperature within the PFR.</p>
+<p><span class="math display">\[
+T_2 = T \big\vert_{V_{PFR}} \tag{11}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In order to solve the IVODEs numerically I’ll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in <a href="#tbl-example_16_3_1_initial_values" class="quarto-xref">Table&nbsp;<span>16.1</span></a>. At the start of each integration step, the independent variable <span class="math inline">\(V\)</span> and dependent variables <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> will be known, as will the given and known constants listed in the assignment summary. I will need to calculate any other quantities that appear in the IVODE design equations (2) thorough (4).</p>
+<p>Here, the only quantity I’ll need to calculate is the rate, <span class="math inline">\(r_1\)</span>. I’m told that the reaction is first order in the concentrations of A, so I can write the rate expression.</p>
+<p><span class="math display">\[
+r_1 = kC_A
+\]</span></p>
+<p>Before I can evaluate the rate, I’ll need to calculate <span class="math inline">\(k\)</span> and <span class="math inline">\(C_A\)</span>. The former I can do with the Arrhenius expression, <a href="section_2_rates_and_expressions.html#eq-arrhenius" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>, and the latter with the definition of concentration for a flow system, <a href="section_1_intro_and_defs.html#eq-concentration_open" class="quarto-xref">Equation&nbsp;<span>1.15</span></a>. I noted earlier that since the fluid is an incompressible liquid, each of the flow rates is equal to <span class="math inline">\(\dot{V}_0\)</span>.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Evaluating the Derivatives</strong></p>
+<p><span class="math display">\[
+r_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)}\frac{\dot{n_A}}{\dot{V}_0} \tag{12}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When I solve the IVODEs numerically, I’ll also need to calculate the initial and final values in <a href="#tbl-example_16_3_1_initial_values" class="quarto-xref">Table&nbsp;<span>16.1</span></a>. I will be solving the IVODE from within the function that evaluates the residuals, equations (9) and (10). At that point a value for <span class="math inline">\(T_1\)</span> will be available. The molar flow rate of A in the feed can be calculated using given information, and according to equation (5), that is equal to <span class="math inline">\(\dot{n}_{A,1}\)</span>. Knowing the inlet molar flow rate of A, I can then calculate it’s outlet molar flow rate from the specified conversion.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Calculating the Initial and Final Values</strong></p>
+<p><span class="math display">\[
+\dot{n}_{A,0} = \dot{V}_0 C_{A,0} = \dot{n}_{A,1} \tag{13}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{A,2} = \dot{n}_{A,1} \left( 1 - f_A \right) \tag{14}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>At this point the heat exchanger design equations can be solved numerically for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span>. Using the resulting value of <span class="math inline">\(T_1\)</span>, the PFR design equations can be solved numerically to get corresponding sets of values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> spanning the range from their initial (inlet) values to their final (outlet) values. The outlet value of <span class="math inline">\(V\)</span> is the requested PFR volume.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Calculating the Quantities of Interest</strong></p>
+<p>Solving the heat exchanger design equations, (9) and (10), yields <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span>.Solving the reactor design equations using that value of <span class="math inline">\(T_1\)</span> yields corresponding sets of values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>. The final value of <span class="math inline">\(V\)</span> is the PFR volume.</p>
+<p><strong>Calculations Summary</strong></p>
+<ol type="1">
+<li>Substitute given and known constants into all equations.</li>
+<li>When it is necessary to evaluate the derivatives
+<ol type="a">
+<li><span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> will be available.</li>
+<li>calculate <span class="math inline">\(r_1\)</span> using equation (12).</li>
+<li>evaluate the derivatives, equations (2) - (4).</li>
+</ol></li>
+<li>When it is necessary to calculate the initial and final values in <a href="#tbl-example_16_3_1_initial_values" class="quarto-xref">Table&nbsp;<span>16.1</span></a>
+<ol type="a">
+<li><span class="math inline">\(\dot{n}_{A,0}\)</span> is a known constant.</li>
+<li><span class="math inline">\(T_1\)</span> will be available.</li>
+<li>calculate <span class="math inline">\(\dot{n}_{A,1}\)</span> and <span class="math inline">\(\dot{n}_{A,2}\)</span> using equations (13) and (14).</li>
+</ol></li>
+<li>When it is necessary to evaluate the residuals corresponding to equations (9) and (10).
+<ol type="a">
+<li>a guess for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span> will be available.</li>
+<li>solve the PFR design equations using the initial and final values in <a href="#tbl-example_16_3_1_initial_values" class="quarto-xref">Table&nbsp;<span>16.1</span></a>.</li>
+<li>calculate <span class="math inline">\(T_2\)</span> using the results in equation (11).</li>
+<li>evaluate the residuals, <span class="math inline">\(\epsilon_1\)</span> and <span class="math inline">\(\epsilon_2\)</span>, using equations (9) and (10).</li>
+</ol></li>
+<li>When it is necessary to calculate the quantities of interest, <span class="math inline">\(V_{PFR}\)</span>
+<ol type="a">
+<li>corresponding sets of values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values will be available.</li>
+<li>the final value of <span class="math inline">\(V\)</span> is <span class="math inline">\(V_{PFR}\)</span>.</li>
+</ol></li>
+</ol>
+</section>
+<section id="numerical-implementation-of-the-solution" class="level4" data-number="16.3.1.3">
+<h4 data-number="16.3.1.3" class="anchored" data-anchor-id="numerical-implementation-of-the-solution"><span class="header-section-number">16.3.1.3</span> Numerical implementation of the Solution</h4>
+<ol type="1">
+<li>Make the given and known constants available for use in all functions.</li>
+<li>Write a derivatives function that
+<ol type="a">
+<li>receives the independent and dependent variables, <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, as arguments, and</li>
+<li>evaluates the derivatives as described in step 2 of the calculations summary, and returns them.</li>
+</ol></li>
+<li>Write a reactor model function that
+<ol type="a">
+<li>receives the value of <span class="math inline">\(T_1\)</span> as an argument</li>
+<li>calculates the initial and final values in <a href="#tbl-example_16_3_1_initial_values" class="quarto-xref">Table&nbsp;<span>16.1</span></a> as described in step 3 of the calculations summary,</li>
+<li>gets corresponding sets of values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+<ol type="i">
+<li>the initial values and stopping criterion in <a href="#tbl-example_16_3_1_initial_values" class="quarto-xref">Table&nbsp;<span>16.1</span></a> and</li>
+<li>the name of the derivatives function from step 2 above,</li>
+</ol></li>
+<li>checks that the solver successfully solved the IVODEs, and</li>
+<li>returns the values returned by the IVODE solver.</li>
+</ol></li>
+<li>Write a residuals function that
+<ol type="a">
+<li>receives a guess for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span>,</li>
+<li>evaluates the residual as described in step 4 of the calculations summary, and</li>
+<li>returns the values of <span class="math inline">\(\epsilon_1\)</span> and <span class="math inline">\(\epsilon_2\)</span>.</li>
+</ol></li>
+<li>Perform the analysis by
+<ol type="a">
+<li>calling the reactor model function from step 3 above, passing <span class="math inline">\(T_0\)</span> as an argument.
+<ol type="i">
+<li>the final value of <span class="math inline">\(V\)</span> is the PFR volume without backmixing.</li>
+</ol></li>
+<li>setting an initial guess for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span></li>
+<li>calculating <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span> by calling an ATE solver, passing it the name of the residuals function from step 4 and the initial guess, and checking that the solver converged.</li>
+<li>calling the reactor model function from step 3 above, passing the value of <span class="math inline">\(T_1\)</span> from the previous step as an argument.
+<ol type="i">
+<li>the final value of <span class="math inline">\(V\)</span> is the PFR volume with backmixing.</li>
+</ol></li>
+</ol></li>
+</ol>
+</section>
+<section id="results-and-discussion" class="level4" data-number="16.3.1.4">
+<h4 data-number="16.3.1.4" class="anchored" data-anchor-id="results-and-discussion"><span class="header-section-number">16.3.1.4</span> Results and Discussion</h4>
+<p>The calculations were performed as described above. Without thermal backmixing the PFR volume is 3.74 x 10<sup>4</sup> L. When the PFR is thermally backmixed, its volume is 7.93 x 10<sup>3</sup> L. The reason for the difference is easy to understand. The key in either case is the inlet temperature. A higher inlet temperature results in a larger rate coefficient, and therefore a larger rate, near the inlet to the reactor. When the rate is larger, the reacting fluid needs less time in the reactor to reach the final conversion. The time in the reactor is the reactor volume divided by the volumetric flow rate, so when the reacting fluid requires less time in the reactor, the volume is smaller since the volumetric flow rate is constant.</p>
+<p>As discussed in <a href="section_4_continuous_design.html" class="quarto-xref"><span>Chapter 14</span></a>, the rate may decrease steadily as the fluid passes through the reactor, or it may rise, reach a maximum and then decrease, but in either case, the rate a given distance into the reactor will always be greater if the feed enters at a higher temperature. In this particular system, the outlet temperature from the PFR without backmixing is 83.7 °C while that from the PFR with backmxing is 112 °C.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>It was noted in this chapter that multiple steady states are possible in thermally backmixed PFRs. In this assignment, it wasn’t necessary to worry about that because the design equations were being solved to find a reactor operating parameter, namely the volume. The output here was fixed, and there will only be one volume that results in the specified conversion.</p>
+<p>Multiplicity becomes important when the reactor operating parameters are fixed and the design equations are being solved to find the outlet flows and temperatures. Indeed, if a reactor with the volume found in this assignment was operated as described in this assignment, there is a possibility that more than one conversion might be observed if multiple steady states are possible. If that were true, one of the observed conversions would be the 80% specified in this assignment. Example <a href="#sec-example_16_3_1" class="quarto-xref"><span>16.3.1</span></a> illustrates a situation where this is true and the discussion describes one way to determine whether multiple steady states are possible.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:blue">SC</span>o<span style="color:red">RE</span> Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in <a href="http://buffalobadger.github.io/SCoRE/class_25.html">SCoRE</a>.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-example_16_3_2" class="level3" data-number="16.3.2">
+<h3 data-number="16.3.2" class="anchored" data-anchor-id="sec-example_16_3_2"><span class="header-section-number">16.3.2</span> Conversion in a Thermally Backmixed PFR</h3>
+<p>An adiabatic PFR with a volume of 4 m<sup>3</sup> will be used to process 1.25 mol s<sup>-1</sup> of an equimolar gas phase mixture of A and B at 300 K and 2.5 atm. This feed will be pre-heated using the product stream from the reactor. The heat of reaction is constant and equal to -8,600 cal mol<sup>-1</sup>. The heat capacity of the gas is constant and equal to 25.8 cal mol<sup>-1</sup> K<sup>-1</sup>. Pressure drop in the reactor is negligible. The heat transfer area multipled by the heat transfer coefficient U<sub>AM</sub>A = 13.6 cal K<sup>-1</sup> s<sup>-1</sup>. What will the final conversion equal if reaction (1) takes place with a rate given by equation (2) with the pre-exponential factor equal to 8.12 x 10<sup>2</sup> s<sup>-1</sup> and the activation energy equal to 9,500 cal mol<sup>-1</sup>.?</p>
+<p><span class="math display">\[
+A + B \rightarrow Y + Z \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+r_1 = k_1 C_A \tag{2}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The system to be modeled in this assignment is a thermally backmixed PFR. I’ll start by sketching the system and labeling the flow streams. Then I will summarize the assignment, using the stream labels as subscripts when appropriate.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary-1" class="level4" data-number="16.3.2.1">
+<h4 data-number="16.3.2.1" class="anchored" data-anchor-id="assignment-summary-1"><span class="header-section-number">16.3.2.1</span> Assignment Summary</h4>
+<p><strong>System Schematic</strong></p>
+<div id="fig-example_16_3_2_schematic" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_16_3_2_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/thermally_backmixed_pfr.png" class="img-fluid figure-img" style="width:50.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_16_3_2_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.3: Schematic representation of the thermally-backmixed PFR.
+</figcaption>
+</figure>
+</div>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(V_{PFR}\)</span> = 4 m<sup>3</sup>, <span class="math inline">\(\dot{n}_{total,0}\)</span> = 1.25 mol s<sup>-1</sup>, <span class="math inline">\(y_{A,0}\)</span> = 0.5, <span class="math inline">\(y_{B,0}\)</span> = 0.5, <span class="math inline">\(T_0\)</span> = 300 K, <span class="math inline">\(P\)</span> = 2.5 atm, <span class="math inline">\(\Delta H_1\)</span> = -8,600 cal mol<sup>-1</sup>, <span class="math inline">\(\hat{C}_p\)</span> = 25.8 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(U_{MA}A\)</span> = 13.6 cal K<sup>-1</sup> s<sup>-1</sup>, <span class="math inline">\(k_{0,1}\)</span> = 8.12 x 10<sup>2</sup> s<sup>-1</sup>, <span class="math inline">\(E_1\)</span> = 9,500 cal mol<sup>-1</sup>, <span class="math inline">\(R\)</span> = 1.987 cal mol<sup>-1</sup> K<sup>-1</sup> = 8.206 x 10<sup>-5</sup> m<sup>3</sup> atm mol<sup>-1</sup> K<sup>-1</sup>.</p>
+<p><strong>Reactor System</strong>: Adiabatic, thermally backmixed PFR</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(f_A\)</span></p>
+</section>
+<section id="mathematical-formulation-of-the-solution-1" class="level4" data-number="16.3.2.2">
+<h4 data-number="16.3.2.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution-1"><span class="header-section-number">16.3.2.2</span> Mathematical Formulation of the Solution</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In order to model this system I’ll need design equations for the PFR and for the heat exchanger. The PFR is adiabatic with negligible pressure drop, so I don’t need an energy balance on the heat exchange fluid (since there isn’t one) or a momentum balance. I do need steady-state PFR mole balances and a steady-state PFR energy balance on the reacting fluid. The general form of the mole balance is given in <a href="section_3_design_equations.html#eq-pfr_ss_mol_balance" class="quarto-xref">Equation&nbsp;<span>6.39</span></a>. I don’t have or need the reactor diameter and length, so I’ll rewrite the balance equations using the reactor volume as the independent variable. I’ll also expand the summation over the reactions; here there is only one reaction.</p>
+<p><span class="math display">\[
+\frac{d \dot{n}_i}{dz}  = \frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j
+\]</span></p>
+<p><span class="math display">\[
+\frac{d \dot{n}_i}{\frac{\pi D^2}{4}dz}  = \frac{d \dot{n}_i}{dV}  = \nu_{i,1}r_1
+\]</span></p>
+<p>The general form of the steady-state PFR energy balance is given in <a href="section_3_design_equations.html#eq-pfr_ss_energy_balance" class="quarto-xref">Equation&nbsp;<span>6.40</span></a>. Here the heat transfer term goes to zero. I’ll rewrite it in the form of a derivative expression with the reactor volume as the independent variable and the summations expanded. The heat capacity given in this assignment is the overall molar heat capacity.</p>
+<p><span class="math display">\[
+\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right) \frac{d T}{d z} = \cancelto{0}{\pi D U\left( T_{ex} - T  \right)} - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+\]</span></p>
+<p><span class="math display">\[
+\frac{d T}{\frac{\pi D^2}{4}dz} = \frac{d T}{dV} = \frac{-r_1 \Delta H_1}{\left( \dot{n}_{A} + \dot{n}_{B} + \dot{n}_{Y} + \dot{n}_{Z} + \right)\hat{C}_p}
+\]</span></p>
+</div>
+</div>
+</div>
+<p><strong>Reactor Design Equations</strong></p>
+<p>PFR mole balance design equations for A, B, Y, and Z are presented in equations (3) through (6), and the energy balance on the reacting fluid is given in equation (7).</p>
+<p><span class="math display">\[
+\frac{d \dot{n}_A}{dV}  = - r_1 \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d \dot{n}_B}{dV}  = - r_1 \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d \dot{n}_Y}{dV}  = r_1 \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d \dot{n}_Z}{dV}  = r_1 \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d T}{dV} = \frac{-r_1 \Delta H_1}{\left( \dot{n}_{A} + \dot{n}_{B} + \dot{n}_{Y} + \dot{n}_{Z} \right)\hat{C}_p} \tag{7}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The PFR design equations are IVODEs. There are five equations and they contain five dependent variables (<span class="math inline">\(\dot{n}_A\)</span>,<span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>), so they can be solved. In order to do so numerically I’ll need initial values and a stopping criterion. I can define <span class="math inline">\(V=0\)</span> as the reactor inlet. In that case the initial values are the values of the dependent variables in stream 1, the reactor inlet. I know the PFR volume, so I can use that as the stopping criterion. The feed only contains A and B, and nothing gets mixed into it before it enters the reactor, so the inlet molar flow rates of Y and Z are zero.</p>
+</div>
+</div>
+</div>
+<p><strong>Initial Values and Stopping Criterion</strong></p>
+<div id="tbl-example_16_3_2_initial_values" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_16_3_2_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;16.2: Initial values and stopping criterion for solving equations, (3) - (7).
+</figcaption>
+<div aria-describedby="tbl-example_16_3_2_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(V_{PFR}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,1}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_B\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{B,1}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_1\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I also need design equations for the heat exchanger. The mole balances are trivial: the molar flow rates in stream 0 equal those in stream 1 and the molar flow rates in stream 2 equal those in stream 3. The energy balance simply requires the heat gained by stream 0 to equal the heat lost by stream 2. The expression for the rate of heat transfer simply requires the rate at which heat is transferred to equal the rate at which heat is gained by stream 0. The heat capacity is constant, making it easy to evaluate the integrals.</p>
+<p><span class="math display">\[
+\sum_i \left( \dot{n}_{i,0} \int_{T_0}^{T_1}\hat{C}_{p,i} dT\right) = \sum_i \left( \dot{n}_{i2} \int_{T_3}^{T_2}\hat{C}_{p,i} dT\right)
+\]</span></p>
+<p><span class="math display">\[
+0 = \left( \dot{n}_{A,0} + \dot{n}_{B,0} + \dot{n}_{Y,0} + \dot{n}_{Z,0} \right)\cancel{\hat{C}_p}\left( T_1 - T_0 \right) - \left( \dot{n}_{A,2} + \dot{n}_{B,2} + \dot{n}_{Y,2} + \dot{n}_{Z,2} \right)\cancel{\hat{C}_p}\left( T_3 - T_2 \right)
+\]</span></p>
+<p>The rate of heat transfer can also be set equal to the rate at which the feed gains heat.</p>
+<p><span class="math display">\[
+\sum_i \left( \dot{n}_{i,0} \int_{T_0}^{T_1}\hat{C}_{p,i} dT\right) = U_{AM}A \Delta T_{AM}
+\]</span></p>
+<p><span class="math display">\[
+0 = \left( \dot{n}_{A,0} + \dot{n}_{B,0} + \dot{n}_{Y,0} + \dot{n}_{Z,0} \right)\hat{C}_p\left( T_1 - T_0 \right) - U_{AM}A \left(\frac{\left(T_3 - T_0\right) + \left(T_2 - T_1\right)}{2}\right)
+\]</span></p>
+</div>
+</div>
+</div>
+<p><strong>Heat Exchanger Design Equations</strong></p>
+<p><span class="math display">\[
+0 = \dot{n}_{i,0} - \dot{n}_{i,1}; \qquad i = \text{ A, B, Y, and Z} \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{n}_{i,2} - \dot{n}_{i,3}; \qquad i = \text{ A, B, Y, and Z} \tag{9}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align}
+0 &amp;= \left( \dot{n}_{A,0} + \dot{n}_{B,0} + \dot{n}_{Y,0} + \dot{n}_{Z,0} \right)\left( T_1 - T_0 \right) \\&amp;- \left( \dot{n}_{A,2} + \dot{n}_{B,2} + \dot{n}_{Y,2} + \dot{n}_{Z,2} \right)\left( T_3 - T_2 \right) = \epsilon_1
+\end{align} \tag{10}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align}
+0 &amp;= \left( \dot{n}_{A,0} + \dot{n}_{B,0} + \dot{n}_{Y,0} + \dot{n}_{Z,0} \right)\hat{C}_p\left( T_1 - T_0 \right) \\&amp;- U_{AM}A \left(\frac{\left(T_3 - T_0\right) + \left(T_2 - T_1\right)}{2}\right) = \epsilon_2
+\end{align} \tag{11}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>There are two heat exchanger design equations (10) and (11). That means I can solve them to find two unknown quantities. Examining those equations I see that they contain three unknown quantities: <span class="math inline">\(T_1\)</span>, <span class="math inline">\(T_2\)</span>, and <span class="math inline">\(T_3\)</span>. As described in <a href="apndx_solve_daes.html" class="quarto-xref"><span>Appendix K</span></a>, I will solve the heat exchanger design equations, (9) and (10), for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span>. To do so numerically, I will have to (a) provide an initial guess for those unknowns and (b) evaluate the residuals. At the point where I need to evaluate the residuals, I will have a guess for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span>. So, to evaluate the residuals I’ll need to calculate any other unknown quantities that appear in them. In this case, the only other unknown is <span class="math inline">\(T_2\)</span>. <span class="math inline">\(T_1\)</span> is one of the initial values I need for solving the PFR design equations, so using the guess for <span class="math inline">\(T_1\)</span>, I can solve the PFR design equations to find the outlet temperature, <span class="math inline">\(T_2\)</span>.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Evaluating the Heat Exchanger Residuals</strong></p>
+<p>Solving the PFR design equations, (3) - (7), will yield the molar flow rates of A, B, Y, and Z and the temperature within the PFR. The outlet temperature is the temperature of stream 2.</p>
+<p><span class="math display">\[
+T_2 = T \big\vert_{V_{PFR}} \tag{12}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The PFR design equations are IVODEs. To solve them numerically I’ll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in <a href="#tbl-example_16_3_2_initial_values" class="quarto-xref">Table&nbsp;<span>16.2</span></a>. At the start of each integration step, the independent variable <span class="math inline">\(V\)</span> and dependent variables (<span class="math inline">\(\dot{n}_A\)</span>,<span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>) will be known, as will the given and known constants listed in the assignment summary. I will need to calculate any other quantities that appear in the IVODEs, equations (3) - (7).</p>
+<p>For this assignment, that means I’ll need to calculate <span class="math inline">\(r_1\)</span>. I can do so using equation (2), but to use that equation I first need to calculate <span class="math inline">\(k_1\)</span> and <span class="math inline">\(C_A\)</span>. The rate coefficient can be calculated using the Arrhenius expression, <a href="section_2_rates_and_expressions.html#eq-arrhenius" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>. The reacting fluid is an ideal gas, so I can use the ideal gas law to calculate the concentration of A.</p>
+<p><span class="math display">\[
+C_A = \frac{\dot{n}_A}{\dot{V}} = \frac{P_A}{RT} = y_A \frac{P}{RT} = \frac{\dot{n}_A}{\dot{n}_{A} + \dot{n}_{B} + \dot{n}_{Y} + \dot{n}_{Z}} \left( \frac{P}{RT} \right)
+\]</span></p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Evaluating the Derivatives</strong></p>
+<p>The rate, <span class="math inline">\(r_1\)</span>, can be calculated using equation (2).</p>
+<p><span class="math display">\[
+k_1 = k_{0,1} \exp{\left( \frac{-E_1}{RT} \right)} \tag{13}
+\]</span></p>
+<p><span class="math display">\[
+C_A = \frac{\dot{n}_A}{\dot{n}_{A} + \dot{n}_{B} + \dot{n}_{Y} + \dot{n}_{Z}} \left( \frac{P}{RT} \right) \tag{14}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When I solve the IVODEs numerically, I’ll also need to calculate the initial and final values in <a href="#tbl-example_16_3_2_initial_values" class="quarto-xref">Table&nbsp;<span>16.2</span></a>. The molar flow rates of A and B in the feed, stream 0, are given, and according to equation (8) they are equal to the necessary molar flow rate initial values.</p>
+<p>The IVODEs will be solved within a function that evaluates the residuals corresponding to the heat exchanger design equations. At that point the temperture of stream 1 will be available. Additionally, the volume of the PFR is known. Thus, it won’t be necessary to calculate any of the initial and final values.</p>
+<p>So, with the information above, the heat exchanger design equations can be solved numerically for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span>. Once that is done, the resulting value of <span class="math inline">\(T_1\)</span> can be used as an initial value, and the PFR design equations can be solved for sets of corresponding values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>,<span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> that span the range from their initial to their final values. Since the molar flow rate of A does not change from stream 2 to stream 3, equation (9), the conversion can be calcualted using its defining equation.</p>
+</div>
+</div>
+</div>
+<p><strong>Ancillary Equations for Calculating the Quantities of Interest</strong></p>
+<p>Solving the reactor design equations yields <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>,<span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> spanning the range from <span class="math inline">\(V=0\)</span> to <span class="math inline">\(V=V_{PFR}\)</span>.</p>
+<p><span class="math display">\[
+\dot{n}_{A,2} = \dot{n}_A \big\vert_{V=V_{PFR}} \tag{15}
+\]</span></p>
+<p><span class="math display">\[
+f_A = \frac{\dot{n}_{A,0} - \dot{n}_{A,2}}{\dot{n}_{A,0}} \tag{16}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-18" class="callout-18-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I know that thermally backmixed PFRs can have multiple steady states. In the analysis I’m doing here, the operating parameters are set and I’m calculating the reactor output, specifically the conversion. Under these circumstances, there might be multiple steady states, so I’ll need to repeat the calculations using different guesses for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span> to see whether there is more than one steady state.</p>
+</div>
+</div>
+</div>
+<p>It is possible that there are multiple steady-state conversions. Therefore the calculations described here should be repeated using different initial guesses for the heat exchanger design equation unknowns, <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span>.</p>
+<p><strong>Calculations Summary</strong></p>
+<ol type="1">
+<li>Substitute given and known constants into all equations.</li>
+<li>When it is necessary to evaluate the derivatives
+<ol type="a">
+<li><span class="math inline">\(V\)</span>$, <span class="math inline">\(\dot{n}_A\)</span>,<span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span> will be available.</li>
+<li>calculate <span class="math inline">\(k_1\)</span> and <span class="math inline">\(C_A\)</span> using equations (13) and (14).</li>
+<li>calculate <span class="math inline">\(r_1\)</span> using equation (2).</li>
+<li>evaluate the derivatives using equations (3) - (7).</li>
+</ol></li>
+<li>When it is necessary to calculate the initial and final values in <a href="#tbl-example_16_3_2_initial_values" class="quarto-xref">Table&nbsp;<span>16.2</span></a>
+<ol type="a">
+<li><span class="math inline">\(V_{PFR}\)</span>, <span class="math inline">\(\dot{n}_{A,0}\)</span>, and <span class="math inline">\(\dot{n}_{B,0}\)</span> are known constants, and <span class="math inline">\(T_1\)</span> will be available.</li>
+<li>calculate <span class="math inline">\(\dot{n}_{A,1}\)</span>, and <span class="math inline">\(\dot{n}_{B,1}\)</span> using equation (8).</li>
+</ol></li>
+<li>When it is necessary to evaluate the heat exchanger design equation residuals
+<ol type="a">
+<li>a guess for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span> will be available for use in all equations.</li>
+<li>solve the PFR reactor design equations numerically to get corresponding sets of values of <span class="math inline">\(V\)</span>$, <span class="math inline">\(\dot{n}_A\)</span>,<span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values.</li>
+<li>extract <span class="math inline">\(T_2\)</span> using equation (12).</li>
+<li>evaluate <span class="math inline">\(\epsilon_1\)</span> and <span class="math inline">\(\epsilon_2\)</span> using equations (10) and (11).</li>
+</ol></li>
+<li>When it is necessary to calculate the quantity of interest, <span class="math inline">\(f_A\)</span>
+<ol type="a">
+<li>corresponding sets of values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>,<span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values will be available.</li>
+<li>extract <span class="math inline">\(\dot{n}_{A,2}\)</span> using equation (15).</li>
+<li>calculate <span class="math inline">\(f_A\)</span> using equation (16).</li>
+</ol></li>
+</ol>
+</section>
+<section id="numerical-implementation-of-the-solution-1" class="level4" data-number="16.3.2.3">
+<h4 data-number="16.3.2.3" class="anchored" data-anchor-id="numerical-implementation-of-the-solution-1"><span class="header-section-number">16.3.2.3</span> Numerical implementation of the Solution</h4>
+<ol type="1">
+<li>Make the given and known constants available for use in all functions.</li>
+<li>Write a derivatives function that
+<ol type="a">
+<li>receives the independent and dependent variables, <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>,<span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, as arguments,</li>
+<li>evaluates the derivatives as described in step 2 of the calculations summary, and returns them.</li>
+</ol></li>
+<li>Write a reactor model function that
+<ol type="a">
+<li>receives the value of <span class="math inline">\(T_1\)</span> as an argument</li>
+<li>calculates the initial and final values in <a href="#tbl-example_16_3_2_initial_values" class="quarto-xref">Table&nbsp;<span>16.2</span></a> as described in step 3 of the calculations summary,</li>
+<li>gets corresponding sets of values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>,<span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+<ol type="i">
+<li>the initial values and stopping criterion in <a href="#tbl-example_16_3_2_initial_values" class="quarto-xref">Table&nbsp;<span>16.2</span></a> and</li>
+<li>the name of the derivatives function from step 2 above,</li>
+</ol></li>
+<li>checks that the solver successfully solved the IVODEs, and</li>
+<li>returns the values returned by the IVODE solver.</li>
+</ol></li>
+<li>Write a residuals function that
+<ol type="a">
+<li>receives a guess for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span> and makes it available to all functions,</li>
+<li>evaluates the residual as described in step 4 of the calculations summary, and</li>
+<li>returns the values of <span class="math inline">\(\epsilon_1\)</span> and <span class="math inline">\(\epsilon_2\)</span>.</li>
+</ol></li>
+<li>Perform the analysis by
+<ol type="a">
+<li>calculating <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span> by
+<ol type="i">
+<li>setting an initial guess for their values,</li>
+<li>calculating the values of <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span> by
+<ol type="a">
+<li>calling an ATE solver, passing the initial guess and the name of the residuals function from step 4</li>
+<li>checking that the solver converged</li>
+</ol></li>
+</ol></li>
+<li>calling the reactor model function from step 2 above to get corresponding sets of values of <span class="math inline">\(V\)</span>$, <span class="math inline">\(\dot{n}_A\)</span>,<span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from their initial values to their final values,</li>
+<li>calculating the conversion as described in step 5 of the calculations summary.</li>
+</ol></li>
+</ol>
+</section>
+<section id="results-and-discussion-1" class="level4" data-number="16.3.2.4">
+<h4 data-number="16.3.2.4" class="anchored" data-anchor-id="results-and-discussion-1"><span class="header-section-number">16.3.2.4</span> Results and Discussion</h4>
+<p>The calculations were performed as described above using different initial guesses for <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_3\)</span>. Three steady-state conversions were found: 4.23, 66, and 100%. Without thermal backmixing the conversion is 3.59%. The steady state with the lowest conversion is easy to explain. Note that without thermal backmixing the conversion is only 3.59%. This indicates that the lowest conversion results when the startup procedure failed to get the PFR operating at higher temperature. Thus, very little heat is generated by the reaction, and consequently the heating of the feed is almost zero and the conversion is very close to the situation with zero backmixing. A steady state like this might be expected for most thermally backmixed PFRs.</p>
+<p>The steady state with the greatest conversion is also easy to understand. Basically, the thermally backmixed PFR is operating as intended. The feed gets sufficiently heated so that the rate at the PFR inlet is significant. The reaction releases heat as the fluid progresses through the reactor and is at a high temperature when it exits. That then allows a significant amount of heat to be transferred to the feed in the heat exchanger.</p>
+<p>By analogy to multiplicity in CSTRs, the steady state with the intermediate conversion might be expected to be unstable. At the same time, it would be useful to know whether there are other steady states. One way to find the number of steady states is as follows.</p>
+<ul>
+<li>Select a range of values for <span class="math inline">\(T_1\)</span>.</li>
+<li>For each value in that range
+<ul>
+<li>Calculate <span class="math inline">\(T_2\)</span> by solving the PFR design equations.</li>
+<li>Calculate <span class="math inline">\(T_2\)</span> using the heat exchanger design equations:
+<ul>
+<li>Calculate <span class="math inline">\(T_3\)</span> using equation (11), then</li>
+<li>Calculate <span class="math inline">\(T_2\)</span> using equation (10).</li>
+</ul></li>
+</ul></li>
+<li>Plot <span class="math inline">\(T_2\)</span> calculated using the PFR design equations as a function of <span class="math inline">\(T_1\)</span>.</li>
+<li>On the same axes, plot <span class="math inline">\(T_2\)</span> calculated using the heat exchanger design equations as a function of <span class="math inline">\(T_1\)</span>.</li>
+<li>Points where the two curves intersect are steady states for the thermally backmixed PFR.</li>
+</ul>
+<p><a href="#fig-example_16_3_2_multiplicity_plot" class="quarto-xref">Figure&nbsp;<span>16.4</span></a> shows the resulting graph. It shows that for this system and operating conditions there are three steady states. The proper way to determine the stability of these steady states would be to conduct a perturbation analysis. A slightly less proper way would be to perturb the system slightly from each steady state and use a transient analysis to see whether the system returned to the original steady state. Here, however, a non-rigourous argument will be made that the middle (<span class="math inline">\(T_1\)</span> ~ 75 °C) steady state in <a href="#fig-example_16_3_2_multiplicity_plot" class="quarto-xref">Figure&nbsp;<span>16.4</span></a> is unstable.</p>
+<div id="fig-example_16_3_2_multiplicity_plot" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_16_3_2_multiplicity_plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="examples/reb_16_3_2/multiplicity_plot.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_16_3_2_multiplicity_plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;16.4: PFR outlet temperature calculated using the PFR design equations and using the heat exchanger design equations. Each point where the curves cross is a steady state.
+</figcaption>
+</figure>
+</div>
+<p>As a matter of convenience, the steady state with the lowest value of <span class="math inline">\(T_1\)</span> will be referred to as the lower steady state, that with the greatest value of <span class="math inline">\(T_1\)</span> as the upper steady state, and the one with the intermediate value of <span class="math inline">\(T_1\)</span> as the middle steady state. At any value of <span class="math inline">\(T_1\)</span>, the blue curve can be thought of as the stream 2 temperature that the heat exchanger requires in order to maintain stream 1 at <span class="math inline">\(T_1\)</span>, and the red curve can be thought of as the stream 2 temperature that the PFR is capable of producing.</p>
+<p>With that perspective, consider a system operating at either the upper or the lower steady state. If stream 1 is perturbed to a temperature <span class="math inline">\(T_1\)</span> that is greater than its steady state temperature, the PFR cannot produce a stream 2 temperature that is large enough for the heat exchanger to maintain the perturbed stream 1 temperature. Since the stream 2 temperature is not large enough to maintain it, the perturbed stream 1 temperature will decrease until it returns to the original steady state value. In terms of <a href="#fig-example_16_3_2_multiplicity_plot" class="quarto-xref">Figure&nbsp;<span>16.4</span></a>, if the system is perturbed slightly to the right from the upper or lower steady state, the blue curve is above the red curve, and consequently the PFR does not produce a stream 2 temperature that is high enough for the heat exchanger to maintain the new stream 1 temperature.</p>
+<p>Similarly, if a system is operating at either the upper or the lower steady state and the stream 1 temperature is perturbed to a temperature <span class="math inline">\(T_1\)</span> that is less than the steady state value, then PFR will produce a stream 2 temperature greater than what the heat exchanger needs in order to maintain the new temperature. With the stream 2 temperature greater than what is needed, too much heat will be transferred to stream 1, and its temperature will increase until it returns to the original steady state.</p>
+<p>Thus, when a system is perturbed in either direction from either the upper or lower steady state, it will return to that steady state. In other words, the upper and lower steady states are stable. By the same reasoning, the middle steady state is unstable. If a system is operating at the middle steady state and the stream 1 temperature is increased slightly, the PFR will produce a stream 2 temperature in excess of what is needed to maintain the new temperature. As a consequence, the temperature of stream 1 will increase, moving it farther from the orginal middle steady state. This will continue until the system reaches the upper steady state. Similarly, if a system is operating at the middle steady state and the stream 1 temperature is decreased slightly, the PFR will produce a stream 2 temperature smaller than what is needed to maintain the new temperature. As a consequence, the temperature of stream 1 will decrease, moving it farther from the orginal middle steady state. This will continue until the system reaches the lower steady state.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:blue">SC</span>o<span style="color:red">RE</span> Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in <a href="http://buffalobadger.github.io/SCoRE/class_25.html">SCoRE</a>.</p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="symbols-used-in-chapter--sec-5_thermal_backmix_pfr" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="symbols-used-in-chapter--sec-5_thermal_backmix_pfr"><span class="header-section-number">16.4</span> Symbols used in <a href="#sec-5_thermal_backmix_pfr" class="quarto-xref">Chapter&nbsp;<span>16</span></a></h2>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(f_i\)</span></td>
+<td style="text-align: left;">Fractional conversion of reactant <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(k_j\)</span></td>
+<td style="text-align: left;">Rate coefficient for reaction <span class="math inline">\(j\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(k_{0,j}\)</span></td>
+<td style="text-align: left;">Arrhenius pre-exponential factor for rate coefficient <span class="math inline">\(k_j\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_I\)</span></td>
+<td style="text-align: left;">Molar flow rate of reagent <span class="math inline">\(i\)</span>; an additional subscript denotes the flow stream.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(r_j\)</span></td>
+<td style="text-align: left;">Rate of reaction <span class="math inline">\(j\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(y_i\)</span></td>
+<td style="text-align: left;">Gas phase mole fraction of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">! <span class="math inline">\(z\)</span></td>
+<td style="text-align: left;">Distance from the inlet of a PFR in the axial direction.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(A\)</span></td>
+<td style="text-align: left;">Heat transfer area.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(C_i\)</span></td>
+<td style="text-align: left;">Concentration of reagent <span class="math inline">\(i\)</span>; an additional subscript denotes the flow stream.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\hat{C}_{p,i}\)</span></td>
+<td style="text-align: left;">Molar heat capacity of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\tilde{C}_{p,}\)</span></td>
+<td style="text-align: left;">Gravimetric heat capacity.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\breve{C}_{p,}\)</span></td>
+<td style="text-align: left;">Volumetric heat capacity.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(D\)</span></td>
+<td style="text-align: left;">PFR diameter.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(E_j\)</span></td>
+<td style="text-align: left;">Arrhenius activation energy for rate coefficient <span class="math inline">\(k_j\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(P\)</span></td>
+<td style="text-align: left;">Pressure.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(P_i\)</span></td>
+<td style="text-align: left;">Parial pressure of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(R\)</span></td>
+<td style="text-align: left;">Ideal gas constant.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: left;">Temperature; an additional subscript denotes the flow stream.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(U\)</span></td>
+<td style="text-align: left;">Heat transfer coefficient; an additional subscript denotes the type of temperature difference to be used with it.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: left;">Volume; an additional subscript denotes the equipment.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{V}\)</span></td>
+<td style="text-align: left;">Volumetric flow rate; an additional subscript denotes the flow stream.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\epsilon\)</span></td>
+<td style="text-align: left;">Residual; an additional subscript is used to differentiate between multiple residuals.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\nu_{i,j}\)</span></td>
+<td style="text-align: left;">Stoichiometric coefficient of reagent <span class="math inline">\(i\)</span> in reaction <span class="math inline">\(j\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\Delta H_j\)</span></td>
+<td style="text-align: left;">Heat of reaction <span class="math inline">\(j\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">! <span class="math inline">\(\Delta T\)</span></td>
+<td style="text-align: left;">Temperature difference in a heat exchanger; an additional denotes the type (e. g. arithmetic mean, log-mean, or cold).</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
