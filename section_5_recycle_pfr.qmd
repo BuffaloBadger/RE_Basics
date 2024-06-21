@@ -57,11 +57,11 @@ $$
 When the fluid in a recycle PFR is incompressible, balance equations can be written for the volumetric flow rates. Additionally, a balance on the entire process shows that streams 0 and 3 have equal volumetric flow rates, and a balance on just the PFR shows that streams 1 and 2 have equal volumetric flow rates.
 
 $$
-0 = \dot{V}_2 - \dot{V}_3 - \dot{V}_4
+0 = \dot{V}_2 - \dot{V}_3 - \dot{V}_4; \quad \left( \text{incompressible liquids} \right)
 $${#eq-splitter_liq_vol_bal}
 
 $$
-0 = \dot{V}_1 - \dot{V}_0 - \dot{V}_4
+0 = \dot{V}_1 - \dot{V}_0 - \dot{V}_4; \quad \left( \text{incompressible liquids} \right)
 $${#eq-mixer_liq_vol_bal}
 
 $$
@@ -86,6 +86,17 @@ When modeling PFRs, it often is not necessary to solve all of the ATEs numerical
 
 ## Examples
 
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+source("~/Libraries/R/fmt_tibble_col.R")
+```
+
+preview examples
+
 ### Producing a Chiral Molecule in a Recycle PFR {#sec-example_17_3_1}
 
 {{< include examples/reb_17_3_1/narrative.qmd >}}
@@ -97,44 +108,67 @@ When modeling PFRs, it often is not necessary to solve all of the ATEs numerical
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-identify problem type, describe variable naming, identify reactor operating mode
+This assignment will require analysis of a recycle PFR. To begin I'll draw a schematic of the system, label the equipment and flow streams, and summarize the assignment using the labels as subscripts to indicate the flow stream that they apply to. 
 
 :::
 
 #### Assignment Summary
 
-**Given and Known Constants**: 
+**Reactor System Schematic**
 
-**Reactor System**: 
+![Schematic representation of the recycle PFR](Graphics/recycle_pfr.png){#fig-example_17_3_1_schematic width="60$"}
 
-**Quantities of Interest**: 
+**Given and Known Constants**: $\Delta H_1$ = -14 kcal mol^-1^, $k_{0,1}$ = 4.2 x 10^15^ cm^3^ mol^-1^ min^-1^, $E_1$ = 18 kcal mol^-1^, $\breve{C}_p$ = 1.3 cal cm^-3^ K^-1^, $C_{A,0}$ = 2 M, $C_{Z,0}$ = 0 M, $\dot{V}_0$ = 500 cm^3^ min^-1^, $T_0$ = 300K, $R_R$ = 1.3, $D$ = 5 cm, $L$ = 50 cm, and $R$ = 1.987 cal mol^-1^ K^-1^.
+
+**Reactor System**: Adiabatic recycle PFR
+
+**Quantities of Interest**: $C_{A,3}$, $C_{Z,3}$, and $T_3$
 
 #### Mathematical Formulation of the Solution
+
+Note: Variables representing flow rates and temperatures one of the four process streams in @fig-fig-example_17_3_1_schematic will be subscripted with the stream number. Variables representing the molar flow rates and temperature [within]{.underline} the PFR will not have a stream number subscript.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-generate design equations
+The components in this reactor system are a stream mixer, M, a PFR, and a stream splitter, S. I will need reactor design equations for the PFR and mole and energy balances for the mixer and splitter in order to model the system. Starting with the PFR, it is adiabatic and operates at steady-state with negligible pressure drop. As such, I do not need a momentum balance and there isn't a heat exchange fluid to write an energy balance for. I do need mole balances and an energy balance on the reacting fluid. The general form of the steady-state PFR mole balance is given in @eq-pfr_ss_mol_balance. There is one reaction, so the summation over the reactions becomes a single term.
+
+$$
+\frac{d \dot{n}_i}{d z} = \frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j = \frac{\pi D^2}{4}\nu_{i,1}r_1
+$$
+
+The general form of the steady-state PFR energy balance is given in equation @eq-pfr_ss_energy_balance. Here the heat transfer term is zero because the reactor is adiabatic. As above, there is only one reaction. Additionally, the assignment provides a volumetric heat capacity for the reacting liquid, so the sensible heat term can be expressed using that. Finally rearrangement yields the energy balance in the form of a derivative expression.
+
+$$
+\cancelto{\dot{V} \breve{C}_p}{\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right)} \frac{d T}{d z} = \cancelto{0}{\pi D U\left( T_{ex} - T  \right)} - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+$$
+
+$$
+\frac{d T}{d z} = - \frac{\pi D^2}{4} \frac{r_1 \Delta H_1}{\dot{V} \breve{C}_p}
+$$
 
 :::
 
 **Reactor Design Equations**
 
-Mole balance design equations for [reagents] are presented in equations (numbers). The energy balance on the reacting fluid is given in equation (number). An energy balance on the heat exchange fluid is shown in equation (number). The momentum balance is given in equation (number).
+PFR mole balance design equations for A and Z are presented in equations (3) and (4), and an energy balance on the reacting fluid is given in equation (5).
+
+$$
+\frac{d \dot{n}_A}{d z} = - \frac{\pi D^2}{4}r_1 \tag{3}
+$$
+
+$$
+\frac{d \dot{n}_Z}{d z} = \frac{\pi D^2}{4}r_1 \tag{4}
+$$
+
+$$
+\frac{d T}{d z} = - \frac{\pi D^2}{4} \frac{r_1 \Delta H_1}{\dot{V} \breve{C}_p} \tag{5}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-check number of ivodes and deps, and if needed, generate IVODE from the differential ideal gas law
-
-:::
-
-A differential form of the ideal gas law, appropriate for this reactor system, is shown in equation (number).
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-define initial values and stopping criterion
+The number of IVODEs, three, is equal to the number of dependent variables, $\dot{n}_A$, $\dot{n}_Z$, and $T$, so they can be solved without adding any IVODEs or eliminating any dependent variables. In order to do so numerically, initial values and a stopping criterion are needed. I can define $z=0$ as the inlet to the PFR, i. e. stream 1. The initial values are then the values of the dependent variables in that stream. I also know the reactor length, so I can use that as the stopping criterion.
 
 :::
 
@@ -142,92 +176,239 @@ define initial values and stopping criterion
 
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
-| $$ | $$ | $$ |
-| $$ | $$ | |
+| $z$ | $0$ | $L$ |
+| $\dot{n}_A$ | $\dot{n}_{A,1}$ | |
+| $\dot{n}_Z$ | $\dot{n}_{Z,1}$ | |
+| $T$ | $T_1$ | |
   
-: Initial values and stopping criterion for solving  equations, (numbers). {#tbl-example_17_3_1_initial_values}
+: Initial values and stopping criterion for solving  equations, (3) through (5). {#tbl-example_17_3_1_initial_values}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_17_3_1_initial_values. At the start of each integration step, the independent variable (symbol) and dependent variables (list) will be known, as will the given and known constants listed above. I will need to calculate any other quantities that appear in the IVODE design equations (list).
+I also need mole and energy balances for the stream mixer and the stream splitter. However, my plan is to solve only the stream mixer design equations numerically. I'll use the stream splitter design equations as ancillary equations when I need to evaluate the residuals for the stream mixer ATEs. The stream mixer mole balance simply requires that the molar flow rate of each reagent in stream 1 is equal to the sum of its flow rates in streams 0 and 4. The energy balance for a stream mixer is given in @eq-mixer_energy_bal. It is written in terms of the stream labeling in @fig-example_17_3_1_schematic earlier in this chapter. Here, however, I have a volumetric heat capacity, so I can express the sensible heats using that. At the same time, I can evaluate the integral.
 
-identify and generate ancillary equations
+$$
+0 = \sum_i \left( \dot{n}_{i,0} \int_{T_{0}}^{T_{1}} \hat{C}_{p,i} dT + \dot{n}_{i,4} \int_{T_{4}}^{T_{1}} \hat{C}_{p,i} dT  \right) 
+$$
+
+$$
+0 = \dot{V}_0 \breve{C}_p \left( T_1 - T_0 \right) + \dot{V}_4\breve{C}_p \left( T_1 - T_4 \right) 
+$$
+
+These equations are already in the form of residual expressions.
+
+:::
+
+**Stream Mixer Mole and Energy Balances**
+
+$$
+0 = \dot{n}_{A,1} - \dot{n}_{A,0} - \dot{n}_{A,4} = \epsilon_1 \tag{6|}
+$$ 
+
+$$
+0 = \dot{n}_{Z,1} - \dot{n}_{Z,0} - \dot{n}_{Z,4} = \epsilon_2 \tag{7}
+$$ 
+
+$$
+0 = \dot{V}_0 \breve{C}_p \left( T_1 - T_0 \right) + \dot{V}_4\breve{C}_p \left( T_1 - T_4 \right) = \epsilon_3 \tag{8}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The stream mixer balances are a set of three ATEs, so I can solve them to find three unknowns. For the reasons explained in @sec-apndx_solve_daes, I will solve them for the molar flow rates of A and Z and the temperature of stream 1. To solve them I'll need to provide an initial guess for those unknowns, and I'll need to evaluate the residuals each time a new guess is generated.
+
+At the point where I need to evaluate the residuals, equations (6), (7), and (8), I will have values for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$, along with the given and known quantities listed in the assignment summary. In order to evaluate the residuals I'll need to calculate every other quantity appearing in the equations. Here that means I'll need to calculate $\dot{n}_{A,0}$, $\dot{n}_{Z,0}$, $\dot{n}_{A,4}$, $\dot{n}_{Z,4}$, $\dot{V}_4$, and $T_4$.
+
+I know the volumetric flow rate and the concentrations in stream 0, so I can use them to calculate the molar flow rates of A and Z in stream zero. I can use @eq-overall_vol_flow_bal_recycle to calculate the volumetric flow rate of stream 3 and then use the definition of the recycle ratio, @eq-recycle_ratio, to calcualte the volumetric flow rate of stream 4.
+
+In order to calculate the molar flow rates and temperature for stream 4, I need to first solve the PFR reactor design equations. The final values of the dependent variables are $\dot{n}_{A,2}$, $\dot{n}_{Z,2}$, and $T_2$. The splitter does not change the temperature, so that gives $T_4$
+
+The definition of the recycle ratio can be substituted into the splitter mole balance which can then be solved for the molar flow rate in stream 4.
+
+$$
+0 = \dot{n}_{i,2} - \cancelto{\frac{\dot{n}_{i,4}}{R_R}}{\dot{n}_{i,3}} - \dot{n}_{i,4}
+$$
+
+$$
+\dot{n}_{i,4} = \frac{R_R}{1 + R_R}\dot{n}_{i,2}
+$$
+
+Then I need to use the mole and energy balances for the stream splitter to calculate the flow rates and temperature in stream 4. 
+
+:::
+
+**Ancillary Equations for Evaluating the Stream mixer Residuals**
+
+$$
+\dot{n}_{A,0} = \dot{V}_0 C_{A,0} \tag{9}
+$$
+
+$$
+\dot{n}_{Z,0} = \dot{V}_0 C_{Z,0} \tag{10}
+$$
+
+$$
+\dot{V}_3 = \dot{V}_0 \tag{11}
+$$
+
+$$
+\dot{V}_4 = R_R \dot{V}_3 \tag{12}
+$$
+
+Using the guess for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$, the PFR design equations can be solved for $\dot{n}_A$, $\dot{n}_Z$, and $T$ as functions of $z$ in the PFR. The outlet values are the values for stream 2.
+
+$$
+\dot{n}_{A,2} = \dot{n}_A \big \vert_{z=L} \tag{13}
+$$
+
+$$
+\dot{n}_{Z,2} = \dot{n}_Z \big \vert_{z=L} \tag{14}
+$$
+
+$$
+T_4 = T_3 = T_2 = T \big \vert_{z=L} \tag{15}
+$$
+
+$$
+\dot{n}_{A,4} = \frac{R_R}{1 + R_R}\dot{n}_{A,2} \tag{16}
+$$
+
+$$
+\dot{n}_{Z,4} = \frac{R_R}{1 + R_R}\dot{n}_{Z,2} \tag{17}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_17_3_1_initial_values. At the start of each integration step, the independent variable, $z$, and dependent variables, $\dot{n}_A$, $\dot{n}_Z$, and $T$, will be known, as will the given and known constants listed in the assignment summary. I will need to calculate any other quantities that appear in the IVODE design equations (3), (4), and (5).
+
+Looking at those IVODEs, the quantities that are not known are $\dot{V}$ and $r_1$. Since this is a liquid system, and assumed to be incompressible, the volumetric flow rate will be constant in the PFR. Acording to a mass balance on the splitter, the volumetric flow rate leaving the reactor is equal to the sum of the flow rates of streams 3 and 4. Those flow rates can be calculated as shown in equations (11) and (12).
+
+The rate can be calculated using the rate expression given in equation (2). Before that can be done, the rate coefficient and the concentrations of A and Z must be calculated. The rate coefficient can be calculated using the Arrhenius expression, @eq-arrhenius. The concentrations can be calculated using the defining equation for concentration in a flow system, @eq-concentration_open, making sure to use the volumetric flow rate in the PFR.
 
 :::
 
 **Ancillary Equations for Evaluating the Derivatives**
 
+The rate can be calculated using equation (2) after first calculating the rate coefficient and concentrations of A and Z.
 
+$$
+\dot{V} = \dot{V}_2 = \dot{V}_3 + \dot{V}_4 \tag{18}
+$$
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
+$$
+k_1 = k_{0,1} \exp \left( \frac{-E_1}{RT} \right) \tag{19}
+$$
 
-When I solve the IVODEs numerically, I'll also need to calculate the initial and final values in @tbl-example_17_3_1_initial_values....
+$$
+C_A = \frac{\dot{n}_A}{\dot{V}} \tag{20}
+$$
 
-:::
+$$
+C_Z = \frac{\dot{n}_Z}{\dot{V}} \tag{21}
+$$
 
 **Ancillary Equations for Calculating the Initial and Final Values**
 
-
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-At this point the reactor design equations can be solved numerically to get corresponding sets of values of [list] spanning the range from their initial (inlet) values to their final (outlet) values.
-
-develop equations needed to calculate quantities of interest
-
-:::
+The IVODEs, equations (3), (4), and (5), will be solved within the function that evaluates the residuals. At that point, the initial values in @tbl-example_17_3_1_initial_values will be available.
 
 **Ancillary Equations for Calculating the Quantities of Interest**
 
-Solving the reactor design equations yields [list independent and dependent variables].  The quantities of interest....
+The the stream mixer mole and energy balances can be solved numerically to find the molar flow rates of A and Z and the temperature for stream 1. Then, using the results, the PFR reactor design equations can be solved numerically to get corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ spanning the range from their initial (inlet) values to their final (outlet) values.
+
+The outlet values are the molar flows and temperature for stream 2, equations (13) through (15), and using the mole balances on the stream splitter and the definition of the recycle ratio, the molar flow rates of A and Z in stream 4 can be calculated, equations (16) and (17).
+
+$$
+\dot{n}_{A,3} = \dot{n}_{A,2} - \dot{n}_{A,4} \tag{22}
+$$
+
+$$
+\dot{n}_{Z,3} = \dot{n}_{Z,2} - \dot{n}_{Z,4} \tag{23}
+$$
+
+$$
+C_{A,3} = \frac{\dot{n}_{A,3}}{\dot{V}_3} \tag{24}
+$$
+
+$$
+C_{Z,3} = \frac{\dot{n}_{Z,3}}{\dot{V}_3} \tag{25}
+$$
 
 **Calculations Summary**
 
+To calculate $C_{A,3}$, $C_{Z,3}$, and $T_3$, the mole and energy balances on the stream splitter will be solved numerically to get $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$. (While doing so, the PFR design equations and the mole balances on the stream splitter will be solved within the function that evaluates the stream splitter residuals.) The PFR reactor design equations will then be solved using the resulting values as the initial values to find $\dot{n}_{A,2}$, $\dot{n}_{Z,2}$, and $T_2$. The stream splitter balances will then be used to calculate $C_{A,3}$, $C_{Z,3}$, and $T_3$. The calculation details are as follow.
+
 1. Substitute given and known constants into all equations.
 2. When it is necessary to evaluate the derivatives
-	a. [list of variables] will be available.
-	b. 
-3. When it is necessary to calculate the initial and final values in @tbl-example_17_3_1_initial_values
-	a. [list of variables] are known constants.
-	b. 
-4. When it is necessary to evaluate the residual corresponding to [variable]
-    a. a guess for [variable] will be available for use in all equations.
-    b. 
-5. When it is necessary to calculate the quantities of interest, [list]
-	a. corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values will be available.
-	b. 
+	a. $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$ will be available.
+	b. calculates $\dot{V}_3$ using equation (11).
+	c. calculates $\dot{V}_4$ using equation (12).
+	d. calculate $\dot{V}$ and $k_1$ using equations (18) and (19).
+	e. calculate $C_A$ and $C_Z$ using equations (20) and (21).
+	f. calculate $r_1$ using equation (2).
+	g. evaluate the derivatives using equations (3), (4), and (5).
+3. The initial and final values in @tbl-example_17_3_1_initial_values will be available when they are needed either as a guess for their values within the residuals function or as their calculated values after solving the stream mixer balances.
+4. When it is necessary to evaluate the stream mixer residuals
+    a. a guess for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ will be available for use in all equations.
+    b. calculate $\dot{n}_{A,0}$, $\dot{n}_{Z,0}$, $\dot{V}_3$ and $\dot{V}_4$ using equations (9) through (12).
+	c. solve the PFR reactor design equations.
+	d. calculate $\dot{n}_{A,2}$, $\dot{n}_{Z,2}$, and $T_4$ using equations (13) through (15).
+	e. calculate $\dot{n}_{A,4}$ and $\dot{n}_{Z,4}$ using equations (16) and (17).
+	f. evaluate $\epsilon_1$, $\epsilon_2$, and $\epsilon_3$ using equations (6) - (8).
+5. When it is necessary to calculate the quantities of interest, $C_{A,3}$, $C_{Z,3}$, and $T_3$
+	a. corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, spanning the range from the inlet of the PFR to its outlet will be available.
+	b. calculate $\dot{n}_{A,2}$, $\dot{n}_{Z,2}$, and $T_3$ using equations (13) through (15).
+	c. calculate $\dot{n}_{A,4}$ and $\dot{n}_{Z,4}$ using equations (16) and (17).
+	d. calculate $\dot{n}_{A,3}$ and $\dot{n}_{Z,3}$ using equations (22) and (23).
+	e. calculate $\dot{V}_3$ using equation (11).
+	f. calculate $C_{A,3}$ and $C_{Z,3}$ using equations (24) and (25).
 
 #### Numerical implementation of the Solution
 
 1. Make the given and known constants available for use in all functions.
-2. Define a variable to hold [unknown constant] and make it available to all functions.
-3. Write a derivatives function that
-	a. receives the independent and dependent variables, [list], as arguments,
-	b. evaluates the derivatives as described in step 2 of the calculations summary, and returns them.
-4. Write a residuals function that
-	a. receives a guess for [variable] and makes it available to all functions,
-	b. evaluates the residual as described in step 4 of the calculations summary, and
-	c. returns the value of [variable].
-5. Write a reactor model function that
-	a. ...
-	b. calculates the initial and final values in @tbl-example_17_3_1_initial_values as described in step 3 of the calculations summary,
-	c. gets corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
+2. Write a derivatives function that
+	a. receives the independent and dependent variables, $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, as arguments,
+	b. evaluates the derivatives as described in step 2 of the calculations summary, and returns their values.
+3. Write a reactor model function that
+	a. receives the initial and final values in @tbl-example_17_3_1_initial_values as arguments,
+	b. solves the PFR reactor design equations to get corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, spanning the range from the inlet of the PFR to its outlet by calling an IVODE solver with the following arguments:
 		i. the initial values and stopping criterion in @tbl-example_17_3_1_initial_values and
-		ii. the name of the derivatives function from step 3 above,
+		ii. the name of the derivatives function from step 2 above,
 	d. checks that the solver successfully solved the IVODEs, and
 	e. returns the values returned by the IVODE solver.
+4. Write a residuals function that
+	a. receives a guess for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$,
+	b. evaluates the residuals as described in step 4 of the calculations summary, and returns their values.
+5. Write a stream mixer model function that
+	a. receives guesses for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ as arguments.
+	b. calculates $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ by calling an ATE solver with the following arguments:
+		i. the initial guess
+		ii. the name of the residuals function from step 4
+	c. checks that the solver converged
+	d. returns the resulting values of $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$
 6. Perform the analysis by
-	a. ...
-	b. calling the reactor model function from step 5 above to get corresponding sets of values of [independent variable], [dependent variable], spanning the range from their initial values to their final values,
-	c. calculating the quantities of interest as described in step 5 of the calculations summary,
-	d. ....
+	a. setting an initial guess for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$
+	b. calculating $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ by calling the stream mixer model function from step 5 above, passing the initial guess as an argument.
+	c. calculating values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, spanning the range from the inlet of the PFR to its outlet by calling the reactor model function from step 3 above, passing $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ as arguments
+	d. calculating $C_{A,3}$, $C_{Z,3}$, and $T_3$ as described in step 5 of the calculations summary.
 
 #### Results and Discussion
 
-The calculations were performed as described above.
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv("examples/reb_17_3_1/results.csv") 
+df <- fmt_tibble_col(df, 2, 3, 3, 2)
+```
+
+
+The calculations were performed as described above. The concentrations of A and Z in stream 3 are `r df$value[4]` and `r df$value[5]` `r df$units[4]` and its temperature is `r df$value[6]` `r df$units[6]`. Notice that there is no Z in the feed to the process, and the rate is proportional to the concentration of Z. If this feed had been processed in a PFR without recycle, no reaction would have taken place. Because the recycle stream contains reagent Z, the rate in the reactor is not equal to zero and a significant amount of A is converted to Z.
+
+Due to the backmixing, it is possible that other steady states exist. The calculations were repeated using different initial guesses, and indeed, two additional steady states were identified. The first is a trivial solution where $C_{A,3} = C_{A,0}$, $C_{Z,3} = C_{Z,0}$, and $T_3 = T_0$. Clearly, in this system the reaction never got started. The feed is mixed with a recycle stream containing only reagent A and fed to the reactor. No reaction occurs, so the effluent is at the feed temperature and again contains only reagent A.
+
+The other steady state has an outlet concentration of A equal to `r df$value[10]` `r df$units[10]`, an outlet concentration of Z equal to `r df$value[11]` `r df$units[11]`, and an outlet temperature of `r df$value[12]` `r df$units[12]`. No attempt was made to determine the stability of the three steady states.
 
 ::: {.callout-note appearance="simple"}
 ## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection

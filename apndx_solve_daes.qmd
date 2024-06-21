@@ -54,20 +54,20 @@ source("~/Libraries/R/fmt_tibble_col.R")
 
 ### Mathematical Formulation of the Solution
 
-The engineer then generated the reactor design equations, (2), (3), and (4); the initial values and stopping criterion in @tbl-example_K_4_1_initial_values; the mole and energy balances on the stream splitter, equations (5), (6), and (7); and the mole and energy balances on the stream mixer, equations (8), (9), (10), and (11).
+The engineer then generated the reactor design equations, (2), (3), and (4); the initial values and stopping criterion in @tbl-example_K_4_1_initial_values; the mole and energy balances on the stream mixer, equations (5), (6), and (7); and the mole and energy balances on the stream splitter, equations (8), (9), (10), and (11).
 
 **Reactor Design Equations**
 
 $$
-\frac{d\dot{n}_A}{dz} = - \frac{\pi D^2}{4}r \tag{2}
+\frac{d\dot{n}_A}{dz} = - \frac{\pi D^2}{4}r_1 \tag{2}
 $$
 
 $$
-\frac{d\dot{n}_Z}{dz} =  \frac{\pi D^2}{4}r \tag{3}
+\frac{d\dot{n}_Z}{dz} =  \frac{\pi D^2}{4}r_1 \tag{3}
 $$
 
 $$
-\frac{dT}{dz} = - \frac{\pi D^2}{4}\frac{r\Delta H}{\dot{V}_{in} \breve{C}_p} \tag{4}
+\frac{dT}{dz} = - \frac{\pi D^2}{4}\frac{r_1\Delta H}{\dot{V} \breve{C}_p} \tag{4}
 $$
 
 **Initial Values and Stopping Criterion**
@@ -75,70 +75,98 @@ $$
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
 | $z$ | $0$ | $L$ |
-| $\dot{n}_A$ | $\dot{n}_{A,in}$ | |
-| $\dot{n}_Z$ | $\dot{n}_{Z,in}$ | |
-| $T$ | $T_{in}$ | |
+| $\dot{n}_A$ | $\dot{n}_{A,1}$ | |
+| $\dot{n}_Z$ | $\dot{n}_{Z,1}$ | |
+| $T$ | $T_{1}$ | |
   
 : Initial values and stopping criterion for solving the IVODEs, equations (1) through (3). {#tbl-example_K_4_1_initial_values}
 
 **Stream Splitter and Stream Mixer Design Equations**
 
 $$
-\dot{n}_{A,feed} + \dot{n}_{A,r} - \dot{n}_{A,in}  = 0 = \epsilon_1 \tag{5}
+\dot{n}_{A,0} + \dot{n}_{A,4} - \dot{n}_{A,1}  = 0 = \epsilon_1 \tag{5}
 $$
 
 $$
-\dot{n}_{Z,feed} + \dot{n}_{Z,r} - \dot{n}_{Z,in}  = 0 = \epsilon_2 \tag{6}
+\dot{n}_{Z,0} + \dot{n}_{Z,4} - \dot{n}_{Z,1}  = 0 = \epsilon_2 \tag{6}
 $$
 
 $$
-\dot{V}_{feed} \breve{C}_p \left( T_{in} - T_{feed} \right) + \dot{V}_{r} \breve{C}_p \left( T_{in} - T_{r} \right) = 0 = \epsilon_3 \tag{7}
+\dot{V}_0 \breve{C}_p \left( T_{1} - T_{0} \right) + \dot{V}_4 \breve{C}_p \left( T_1 - T_4 \right) = 0 = \epsilon_3 \tag{7}
 $$
 
 $$
-\dot{n}_{A,out} - \dot{n}_{A,r} - \dot{n}_{A,prod}  = 0 = \epsilon_4 \tag{8}
+\dot{n}_{A,2} - \dot{n}_{A,4} - \dot{n}_{A,3}  = 0 = \epsilon_4 \tag{8}
 $$
 
 $$
-\dot{n}_{Z,out} - \dot{n}_{Z,r} - \dot{n}_{Z,prod}  = 0 = \epsilon_5 \tag{9}
+\dot{n}_{Z,2} - \dot{n}_{Z,4} - \dot{n}_{Z,3}  = 0 = \epsilon_5 \tag{9}
 $$
 
 $$
-T_{out} - T_r = 0 = \epsilon_6 \tag{10}
+T_2 - T_4 = 0 = \epsilon_6 \tag{10}
 $$
 
 $$
-T_{out} - T_{prod} = 0 = \epsilon_7 \tag{11}
+T_2 - T_3 = 0 = \epsilon_7 \tag{11}
 $$
 
-The engineer noted that when the derivatives were evaluated at the start of each integration step, the rate would need to be calculated, and wrote the ancillary equation, (12), for doing so. He added equations (13), (14), and (15) because they are needed to calculate $\dot{V}_{in}$ which appears in the rate expression. The engineer also noted that the flow rates of the recycle stream will be needed to evaluate the residuals. They are related to the product stream flow rates through the recycle ratio, equations (16), and (17).
+The engineer noted that when the derivatives were evaluated at the start of each integration step, the volumetric flow rate and the reaction rate would need to be calculated, and wrote the ancillary equations, (12) through (18), for doing so. Knowing that the splitter and mixer balances would be solved for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, $T_{1}$, $T_4$, $\dot{n}_{A,3}$, $\dot{n}_{Z,3}$, and $T_{3}$, the engineer also noted that the molar flow rates of A and Z in streams 0, 2, and 4 and the volumetric flow rate of stream 4 will be needed to evaluate the residuals. The engineer wrote equations (19) through (24) for doing so, but equations for calculating $\dot{n}_{A,2}$, $\dot{n}_{Z,2}$, $T_{2}$ were still needed.
 
 **Ancillary Equations for Evaluating the Derivatives**
 
 $$
-r = k_0 \exp{\left( \frac{-E}{RT} \right)}\frac{\dot{n}_A\dot{n}_Z}{\dot{V}_{in}^2} \tag{12}
+\dot{V}_3 = \dot{V}_0 \tag{12}
 $$
 
 $$
-\dot{V}_{feed} = \dot{V}_{prod} \tag{13}
+\dot{V}_4 = R_R \dot{V}_3 \tag{13}
 $$
 
 $$
-\dot{V}_{r} = R_R \dot{V}_{prod} \tag{14}
+\dot{V} = \dot{V}_3 + \dot{V}_4 \tag{14}
 $$
 
 $$
-\dot{V}_{in} = \dot{V}_{feed} + \dot{V}_{r} \tag{15}
+k_1 = k_{0,1} \exp \left( \frac{-E_1}{RT} \right) \tag{15}
+$$
+
+$$
+C_A = \frac{\dot{n}_A}{\dot{V}} \tag{16}
+$$
+
+$$
+C_Z = \frac{\dot{n}_Z}{\dot{V}} \tag{17}
+$$
+
+$$
+r_1 = k_1C_AC_Z \tag{18}
 $$
 
 **Ancillary Equations for Evaluating the Residuals**
 
 $$
-\dot{n}_{A,r} = R_R \dot{n}_{A,prod} \tag{16}
+\dot{n}_{A,0} = \dot{V}_0 C_{A,0} \tag{19}
 $$
 
 $$
-\dot{n}_{Z,r} = R_R \dot{n}_{Z,prod} \tag{17}
+\dot{n}_{Z,0} = \dot{V}_0 C_{Z,0} \tag{20}
+$$
+
+$$
+\dot{V}_3 = \dot{V}_0 \tag{21}
+$$
+
+$$
+\dot{V}_4 = R_R \dot{V}_3 \tag{22}
+$$
+
+$$
+\dot{n}_{A,4} = R_R \dot{n}_{A,3} \tag{23}
+$$
+
+$$
+\dot{n}_{Z,4} = R_R \dot{n}_{Z,3} \tag{24}
 $$
 
 ### Assignment
@@ -147,48 +175,41 @@ Complete the numerical formulation of the solution, and then implement it numeri
 
 ---
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
+The splitter and mixer balances, equations (5) through (11), are ATEs. The engineer noted that they will be solved to find $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, $T_{1}$, $T_4$, $\dot{n}_{A,3}$, $\dot{n}_{Z,3}$, and $T_{3}$. When solving them numerically, a guess for those unknowns will be available and must be used to evaluate the residuals, $\epsilon_1$ through $\epsilon_7$ using equations (5) through (11). Before the residuals can be evaluated, the other unknown quantities, $\dot{n}_{A,0}$, $\dot{n}_{Z,0}$, $\dot{n}_{A,2}$, $\dot{n}_{Z,2}$, $T_{2}$, $\dot{n}_{A,4}$, $\dot{n}_{Z,4}$, and $\dot{V}_4$, must be calculated. Equations (19) through (24) can be used to calculate all but $\dot{n}_{A,2}$, $\dot{n}_{Z,2}$ and $T_{2}$.
 
-I know that when solving DAEs of this type, the IVODEs will be solved within the residuals function for the ATEs, so I'll start by considering the solution of the ATEs. There are 7 ATEs, equations (5) through (11), but they contain 13 unknown quantities: $\dot{n}_{A,r}$, $\dot{n}_{A,in}$, $\dot{n}_{Z,r}$, $\dot{n}_{Z,in}$, $T_{in}$, $\dot{V}_r$, $\dot{T}_r$, $\dot{n}_{A,out}$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,out}$, $\dot{n}_{Z,prod}$, $T_{out}$, and $T_{prod}$. I can find 7 of the unknown quantities by solving the ATEs. The others will need to be calculated at the point where the residuals need to be evaluated.
-
-I also know that the initial IVODE values in @tbl-example_K_4_1_initial_values must be among the 7 variables found by solving the ATEs, and the final IVODE values *cannot* be among them. I will solve the ATEs for $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, $T_{prod}$, and $T_r$.
-
-With that choice, at the point where the residuals need to be evaluated, I will have values for those 7 variables, but I'll need to calculate the other 6 unknown quantities. Since I'll know $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$, I can solve the PFR design equations for $\dot{n}_A\left(z\right)$, $\dot{n}_Z\left(z\right)$, and $T\left(z\right)$. The resulting final values are then equal to $\dot{n}_{A,out}$, $\dot{n}_{Z,out}$, and $T_{out}$. Finally, I can use equations (13) through (16) to calculate $\dot{n}_{A,r}$, $\dot{n}_{Z,r}$, and $\dot{V}_r$.
-
-:::
-
-The ATEs, equations (5) through (11) can be solved numerically to find $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$. At the point where the residuals must be evaluated, the molar flow rates and temperature at the reactor outlet can be found by solving the PFR design equations numerically for corresponding values of $z$, $\dot{n_A}$, $\dot{n_Z}$, and $T$ that span the range from $z=0$ to $z=L$. The outlet values are then found using equations (17), (18), and (19).
+Guesses for the initial and final values in @tbl-example_K_4_1_initial_values are available at this point, so the IVODEs, equations (2), (3), and (4), can be solved numerically to get values of $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, spanning the range from the inlet of the PFR to its outlet. The molar flow rates and temperature of stream 2 are simply the outlet values.
 
 $$
-\dot{n}_{A,out} = \dot{n}_A \big\vert_{z=L} \tag{18}
+\dot{n}_{A,2} = \dot{n}_A \big\vert_{z=L} \tag{25}
 $$
 
 $$
-\dot{n}_{Z,out} = \dot{n}_Z \big\vert_{z=L} \tag{19}
+\dot{n}_{Z,2} = \dot{n}_Z \big\vert_{z=L} \tag{26}
 $$
 
 $$
-T_{out} = T \big\vert_{z=L} \tag{20}
+T_2 = T \big\vert_{z=L} \tag{27}
 $$
 
 **Calculations Summary**:
 
+To calculate the quantities of interest, $\dot{n}_{A,3}$, $\dot{n}_{Z,3}$, and $T_3$, the splitter and mixer balances, equations (5) through (11) will be solved numerically to get $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, $T_{1}$, $T_4$, $\dot{n}_{A,3}$, $\dot{n}_{Z,3}$, and $T_{3}$. While doing so, the PFR design equations, (2) - (4), will be solved within the function that evaluates the residuals. The calculation details are as follow.
+
 1. Substitute the given and known quantities in all equations.
 2. When it is necessary to evaluate the residuals
-    a. $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$ will be available
-    b. Solve the PFR design equations, (2) through (4), numerically to get corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_Z$ and $T$.
-    c. calculate $\dot{V}_{prod}$ using equation (13).
-    d. calculate $\dot{V}_r$ using equation (14).
-    e. calculate $\dot{V}_{in}$ using equation (15).
-    f. calculate $\dot{n}_{A,r}$, $\dot{n}_{Z,r}$, $\dot{n}_{A,out}$, $\dot{n}_{Z,out}$, and $T_{out}$ using equations (16) - (20).
-    g. evaluate the residuals, $\epsilon_1$ through $\epsilon_7$ using equations (5) through (11).
+    a. $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, $T_{1}$, $T_4$, $\dot{n}_{A,3}$, $\dot{n}_{Z,3}$, and $T_{3}$ will be available
+    b. Solve the PFR design equations, (2) through (4), numerically to get corresponding sets of values of $z$, $\dot{n}_A$, $\dot{n}_Z$ and $T$ spanning the range from the inlet of the PFR to its outlet.
+    c. calculate $\dot{n}_{A,2}$, $\dot{n}_{Z,2}$ and $T_{2}$ using equations (25) - (27).
+    d. calculate $\dot{n}_{A,0}$, $\dot{n}_{Z,0}$, and $\dot{V}_3$ using equations (19) - (21).
+    e. calculate $\dot{V}_4$, $\dot{n}_{A,4}$, and $\dot{n}_{Z,4}$ using equations (22) - (24).
+    f. evaluate the residuals, $\epsilon_1$ through $\epsilon_7$ using equations (5) through (11).
 3. When it is necessary to evaluate the derivatives
     a. values of $z$, $\dot{n}_A$, $\dot{n}_Z$ and $T$ will be available.
-    b. calculate $\dot{V}_{prod}$ using equation (13).
-    c. calculate $\dot{V}_r$ using equation (14).
-    d. calculate $\dot{V}_{in}$ using equation (15).
-    e. calculate $r$ using equation (12).
+    b. calculate $\dot{V}_3$ using equation (12).
+    c. calculate $\dot{V}_4$ using equation (13).
+    d. calculate $\dot{V}$ and $k_1$ using equations (14) and (15).
+    e. calculate $C_A$ and $C_Z$ using equations (16) and (17).
+    e. calculate $r_1$ using equation (18).
     f. evaluate the derivatives using equations (2), (3), and (4).
 
 
@@ -199,26 +220,25 @@ $$
     a. receives values of $z$, $\dot{n}_{A}$, $\dot{n}_{Z}$, and $T$ as input,
     b. calculates and returns the values of the derivatives as described in step 3 of the calculations summary
 3. Write a reactor model function that
-    a. receives $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, and $T_{in}$ as arguments,
-    b. gets corresponding sets of values of $z$, $\dot{n}_{A}$, $\dot{n}_{Z}$, and $T$ spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it:
+    a. receives $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ as arguments,
+    b. solves the PFR design equations to get corresponding sets of values of $z$, $\dot{n}_{A}$, $\dot{n}_{Z}$, and $T$ spanning the range from the PFR inlet to the PFR outlet by calling an IVODE solver and passing the following information to it:
         i. the initial values and stopping criterion in @tbl-example_K_4_1_initial_values and
         ii. the name of the derivatives function from step 2 above,
     c. checks that the solver successfully solved the IVODEs, and
     d. returns the values returned by the IVODE solver.
 4. Write a residuals function that
-    a. receives values of $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$ as arguments
+    a. receives values of $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, $T_1$, $T_4$, $\dot{n}_{A,3}$, $\dot{n}_{Z,3}$, and $T_3$ as arguments
     b. calculates and returns the residuals as described in step 2 of the calculations summary.
-5. Write an other equipment model function that 
-    a. receives an initial guess ($\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$) for the solution of the ATEs
-    b. gets a solution of the ATEs by calling an ATE solver and passing the following information to it
+5. Write a splitter and mixer model function that 
+    a. receives an initial guess for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, $T_1$, $T_4$, $\dot{n}_{A,3}$, $\dot{n}_{Z,3}$, and $T_3$ as arguments
+    b. calculates $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, $T_1$, $T_4$, $\dot{n}_{A,3}$, $\dot{n}_{Z,3}$, and $T_3$ by calling an ATE solver and passing the following information to it
         i. the initial guess and
         ii. the name of the residuals function from step 4 above,
     c. checks that the solver converged, and
     d. returns the values returned by the ATE solver.
 6. Perform the analysis by
-    a. setting an initial guess for $\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$,
-    b. calling the other equipment model function from step 5 to get a solution ($\dot{n}_{A,in}$, $\dot{n}_{Z,in}$, $T_{in}$, $T_r$, $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$), and
-    c. displaying the results.
+    a. setting an initial guess for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, $T_1$, $T_4$, $\dot{n}_{A,3}$, $\dot{n}_{Z,3}$, and $T_3$,
+    b. calculates $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, $T_1$, $T_4$, $\dot{n}_{A,3}$, $\dot{n}_{Z,3}$, and $T_3$ by calling the splitter and mixer model function from step 5, passing the initial guess as an argument.
 
 ### Results and Discussion
 
