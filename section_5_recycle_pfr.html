@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -465,7 +494,23 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#recycle-pfrs" id="toc-recycle-pfrs" class="nav-link active" data-scroll-target="#recycle-pfrs"><span class="header-section-number">17.1</span> Recycle PFRs</a></li>
+  <li><a href="#analysis-of-recycle-pfrs" id="toc-analysis-of-recycle-pfrs" class="nav-link" data-scroll-target="#analysis-of-recycle-pfrs"><span class="header-section-number">17.2</span> Analysis of Recycle PFRs</a>
+  <ul class="collapse">
+  <li><a href="#solving-the-recycle-pfr-design-equations" id="toc-solving-the-recycle-pfr-design-equations" class="nav-link" data-scroll-target="#solving-the-recycle-pfr-design-equations"><span class="header-section-number">17.2.1</span> Solving the Recycle PFR Design Equations</a></li>
+  <li><a href="#multiplicity-in-steady-state-recycle-pfrs" id="toc-multiplicity-in-steady-state-recycle-pfrs" class="nav-link" data-scroll-target="#multiplicity-in-steady-state-recycle-pfrs"><span class="header-section-number">17.2.2</span> Multiplicity in Steady-State Recycle PFRs</a></li>
+  </ul></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">17.3</span> Example</a>
+  <ul class="collapse">
+  <li><a href="#sec-example_17_3_1" id="toc-sec-example_17_3_1" class="nav-link" data-scroll-target="#sec-example_17_3_1"><span class="header-section-number">17.3.1</span> Producing a Chiral Molecule in a Recycle PFR</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-chapter--sec-5_recycle_pfr" id="toc-symbols-used-in-chapter--sec-5_recycle_pfr" class="nav-link" data-scroll-target="#symbols-used-in-chapter--sec-5_recycle_pfr"><span class="header-section-number">17.4</span> Symbols used in Chapter&nbsp;<span>17</span></a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -489,9 +534,655 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This chapter will be added as soon as I finish writing it.</p>
+<p>One of the most important factors when comparing different reactor systems is the way that the composition and temperature vary over the time during which the reaction is taking place. CSTRs and PFRs represent the two extremes. The temperature and composition are constant for the entire time the reaction is taking place in a CSTR, while they vary continuously over the time the reaction is taking place in a PFR.</p>
+<p><a href="section_5_thermally_backmixed_pfr.html" class="quarto-xref"><span>Chapter 16</span></a> showed how, for an exothermic reaction, the variation of the temperature during the time the reaction is taking place in a PFR can be altered to be a little bit more like a CSTR. That is accomplished by transferring heat from the product stream to the feed stream. This chapter examines a way to alter the variation of both the temperature <u>and the composition</u> during the time the reaction is taking place in a PFR to be a little bit more like a CSTR. To accomplish that, a fraction of the product stream is split off and mixed with the process feed stream. A reactor with this configuration is called a recycle PFR.</p>
+<section id="recycle-pfrs" class="level2" data-number="17.1">
+<h2 data-number="17.1" class="anchored" data-anchor-id="recycle-pfrs"><span class="header-section-number">17.1</span> Recycle PFRs</h2>
+<p>A recycle PFR is depicted in <a href="#fig-recycle_pfr" class="quarto-xref">Figure&nbsp;<span>17.1</span></a>. The system consists of a stream mixer, the PFR, and a stream splitter. The fluid stream, 2, leaving the reactor is split into two streams. One of the resulting streams, 3, is the product stream for the process. The other stream, 4, is called the <em>recycle</em> stream because it is diverted back to the reactor inlet where it is mixed with the fresh feed to the process, stream 0. The resulting mixed stream, 1, is what enters the PFR.</p>
+<div id="fig-recycle_pfr" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-recycle_pfr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/recycle_pfr.png" class="img-fluid figure-img" style="width:60.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-recycle_pfr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;17.1: Schematic representation of a recycle PFR showing the stream mixer, M, PFR reactor, and stream splitter, S.
+</figcaption>
+</figure>
+</div>
+<p>In a steady-state CSTR, the fresh feed is immediately mixed into the reacting fluid. As a consequence, the composition and temperature are at their outlet values for the entire time the fluid reacts. In a PFR, the composition and temperature change continuously as the fluid flows through the reactor starting at their inlet values and ending at their outlet values . By recycling, or backmixing, some of the converted fluid into the fresh feed, the inlet composition and temperature are effectively those of a partially converted feed stream.</p>
+<p>Another way to describe the differences is that in a PFR the composition and temperature of the reacting fluid progress from their inlet values to their outlet values, while in a CSTR, the composition and temperature of the reacting fluid immediately jump to their outlet values. In a recycle PFR, then, the composition and temperature of the reacting fluid immediately jump part of the way to their outlet values and then progress the rest of the way to their outlet values. In that way, adding recycle to a PFR shifts it’s behavior to be more like a CSTR.</p>
+<p>The ratio of the flow rate of stream 4 to that of stream 3 is called the <strong>recycle ratio</strong>, <span class="math inline">\(R_R\)</span>, <a href="#eq-recycle_ratio" class="quarto-xref">Equation&nbsp;<span>17.1</span></a>. As the recycle ratio approaches infinity, that is as more and more of stream 2 is recycled, a recycle PFR approaches the behavior of a CSTR. The recycle ratio can be calculated using volumetric flow rates or the molar flow rate of any reagent, <span class="math inline">\(i\)</span>, present in the system, as shown in the equation.</p>
+<p><span id="eq-recycle_ratio"><span class="math display">\[
+R_R = \frac{\dot{V}_4}{\dot{V}_3} = \frac{\dot{n}_{i,4}}{\dot{n}_{i,3}}
+\tag{17.1}\]</span></span></p>
+<p>Adding thermal backmixing to a PFR shifts it’s thermal behavior to be more like a CSTR without affecting its compositional behavior. In contrast, adding recycle to a PFR shifts all of its behavior to be more like a CSTR. So if the behavior of a CSTR is desired, why not just use a CSTR? Why use a recycle PFR? One situation where a recycle PFR would be preferred over a CSTR is when the reactions taking place require a heterogeneous catalyst. Specifically, the catalyst can be loaded into the PFR with the reacting fluid flowing through the resulting packed bed. This avoids the need to devise a way to achieve the perfect mixing required in a CSTR.</p>
+<p>Generally speaking CSTR-like behavior, whether provided by an actual CSTR or by a recycle PFR, is desired when the outlet composition and temperature result ih a larger rate or better selectivity than the feed composition and temperature. For example, the rate of an exothermic auto-catalytic reaction in an adiabatic reactor is greater at the outlet conditions where the temperature is larger (larger rate coefficient) and the product concentration is higher (which increases the rate of an auto-catalytic reaction).</p>
+<p>In fact, for an exothermic auto-catalytic reaction, a recycle PFR might be preferred over a CSTR. The rate of an auto-catalytic reaction increases with product concentration, but it still must go to zero as the reactant becomes fully consumed. In other words, there is a rate trade-off between high product concentration and low reactant concentration. At very high conversions where the reactant concentration is near zero, the rate in a CSTR will be very small for the entire time the reaction is taking place. In a recycle PFR, the rate at the inlet will be larger than it would be without recycle due to the presence of product at an appreciable concentration and the higher temperature. Then it will decrease as the fluid flows through the PFR, ultimately becoming equal to the rate in a CSTR. Thus, the average rate in the recycle PFR will be greater than the rate in a CSTR, and consequently, the volume of the recycle PFR will be smaller.</p>
+</section>
+<section id="analysis-of-recycle-pfrs" class="level2" data-number="17.2">
+<h2 data-number="17.2" class="anchored" data-anchor-id="analysis-of-recycle-pfrs"><span class="header-section-number">17.2</span> Analysis of Recycle PFRs</h2>
+<p>Three components make-up a recycle PFR: a stream mixer, the PFR, and a stream splitter. In order to model a recycle PFR, design equations are needed for each component. <em>Reaction Engineering Basics</em> only considers steady-state recycle PFRs. The reactor design equations for a steady-state PFR, Equations <a href="section_3_design_equations.html#eq-pfr_ss_mol_balance" class="quarto-xref"><span>6.39</span></a> and <a href="section_3_design_equations.html#eq-pfr_ss_energy_balance" class="quarto-xref"><span>6.40</span></a>, were derived in <a href="apndx_ideal_reactor_models.html" class="quarto-xref"><span>Appendix H</span></a>, presented in <a href="section_3_design_equations.html" class="quarto-xref"><span>Chapter 6</span></a>, and utilized in <a href="section_4_pfr_analysis.html" class="quarto-xref"><span>Chapter 13</span></a>. The general, steady-state mole and reacting fluid energy balances are reproduced below. Recall that these equations also can be written using the reactor volume as the dependent variable, and the sensible heat term can be written in terms of the volumetric or gravimetric heat capacity of the reacting fluid as a whole. If the PFR is heated or cooled using a heat exchange fluid, the appropriate energy balance on that fluid, <a href="section_3_design_equations.html#eq-exchange_energy_bal_sensible" class="quarto-xref">Equation&nbsp;<span>6.2</span></a> or <a href="section_3_design_equations.html#eq-exchange_energy_bal_latent" class="quarto-xref">Equation&nbsp;<span>6.6</span></a>, must be added to the reactor design equations, and if there is pressure drop the appropriate momentum balance, <a href="section_3_design_equations.html#eq-pfr_momentum_balance" class="quarto-xref">Equation&nbsp;<span>6.41</span></a> or <a href="section_3_design_equations.html#eq-pfr_ergun_eqn" class="quarto-xref">Equation&nbsp;<span>6.42</span></a>, must be added.</p>
+<p><span class="math display">\[
+\frac{d \dot{n}_i}{d z}  =\frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j
+\]</span></p>
+<p><span class="math display">\[
+\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right) \frac{d T}{d z} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+\]</span></p>
+<p>Mole and energy balances for stream splitters and stream mixers were presented in <a href="section_5_reactor_networks.html" class="quarto-xref"><span>Chapter 15</span></a> and are reproduced below using the stream notation in <a href="#fig-recycle_pfr" class="quarto-xref">Figure&nbsp;<span>17.1</span></a>. For stream splitters, the fact that all streams are at the same temperature is used in lieu of an energy balance. The energy balance for a stream mixer can also be written in terms of volumetric or gravimetric heat capacities of the flowing fluids.</p>
+<p><span class="math display">\[
+0 = \dot{n}_{i,2} - \dot{n}_{i,3} - \dot{n}_{i,4}
+\]</span></p>
+<p><span class="math display">\[
+T_2 = T_3 = T_4
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{n}_{i,1} - \dot{n}_{i,0} - \dot{n}_{i,4}
+\]</span></p>
+<p><span class="math display">\[
+0 = \sum_i \left( \dot{n}_{i,0} \int_{T_{0}}^{T_{1}} \hat{C}_{p,i} dT + \dot{n}_{i,4} \int_{T_{4}}^{T_{1}} \hat{C}_{p,i} dT  \right)
+\]</span></p>
+<p>When the fluid in a recycle PFR is an incompressible, ideal mixture, balance equations can be written for the volumetric flow rates. Additionally, a balance on the entire process shows that streams 0 and 3 have equal volumetric flow rates, and a balance on just the PFR shows that streams 1 and 2 have equal volumetric flow rates.</p>
+<p><span id="eq-splitter_liq_vol_bal"><span class="math display">\[
+0 = \dot{V}_2 - \dot{V}_3 - \dot{V}_4; \quad \left( \text{incompressible liquids} \right)
+\tag{17.2}\]</span></span></p>
+<p><span id="eq-mixer_liq_vol_bal"><span class="math display">\[
+0 = \dot{V}_1 - \dot{V}_0 - \dot{V}_4; \quad \left( \text{incompressible liquids} \right)
+\tag{17.3}\]</span></span></p>
+<p><span id="eq-overall_vol_flow_bal_recycle"><span class="math display">\[
+\dot{V}_0 = \dot{V}_3; \quad \left( \text{incompressible liquids} \right)
+\tag{17.4}\]</span></span></p>
+<p><span id="eq-reactor_vol_flow_bal_recycle"><span class="math display">\[
+\dot{V}_1 = \dot{V}_2; \quad \left( \text{incompressible liquids} \right)
+\tag{17.5}\]</span></span></p>
+<section id="solving-the-recycle-pfr-design-equations" class="level3" data-number="17.2.1">
+<h3 data-number="17.2.1" class="anchored" data-anchor-id="solving-the-recycle-pfr-design-equations"><span class="header-section-number">17.2.1</span> Solving the Recycle PFR Design Equations</h3>
+<p>The design equations for a recycle PFR form a set of differential-algebraic equations (DAEs). That set of DAEs includes the PFR design equations as IVODEs and the stream mixer and stream splitter mole and energy balances as ATEs. In some instances it may be possible to solve the IVODEs independently from the ATEs. To do that, the composition and temperature of stream 1 must be known. Most commonly, though, the composition of the feed, stream 0, is known and that of stream 1 is unknown.</p>
+<p><a href="apndx_solve_daes.html" class="quarto-xref"><span>Appendix K</span></a> describes how to solve the DAEs for the more common situation where the composition and temperature of stream 0 are known (and not those of stream 1). In essence, the solution is structured as if only the stream mixer mole and energy balances (a set of ATEs) are being solved. When that is done, the number of unknowns in the ATEs will be larger than the number of ATEs. By including the molar flow rates and temperature of stream 1 among the unknowns to be found by solving ATEs, it becomes possible to solve the PFR design equations (a set of IVODEs) within the function that evaluates the ATE residuals.</p>
+<p>When the solution is structured in this way, the mole and energy balances on the stream splitter are typically used within the function that evaluates the ATE residuals, and not solved separately. In addition, solving the stream mixer mole and energy balances only yields the molar flow rates and temperature for stream 1. After the stream splitter balances are solved, the results must be used to solve the PFR design equations. That will yield the molar flow rates and temperature for stream 2. Finally, the molar flow rates and temperature for stream 3 can be calculated using the mole and energy balances on the stream splitter.</p>
+</section>
+<section id="multiplicity-in-steady-state-recycle-pfrs" class="level3" data-number="17.2.2">
+<h3 data-number="17.2.2" class="anchored" data-anchor-id="multiplicity-in-steady-state-recycle-pfrs"><span class="header-section-number">17.2.2</span> Multiplicity in Steady-State Recycle PFRs</h3>
+<p><a href="section_5_thermally_backmixed_pfr.html" class="quarto-xref"><span>Chapter 16</span></a> noted that when the input to a reactor can be affected by the output from that reactor, multiple steady states may be observed. In a recycle PFR, a fraction of the reactor output is mixed into the reactor input, so clearly the input is affected by the output. As such, multiple steady states can occur in recycle PFRs, just as they can in CSTRs and thermally backmixed PFRs. When the inputs and operating parameters for a recycle PFR are fixed and the design equations are being solved to find the reactor outputs, an analysis should be performed to determine whether multiple steady states are possible, and if they are, all of the steady state solutions should be found. Analyses of that type are beyond the scope of <em>Reaction Engineering Basics</em>. They are typically included in more advanced books and courses on reaction engineering. Here, to test for and find multiple steady states the model equations will be solved using different initial guesses to see whether different steady-state solutions are obtained.</p>
+</section>
+</section>
+<section id="example" class="level2" data-number="17.3">
+<h2 data-number="17.3" class="anchored" data-anchor-id="example"><span class="header-section-number">17.3</span> Example</h2>
+<p>The example presented in this section illustrates the analysis of a steady-state recycle PFR to determine the reactor response for an exothermic, auto-catalytic reaction. As noted above, this is one situation where a recycle PFR may outperform both a CSTR and a thermally backmixed PFR.</p>
+<section id="sec-example_17_3_1" class="level3" data-number="17.3.1">
+<h3 data-number="17.3.1" class="anchored" data-anchor-id="sec-example_17_3_1"><span class="header-section-number">17.3.1</span> Producing a Chiral Molecule in a Recycle PFR</h3>
+<p>In liquid phase reaction (1) the chiral molecule, Z, is produced auto-catalytically according to the rate expression given in equation (2). In the absence of the product, Z, the reaction rate is very small. The heat of reaction is -14 kcal mol<sup>-1</sup>, independent of temperature. The pre-exponential factor is equal to 4.2 x 10<sup>15</sup> cm<sup>3</sup> mol<sup>-1</sup> min<sup>-1</sup> and the activation energy is 18 kcal mol<sup>-1</sup>. A solvent is used, and the heat capacity of the reacting solution can be taken to equal that of the solvent, 1.3 cal cm<sup>-3</sup> K<sup>-1</sup>. The density of the liquid may be assumed to be constant. The concentrations of A and Z in the feed to the process are 2 M and 0 M, respectively, and the flow rate is 500 cm<sup>3</sup> min<sup>-1</sup> at 300K. An adiabatic recycle PFR with a recycle ratio of 1.3 is used. The reactor diameter is 5 cm and it is 50 cm long. What are the outlet concentrations of A and Z and the outlet temperature from the process?</p>
+<p><span class="math display">\[
+A \rightarrow Z \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+r_1 = k_1C_AC_Z \tag{2}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This assignment involves a recycle PFR. To begin I’ll draw a schematic of the system, labeling the equipment and flow streams. Then I’ll summarize the assignment using the labels as subscripts when it is necessary to denote the stream or equipment to which a variable applies.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary" class="level4" data-number="17.3.1.1">
+<h4 data-number="17.3.1.1" class="anchored" data-anchor-id="assignment-summary"><span class="header-section-number">17.3.1.1</span> Assignment Summary</h4>
+<p><strong>System Schematic</strong></p>
+<div id="fig-example_17_3_1_schematic" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_17_3_1_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/recycle_pfr.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_17_3_1_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;17.2: Schematic representation of the recycle PFR
+</figcaption>
+</figure>
+</div>
+<p><strong>Reactor Type</strong>: Adiabatic PFR</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(C_{A,3}\)</span>, <span class="math inline">\(C_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span></p>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(\Delta H_1\)</span> = -14 kcal mol<sup>-1</sup>, <span class="math inline">\(k_{0,1}\)</span> = 4.2 x 10<sup>15</sup> cm<sup>3</sup> mol<sup>-1</sup> min<sup>-1</sup>, <span class="math inline">\(E_1\)</span> = 18 kcal mol<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 1.3 cal cm<sup>-3</sup> K<sup>-1</sup>, <span class="math inline">\(C_{A,0}\)</span> = 2 M, <span class="math inline">\(C_{Z,0}\)</span> = 0 M, <span class="math inline">\(\dot{V}_0\)</span> = 500 cm<sup>3</sup> min<sup>-1</sup>, <span class="math inline">\(T_0\)</span> = 300K, <span class="math inline">\(R_R\)</span> = 1.3, <span class="math inline">\(D\)</span> = 5 cm, <span class="math inline">\(L\)</span> = 50 cm, and <span class="math inline">\(R\)</span> = 1.987 cal mol<sup>-1</sup> K<sup>-1</sup>.</p>
+</section>
+<section id="mathematical-formulation-of-the-solution" class="level4" data-number="17.3.1.2">
+<h4 data-number="17.3.1.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution"><span class="header-section-number">17.3.1.2</span> Mathematical Formulation of the Solution</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I know that in order to complete this assignment I’m going to need to create a mathematical model of the adiabatic PFR. That model will solve the PFR design equations, so I’ll begin by generating the reactor design equations needed to model this particular PFR.</p>
+<p>One or mole balances are always needed when modeling a reactor. Here I’ll just write a mole balance for every reagent present in the system. The general form of the steady-state PFR mole balance is given in <a href="section_3_design_equations.html#eq-pfr_ss_mol_balance" class="quarto-xref">Equation&nbsp;<span>6.39</span></a>. There is one reaction, so the summation over the reactions becomes a single term.</p>
+<p><span class="math display">\[
+\frac{d \dot{n}_{i,PFR}}{d z} = \frac{\pi D^2}{4}\sum_j \nu_{i,j}r_j = \frac{\pi D^2}{4}\nu_{i,1}r_1
+\]</span></p>
+<p>The PFR is not isothermal. The temperature will vary along its length due to the heat being released by the reaction. That means that an energy balance must also be included among the reactor design equations. The general form of the steady-state PFR energy balance is given in equation <a href="section_3_design_equations.html#eq-pfr_ss_energy_balance" class="quarto-xref">Equation&nbsp;<span>6.40</span></a>. Here the heat transfer term is zero because the reactor is adiabatic. As above, there is only one reaction. Additionally, the assignment provides a volumetric heat capacity for the reacting liquid, so the sensible heat term can be expressed using that. Finally rearrangement yields the energy balance in the form of a derivative expression, which facilitates numerical solution.</p>
+<p><span class="math display">\[
+\cancelto{\dot{V}_{PFR} \breve{C}_p}{\left(\sum_i \dot{n}_{i,PFR} \hat{C}_{p,i} \right)} \frac{dT_{PFR}}{dz} = \cancelto{0}{\pi D U\left( T_{ex} - T_{PFR}  \right)} - \frac{\pi D^2}{4}\sum_j r_j \Delta H_j
+\]</span></p>
+<p><span class="math display">\[
+\frac{dT_{PFR}}{dz} = - \frac{\pi D^2}{4} \frac{r_1 \Delta H_1}{\dot{V}_{PFR} \breve{C}_p}
+\]</span></p>
+<p>Being adiabatic, a heat exchange fluid is not used in this reactor, and that means an energy balance on the heat exchange fluid is not needed. The assignment narrative also states that the pressure drop is negligible, so a momentum is not needed either. So, the reactor design equations for the PFR consist of the mole and energy balances above.</p>
+</div>
+</div>
+</div>
+<p><strong>PFR Model</strong></p>
+<p><u>Design Equations</u></p>
+<p><span class="math display">\[
+\frac{d \dot{n}_{A,PFR}}{d z} = - \frac{\pi D^2}{4}r_1 \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d \dot{n}_{Z,PFR}}{d z} = \frac{\pi D^2}{4}r_1 \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dT_{PFR}}{dz} = - \frac{\pi D^2}{4} \frac{r_1 \Delta H_1}{\dot{V}_{PFR} \breve{C}_p} \tag{5}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The PFR design equations are IVODEs. The independent variable is <span class="math inline">\(z\)</span>, and dependent variables are <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span>. There are three IVODEs and they contain 3 dependent variables, so I can proceed to solve them.</p>
+<p>At the point where I need to solve the IVODEs numerically, I will need initial values and a stopping criterion. I can define <span class="math inline">\(z=0\)</span> as the inlet to the PFR, i. e. stream 1. The initial values are then the values of the dependent variables in that stream. I also know the reactor length, so I can use that as the stopping criterion.</p>
+<p>I know the reactor length, but I don’t know the molar flow rates of A and Z or the temperature for stream 1, and I can’t calculate them, so they will need to be provided to the reactor model.</p>
+</div>
+</div>
+</div>
+<p><u>Initial Values and Stopping Criterion</u></p>
+<p>The initial values and stopping criterion for solving the design equations are given in <a href="#tbl-example_17_3_1_initial_values" class="quarto-xref">Table&nbsp;<span>17.1</span></a>. The reactor length, <span class="math inline">\(L\)</span>, is known. <strong>The values of <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> will need to be provided at the point where the reactor design equations need to be solved</strong>.</p>
+<div id="tbl-example_17_3_1_initial_values" class="quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_17_3_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;17.1: Initial values and stopping criterion for solving equations, (3) through (5).
+</figcaption>
+<div aria-describedby="tbl-example_17_3_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(L\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,PFR}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,1}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,PFR}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,1}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(T_{PFR}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_1\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The other thing I will need to provide when I want to solve the IVODEs is a function that evaluates the derivatives appearing in the IVODEs at the start of each integration step. That function will be provided with the current values of the independent and dependent variables, <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span>. The given and known constants listed in the assignment summary will also be available. In order to evaluate the derivatives, any other quantities appearing in equations (3) through (5) will need to be calculated. Looking at those IVODEs, the quantities that are not known are <span class="math inline">\(\dot{V}_{PFR}\)</span> and <span class="math inline">\(r_1\)</span>.</p>
+<p>Since this is a liquid system, and assumed to be incompressible, the volumetric flow rate will be constant in the PFR.</p>
+<p><span class="math display">\[
+\dot{V}_1 = \dot{V}_{PFR} = \dot{V}_2
+\]</span></p>
+<p>Also, because it is a liquid system, the feed and product flow rates will be equal.</p>
+<p><span class="math display">\[
+\dot{V}_0 = \dot{V}_3
+\]</span></p>
+<p>The definition of the recycle ratio and a balance on the stream splitter provide two more relationships between the volumetric flow rates of streams 2, 3 and 4.</p>
+<p><span class="math display">\[
+\dot{V}_2 = \dot{V}_3 + \dot{V}_4
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_4 = R_R \dot{V}_3
+\]</span></p>
+<p>Using those equations, I can calculate <span class="math inline">\(\dot{V}_{PFR}\)</span> as described following this callout.</p>
+<p>The rate can be calculated using the rate expression given in equation (2). Before that can be done, the rate coefficient and the concentrations of A and Z must be calculated. The rate coefficient can be calculated using the Arrhenius expression, <a href="section_2_rates_and_expressions.html#eq-arrhenius" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>. The concentrations can be calculated using the defining equation for concentration in a flow system, <a href="section_1_intro_and_defs.html#eq-concentration_open" class="quarto-xref">Equation&nbsp;<span>1.15</span></a>, making sure to use the volumetric flow rate in the PFR.</p>
+</div>
+</div>
+</div>
+<p><u>Derivatives Function</u></p>
+<p>Given the values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span> and those listed in the assignment summary the unknown quantities appearing in equations (3) through (5) can be evaluated using the following sequence of calculations. The derivatives can then be evaluated using equations (3) through (5).</p>
+<p><span class="math display">\[
+\dot{V}_3 = \dot{V}_0
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_4 = R_R \dot{V}_3
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_2 = \dot{V}_3 + \dot{V}_4
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_{PFR} = \dot{V}_2
+\]</span></p>
+<p><span class="math display">\[
+k_1 = k_{0,1} \exp \left( \frac{-E_1}{RT} \right)
+\]</span></p>
+<p><span class="math display">\[
+C_A = \frac{\dot{n}_A}{\dot{V}}
+\]</span></p>
+<p><span class="math display">\[
+C_Z = \frac{\dot{n}_Z}{\dot{V}}
+\]</span></p>
+<p><span class="math display">\[
+r_1 = k_1 C_A C_Z
+\]</span></p>
+<p><u>Solving the PFR Design Equations</u></p>
+<p>The reactor design equations can be solved by calling an IVODE solver, providing it with the initial values and a function that evaluates the derivatives as described above. The results returned by the solver should be checked to make sure that it successfully solved the IVODEs. Assuming success, the solver will return corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span> that span the range from the reactor inlet to the reactor outlet.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The preceding description shows that I can’t solve the PFR design equations independently because I don’t have the molar flow rates and temperature for stream 1 to use as initial values. I know that this is typically the case for a recycle PFR, and that I’ll need to solve them simultaneously with mole and energy balances on the stream mixer. So I’ll need to create a model for the stream mixer. I’ll begin by generating mole and energy balances for it.</p>
+<p>The stream mixer mole balance simply requires that the molar flow rate of each reagent in stream 1 is equal to the sum of its flow rates in streams 0 and 4. The energy balance for a stream mixer is given in <a href="section_5_reactor_networks.html#eq-mixer_energy_bal" class="quarto-xref">Equation&nbsp;<span>15.4</span></a>. It is written in terms of the stream labeling in <a href="#fig-example_17_3_1_schematic" class="quarto-xref">Figure&nbsp;<span>17.2</span></a> earlier in this chapter. Here, however, I have a volumetric heat capacity, so I can express the sensible heats using that. At the same time, I can evaluate the integral.</p>
+<p><span class="math display">\[
+0 = \sum_i \left( \dot{n}_{i,0} \int_{T_{0}}^{T_{1}} \hat{C}_{p,i} dT + \dot{n}_{i,4} \int_{T_{4}}^{T_{1}} \hat{C}_{p,i} dT  \right)
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{V}_0 \breve{C}_p \left( T_1 - T_0 \right) + \dot{V}_4\breve{C}_p \left( T_1 - T_4 \right)
+\]</span></p>
+<p>These equations are already in the form of residual expressions, which facilitates numerical solution.</p>
+</div>
+</div>
+</div>
+<p><strong>Stream Mixer Model</strong></p>
+<p><u>Design Equations</u></p>
+<p><span class="math display">\[
+0 = \dot{n}_{A,1} - \dot{n}_{A,0} - \dot{n}_{A,4} = \epsilon_1 \tag{6|}
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{n}_{Z,1} - \dot{n}_{Z,0} - \dot{n}_{Z,4} = \epsilon_2 \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{V}_0 \breve{C}_p \left( T_1 - T_0 \right) + \dot{V}_4\breve{C}_p \left( T_1 - T_4 \right) = \epsilon_3 \tag{8}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The stream mixer balances are coupled ATEs. There are three ATEs, so I can solve them to find three unknowns. For the reasons explained in <a href="apndx_solve_daes.html" class="quarto-xref"><span>Appendix K</span></a>, I will solve them for the molar flow rates of A and Z and the temperature of stream 1.</p>
+<p>To solve them numerically I’ll need to provide an initial guess for those unknowns, and I’ll need to provide a function that evaluates the ATE residuals each time a new guess is generated. That function will be provided with the values of the unknowns, <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>. The given and known constants listed in the assignment summary will also be available. In order to evaluate the residuals, <span class="math inline">\(\epsilon_1\)</span>, <span class="math inline">\(\epsilon_2\)</span>, and <span class="math inline">\(\epsilon_3\)</span>, every other quantity appearing in equations (6), (7), and (8) will need to be calculated. Looking at those ATEs, the quantities that are not known are <span class="math inline">\(\dot{n}_{A,0}\)</span>, <span class="math inline">\(\dot{n}_{Z,0}\)</span>, <span class="math inline">\(\dot{n}_{A,4}\)</span>, <span class="math inline">\(\dot{n}_{Z,4}\)</span>, <span class="math inline">\(\dot{V}_4\)</span>, and <span class="math inline">\(T_4\)</span>.</p>
+<p>I know the volumetric flow rate and the concentrations in stream 0, so I can use them to calculate the molar flow rates of A and Z in stream zero.</p>
+<p><span class="math display">\[
+\dot{n}_{A,0} = \dot{V}_0 C_{A,0}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,0} = \dot{V}_0 C_{Z,0}
+\]</span></p>
+<p>I already wrote equations for calculating <span class="math inline">\(\dot{V}_4\)</span> when I was formulating the reactor model.</p>
+<p><span class="math display">\[
+\dot{V}_3 = \dot{V}_0
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_4 = R_R \dot{V}_3
+\]</span></p>
+<p>I can’t write equations to calculate the molar flow rates and temperature for stream 4 directly, but since I have <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>, I use the PFR reactor model to get <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span>. The outlet values are the molar flow rates and temperature for stream 2. Since the temperatures of the streams leaving the splitter are equal to the temperature of the stream entering it, that gives me <span class="math inline">\(T_4\)</span>. Then I can use the stream splitter balances to calculate the values for stream 4.</p>
+<p><span class="math display">\[
+\dot{n}_{A,2} = \dot{n}_{A,PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,2} = \dot{n}_{Z,PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+T_2 = T_{PFR} \big \vert_{z=L} = T_4
+\]</span></p>
+<p>The definition of the recycle ratio can be substituted into the splitter mole balance which can then be solved for the molar flow rate in stream 4.</p>
+<p><span class="math display">\[
+0 = \dot{n}_{i,2} - \cancelto{\frac{\dot{n}_{i,4}}{R_R}}{\dot{n}_{i,3}} - \dot{n}_{i,4}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{i,4} = \frac{R_R}{1 + R_R}\dot{n}_{i,2}
+\]</span></p>
+</div>
+</div>
+</div>
+<p><strong>An initial guess for the values of <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> will need to be provided at the point where the stream mixer design equations need to be solved.</strong></p>
+<p><u>Residuals Function</u></p>
+<p>Given the values of <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> and those listed in the assignment summary, the unknown quantities appearing in the residuals expressions, equations (6), (7), and (8), can be evaluated using the following sequence of calculations.</p>
+<p><span class="math display">\[
+\dot{n}_{A,0} = \dot{V}_0 C_{A,0}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,0} = \dot{V}_0 C_{Z,0}
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_3 = \dot{V}_0
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_4 = R_R \dot{V}_3
+\]</span></p>
+<p>Solve the PFR design equations for <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span>.</p>
+<p><span class="math display">\[
+\dot{n}_{A,2} = \dot{n}_{A,PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,2} = \dot{n}_{Z,PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+T_4 = T_3 = T_2 = T_{PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{A,4} = \frac{R_R}{1 + R_R}\dot{n}_{A,2}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,4} = \frac{R_R}{1 + R_R}\dot{n}_{Z,2}
+\]</span></p>
+<p>The residuals, <span class="math inline">\(\epsilon_1\)</span>, <span class="math inline">\(\epsilon_2\)</span>, and <span class="math inline">\(\epsilon_3\)</span>, can then be evaluated using equations (6) through (8).</p>
+<p><u>Solving the Stream Splitter Design Equations</u></p>
+<p>The stream splitter design equations can be solved by calling an ATE solver, providing it with the initial guess for <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> and a function that evaluates the residuals as described above. The results returned by the solver should be checked to make sure the solver converged. Assuming it did converge, it will return the values of <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>At this point, I can use the stream splitter model to calculate <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>. With that result, I can use the reactor model to calculate corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span> that span the range from the reactor inlet to the reactor outlet. The values at the reactor outlet are the values in stream 2. The temperatures of the streams leaving the stream splitter, streams 3 and 4, are equal to the temperature of the stream entering it, stream 2. That gives me the value of one of the quantities of interest, <span class="math inline">\(T_4\)</span>.</p>
+<p>The molar flow rates of A and Z in stream 4 can be calculated in the same way that they were calculated when evaluating the residuals.</p>
+<p><span class="math display">\[
+\dot{n}_{i,4} = \frac{R_R}{1 + R_R}\dot{n}_{i,2}
+\]</span></p>
+<p>Then a mole balance on the stream splitter can be used to calculate their flow rates in stream 3.</p>
+<p><span class="math display">\[
+\dot{n}_{i,3} = \dot{n}_{i,2} - \dot{n}_{i,4}
+\]</span></p>
+<p>Their concentrations in stream 3 can be calculated using the defining equation for concentration for a flow system, <a href="section_1_intro_and_defs.html#eq-concentration_open" class="quarto-xref">Equation&nbsp;<span>1.15</span></a>.</p>
+<p><span class="math display">\[
+C_{i,3} = \frac{\dot{n}_{i,3}}{\dot{V}_3}
+\]</span></p>
+<p>The volumetric flow rate of stream 3 in that equation can be calculated in the same way that it was calculated when evaluating the PFR derivatives.</p>
+<p><span class="math display">\[
+\dot{V}_3 = \dot{V}_0
+\]</span></p>
+<p>With that, all of the quantities of interest will have been calculated.</p>
+</div>
+</div>
+</div>
+<p><strong>Performing the Analysis</strong></p>
+<p>The complete analysis can be performed as follows.</p>
+<ol type="1">
+<li>Guess the values of <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>.</li>
+<li>Use the stream splitter model as described above to calculate <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>.</li>
+<li>Provide the results to the PFR model and use it as described above to get corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span> that span the range from the reactor inlet to the reactor outlet.</li>
+<li>Perform the following sequence of calculations to find the quantities of interest, <span class="math inline">\(C_{A,3}\)</span>, <span class="math inline">\(C_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span>.</li>
+</ol>
+<p><span class="math display">\[
+\dot{n}_{A,2} = \dot{n}_{A,PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,2} = \dot{n}_{Z,PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+T_4 = T_{PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{A,4} = \frac{R_R}{1 + R_R}\dot{n}_{A,2}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,4} = \frac{R_R}{1 + R_R}\dot{n}_{Z,2}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{A,3} = \dot{n}_{A,2} - \dot{n}_{A4}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,3} = \dot{n}_{Z,2} - \dot{n}_{Z4}
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_3 = \dot{V}_0
+\]</span></p>
+<p><span class="math display">\[
+C_{A,3} = \frac{\dot{n}_{A,3}}{\dot{V}_3}
+\]</span></p>
+<p><span class="math display">\[
+C_{Z,3} = \frac{\dot{n}_{Z,3}}{\dot{V}_3}
+\]</span></p>
+</section>
+<section id="numerical-implementation-of-the-solution" class="level4" data-number="17.3.1.3">
+<h4 data-number="17.3.1.3" class="anchored" data-anchor-id="numerical-implementation-of-the-solution"><span class="header-section-number">17.3.1.3</span> Numerical implementation of the Solution</h4>
+<p>Create a computer function and within that function do the following:</p>
+<ol type="1">
+<li>Make the given and known constants available everywhere within the function.</li>
+<li>Write a derivatives function that
+<ol type="a">
+<li>receives the independent and dependent variables, <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, as arguments,</li>
+<li>evaluates the derivatives as described above for the PFR model, and</li>
+<li>returns the values of <span class="math inline">\(\frac{d\dot{n}_{A,PFR}}{dz}\)</span>, <span class="math inline">\(\frac{d\dot{n}_{Z,PFR}}{dz}\)</span>, and <span class="math inline">\(\frac{dT_{PFR}}{dz}\)</span>.</li>
+</ol></li>
+<li>Write a PFR function that
+<ol type="a">
+<li><span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> as arguments,</li>
+<li>solves the PFR reactor design equations as described above for the PFR model, and</li>
+<li>returns corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span>.</li>
+</ol></li>
+<li>Write a residuals function that
+<ol type="a">
+<li>receives <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> as arguments,</li>
+<li>evaluates the residuals as described above for the stream mixer model, and</li>
+<li>returns the values of <span class="math inline">\(\epsilon_1\)</span>, <span class="math inline">\(\epsilon_2\)</span>, and <span class="math inline">\(\epsilon_3\)</span>.</li>
+</ol></li>
+<li>Write a stream mixer model function that
+<ol type="a">
+<li>receives guesses for <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> as arguments,</li>
+<li>calculates <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> as described above for the stream mixer model, and</li>
+<li>returns the resulting values of <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>.</li>
+</ol></li>
+<li>Write an analysis function that performs the analysis as described above and displays the results.</li>
+<li>Call the analysis function.</li>
+</ol>
+</section>
+<section id="results-and-discussion" class="level4" data-number="17.3.1.4">
+<h4 data-number="17.3.1.4" class="anchored" data-anchor-id="results-and-discussion"><span class="header-section-number">17.3.1.4</span> Results and Discussion</h4>
+<p>A computer function was created following the directions in the preceding section to perform the calculations as described above. The concentrations of A and Z in stream 3 are 0.112 and 1.89 M and its temperature is 320 K. Notice that there is no Z in the feed to the process, and the rate is proportional to the concentration of Z. If this feed had been processed in a PFR without recycle, no reaction would have taken place. Because the recycle stream contains reagent Z, the rate in the recycle reactor is not equal to zero and a significant amount of A is converted to Z.</p>
+<p>Due to the backmixing, it is possible that other steady states exist. The calculations were repeated using different initial guesses, and indeed, two additional steady states were identified. The first is a trivial solution where <span class="math inline">\(C_{A,3} = C_{A,0}\)</span>, <span class="math inline">\(C_{Z,3} = C_{Z,0}\)</span>, and <span class="math inline">\(T_3 = T_0\)</span>. Clearly, in this system the reaction never got started. The feed, containing only reagent A, is mixed with a recycle stream containing only reagent A and fed to the reactor. There isn’t any reagent Z present, so reaction occurs. The effluent is at the feed temperature and again contains only reagent A.</p>
+<p>The other steady state has an outlet concentration of A equal to 1.93 M, an outlet concentration of Z equal to 0.0725 M, and an outlet temperature of 301 K. No attempt was made to determine the stability of the three steady states.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span style="color:blue">SC</span>o<span style="color:red">RE</span> Connection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in <a href="http://buffalobadger.github.io/SCoRE/class_26.html">SCoRE</a>.</p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="symbols-used-in-chapter--sec-5_recycle_pfr" class="level2" data-number="17.4">
+<h2 data-number="17.4" class="anchored" data-anchor-id="symbols-used-in-chapter--sec-5_recycle_pfr"><span class="header-section-number">17.4</span> Symbols used in <a href="#sec-5_recycle_pfr" class="quarto-xref">Chapter&nbsp;<span>17</span></a></h2>
+<table class="table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(f_i\)</span></td>
+<td style="text-align: left;">Fractional conversion of reactant <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(k_j\)</span></td>
+<td style="text-align: left;">Rate coefficient for reaction <span class="math inline">\(j\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(k_{0,j}\)</span></td>
+<td style="text-align: left;">Arrhenius pre-exponential factor for rate coefficient <span class="math inline">\(k_j\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}_i\)</span></td>
+<td style="text-align: left;">Molar flow rate of reagent <span class="math inline">\(i\)</span>; an additional subscript denotes the flow stream or reactor.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(r_j\)</span></td>
+<td style="text-align: left;">Rate of reaction <span class="math inline">\(j\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(y_i\)</span></td>
+<td style="text-align: left;">Gas phase mole fraction of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">! <span class="math inline">\(z\)</span></td>
+<td style="text-align: left;">Distance from the inlet of a PFR in the axial direction.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(A\)</span></td>
+<td style="text-align: left;">Heat transfer area.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(C_i\)</span></td>
+<td style="text-align: left;">Concentration of reagent <span class="math inline">\(i\)</span>; an additional subscript denotes the flow stream.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\hat{C}_{p,i}\)</span></td>
+<td style="text-align: left;">Molar heat capacity of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\tilde{C}_{p}\)</span></td>
+<td style="text-align: left;">Gravimetric heat capacity.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\breve{C}_{p}\)</span></td>
+<td style="text-align: left;">Volumetric heat capacity.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(D\)</span></td>
+<td style="text-align: left;">PFR diameter.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(E_j\)</span></td>
+<td style="text-align: left;">Arrhenius activation energy for rate coefficient <span class="math inline">\(k_j\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(L\)</span></td>
+<td style="text-align: left;">Length of the PFR.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(P\)</span></td>
+<td style="text-align: left;">Pressure.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(P_i\)</span></td>
+<td style="text-align: left;">Parial pressure of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(R\)</span></td>
+<td style="text-align: left;">Ideal gas constant.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(R_R\)</span></td>
+<td style="text-align: left;">Recycle ratio.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: left;">Temperature; an additional subscript denotes the flow stream or reactor.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(U\)</span></td>
+<td style="text-align: left;">Heat transfer coefficient; an additional subscript denotes the type of temperature difference to be used with it.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: left;">Volume; an additional subscript denotes the equipment.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{V}\)</span></td>
+<td style="text-align: left;">Volumetric flow rate; an additional subscript denotes the flow stream or reactor.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\epsilon\)</span></td>
+<td style="text-align: left;">Residual; an additional subscript is used to differentiate between multiple residuals.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\nu_{i,j}\)</span></td>
+<td style="text-align: left;">Stoichiometric coefficient of reagent <span class="math inline">\(i\)</span> in reaction <span class="math inline">\(j\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\Delta H_j\)</span></td>
+<td style="text-align: left;">Heat of reaction <span class="math inline">\(j\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\Delta T\)</span></td>
+<td style="text-align: left;">Temperature difference in a heat exchanger; an additional denotes the type (e. g. arithmetic mean, log-mean, or cold).</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
