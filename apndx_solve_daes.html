@@ -501,13 +501,9 @@ window.Quarto = {
   <li><a href="#daes-in-reaction-engineering-basics" id="toc-daes-in-reaction-engineering-basics" class="nav-link active" data-scroll-target="#daes-in-reaction-engineering-basics"><span class="header-section-number">K.1</span> DAEs in <em>Reaction Engineering Basics</em></a></li>
   <li><a href="#sec-form_soln_daes" id="toc-sec-form_soln_daes" class="nav-link" data-scroll-target="#sec-form_soln_daes"><span class="header-section-number">K.2</span> Mathematical Formulation of the Solution of DAEs</a></li>
   <li><a href="#sec-impl_soln_daes" id="toc-sec-impl_soln_daes" class="nav-link" data-scroll-target="#sec-impl_soln_daes"><span class="header-section-number">K.3</span> Numerical Implementation of the Solution of DAEs</a></li>
-  <li><a href="#sec-example_K" id="toc-sec-example_K" class="nav-link" data-scroll-target="#sec-example_K"><span class="header-section-number">K.4</span> Example Solution of a Set of DAEs for a Recycle PFR</a>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">K.4</span> Example</a>
   <ul class="collapse">
-  <li><a href="#assignment-summary" id="toc-assignment-summary" class="nav-link" data-scroll-target="#assignment-summary"><span class="header-section-number">K.4.1</span> Assignment Summary</a></li>
-  <li><a href="#mathematical-formulation-of-the-solution" id="toc-mathematical-formulation-of-the-solution" class="nav-link" data-scroll-target="#mathematical-formulation-of-the-solution"><span class="header-section-number">K.4.2</span> Mathematical Formulation of the Solution</a></li>
-  <li><a href="#assignment" id="toc-assignment" class="nav-link" data-scroll-target="#assignment"><span class="header-section-number">K.4.3</span> Assignment</a></li>
-  <li><a href="#numerical-implementation-of-the-solution" id="toc-numerical-implementation-of-the-solution" class="nav-link" data-scroll-target="#numerical-implementation-of-the-solution"><span class="header-section-number">K.4.4</span> Numerical Implementation of the Solution</a></li>
-  <li><a href="#results-and-discussion" id="toc-results-and-discussion" class="nav-link" data-scroll-target="#results-and-discussion"><span class="header-section-number">K.4.5</span> Results and Discussion</a></li>
+  <li><a href="#sec-example_K" id="toc-sec-example_K" class="nav-link" data-scroll-target="#sec-example_K"><span class="header-section-number">K.4.1</span> Numerical Aspects of Modeling a Recycle PFR</a></li>
   </ul></li>
   <li><a href="#symbols-used-in-sec-apndx_solve_daes" id="toc-symbols-used-in-sec-apndx_solve_daes" class="nav-link" data-scroll-target="#symbols-used-in-sec-apndx_solve_daes"><span class="header-section-number">K.5</span> Symbols Used in <span>Appendix K</span></a></li>
   </ul>
@@ -535,88 +531,104 @@ window.Quarto = {
 </header>
 
 
-<p>A set of differential-algebraic equations (DAEs) includes two subsets of equations. One subset contains differential equations and the other contains ATEs. Only one type of DAEs are important in <em>Reaction Engineering Basics</em>, and they can be solved using the same solvers as are used for ATEs and IVODEs (see <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a> and <a href="apndx_solve_ivodes.html" class="quarto-xref"><span>Appendix J</span></a>).</p>
+<p>A set of differential-algebraic equations (DAEs) includes two subsets of equations. One subset contains IVODEs and the other contains ATEs. The distinguishing feature of DAEs is that the IVODEs and the ATEs are coupled. That is, there are some unknowns that appear in both the IVODEs and the ATEs. In <em>Reaction Engineering Basics</em>, DAEs are only encountered when analyzing simple reactor systems that include a PFR.</p>
+<p>When a set of ATEs is solved numerically, a computer program called an ATE solver is used. <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a> describes how ATE solvers work, what they require as input, and how to use them. Similarly, when a set of IVODEs is solved numerically an IVODE solver is used. <a href="apndx_solve_ivodes.html" class="quarto-xref"><span>Appendix J</span></a> describes how IVODE solvers work, what they require as input, and how to use them.</p>
+<p>When a set of DAEs of the kind encountered in <em>Reaction Engineering Basics</em> needs to be solved, it isn’t necessary to use a DAE solver. The DAEs can be solved using ATE and IVODE solvers. Thus, assuming the reader is familiar with Appendices <a href="apndx_solve_ates.html" class="quarto-xref"><span>I</span></a> and <a href="apndx_solve_ivodes.html" class="quarto-xref"><span>J</span></a>, this appendix does not need to describe how a DAE solver works, what it requires as input, or how to use it. However, in order to solve the DAEs using ATE and IVODE solvers, the equations need to be formulated properly. The purpose of this appendix, then, is to describe how to mathematically formulate the solution of a set of DAEs so that they can be solved using ATE and IVODE solvers.</p>
 <section id="daes-in-reaction-engineering-basics" class="level2" data-number="K.1">
 <h2 data-number="K.1" class="anchored" data-anchor-id="daes-in-reaction-engineering-basics"><span class="header-section-number">K.1</span> DAEs in <em>Reaction Engineering Basics</em></h2>
-<p><a href="apndx_solve_ivodes.html" class="quarto-xref"><span>Appendix J</span></a> describes how to solve IVODEs with an unknown initial value or when an unknown constant appears in the IVODEs. In essence, an implicit ATE is written for the unknown initial value or constant. Then that implicit ATE is solved together with the IVODEs. The solution of a set of DAEs as described here uses a very similar approach.</p>
-<p>In <em>Reaction Engineering Basics</em> the IVODE subset of the DAEs will always be the reactor design equations for a PFR. The ATE subset of the DAEs will be mole and energy balances on other equipment associated with the PFR. Specifically the ATEs will be mole and energy balances on a heat exchanger when analyzing a thermally back-mixed PFR or mole and energy balances on a stream mixer and a stream splitter when analyzing a recycle PFR.</p>
+<p>In <em>Reaction Engineering Basics</em> the IVODE subset of the DAEs will always be the reactor design equations for a PFR. The ATE subset of the DAEs will be mole and energy balances on other equipment connected to the PFR. Specifically the ATEs will be mole and energy balances on a heat exchanger when analyzing a thermally back-mixed PFR or mole and energy balances on a stream mixer when analyzing a recycle PFR.</p>
+<p><a href="apndx_solve_ivodes.html" class="quarto-xref"><span>Appendix J</span></a> describes how to solve IVODEs with an unknown initial value or when an unknown constant appears in the IVODEs. In essence, an implicit ATE is written for the unknown initial value or constant. The IVODEs then are solved each time the residual for the implicit ATE is evaluated. The solution of a set of DAEs as described here uses a very similar approach.</p>
 </section>
 <section id="sec-form_soln_daes" class="level2" data-number="K.2">
 <h2 data-number="K.2" class="anchored" data-anchor-id="sec-form_soln_daes"><span class="header-section-number">K.2</span> Mathematical Formulation of the Solution of DAEs</h2>
-<p>After summarizing the assignment, the mathematical formulation of the solution begins with writing the PFR reactor design equations and identifying the initial values and stopping criterion that will be used when solving them. The next step is to write mole and energy balances on the heat exchanger or on the stream splitter and stream mixer. The PFR reactor design equations will be IVODEs and the other mole and energy balances will be ATEs that together make up the set of DAEs being solved.</p>
-<p>The solution of the DAEs starts with the ATEs. The number of unknown quantities appearing in the ATEs will be greater than the number of ATEs. The unknown quantities will include initial values of the IVODE dependent variables, final values of the IVODE dependent variables, and other unknown quantities. <strong>The key to solving the DAEs</strong> is that the ATEs are solved to find the unknown IVODE <em>initial</em> values and the other unknown quantities. It is critically important that <strong>the ATEs are not solved to find the unknown IVODE <em>final</em> values</strong>.</p>
-<p>As described in <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a>, when an ATE solver is used to solve the ATEs numerically, it must be provided with two things. The first is an initial guess for the solution of the ATEs. The second is a residuals function. The residuals function must accept a guess for the solution as an argument. It must use that guess to calculate the values of any remaining unknown quantities appearing in the residuals expressions, evaluate the residuals, and return their values.</p>
-<p>So, for this type of DAEs, when the residuals function receives a guess for the solution of the ATEs, that guess will include values for the IVODE initial values. Using those initial values, the IVODEs can be solved numerically to get the IVODE final values. Then, using those final values, the residuals can be evaluated and returned.</p>
-<p>The key point is that the IVODEs are solved numerically <u>within</u> the residuals function, because within the residuals function the necessary initial values are available. The numerical solution of the IVODEs can be accomplished exactly as described in <a href="apndx_solve_ivodes.html" class="quarto-xref"><span>Appendix J</span></a>.</p>
+<p>After summarizing the assignment, the mathematical formulation of the solution should begin with the formulation of a model for the PFR only. Doing so will reveal whether the PFR design equations can be solved independently from the equations for all other equipment in the system. If they can, then the IVODEs are not mathematically coupled to any ATEs, and the information in this appendix is not needed. In many cases, however, formulating the PFR design equations will show that they cannot be solved independently. Specifically, the necessary initial values of one or more dependent variables will be unknown.</p>
+<p>If the IVODEs cannot be solved independently, the next step is to formulate a model for the heat exchanger or stream mixer that precedes the PFR in the system. Formulation of this model will reveal that there are more unknowns than equations. If the equations in this model were going to be solved analytically, this would mean that they could not be solved independently. In essence, in order to solve the PFR model, the solution of the heat exchanger or mixer model would be needed, and to solve the heat exchanger or mixer model, the solution to the PFR design equations would be needed.</p>
+<p>When the heat exchanger or stream mixer model (ATEs) is going to be solved numerically, however, that is not the case. As noted, the number of unknown quantities will be greater than the number of ATEs. The unknown quantities appearing in the ATEs will include the initial values of the IVODE dependent variables, among other unknown quantities. <strong>The key to solving the ATEs</strong> is to include the unknowns that are also initial values in the IVODEs among the unknowns to be found by solving the ATEs.</p>
+<p>As described in <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a>, when an ATE solver is used to solve the ATEs numerically, it must be provided with two things. The first is an initial guess for the solution of the ATEs. The second is a residuals function. The residuals function must accept a guess for the solution of the ATEs as an argument. It must use that guess to calculate the values of any remaining unknown quantities appearing in the residuals expressions, evaluate the residuals, and return their values.</p>
+<p>So in the present situation, the ATEs are being solved to find the IVODE initial values (and perhaps other quantities). As such, when the residuals function will receive a guess that includes the IVODE initial values. Using those initial values, the IVODEs can be solved numerically within the residuals function. The results from doing so can then be used to calculate any additional unknown quantities appearing in the residuals expressions, after which, the residuals can be evaluated.</p>
+<p>The key point is that the IVODEs are solved numerically <u>within</u> the residuals function where the necessary initial values are available. The numerical solution of the IVODEs can be accomplished exactly as described in <a href="apndx_solve_ivodes.html" class="quarto-xref"><span>Appendix J</span></a>.</p>
 </section>
 <section id="sec-impl_soln_daes" class="level2" data-number="K.3">
 <h2 data-number="K.3" class="anchored" data-anchor-id="sec-impl_soln_daes"><span class="header-section-number">K.3</span> Numerical Implementation of the Solution of DAEs</h2>
-<p>The numerical implementation of the solution entails writing code similar to that used with solving ATEs (<a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a>) and IVODEs (<a href="apndx_solve_ivodes.html" class="quarto-xref"><span>Appendix J</span></a>). Some of the code calls the ATE and IVODE solvers, and some of the code is called by those solvers. The specifics of writing the code will depend upon the mathematics software being used and programmer preferences. Here it is assumed that the code is split into several functions, each of which performs a specific task. There are many other, equally valid ways to structure the code. The function structure used herein is described below.</p>
+<p>The mathematical formulation of the solution began with the formulation of a PFR model wherein the PFR reactor design equations are solved. The numerical implementation of the solution begins with writing related computer functions. Specifically, a PFR model function and a derivatives function must be written as detailed here.</p>
 <dl>
-<dt>other equipment model function</dt>
-<dd>
-receives an initial guess for the solution of the mole and energy balances on equipment other than the reactor (i. e. the ATEs), calls an ATE solver, passing the initial guess and the name of the residuals function (below), checks that the ATE solver converged, and returns one solution of the ATEs.
-</dd>
-<dt>residuals function</dt>
-<dd>
-receives a guess for the solution of the ATEs, calls the reactor model function to solve the IVODEs using the guess, uses the results to evaluate and return the residuals corresponding to the ATEs.
-</dd>
-<dt>reactor model function</dt>
-<dd>
-receives the initial values, sets the stopping criterion, calls an IVODE solver, and returns corresponding sets of values of the independent variable and each of the dependent variables spanning the range from their initial value to their final value.
-</dd>
 <dt>derivatives function</dt>
 <dd>
-receives the values of the independent and dependent variables at the start of an integration step, uses them to evaluate the derivatives and returns their values.
+receives the values of the independent and dependent variables at the start of an integration step as arguments, uses them to evaluate the derivatives and returns their values.
 </dd>
-<dt>top-level code (and/or a master calculations function)</dt>
+<dt>PFR model function</dt>
+<dd>
+receives the initial values of the dependent variables as arguments, calls an IVODE solver, passing the initial values, stopping criterion, and the name of the derivatives function above, checks that a solution was obtained, and returns corresponding sets of values of the independent variable and each of the dependent variables spanning the range from the reactor inlet to the reactor outlet.
+</dd>
+</dl>
+<p>The next step in the mathematical formulation was the formulation of a model for the heat exchanger or stream mixer. The next step in the numerical implementation is writing related computer functions. The heat exchanger/stream mixer model is a set of ATEs, so a heat exchanger/stream mixer model function that solves those ATEs and a residuals function must be written as described here.</p>
+<dl>
+<dt>residuals function</dt>
+<dd>
+receives a guess for the solution of the ATEs that includes the initial values needed to solve the PFR design equations, calls the reactor model function, passing those initial values as argument, to solve the IVODEs, uses the results to calculate any other unknown quantities appearing in the ATEs, evaluates the residuals and returns their values.
+</dd>
+<dt>heat exchanger/stream mixer model function</dt>
+<dd>
+receives an initial guess for the solution of the heat exchanger/stream mixer design equations (i. e. the ATEs), calls an ATE solver, passing the initial guess and the name of the residuals function above as arguments, checks that the ATE solver converged, and returns one solution of the ATEs.
+</dd>
+</dl>
+<p>The numerical implementation is completed by writing an analysis function that uses the preceding functions to perform the analysis and calculate the quantities of interest</p>
+<dl>
+<dt>analysis function</dt>
 <dd>
 establishes a mechanism for making quantities available to all functions, sets an initial guess for the solution of the other equipment ATEs, calls the other equipment model function to get a solution of the ATEs, and perfroms any additional calculations that are necessary.
 </dd>
 </dl>
 </section>
-<section id="sec-example_K" class="level2" data-number="K.4">
-<h2 data-number="K.4" class="anchored" data-anchor-id="sec-example_K"><span class="header-section-number">K.4</span> Example Solution of a Set of DAEs for a Recycle PFR</h2>
-<p>A reaction engineer has been given an assignment (see <a href="section_5_recycle_pfr.html#sec-example_17_3_1" class="quarto-xref">Example&nbsp;<span>17.3.1</span></a>) that requires analyzing the use of an adiabatic, steady-state, recycle PFR like that in <a href="#fig-example_K_4_1_schematic" class="quarto-xref">Figure&nbsp;<span>K.1</span></a> for reaction (1). The engineer summarized the assignment as shown below.</p>
+<section id="example" class="level2" data-number="K.4">
+<h2 data-number="K.4" class="anchored" data-anchor-id="example"><span class="header-section-number">K.4</span> Example</h2>
+<p>This appendix did not introduce any new numerical methods. The one new topic it touched on was how to structure the solution mathematically so that the analysis can be performed using ATE and IVODE solvers. As such, there aren’t any new numerical methods that need to be demonstrated, and it isn’t clear that an example is necessary. As a compromise, <a href="section_5_recycle_pfr.html#sec-example_17_3_1" class="quarto-xref">Example&nbsp;<span>17.3.1</span></a> is reproduced here, but with different expert thinking callouts that are intended to highlight how the solution of the ATEs was formulated to allow solution of the models. The equations used in the example are not derived here, see <a href="section_5_recycle_pfr.html#sec-example_17_3_1" class="quarto-xref">Example&nbsp;<span>17.3.1</span></a> for that.</p>
+<section id="sec-example_K" class="level3" data-number="K.4.1">
+<h3 data-number="K.4.1" class="anchored" data-anchor-id="sec-example_K"><span class="header-section-number">K.4.1</span> Numerical Aspects of Modeling a Recycle PFR</h3>
+<p>In liquid phase reaction (1) the chiral molecule, Z, is produced auto-catalytically according to the rate expression given in equation (2). In the absence of the product, Z, the reaction rate is very small. The heat of reaction is -14 kcal mol<sup>-1</sup>, independent of temperature. The pre-exponential factor is equal to 4.2 x 10<sup>15</sup> cm<sup>3</sup> mol<sup>-1</sup> min<sup>-1</sup> and the activation energy is 18 kcal mol<sup>-1</sup>. A solvent is used, and the heat capacity of the reacting solution can be taken to equal that of the solvent, 1.3 cal cm<sup>-3</sup> K<sup>-1</sup>. The density of the liquid may be assumed to be constant. The concentrations of A and Z in the feed to the process are 2 M and 0 M, respectively, and the flow rate is 500 cm<sup>3</sup> min<sup>-1</sup> at 300K. An adiabatic recycle PFR with a recycle ratio of 1.3 is used. The reactor diameter is 5 cm and it is 50 cm long. What are the outlet concentrations of A and Z and the outlet temperature from the process?</p>
 <p><span class="math display">\[
 A \rightarrow Z \tag{1}
 \]</span></p>
-<section id="assignment-summary" class="level3" data-number="K.4.1">
-<h3 data-number="K.4.1" class="anchored" data-anchor-id="assignment-summary"><span class="header-section-number">K.4.1</span> Assignment Summary</h3>
-<p><strong>Given and Known Constants</strong>: <span class="math inline">\(\Delta H_1\)</span> = -14 kcal mol<sup>-1</sup>, <span class="math inline">\(k_{0,1}\)</span> = 4.2 x 10<sup>15</sup> cm<sup>3</sup> mol<sup>-1</sup> min<sup>-1</sup>, <span class="math inline">\(E_1\)</span> = 18 kcal mol<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 1.3 cal cm<sup>-3</sup> K<sup>-1</sup>, <span class="math inline">\(C_{A,0}\)</span> = 2 M, <span class="math inline">\(C_{Z,0}\)</span> = 0 M, <span class="math inline">\(\dot{V}_0\)</span> = 500 cm<sup>3</sup> min<sup>-1</sup>, <span class="math inline">\(T_0\)</span> = 300K, <span class="math inline">\(R_R\)</span> = 1.3, <span class="math inline">\(D\)</span> = 5 cm, <span class="math inline">\(L\)</span> = 50 cm, and <span class="math inline">\(R\)</span> = 1.987 cal mol<sup>-1</sup> K<sup>-1</sup>.</p>
-<p><strong>Reactor System</strong>: Adiabatic, steady-state, recycle PFR.</p>
-<p><strong>Quantities of Interest</strong>: <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span>.</p>
+<p><span class="math display">\[
+r_1 = k_1C_AC_Z \tag{2}
+\]</span></p>
+<section id="assignment-summary" class="level4" data-number="K.4.1.1">
+<h4 data-number="K.4.1.1" class="anchored" data-anchor-id="assignment-summary"><span class="header-section-number">K.4.1.1</span> Assignment Summary</h4>
+<p><strong>System Schematic</strong></p>
 <div id="fig-example_K_4_1_schematic" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-example_K_4_1_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="Graphics/recycle_pfr.png" class="img-fluid figure-img" style="width:60.0%">
+<img src="Graphics/recycle_pfr.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_K_4_1_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;K.1: Schematic representation of a recycle PFR.
+Figure&nbsp;K.1: Schematic representation of the recycle PFR
 </figcaption>
 </figure>
 </div>
+<p><strong>Reactor Type</strong>: Adiabatic PFR</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(C_{A,3}\)</span>, <span class="math inline">\(C_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span></p>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(\Delta H_1\)</span> = -14 kcal mol<sup>-1</sup>, <span class="math inline">\(k_{0,1}\)</span> = 4.2 x 10<sup>15</sup> cm<sup>3</sup> mol<sup>-1</sup> min<sup>-1</sup>, <span class="math inline">\(E_1\)</span> = 18 kcal mol<sup>-1</sup>, <span class="math inline">\(\breve{C}_p\)</span> = 1.3 cal cm<sup>-3</sup> K<sup>-1</sup>, <span class="math inline">\(C_{A,0}\)</span> = 2 M, <span class="math inline">\(C_{Z,0}\)</span> = 0 M, <span class="math inline">\(\dot{V}_0\)</span> = 500 cm<sup>3</sup> min<sup>-1</sup>, <span class="math inline">\(T_0\)</span> = 300K, <span class="math inline">\(R_R\)</span> = 1.3, <span class="math inline">\(D\)</span> = 5 cm, <span class="math inline">\(L\)</span> = 50 cm, and <span class="math inline">\(R\)</span> = 1.987 cal mol<sup>-1</sup> K<sup>-1</sup>.</p>
 </section>
-<section id="mathematical-formulation-of-the-solution" class="level3" data-number="K.4.2">
-<h3 data-number="K.4.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution"><span class="header-section-number">K.4.2</span> Mathematical Formulation of the Solution</h3>
-<p>The engineer then generated the reactor design equations, (2), (3), and (4); the initial values and stopping criterion in <a href="#tbl-example_K_4_1_initial_values" class="quarto-xref">Table&nbsp;<span>K.1</span></a>; the mole and energy balances on the stream mixer, equations (5), (6), and (7); and the mole and energy balances on the stream splitter, equations (8), (9), (10), and (11).</p>
-<p><strong>Reactor Design Equations</strong></p>
+<section id="mathematical-formulation-of-the-solution" class="level4" data-number="K.4.1.2">
+<h4 data-number="K.4.1.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-solution"><span class="header-section-number">K.4.1.2</span> Mathematical Formulation of the Solution</h4>
+<p><strong>PFR Model</strong></p>
+<p><u>Design Equations</u></p>
 <p><span class="math display">\[
-\frac{d\dot{n}_A}{dz} = - \frac{\pi D^2}{4}r_1 \tag{2}
+\frac{d \dot{n}_{A,PFR}}{d z} = - \frac{\pi D^2}{4}r_1 \tag{3}
 \]</span></p>
 <p><span class="math display">\[
-\frac{d\dot{n}_Z}{dz} =  \frac{\pi D^2}{4}r_1 \tag{3}
+\frac{d \dot{n}_{Z,PFR}}{d z} = \frac{\pi D^2}{4}r_1 \tag{4}
 \]</span></p>
 <p><span class="math display">\[
-\frac{dT}{dz} = - \frac{\pi D^2}{4}\frac{r_1\Delta H}{\dot{V} \breve{C}_p} \tag{4}
+\frac{dT_{PFR}}{dz} = - \frac{\pi D^2}{4} \frac{r_1 \Delta H_1}{\dot{V}_{PFR} \breve{C}_p} \tag{5}
 \]</span></p>
-<p><strong>Initial Values and Stopping Criterion</strong></p>
-<div id="tbl-example_K_4_1_initial_values" class="quarto-float anchored">
+<p><u>Initial Values and Stopping Criterion</u></p>
+<div id="tbl-example_17_3_1_initial_values" class="quarto-float anchored">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_K_4_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;K.1: Initial values and stopping criterion for solving the IVODEs, equations (1) through (3).
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_17_3_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;K.1: Initial values and stopping criterion for solving equations, (3) through (5).
 </figcaption>
-<div aria-describedby="tbl-example_K_4_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div aria-describedby="tbl-example_17_3_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
 <thead>
 <tr class="header">
@@ -632,18 +644,18 @@ Table&nbsp;K.1: Initial values and stopping criterion for solving the IVODEs, eq
 <td style="text-align: center;"><span class="math inline">\(L\)</span></td>
 </tr>
 <tr class="even">
-<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,PFR}\)</span></td>
 <td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,1}\)</span></td>
 <td style="text-align: center;"></td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;"><span class="math inline">\(\dot{n}_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,PFR}\)</span></td>
 <td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,1}\)</span></td>
 <td style="text-align: center;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: center;"><span class="math inline">\(T\)</span></td>
-<td style="text-align: center;"><span class="math inline">\(T_{1}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_{PFR}\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_1\)</span></td>
 <td style="text-align: center;"></td>
 </tr>
 </tbody>
@@ -651,246 +663,196 @@ Table&nbsp;K.1: Initial values and stopping criterion for solving the IVODEs, eq
 </div>
 </figure>
 </div>
-<p><strong>Stream Splitter and Stream Mixer Design Equations</strong></p>
+<p><u>Derivatives Function</u></p>
+<p>Given the values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span> and those listed in the assignment summary, the unknown quantities appearing in equations (3) through (5) can be evaluated using the following sequence of calculations. The derivatives can then be evaluated using equations (3) through (5).</p>
 <p><span class="math display">\[
-\dot{n}_{A,0} + \dot{n}_{A,4} - \dot{n}_{A,1}  = 0 = \epsilon_1 \tag{5}
+\dot{V}_3 = \dot{V}_0
 \]</span></p>
 <p><span class="math display">\[
-\dot{n}_{Z,0} + \dot{n}_{Z,4} - \dot{n}_{Z,1}  = 0 = \epsilon_2 \tag{6}
+\dot{V}_4 = R_R \dot{V}_3
 \]</span></p>
 <p><span class="math display">\[
-\dot{V}_0 \breve{C}_p \left( T_{1} - T_{0} \right) + \dot{V}_4 \breve{C}_p \left( T_1 - T_4 \right) = 0 = \epsilon_3 \tag{7}
+\dot{V}_2 = \dot{V}_3 + \dot{V}_4
 \]</span></p>
 <p><span class="math display">\[
-\dot{n}_{A,2} - \dot{n}_{A,4} - \dot{n}_{A,3}  = 0 = \epsilon_4 \tag{8}
+\dot{V}_{PFR} = \dot{V}_2
 \]</span></p>
 <p><span class="math display">\[
-\dot{n}_{Z,2} - \dot{n}_{Z,4} - \dot{n}_{Z,3}  = 0 = \epsilon_5 \tag{9}
+k_1 = k_{0,1} \exp \left( \frac{-E_1}{RT} \right)
 \]</span></p>
 <p><span class="math display">\[
-T_2 - T_4 = 0 = \epsilon_6 \tag{10}
+C_A = \frac{\dot{n}_A}{\dot{V}}
 \]</span></p>
 <p><span class="math display">\[
-T_2 - T_3 = 0 = \epsilon_7 \tag{11}
-\]</span></p>
-<p>The engineer noted that when the derivatives were evaluated at the start of each integration step, the volumetric flow rate and the reaction rate would need to be calculated, and wrote the ancillary equations, (12) through (18), for doing so. Knowing that the splitter and mixer balances would be solved for <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, <span class="math inline">\(T_{1}\)</span>, <span class="math inline">\(T_4\)</span>, <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_{3}\)</span>, the engineer also noted that the molar flow rates of A and Z in streams 0, 2, and 4 and the volumetric flow rate of stream 4 will be needed to evaluate the residuals. The engineer wrote equations (19) through (24) for doing so, but equations for calculating <span class="math inline">\(\dot{n}_{A,2}\)</span>, <span class="math inline">\(\dot{n}_{Z,2}\)</span>, <span class="math inline">\(T_{2}\)</span> were still needed.</p>
-<p><strong>Ancillary Equations for Evaluating the Derivatives</strong></p>
-<p><span class="math display">\[
-\dot{V}_3 = \dot{V}_0 \tag{12}
+C_Z = \frac{\dot{n}_Z}{\dot{V}}
 \]</span></p>
 <p><span class="math display">\[
-\dot{V}_4 = R_R \dot{V}_3 \tag{13}
+r_1 = k_1 C_A C_Z
 \]</span></p>
-<p><span class="math display">\[
-\dot{V} = \dot{V}_3 + \dot{V}_4 \tag{14}
-\]</span></p>
-<p><span class="math display">\[
-k_1 = k_{0,1} \exp \left( \frac{-E_1}{RT} \right) \tag{15}
-\]</span></p>
-<p><span class="math display">\[
-C_A = \frac{\dot{n}_A}{\dot{V}} \tag{16}
-\]</span></p>
-<p><span class="math display">\[
-C_Z = \frac{\dot{n}_Z}{\dot{V}} \tag{17}
-\]</span></p>
-<p><span class="math display">\[
-r_1 = k_1C_AC_Z \tag{18}
-\]</span></p>
-<p><strong>Ancillary Equations for Evaluating the Residuals</strong></p>
-<p><span class="math display">\[
-\dot{n}_{A,0} = \dot{V}_0 C_{A,0} \tag{19}
-\]</span></p>
-<p><span class="math display">\[
-\dot{n}_{Z,0} = \dot{V}_0 C_{Z,0} \tag{20}
-\]</span></p>
-<p><span class="math display">\[
-\dot{V}_3 = \dot{V}_0 \tag{21}
-\]</span></p>
-<p><span class="math display">\[
-\dot{V}_4 = R_R \dot{V}_3 \tag{22}
-\]</span></p>
-<p><span class="math display">\[
-\dot{n}_{A,4} = R_R \dot{n}_{A,3} \tag{23}
-\]</span></p>
-<p><span class="math display">\[
-\dot{n}_{Z,4} = R_R \dot{n}_{Z,3} \tag{24}
-\]</span></p>
-</section>
-<section id="assignment" class="level3" data-number="K.4.3">
-<h3 data-number="K.4.3" class="anchored" data-anchor-id="assignment"><span class="header-section-number">K.4.3</span> Assignment</h3>
-<p>Complete the numerical formulation of the solution, and then implement it numerically.</p>
-<hr>
-<p>The splitter and mixer balances, equations (5) through (11), are ATEs. The engineer noted that they will be solved to find <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, <span class="math inline">\(T_{1}\)</span>, <span class="math inline">\(T_4\)</span>, <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_{3}\)</span>. When solving them numerically, a guess for those unknowns will be available and must be used to evaluate the residuals, <span class="math inline">\(\epsilon_1\)</span> through <span class="math inline">\(\epsilon_7\)</span> using equations (5) through (11). Before the residuals can be evaluated, the other unknown quantities, <span class="math inline">\(\dot{n}_{A,0}\)</span>, <span class="math inline">\(\dot{n}_{Z,0}\)</span>, <span class="math inline">\(\dot{n}_{A,2}\)</span>, <span class="math inline">\(\dot{n}_{Z,2}\)</span>, <span class="math inline">\(T_{2}\)</span>, <span class="math inline">\(\dot{n}_{A,4}\)</span>, <span class="math inline">\(\dot{n}_{Z,4}\)</span>, and <span class="math inline">\(\dot{V}_4\)</span>, must be calculated. Equations (19) through (24) can be used to calculate all but <span class="math inline">\(\dot{n}_{A,2}\)</span>, <span class="math inline">\(\dot{n}_{Z,2}\)</span> and <span class="math inline">\(T_{2}\)</span>.</p>
-<p>Guesses for the initial and final values in <a href="#tbl-example_K_4_1_initial_values" class="quarto-xref">Table&nbsp;<span>K.1</span></a> are available at this point, so the IVODEs, equations (2), (3), and (4), can be solved numerically to get values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, spanning the range from the inlet of the PFR to its outlet. The molar flow rates and temperature of stream 2 are simply the outlet values.</p>
-<p><span class="math display">\[
-\dot{n}_{A,2} = \dot{n}_A \big\vert_{z=L} \tag{25}
-\]</span></p>
-<p><span class="math display">\[
-\dot{n}_{Z,2} = \dot{n}_Z \big\vert_{z=L} \tag{26}
-\]</span></p>
-<p><span class="math display">\[
-T_2 = T \big\vert_{z=L} \tag{27}
-\]</span></p>
-<p><strong>Calculations Summary</strong>:</p>
-<p>To calculate the quantities of interest, <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span>, the splitter and mixer balances, equations (5) through (11) will be solved numerically to get <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, <span class="math inline">\(T_{1}\)</span>, <span class="math inline">\(T_4\)</span>, <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_{3}\)</span>. While doing so, the PFR design equations, (2) - (4), will be solved within the function that evaluates the residuals. The calculation details are as follow.</p>
-<ol type="1">
-<li>Substitute the given and known quantities in all equations.</li>
-<li>When it is necessary to evaluate the residuals
-<ol type="a">
-<li><span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, <span class="math inline">\(T_{1}\)</span>, <span class="math inline">\(T_4\)</span>, <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_{3}\)</span> will be available</li>
-<li>Solve the PFR design equations, (2) through (4), numerically to get corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span> and <span class="math inline">\(T\)</span> spanning the range from the inlet of the PFR to its outlet.</li>
-<li>calculate <span class="math inline">\(\dot{n}_{A,2}\)</span>, <span class="math inline">\(\dot{n}_{Z,2}\)</span> and <span class="math inline">\(T_{2}\)</span> using equations (25) - (27).</li>
-<li>calculate <span class="math inline">\(\dot{n}_{A,0}\)</span>, <span class="math inline">\(\dot{n}_{Z,0}\)</span>, and <span class="math inline">\(\dot{V}_3\)</span> using equations (19) - (21).</li>
-<li>calculate <span class="math inline">\(\dot{V}_4\)</span>, <span class="math inline">\(\dot{n}_{A,4}\)</span>, and <span class="math inline">\(\dot{n}_{Z,4}\)</span> using equations (22) - (24).</li>
-<li>evaluate the residuals, <span class="math inline">\(\epsilon_1\)</span> through <span class="math inline">\(\epsilon_7\)</span> using equations (5) through (11).</li>
-</ol></li>
-<li>When it is necessary to evaluate the derivatives
-<ol type="a">
-<li>values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span> and <span class="math inline">\(T\)</span> will be available.</li>
-<li>calculate <span class="math inline">\(\dot{V}_3\)</span> using equation (12).</li>
-<li>calculate <span class="math inline">\(\dot{V}_4\)</span> using equation (13).</li>
-<li>calculate <span class="math inline">\(\dot{V}\)</span> and <span class="math inline">\(k_1\)</span> using equations (14) and (15).</li>
-<li>calculate <span class="math inline">\(C_A\)</span> and <span class="math inline">\(C_Z\)</span> using equations (16) and (17).</li>
-<li>calculate <span class="math inline">\(r_1\)</span> using equation (18).</li>
-<li>evaluate the derivatives using equations (2), (3), and (4).</li>
-</ol></li>
-</ol>
-</section>
-<section id="numerical-implementation-of-the-solution" class="level3" data-number="K.4.4">
-<h3 data-number="K.4.4" class="anchored" data-anchor-id="numerical-implementation-of-the-solution"><span class="header-section-number">K.4.4</span> Numerical Implementation of the Solution</h3>
-<ol type="1">
-<li>Make the given and known constants available for use in all functions,</li>
-<li>Write a derivatives function that
-<ol type="a">
-<li>receives values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A}\)</span>, <span class="math inline">\(\dot{n}_{Z}\)</span>, and <span class="math inline">\(T\)</span> as input,</li>
-<li>calculates and returns the values of the derivatives as described in step 3 of the calculations summary</li>
-</ol></li>
-<li>Write a reactor model function that
-<ol type="a">
-<li>receives <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> as arguments,</li>
-<li>solves the PFR design equations to get corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A}\)</span>, <span class="math inline">\(\dot{n}_{Z}\)</span>, and <span class="math inline">\(T\)</span> spanning the range from the PFR inlet to the PFR outlet by calling an IVODE solver and passing the following information to it:
-<ol type="i">
-<li>the initial values and stopping criterion in <a href="#tbl-example_K_4_1_initial_values" class="quarto-xref">Table&nbsp;<span>K.1</span></a> and</li>
-<li>the name of the derivatives function from step 2 above,</li>
-</ol></li>
-<li>checks that the solver successfully solved the IVODEs, and</li>
-<li>returns the values returned by the IVODE solver.</li>
-</ol></li>
-<li>Write a residuals function that
-<ol type="a">
-<li>receives values of <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, <span class="math inline">\(T_1\)</span>, <span class="math inline">\(T_4\)</span>, <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span> as arguments</li>
-<li>calculates and returns the residuals as described in step 2 of the calculations summary.</li>
-</ol></li>
-<li>Write a splitter and mixer model function that
-<ol type="a">
-<li>receives an initial guess for <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, <span class="math inline">\(T_1\)</span>, <span class="math inline">\(T_4\)</span>, <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span> as arguments</li>
-<li>calculates <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, <span class="math inline">\(T_1\)</span>, <span class="math inline">\(T_4\)</span>, <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span> by calling an ATE solver and passing the following information to it
-<ol type="i">
-<li>the initial guess and</li>
-<li>the name of the residuals function from step 4 above,</li>
-</ol></li>
-<li>checks that the solver converged, and</li>
-<li>returns the values returned by the ATE solver.</li>
-</ol></li>
-<li>Perform the analysis by
-<ol type="a">
-<li>setting an initial guess for <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, <span class="math inline">\(T_1\)</span>, <span class="math inline">\(T_4\)</span>, <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span>,</li>
-<li>calculates <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, <span class="math inline">\(T_1\)</span>, <span class="math inline">\(T_4\)</span>, <span class="math inline">\(\dot{n}_{A,3}\)</span>, <span class="math inline">\(\dot{n}_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span> by calling the splitter and mixer model function from step 5, passing the initial guess as an argument.</li>
-</ol></li>
-</ol>
-</section>
-<section id="results-and-discussion" class="level3" data-number="K.4.5">
-<h3 data-number="K.4.5" class="anchored" data-anchor-id="results-and-discussion"><span class="header-section-number">K.4.5</span> Results and Discussion</h3>
-<p>The calculations were performed as described above and the results are shown in <a href="#tbl-apndx_K_4_1_results" class="quarto-xref">Table&nbsp;<span>K.2</span></a>.</p>
-<div class="cell">
-<div id="tbl-apndx_K_4_1_results" class="cell quarto-float anchored">
-<figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-apndx_K_4_1_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;K.2: Results from solving the DAEs.
-</figcaption>
-<div aria-describedby="tbl-apndx_K_4_1_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="do-not-create-environment cell table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th style="text-align: center;">item</th>
-<th style="text-align: center;">value</th>
-<th style="text-align: center;">units</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A in}\)</span></td>
-<td style="text-align: center;">1.07</td>
-<td style="text-align: center;">mol min<sup>-1</sup></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z_in}\)</span></td>
-<td style="text-align: center;">1.23</td>
-<td style="text-align: center;">mol min<sup>-1</sup></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><span class="math inline">\(T_{in}\)</span></td>
-<td style="text-align: center;">311</td>
-<td style="text-align: center;">K</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"><span class="math inline">\(T_r\)</span></td>
-<td style="text-align: center;">320</td>
-<td style="text-align: center;">K</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,prod}\)</span></td>
-<td style="text-align: center;">5.59 x 10<sup>-2</sup></td>
-<td style="text-align: center;">mol min<sup>-1</sup></td>
-</tr>
-<tr class="even">
-<td style="text-align: center;"><span class="math inline">\(\dot{n}_{Z,prod}\)</span></td>
-<td style="text-align: center;">0.944</td>
-<td style="text-align: center;">mol min<sup>-1</sup></td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;"><span class="math inline">\(T_{prod}\)</span></td>
-<td style="text-align: center;">320</td>
-<td style="text-align: center;">K</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</figure>
-</div>
-</div>
-<p>The numerical solution of a set of DAEs generally requires using solver that is designed for that purpose. However, DAEs are only encountered a few times in <em>Reaction Engineering Basics</em>, and each time they are encountered, the mathematical formulation and numerical implementation of the solution can be accomplished in the same manner as illustrated in this example.</p>
-<div class="callout callout-style-default callout-note callout-titled">
+<p><u>Solving the PFR Design Equations</u></p>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Note
+Click Here to Hide What an Expert Might be Thinking at this Point
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>The recycle stream provides backmixing of the product stream with the feed. This is similar to what happens in a CSTR. Recall that CSTRs sometimes can have multiple steady states. The same is true of a recycle PFR. In fact, the solution presented here is not the only solution.</p>
+<p>I cannot solve the PFR reactor model because I do not know the initial values, <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>. I need equations for calculating those values, so I’ll write mole and energy balances on the stream mixer, M.</p>
 </div>
 </div>
 </div>
-<div class="callout callout-style-simple callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
+<p><strong>Stream Mixer Model</strong></p>
+<p><u>Design Equations</u></p>
+<p><span class="math display">\[
+0 = \dot{n}_{A,1} - \dot{n}_{A,0} - \dot{n}_{A,4} = \epsilon_1 \tag{6|}
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{n}_{Z,1} - \dot{n}_{Z,0} - \dot{n}_{Z,4} = \epsilon_2 \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+0 = \dot{V}_0 \breve{C}_p \left( T_1 - T_0 \right) + \dot{V}_4\breve{C}_p \left( T_1 - T_4 \right) = \epsilon_3 \tag{8}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span style="color:blue">SC</span>o<span style="color:red">RE</span> Connection
+Click Here to Hide What an Expert Might be Thinking at this Point
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
-<p>Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in <a href="http://buffalobadger.github.io/SCoRE/comp_daes.html">SCoRE</a></p>
+<p>These three ATEs contain nine unknowns. Three of them, <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>, are the initial values I need in order to solve the PFR reactor model equations. The others are <span class="math inline">\(\dot{n}_{A,0}\)</span>, <span class="math inline">\(\dot{n}_{Z,0}\)</span>, <span class="math inline">\(\dot{n}_{A,4}\)</span>, <span class="math inline">\(\dot{n}_{Z,4}\)</span>, <span class="math inline">\(\dot{V}_4\)</span>, and <span class="math inline">\(T_4\)</span>. I can easily calculate <span class="math inline">\(\dot{n}_{A,0}\)</span>, <span class="math inline">\(\dot{n}_{Z,0}\)</span>, and <span class="math inline">\(\dot{V}_4\)</span>.</p>
 </div>
 </div>
+</div>
+<p><span class="math display">\[
+\dot{n}_{A,0} = \dot{V}_0 C_{A,0}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,0} = \dot{V}_0 C_{Z,0}
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_3 = \dot{V}_0
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_4 = R_R \dot{V}_3
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to Hide What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>That leaves me with three ATEs containing six unknowns: <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, <span class="math inline">\(T_1\)</span>, <span class="math inline">\(\dot{n}_{A,4}\)</span>, <span class="math inline">\(\dot{n}_{Z,4}\)</span>, and <span class="math inline">\(T_4\)</span>. I know that in this situation, the key is to include the initial values for the IVODEs among the unknowns to be found by solving the ATEs. In this example there are only three ATEs, so they can be solved to find the three unknown initial values, <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>.</p>
+</div>
+</div>
+</div>
+<p><u>Residuals Function</u></p>
+<p>Equations (6) through (8) will be solved for <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>. The residuals must be evaluated given a guess for those quantities. Using that guess and the values listed in the assignment summary, the PFR model equations can be solved for <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span>. Then the following sequence of calculations can be used to find <span class="math inline">\(\dot{n}_{A,4}\)</span>, <span class="math inline">\(\dot{n}_{Z,4}\)</span>, and <span class="math inline">\(T_4\)</span>.</p>
+<p><span class="math display">\[
+\dot{n}_{A,2} = \dot{n}_{A,PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,2} = \dot{n}_{Z,PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+T_4 = T_3 = T_2 = T_{PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{A,4} = \frac{R_R}{1 + R_R}\dot{n}_{A,2}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,4} = \frac{R_R}{1 + R_R}\dot{n}_{Z,2}
+\]</span></p>
+<p>The residuals, <span class="math inline">\(\epsilon_1\)</span>, <span class="math inline">\(\epsilon_2\)</span>, and <span class="math inline">\(\epsilon_3\)</span>, can then be evaluated using equations (6) through (8).</p>
+<p><u>Solving the Stream Mixer Design Equations</u></p>
+<p>The stream mixer design equations can be solved by calling an ATE solver, providing it with the initial guess for <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> and a function that evaluates the residuals as described above. The results returned by the solver should be checked to make sure the solver converged. Assuming it did converge, it will return the values of <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>.</p>
+<p><strong>Performing the Analysis</strong></p>
+<p>The complete analysis can be performed as follows.</p>
+<ol type="1">
+<li>Guess the values of <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>.</li>
+<li>Use the stream splitter model as described above to calculate <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>.</li>
+<li>Provide the results to the PFR model and use it as described above to get corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span> that span the range from the reactor inlet to the reactor outlet.</li>
+<li>Perform the following sequence of calculations to find the quantities of interest, <span class="math inline">\(C_{A,3}\)</span>, <span class="math inline">\(C_{Z,3}\)</span>, and <span class="math inline">\(T_3\)</span>.</li>
+</ol>
+<p><span class="math display">\[
+\dot{n}_{A,2} = \dot{n}_{A,PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,2} = \dot{n}_{Z,PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+T_4 = T_{PFR} \big \vert_{z=L}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{A,4} = \frac{R_R}{1 + R_R}\dot{n}_{A,2}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,4} = \frac{R_R}{1 + R_R}\dot{n}_{Z,2}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{A,3} = \dot{n}_{A,2} - \dot{n}_{A4}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{Z,3} = \dot{n}_{Z,2} - \dot{n}_{Z4}
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_3 = \dot{V}_0
+\]</span></p>
+<p><span class="math display">\[
+C_{A,3} = \frac{\dot{n}_{A,3}}{\dot{V}_3}
+\]</span></p>
+<p><span class="math display">\[
+C_{Z,3} = \frac{\dot{n}_{Z,3}}{\dot{V}_3}
+\]</span></p>
+</section>
+<section id="numerical-implementation-of-the-solution" class="level4" data-number="K.4.1.3">
+<h4 data-number="K.4.1.3" class="anchored" data-anchor-id="numerical-implementation-of-the-solution"><span class="header-section-number">K.4.1.3</span> Numerical implementation of the Solution</h4>
+<p>Create a computer function and within that function do the following:</p>
+<ol type="1">
+<li>Make the given and known constants available everywhere within the function.</li>
+<li>Write a derivatives function that
+<ol type="a">
+<li>receives the independent and dependent variables, <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(T\)</span>, as arguments,</li>
+<li>evaluates the derivatives as described above for the PFR model, and</li>
+<li>returns the values of <span class="math inline">\(\frac{d\dot{n}_{A,PFR}}{dz}\)</span>, <span class="math inline">\(\frac{d\dot{n}_{Z,PFR}}{dz}\)</span>, and <span class="math inline">\(\frac{dT_{PFR}}{dz}\)</span>.</li>
+</ol></li>
+<li>Write a PFR function that
+<ol type="a">
+<li><span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> as arguments,</li>
+<li>solves the PFR reactor design equations as described above for the PFR model, and</li>
+<li>returns corresponding sets of values of <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_{A,PFR}\)</span>, <span class="math inline">\(\dot{n}_{Z,PFR}\)</span>, and <span class="math inline">\(T_{PFR}\)</span>.</li>
+</ol></li>
+<li>Write a residuals function that
+<ol type="a">
+<li>receives <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> as arguments,</li>
+<li>evaluates the residuals as described above for the stream mixer model, and</li>
+<li>returns the values of <span class="math inline">\(\epsilon_1\)</span>, <span class="math inline">\(\epsilon_2\)</span>, and <span class="math inline">\(\epsilon_3\)</span>.</li>
+</ol></li>
+<li>Write a stream mixer model function that
+<ol type="a">
+<li>receives guesses for <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> as arguments,</li>
+<li>calculates <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span> as described above for the stream mixer model, and</li>
+<li>returns the resulting values of <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{Z,1}\)</span>, and <span class="math inline">\(T_1\)</span>.</li>
+</ol></li>
+<li>Write an analysis function that performs the analysis as described above and displays the results.</li>
+<li>Call the analysis function.</li>
+</ol>
+</section>
 </section>
 </section>
 <section id="symbols-used-in-sec-apndx_solve_daes" class="level2" data-number="K.5">
