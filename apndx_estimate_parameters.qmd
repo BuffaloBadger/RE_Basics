@@ -12,6 +12,8 @@ Given values for the unknown model parameters, the model can be used to calculat
 
 The resulting values of the paremeters are estimates. Their values depend upon the experimental data used to calculate them. If the exact same set of experiments was performed two times using the exact same experimental equipment, the resulting data sets would *not* be identical. There is random error associated with any experimental measurement, and for that reason there would be small differences between the two data sets, even if there were no other sources of error. The "best" values for the model parameters calculated using one of the data sets would not be exactly equal to the values found using the other data set. This is why the process is called parameter estimation.
 
+**Statistical Analysis**
+
 Additional statistical calculations are typically performed when estimating the parameter values. These calculations make certain assumptions about the data, for example that the errors conform to a normal distribution. To gauge the uncertainty in the estimated value of each parameter, the upper and lower limits of its 95% confidence interval, $CI_u$ and $CI_l$, can be calculated. Recall that repeating the experiments would result in a slightly different data set, and therefore a slightly different estimated parameter value. If the experiments were repeated 100 times, the estimated parameter value would fall within this interval 95 times. An alternative way to gauge the uncertainty in the estimated value of each parameter is to calculate its standard error, $\lambda$.
 
 It is very common to calculate the coefficient of determination, $R^2$, following parameter estimation. While the 95% confidence interval and the standard error are measures of uncertainty in each estimated parameter, the coefficient of determination provides an indication of the accuracy of the entire model. $R^2$ is the proportion of the variation in the model-predicted response that is predictable from the adjusted input variables. As such, the model is perfectly accurate when $R^2$ is equal to 1.0, and the accuracy decreases as $R^2$ becomes smaller.
@@ -38,13 +40,13 @@ $${#eq-linear_least_squares_parameters}
 
 The best values of the parameters in any analytic model can be found in this way, and since linear models are very common, almost any mathematics software package or spreadsheet will include a function that calculates the best slope and intercept from experimental $x-y$ data. In most cases the coefficient of determination, $R^2$, and measures of the uncertainty in the parameter values ($\lambda_m$ and $\lambda_b$ or $CI_{u,m}$, $CI_{u,b}$, $CI_{l,m}$, and $CI_{l,l}$) also can be calculated. 
 
-When implemented in spreadsheets, a model plot is typically generated. Otherwise one can be created by plotting the experimental response, $y$, *vs*. $x$ as points and, on the same axes, the model-predicted response, $\hat{y}$, *vs*. $x$ as a line. The model plot can be used to assess the accuracy of the model. When the deviations of the experimental response points from the predicted response line are small, and there are no trends in the deviations, the model is accurate.
+When implemented in spreadsheets, a **model plot** is typically generated. Otherwise one can be created by plotting the experimental response, $y$, *vs*. $x$ as points and, on the same axes, the model-predicted response, $\hat{y}$, *vs*. $x$ as a line. The model plot can be used to assess the accuracy of the model. When the deviations of the experimental response points from the predicted response line are small, and there are no trends in the deviations, the model is accurate.
 
-Irrespective of the specific software package being used, a linear model fitting function must be povided with the adjusted input variables and the corresponding experimental responses for all experiments. At the minimum, a linear model fitting function will calculate and return the estimated slope, $m$, and intercept, $b$. With most software packages the linear model fitting function or associated auxillary functions will additionally calculate and return the coefficient of determination, $R^2$, and either the standard errors for the estimated paramerers, $\lambda_m$ and $\lambda_b$, or the upper and lower limits of their 95% confidence intervals, $CI_{u,m}$, $CI_{u,b}$, $CI_{l,m}$, and $CI_{l,l}$.
+Irrespective of the specific software package being used, a linear model fitting function must be povided with the adjusted input variables and the corresponding experimental responses for all experiments. At the minimum, a linear model fitting function will calculate and return the estimated slope, $m$, and intercept, $b$. With most software packages the linear model fitting function or associated auxillary functions will additionally calculate and return the coefficient of determination, $R^2$, and either the standard errors for the estimated paramerers, $\lambda_m$ and $\lambda_b$, or the upper and lower limits of their 95% confidence intervals, $CI_{u,m}$, $CI_{u,b}$, $CI_{l,m}$, and $CI_{l,b}$.
 
 ### Estimation of Arrhenius Expression Parameters
 
-The estimation of the parameters in the Arrhenius expression, namely the pre-exponential factor and the activation energy, is a routine task that is performed often in the analysis of kinetics data. As such, it can make sense to write a dedicated function for estimating Arrhenius expression parameters, since it can be accomplished using linear least squares.
+The estimation of the parameters in the Arrhenius expression, namely the pre-exponential factor and the activation energy, is a routine task that is performed often in the analysis of kinetics data. As such, it can make sense to write a dedicated function for estimating Arrhenius expression parameters.
 
 @sec-2_rates_rate_express showed that by taking the logarithm of both sides of the Arrhenius expression, it can be converted to the linear form given in @eq-linear_arrhenius and reproduced below. @eq-x_and_y_in_linear_arrhenius shows that by defining $y = \ln{k_j}$ and $x = \frac{-1}{RT}$, the equations indeed is linear with a slope equal to $E_j$ and an intercept equal to $\ln{k_{0,j}}$
 
@@ -56,11 +58,11 @@ $$
 \begin{matrix} y = \ln{k_j} \\ x = \displaystyle \frac{-1}{RT} \end{matrix} \quad \Rightarrow \quad y = m x + b \quad \Rightarrow \quad \begin{matrix} m = E_j \\ b = \ln{k_{0,j}} \end{matrix}
 $${#eq-x_and_y_in_linear_arrhenius}
 
-Given a set of temperatures in absolute units, a corresponding set of rate coefficient values, and the ideal gas constant, $x$ and $y$ can be calculated for each data pair as shown in @eq-x_and_y_in_linear_arrhenius. Notice that the temperatures and the ideal gas constant must have the same temperature units. Also, the energy units for the activation energy will be the energy units of the ideal gas constant.
+Given a set of temperatures in absolute units, a corresponding set of rate coefficient values, and the ideal gas constant, $x$ and $y$ can be calculated for each data pair as shown in @eq-x_and_y_in_linear_arrhenius. Notice that the temperatures and the ideal gas constant must have the same *absolute* temperature units. Also, the energy units for the activation energy will be the energy units of the ideal gas constant.
 
 The resulting set of $x$ values and the corresponding set of $y$ values can be passed to a linear model fitting function of one's choosing. The linear model fitting function will return $m$, $b$, $R^2$, and either $\lambda_m$ and $\lambda_b$, or $CI_{u,m}$, $CI_{u,b}$, $CI_{l,m}$, and $CI_{l,l}$.
 
-As @eq-x_and_y_in_linear_arrhenius indicates, the activation energy is equal to the slope, so the actvation energy and its uncertainty (as its standare error or its 95% confidence interval) are given Equations [-@eq-E_linear_least_squares], [-@eq-E_lambda_linear_least_squares], [-@eq-E_uCI_linear_least_squares], and [-@eq-E_lCI_linear_least_squares].
+As @eq-x_and_y_in_linear_arrhenius indicates, the activation energy is equal to the slope, so the actvation energy and its uncertainty (as its standard error or its 95% confidence interval) are given Equations [-@eq-E_linear_least_squares], [-@eq-E_lambda_linear_least_squares], and [-@eq-E_CI_linear_least_squares].
 
 $$
 E_j = m
@@ -71,12 +73,11 @@ $$
 $$ {#eq-E_lambda_linear_least_squares}
 
 $$
-CI_{u,E_j} = CI_{u,m}
-$$ {#eq-E_uCI_linear_least_squares}
-
-$$
-CI_{l,E_j} = CI_{l,m}
-$$ {#eq-E_lCI_linear_least_squares}
+\begin{align}
+CI_{u,E_j} &= CI_{u,m} \\
+CI_{l,E_j} &= CI_{l,m}
+\end{align}
+$$ {#eq-E_CI_linear_least_squares}
 
 @eq-x_and_y_in_linear_arrhenius shows that the intercept, $b$, is the logarithm of the pre-exponential factor, so equations [-@eq-k0_linear_least_squares], [-@eq-k0_lambda_linear_least_squares], and [-@eq-k0_CI_linear_least_squares] must be used to calculate $k_{0,j}$ and its uncertainty.
 
@@ -100,21 +101,21 @@ A dedicated function for estimating Arrhenius expression parameters then can be 
 1. It should receive a vector of $k$ values, a corresponding vector of $T$ values (in absolute units), and the value of the ideal gas constant, $R$, in the same temperature units and the energy units desired for the activation energy as arguments
 2. It should calculate vectors of $x$ and $y$ using equation @eq-x_and_y_in_linear_arrhenius.
 3. It should calculate $m$, $b$, $R^2$, and either $\lambda_m$ and $\lambda_b$ or  $CI_{u,m}$, $CI_{u,b}$, $CI_{l,m}$, and $CI_{l,l}$ by calling a linear model fitting function providing the $x$ and $y$ vectors.
-4. It should calculate $k_{0,j}$, $E_j$, and either $\lambda_{k_{0,j}}$ and $\lambda_{E_j}$ or $CI_{u,k_{0,j}}$, $CI_{l,k_{0,j}}$, $CI_{u,E_j}$, and $CI_{l,E_j}$ using Equations [-@eq-E_linear_least_squares], [-@eq-E_lambda_linear_least_squares], [-@eq-E_uCI_linear_least_squares],  [-@eq-E_lCI_linear_least_squares], [-@eq-k0_linear_least_squares], [-@eq-k0_lambda_linear_least_squares], and [-@eq-k0_CI_linear_least_squares].
+4. It should calculate $k_{0,j}$, $E_j$, and either $\lambda_{k_{0,j}}$ and $\lambda_{E_j}$ or $CI_{u,k_{0,j}}$, $CI_{l,k_{0,j}}$, $CI_{u,E_j}$, and $CI_{l,E_j}$ using Equations [-@eq-E_linear_least_squares], [-@eq-E_lambda_linear_least_squares], [-@eq-E_CI_linear_least_squares], [-@eq-k0_linear_least_squares], [-@eq-k0_lambda_linear_least_squares], and [-@eq-k0_CI_linear_least_squares].
 5. It should return $k_{0,j}$, $E_j$, $R^2$, and either $\lambda_{k_{0,j}}$ and $\lambda_{E_j}$ or $CI_{u,k_{0,j}}$, $CI_{l,k_{0,j}}$, $CI_{u,E_j}$, and $CI_{l,E_j}$.
 
 ## Fitting Functions for a Numerical Model
 
-In *Reaction Engineering Basics*, reactor models are solved numerically. Therefore a fitting function that can use a numerical model must be used for parameter estimation. Many software packages include this kind of fitting function. An overview of the use of fitting functions for numerical models is presented in @sec-6_kin_data_gen. The flow of information is diagram from that discussion is reproduced here as @fig-apndx_L_param_est_info_flow. This section offers an abbreviated description of how these functions work.
+In *Reaction Engineering Basics*, reactor models are solved numerically. Therefore a fitting function that can use a numerical model must be used for parameter estimation. Many software packages include this kind of fitting function. An overview of the use of fitting functions for numerical models is presented in @sec-6_kin_data_gen. The flow of information is diagram from that discussion is reproduced here as @fig-apndx_L_param_est_info_flow. This section offers an abbreviated description of how fitting functions work.
 
 ![Information flow for fitting a reactor model to an experimental data set using a computer fitting function.](Graphics/parameter_estimation_info_flow.png){#fig-apndx_L_param_est_info_flow width="70%"}
 
-The parameters are still estimated by minimizing the sum of the squares of the errors, @eq-sum_of_squares_of_errors, but the minimization is performed numerically and not analytically. Regardless of the specific software being used, four things must be provided to the fitting function, as indicated in @fig-apndx_L_param_est_info_flow. Those inputs to the fitting function are
+The parameters are still estimated by minimizing the sum of the squares of the errors, @eq-sum_of_squares_of_errors, but the minimization is performed numerically. Regardless of the specific software being used, four things must be provided to the fitting function, as indicated in @fig-apndx_L_param_est_info_flow. Those inputs to the fitting function are
 
 1. An initial guess for the values of the model parameters.
-2. The values of the adjusted input variables for all of the experiments being analyzed.
+2. The values of the adjusted input variables (factos) for all of the experiments being analyzed.
 3. The corresponding values of the experimental responses.
-4. A responses function, written by the user, that uses the model to calculate and return the corresponding model-preducted responses.
+4. A responses function, written by the user, that uses the model to calculate and return the corresponding model-predicted responses.
     a. The responses function receives a guess for the model parameters and the values of adjusted input variables for all of the experiments and it returns the model-predicted responses for all of the experiments.
 
 A fitting function works in much the same manner as an ATE solver (see @sec-apndx_solve_ates) except that instead of finding values of unknowns that cause a set of residuals to equal zero it finds values of model parameters that minimize the sum of the squares of the errors. In essence, the fitting function finds the best parameter values by trial and error.
@@ -132,7 +133,7 @@ A fitting function works in much the same manner as an ATE solver (see @sec-apnd
 
 ### Convergence
 
-Parameter estimation as described above is an iterative process. Ideally, as improved guesses are generated, the corresponding sum of the squares of the errors gets smaller and smaller. This is called **convergence**. The fitting function uses a set of convergence criteria to determine whether (a) it has converged to a minimum value of the sum of the squares of the errors, (b) it has not converged to a minimum value of the sum of the squares of the errors but it is making progress and should continue iterating or (c) it has not converged to a minimum value and it is not making progress, so it should stop iterating. Typical convergence criteria are listed below; the fitting function usually provides a default for the "specified amounts" in this list, but the defaults can be overridden at the time the fitting function is called. 
+Parameter estimation as described above is an iterative process. Ideally, as the fitting function generates improved guesses, the corresponding sum of the squares of the errors gets smaller and smaller. This is called **convergence**. The fitting function uses a set of convergence criteria to determine whether (a) it has converged to a minimum value of the sum of the squares of the errors, (b) it has not converged to a minimum value of the sum of the squares of the errors but it is making progress and should continue iterating or (c) it has not converged to a minimum value and it is not making progress, so it should stop iterating. Typical convergence criteria are listed below; the fitting function usually provides a default for the "specified amounts" in this list, but the defaults can be overridden at the time the fitting function is called. Along with the estimated parameters, the coefficient of determination, and the parameter uncertainties, the fitting function should return a flag or message that indicates whether it converged and why it stopped iterating.
 
 * the sum of the squares of the errors is smaller than a specified amount (converged).
 * the sum of the squares of the errors is smaller than it was for the previous iteration (making progress)
@@ -144,9 +145,9 @@ Parameter estimation as described above is an iterative process. Ideally, as imp
 
 ### Caveats
 
-A few issues should be kept in mind when performing numerical parameter estimation. The first is that **the solver may converge to a local minimum** of the sum of the squares of the errors and not the global minimum. This could result in a model that does not appear to be accurate, but that could be accurate if the global minimum was located. One way to try to detect this situation is to repeat the parameter estimation using a very different initial guess. If the solver converges to a different set of estimated parameters, that indicates that one (or possibly both) of the sets of estimated parameters corresponds to a local minimum. If a wide range of initial guesses always leads to the same parameter estimates, that *may* suggest the a global minimum has been found, and it is the model, itself, that is not accurate.
+A few issues should be kept in mind when performing numerical parameter estimation. The first is that **the fitting function may converge to a local minimum** of the sum of the squares of the errors and not the global minimum. This could result in a model that does not appear to be accurate, but that could be accurate if the global minimum was located. One way to try to detect this situation is to repeat the parameter estimation using a very different initial guess. If the solver converges to a different set of estimated parameters, that indicates that one (or possibly both) of the sets of estimated parameters corresponds to a local minimum. If a wide range of initial guesses always leads to the same parameter estimates, that *may* suggest the a global minimum has been found.
 
-The second issue arises **when initially guessing the value of a model parameter that might fall anywhere in a very wide range of values**. As an example, in *Reaction Engineering Basics* problems, the pre-exponential factor for a rate coefficient could have a value anywhere between 10^-20^ and 10^20^. In this situation, if the initial guess is not sufficiently close to the actual value of the parameter, the solver may quit because it is not making progress. One way to reduce the likelihood of this happening is to use the base-10 logarithm of the parameter instead of the parameter itself. That is, if $k_0$ is the actual parameter of interest in the model, re-write the model replacing $k_0$ with $10^\beta$. Then perform parameter estimation to find the best value of $\beta$. When the possible range of $k_0$ is between 10^-20^ and 10^20^, the corresponding range of $\beta$ is between -20 and 20. Once the best value $\beta$ has been found, the best value of $k_0$ is simply calculated as $k_0 = 10^\beta$. 
+The second issue arises **when initially guessing the value of a model parameter that might fall anywhere in a very wide range of values**. As an example, in *Reaction Engineering Basics* problems, the pre-exponential factor for a rate coefficient could have a value anywhere between 10^-20^ and 10^20^. In this situation, if the initial guess is not sufficiently close to the actual value of the parameter, the fitting function may quit because it is not making progress. One way to reduce the likelihood of this happening is to use the base-10 logarithm of the parameter instead of the parameter itself. That is, if $k_0$ is the actual parameter of interest in the model, re-write the model replacing $k_0$ with $10^\beta$. Then perform parameter estimation to find the best value of $\beta$. When the possible range of $k_0$ is between 10^-20^ and 10^20^, the corresponding range of $\beta$ is between -20 and 20. Once the best value $\beta$ has been found, the best value of $k_0$ is simply calculated as $k_0 = 10^\beta$. 
 
 The third issue arises **when the experimental responses span several orders of magnitude**. In this situation, the errors associated with larger values of the response may be greater than errors associated with smaller values of the response. If that is so, the minimization process will focus on the responses with larger values because they have a greater effect upon the sum of the squares of the errors. One option for addressing this situation is to minimize the sum of the squares of the *relative* errors instead of the sum of the squares of the *absolute* errors.
 
@@ -154,9 +155,9 @@ The third issue arises **when the experimental responses span several orders of 
 
 Typically, if successful, the solver will return (a) the estimated values of the model parameters, (b) some measure of the uncertainty in the estimated values (e. g. a 95% confidence interval) and (c) the coefficient of determination, $R^2$. However, finding the best values for the parameters does not ensure that the model is accurate (see @fig-line_fit_to_parabola).
 
-When the model being fit to the data is linear and has only one adjusted input variable a model plot can be created as described above. Otherwise, the estimated values of the model parameters can be used to compute the model-predicted response for each experiment. A "parity plot" can then be created wherein the model-predicted response is plotted versus the experimental response. If the model was perfect, every point in the parity plot would fall on a diagonal line passing through the origin. The farther the points are from the diagonal, the lower the accuracy of the model.
+When the model being fit to the data is linear and has only one adjusted input variable a model plot can be created as described above. Otherwise, the estimated values of the model parameters can be used to compute the model-predicted response for each experiment. A **parity plot** can then be created wherein the model-predicted response is plotted versus the experimental response. If the model was perfect, every point in the parity plot would fall on a diagonal line passing through the origin. The farther the points are from the diagonal, the lower the accuracy of the model.
 
-The errors, or residuals, for each experiment can also be calculated. A set of "residuals plots" can then be created wherein the residuals are plotted versus each of the experimental adjusted input variables. If the model was perfect, every residual would equal zero and every point in every residuals plot would fall on the horizontal axis. The magnitude of the deviations from the horizontal axis is not important (the parity plot is used for this purpose). The critical issue whether the points scatter randomly above and below the horizontal axis as the value of the adjusted input variable increases. When the model is good, there should not be any trends in the deviations as the value of the adjusted input variable increases.
+The errors, or residuals, for each experiment can also be calculated. A set of **residuals plots** can then be created wherein the residuals are plotted versus each of the experimental adjusted input variables. If the model was perfect, every residual would equal zero and every point in every residuals plot would fall on the horizontal axis. The magnitude of the deviations from the horizontal axis is not important (the parity plot is used for this purpose). The critical issue whether the points scatter randomly above and below the horizontal axis as the value of the adjusted input variable increases. When the model is good, there should not be any trends in the deviations as the value of the adjusted input variable increases.
 
 Deciding whether the model is sufficiently accurate is a judgement call. The following criteria are satisfied by an accurate model.
 
@@ -167,27 +168,193 @@ Deciding whether the model is sufficiently accurate is a judgement call. The fol
 * The points in the parity plot are all close to a diagonal line passing through the origin.
 * In each residuals plot, the points scatter randomly about the horizontal axis, and no systematic deviations are apparent.
 
-As noted in @sec-6_kin_data_gen, the uncertainty in *most*, but not *all*, of the parameters might be small. This could indicate one of three possibilities. First, the factor levels used in the experiments may not allow accurate resolution of the parameters with high uncertainty. Second, the parameters with higher uncertainty may be mathematically coupled to other parameters (e. g. the model-predicted response may only depend on the product of two parameters so that the individual parameters can have any values as long as their product has the optimum value). Alternatively, the parameters with high uncertainty may not be needed, and there may be a simpler model with fewer parameters that is equally accurate.
+As noted in @sec-6_kin_data_gen, the uncertainty in *most* of the parameters might be small, but there could be a few for which the uncertainty is large. This could indicate one of three possibilities. First, the factor levels (values to which the adjusted input variables were set) used in the experiments may not allow accurate resolution of those parameters that have high uncertainty. Second, the parameters with higher uncertainty may be mathematically coupled to each other (e. g. the model-predicted response may only depend on the product of two parameters so that the individual parameters can have any values as long as their product has the optimum value). Alternatively, the parameters with high uncertainty may not be needed, and there may be a simpler model with fewer parameters that is equally accurate.
 
 ## Mathematical Formulation of Parameter Estimation
 
-In *Reaction Engineering Basics* the unknown parameters will always be constants that appear in the rate expression. They will always be calculated by calling a fitting function, and a responses function will always need to be written and provided to it. Generally the responses function will loop through the experiments. For each experiment it will solve the reactor design equations for the experimental reactor and use the results to calculate the model-predicted response.
+In *Reaction Engineering Basics* the unknown parameters typically will be constants that appear in the rate expression. They will always be calculated by calling a fitting function, and a responses function will always need to be written and provided to that fitting function. Generally the responses function will loop through the experiments. For each experiment it will solve the reactor design equations for the experimental reactor and use the results to calculate the model-predicted response. The typical steps in formulating parameter estimation are as follow.
 
-* identify all known constants and their values
-* formulate a reactor model for the experimental reactor assuming the rate expression parameters and the adjusted input variables will be available.
-* write any ancillary equations that are needed to solve the reactor model
-* write any ancillary equations that are needed to calculate the model-predicted response given the solution of the reactor model equations
+* Identify all known constants and their values.
+* Formulate a reactor model for the experimental reactor assuming the rate expression parameters and the adjusted input variables will be available.
+* Write any ancillary equations that are needed to solve the reactor model equations.
+* Formulate a responses model that solves the reactor model equations.
+* Write any ancillary equations that are needed to calculate the model-predicted response given the solution of the reactor model equations.
 
 ## Numerical Implementation of Parameter Estimation
 
-* create a matrix of adjusted input variables with one column for each variable and one row for each experiment
-* create a column vector of experimental responses with one row for each experiment and with the rows in the same order as in the adjusted input variable matrix
-* create a vector containing a guess for each unknown parameter
+Numerical implementation of parameter estimation entails writing code that performs the calculations described in the mathematical formulation above. The code will be written for a software package of the user's choosing and will utilize a fitting function provided by that software package. The specific structure of the code will depend upon the software package being used and programmer preference. Here it is assumed that the code will be broken into at least four computer functions that each perform a specific task.
+
+reactor model function
+: receives a value for each adjusted input variable and values of the parameters being estimated, calls an appropriate solver to solve the reactor design equations, checks that the solver was successful, and returns the results that the solver returned.
+
+derivatives function and/or residuals function
+: evaluates the derivatives or the residuals for the reactor design equations as described in Appendices [-@sec-apndx_solve_ates] and [-@sec-apndx_solve_ivodes].
+
+responses function
+: receives values of the parameters being estimated and the full set of adjusted input variables, uses the reactor model function to solve the reactor design equations for each experiment, uses the results from solving the reactor design equations to calculate the model-predicted response for each experiment, returns the full set of model-predicted responses.
+
+top level code (and/or a master calculations function)
+: sets all given and known constants, establishes a mechanism for making quantities available to all functions as necessary, reads and stores the experimental data set (adjusted input variables and experimental responses), calls the fitting function to get the parameter estimates, parameter uncertainties, and coefficient of determination, performs any additional processing such as making a model plot or making parity and residuals plots, and reports or saves the results.
 
 ## Examples
 
-### Arrhenius Expression Parameters ... {#sec-example_L_7_1}
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+source('~/Libraries/R/fmt_tibble_col.R')
+source('~/Libraries/R/fmt_E_to_10.R')
+```
+
+This appendix includes two examples. [Example -@sec-example_L_7_1] illustrates the use of linear least squares to calculate the pre-exponential factor and the activation energy in the Arrhenius expression. The numerical implementation is structured such that one of the functions could be used extracted and used repeatedly as a utility function whenever it is necessary to estimate the parameters in the Arrhenius expression. Example [-@sec-example_L_7_2] illustrates parameter estimation using a numerical reactor model.
+
+### Arrhenius Expression Parameter Estimation {#sec-example_L_7_1}
+
+{{< include examples/reb_L_7_1/narrative.qmd >}}
+
+For convenience, the Assignment Summary and Mathematical Formulation of the Solution from [Example -@sec-example_4_5_4] are reproduced here.
+
+#### Assignment Summary
+
+**Given and Known**: $\underline{T_C}$, $\underline{k}$, and $R$ = 8.314 J mol^-1^ K^-1^.
+
+**Item of Interest**: Accuracy with which the Arrhenius expression, equation (1), represents the data in @tbl-data_reb_4_5_4.
+
+$$
+k = k_0 \exp{ \left( \frac{-E}{RT} \right)} \tag{1}
+$$
+
+#### Mathematical Formulation of the Solution
+
+**Rate Coefficient Model**:
+
+[Linearized Arrhenius Expression]{.underline}
+
+$$
+\begin{align}
+\ln{k} &= E \left( \frac{-1}{RT} \right) + \ln{k_0} \\
+y &= mx + b
+\end{align} \tag{2}
+$$
+
+$$
+y = \ln{k} \tag{3}
+$$
+
+$$
+x = \left( \frac{-1}{R\left(T_C + 273.15\right)} \right) \tag{4}
+$$
+
+
+**Performing the Analysis**
+
+The assignment can be completed as follows:
+
+1. Calculate $x$ and $y$ for each experiment in the data set using equations (3) and (4).
+2. Use a linear least squares fitting function to estimate the best values of $m$ and $b$ in equation (2), along with the upper and lower limits of their 95% confidence intervals, $m_{CI,u}$, $m_{CI,l}$, $b_{CI,u}$, and $b_{CI,l}$, and the coefficient of determination, $R^2$.
+3. Use the results to calculate the Arrhenius pre-exponential factor and activation energy as follows:
+
+$$
+E = m \tag{5}
+$$
+
+$$
+E_{CI,u} = m_{CI,u} \tag{6}
+$$
+
+$$
+E_{CI,l} = m_{CI,l} \tag{7}
+$$
+$$
+b = \ln{k_0} \qquad \Rightarrow \qquad k_0 = \exp{\left(b\right)} \tag{8}
+$$
+
+$$
+k_{0,CI,u} = \exp{\left(b_{CI,u}\right)} \tag{9}
+$$
+
+$$
+k_{0,CI,l} = \exp{\left(b_{CI,l}\right)} \tag{10}
+$$
+
+5. Use the estimated parameters to calculate the model-predicted rate coefficient using equation (1).
+6. Generate a model plot showing the experimental rate coefficient *vs*. $T^{-1}$ as points and the model-predicted rate coefficient *vs*. $T^{-1}$ as a line.
+
+---
+
+#### Numerical Implementation of the Solution
+
+For present purposes, assume that vectors containing experimental temperatures (in absolute units of K or °R), $\underline{T}$, and corresponding experimentally measured rate coefficients, $\underline{k}$ are available, as is the value of the ideal gas constant using the same temperature units as $\underline{T}$ and the units energy and moles that are desired for the activation energy. A function to estimate $k_0$ and $E$, calculate $k_{0,CI,u}$, $k_{0,CI,l}$, $E_{CI,u}$, $E_{CI,l}$, and $R^2$ can be structured as follows:
+
+1. Receive $\underline{k}$, $\underline{T}$, and $R$ (the ideal gas coefficient) as arguments
+2. Calculate vectors containing $\underline{y}$ and $\underline{x}$ using equations (3) and (4).
+3. Call a linear least squares fitting function from software package of the user's choosing
+    a. passing $\underline{y}$ and $\underline{x}$ as arguments
+    b. receiving $m$, $b$, $m_{CI,u}$, $m_{CI,l}$, $b_{CI,u}$, $b_{CI,l}$, and $R^2$ (the coefficient of determination) as return values.
+4. Calculate $k_0$ and $E$, calculate $k_{0,CI,u}$, $k_{0,CI,l}$, $E_{CI,u}$, and $E_{CI,l}$ using equations (5) through (10).
+5. Return $k_0$ and $E$, calculate $k_{0,CI,u}$, $k_{0,CI,l}$, $E_{CI,u}$, $E_{CI,l}$, and $R^2$.
+
+:::{.callout-note collapse="false"}
+## Note
+
+If a fitting function that returns the uncertainties as standard errors of the estimated parameters, $\lambda_m$ and $\lambda_b$, instead of 95% conficence intervals in 3.b above, then equations (11) and (12) should be used to calculate the uncertainties in $k_0$ and $E$.
+
+$$
+\lambda_{E_j} = \lambda_m \tag{11}
+$$
+
+$$
+\lambda_{k_{0,j}} = k_{0,j} \exp {\left(\lambda_b\right)} \tag{12}
+$$
+
+:::
+
+#### Results and Discussion
+
+In fact, a function like that described above was written and used when completing [Example -@sec-example_4_5_4]. That Arrhenius parameter function then was made available like other equation solvers (i. e. it can be called from within any other function). It will be used in every *Reaction Engineering Basics* example that requires estimating Arrhenius parameters, and in the mathematical formulation and numerical implementation for those problems, it will be treated as a solver. As an example, the present formulation and implementation would be written as follows:
+
+##### Mathematical Formulation
+
+**Arrhenius Parameter Estimation**
+
+The Arrhenius parameters, $k_0$ and $E$, the upper and lower limits of their 95% confidence intervals, $k_{0,CI,u}$, $k_{0,CI,l}$, $E_{CI,u}$, and $E_{CI,l}$, and the coefficient of determination, $R^2$, can be found by calling an Arrhenius parameter estimation function, providing it with the $\underline{k}$ *vs*. $\underline{T}$ data and $R$.
+
+**Performing the Analysis**
+
+1. Perform Arrhenius parameter estimation as described above to find $k_0$ $E$, $k_{0,CI,u}$, $k_{0,CI,l}$, $E_{CI,u}$, $E_{CI,l}$, and $R^2$.
+2. Use the estimated parameters to calculate the model-predicted rate coefficient for each experiment using equation (1).
+3. Generate a model plot showing the experimental rate coefficient *vs*. $T^{-1}$ as points and the model-predicted rate coefficient *vs*. $T^{-1}$ as a line.
+
+##### Numerical Implementation
+
+Create a computer function and within that function do the following:
+
+1. Set the value of $R$ (the ideal gas constant).
+2. Read in the vectors containing the experimental $\underline{k}$ and $\underline{T}$ data.
+3. Write an analysis function that performs the analysis as described above and displays the results.
+4. Call the analysis function.
 
 ### to be added {#sec-example_L_7_2}
 
 ## Symbols Used in @sec-apndx_parameter_est
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $b$ | intercept of a linear function. |
+| $k$ | Rate coefficient, a subscript is used to index the reactions if more than one are occurring. |
+| $k_{0,}$ | Pre-exponential factor for a rate coefficient, an additional subscript is used to index the reactions if more than one are occurring. |
+| $m$ | Slope in a linear function. |
+| $x$ | Adjusted input variable, a subscript is used to index the experiments in an experimental data set. $i$ |
+| $y$ | Experimental response, a subscript is used to index the responses in an experimental data set. |
+| $\hat{y}$ | Model-predicted response, a subscript is used to index the responses in an experimental data set. |
+| $CI$ | 95% confidence interval; when used as a subscript followed by "u" or "l" it indicates that the current variable is an upper or lower 95% confidence interval limit. |
+| $E$ | Activation energy, a subscript is used to index the reactions if more than one are occurring. |
+| $R$ | Ideal gas constant. |
+| $R^2$ | Coefficient of determination. |
+| $T$ | Temperature; a subscripted "C" denotes the units are Celsius. |
+| $\lambda$ | Standard error in a parameter estimate, an additional subscript denotes the specific parameter. |
+| $\Psi$ | Sum of the squares of the errors between the experimental response and the model-predicted response. |
+
+: {tbl-colwidths="[20,80]"}
