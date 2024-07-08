@@ -75,7 +75,7 @@ The approach to establishing a rate expression for a reaction begins by **postul
 
 Once a mathematical form has been postulated, the next step is called **parameter estimation**. The parameter estimation step is presented in Chapters [-@sec-6_bstr_data_analysis], [-@sec-6_cstr_data_analysis], and [-@sec-6_pfr_data_analysis]. It uses statistical methods to find the values of each unknown kinetics parameter that appears in the rate expression. The experimental kinetics data are used to find these values. The parameters are chosen so that the rate predicted by the rate expression for each experimental data point is as close as possible to the experimentally measured rate for that data point. Parameter estimation is sometimes referred to as fitting a rate expression to the experimental data.
 
-In addition to the best values of the kinetics parameters, parameter estimation generates additional information. Some measure of the uncertainty in the values of the kinetics parameters is typically produced. Common examples are an estimate of the standard deviation or the 95% confidence interval for each parameter. Other statistical measures of how accurately the model represents the data (or how well the model “fits” the data) are also generated. Well-known examples include the correlation coefficient, $R$, and the coefficient of determination, $R^2$. [Example @sec-example_4_4] illustrates parameter estimation using experimental data.
+In addition to the best values of the kinetics parameters, parameter estimation generates additional information. Some measure of the uncertainty in the values of the kinetics parameters is typically produced. Common examples are an estimate of the standard deviation or the 95% confidence interval for each parameter. Other statistical measures of how accurately the model represents the data (or how well the model “fits” the data) are also generated. Well-known examples include the correlation coefficient, $R$, and the coefficient of determination, $R^2$. [Example @sec-example_4_5_4] illustrates parameter estimation using experimental data.
 
 The next step in the process of establishing a rate expression for a reaction is **assessing the accuracy** of the rate expression. This assessment makes use of the statistical measures generated during parameter estimation. It may also include additional graphical methods. It should be noted that while parameter estimation yields the “best” values of the parameters, that does not mean that the underlying model is accurate. As an example, when $y$ *vs*. $x$ data are plotted, the plotted points might resemble a parabola. Parameter estimation can be used to find the best slope, $m$, and intercept, $b$, of a straight line model, $y = mx + b$, for those data, but the resulting straight line still would not be accurate as seen in @fig-line_fit_to_parabola.
 
@@ -111,7 +111,7 @@ Once the values of the parameters have been estimated, a so-called model plot ca
 * The coefficient of determination, $R^2$, will be close to 1.0
 * The uncertainty in each parameter will be small relative to its value.
 
-The estimation of Arrhenius parameters and assessment of the resulting expression are illustrated in [Example @sec-example_4_4].
+The estimation of Arrhenius parameters and assessment of the resulting expression are illustrated in [Example @sec-example_4_5_4].
 
 ### Empirical Rate Expressions
 
@@ -217,6 +217,7 @@ library(tidyverse)
 library(knitr)
 library(kableExtra)
 source('~/Libraries/R/fmt_tibble_col.R')
+source('~/Libraries/R/fmt_E_to_10.R')
 ```
 
 ### Rate Renormalization and Conversion between Reaction Rate and Species Generation Rate {#sec-example_4_1}
@@ -407,8 +408,6 @@ Also, @fig-example_4_2_fig_2 only shows conversions up to 99% for rate expressio
 
 :::
 
-
-
 ### Limiting Cell Growth Rates Predicted by the Monod Equation {#sec-example_4_3}
 
 {{< include ../RE_Basics_Examples/reb_4_3/problem_statement.qmd >}}
@@ -464,96 +463,122 @@ $$
 
 
 
-### Estimating the Pre-exponential Factor and Activation Energy in the Arrhenius Expression. {#sec-example_4_4}
+### Estimating the Pre-exponential Factor and Activation Energy in the Arrhenius Expression. {#sec-example_4_5_4}
 
-{{< include ../RE_Basics_Examples/reb_4_4/problem_statement.qmd >}}
+{{< include examples/reb_4_5_4/narrative.qmd >}}
 
 ```{r}
 #| echo: false
 #| output: false
-path_to_data <- './Data/'
-path_to_results <- '../RE_Basics_Examples/reb_4_4/Results/'
-path_to_figures <- './Graphics/'
-results <- read.csv(paste0(path_to_data,"reb_4_4_data.csv"))
+results <- read.csv("examples/reb_4_5_4/reb_4_5_4_data.csv")
 results <- fmt_tibble_col(results,3,3,3,1)
 ```
 
 ```{r}
 #| echo: false
-#| label: tbl-data_reb_4_4
+#| label: tbl-data_reb_4_5_4
 #| tbl-cap: Rate coefficients measured experimentally at different temperatures.
 kbl(results, format = "markdown", align = "ccc", col.names = c("i (Expt. Number)", "T (°C)",
     "k (L mol^-1^ min^-1^)"))
 ```
 
-The data are available in the .csv file, [reb_4_4_data.csv](`r paste0(path_to_data,'reb_4_4_data.csv')`).
+The data are available in the .csv file  [reb_4_5_4_data.csv](./examples/reb_4_5_4/reb_4_5_4_data.csv).
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This problem presents experimental data and then asks whether those data are "consistent with" the Arrhenius expression, @eq-arrhenius. In other words, does the Arrhenius expression accurately predict the value of the rate coefficient, $k$, at each of the tempertures, $T$, listed in @tbl-data_reb_4_4. To answer this question, I can see that I'll need to fit the Arrhenius expression to the experimental data and then assess the accuracy of the model.
-
-From the information provided in this chapter, I now that the most common way to fit the Arrhenius expression to experimental data is by using the linearized form shown in @eq-linear_arrhenius. To do that, I'll first need to convert the temperatures to absolute units. Then I can calculate the values of $x$ and $y$ for each experimental data point.
-
-In general, when solving problems I like to start by listing the quantities whose values are given in the problem statement, assigning them to approprite variable symbols. In this problem I'm given several values of $T$ and $k$; I'll underline these in my listing to indicate that they are vector quantities. I also like to list any relationships I'm provided. Here I'm told to use the Arrhenius expression, and since I now I'll use the linearized form, I'll list that.
+This assignment presents experimental data and then asks whether those data are "consistent with" the Arrhenius expression, @eq-arrhenius. In other words, does the Arrhenius expression accurately predict the value of the rate coefficient, $k$, at each of the Celsius tempertures, $T_C$, listed in @tbl-data_reb_4_5_4. I'll start by summarizing the assignment. That is, I'll list the quantities whose values are given in the problem statement, assigning them to approprite variable symbols. In this problem I'm given several values of $T_C$ and $k$; I'll underline these in my listing to indicate that they are vector quantities. I know I'll need the ideal gas constant, so I'll add that to the given and known quantities.
 
 :::
 
-**Given and Known**: $\underline{T}$ and $\underline{k}$.
+**Given and Known**: $\underline{T_C}$, $\underline{k}$, and $R$ = 8.314 J mol^-1^ K^-1^.
 
-**Model**: 
-
-$$
-\ln{k} = E \left( \frac{-1}{RT} \right) + \ln{k_0} \tag{1}
-$$
-
-Defining $y$ and $x$ as shown in equations (2) and (3) shows that equation (1) has the linear form shown in equation (4) when the slope, $m$, and intercept, $b$, are defined as in equations (5) and (6).
+**Item of Interest**: Accuracy with which the Arrhenius expression, equation (1), represents the data in @tbl-data_reb_4_5_4.
 
 $$
-y = \ln{k} \tag{2}
+k = k_0 \exp{ \left( \frac{-E}{RT} \right)} \tag{1}
 $$
-
-$$
-x = \left( \frac{-1}{RT} \right) \tag{3}
-$$
-
-$$
-y = m x + b \tag{4}
-$$
-
-$$
-m = E \tag{5}
-$$
-
-$$
-b = \ln{k_0} \tag{6}
-$$
-
-After converting the temperatures to K, $y$ and $x$ can be computed for each experiment using equations (2) and (3).
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Now I need to fit equation (4) to the data. This can be done using a spreadsheet program. The original data would first be entered in two columns, then new columns would be added for $y$ and $x$. Those columns would the be plotted as a $x-y$ scatterplot. Adding a linear trendline will fit equation (4) to the data, and in most spreadsheets the equation can be displayed on the graph along with the coefficient of determination, $R^2$. I would also like the undertainty in the values of the slope, $E$, and intercept, $\ln{k_0}$. The way those are calculated will depend upon the specific spreadsheet program being used.
+To answer this question, I'll need to fit the Arrhenius expression to the experimental data and then assess the accuracy of the resulting model (see @sec-apndx_parameter_est). I know that the most common way to fit the Arrhenius expression to experimental data is by using the linearized form given in @eq-linear_arrhenius. I need to make sure the temperatures are in absolute units when I calculate $x$.
 
-An alternative approach is to simply use linear least squares software to do the fitting and then plotting the results.
+:::
+
+**Linearized Arrhenius Expression**: 
+
+$$
+\begin{align}
+\ln{k} &= E \left( \frac{-1}{RT} \right) + \ln{k_0} \\
+y &= mx + b
+\end{align} \tag{2}
+$$
+
+$$
+y = \ln{k} \tag{3}
+$$
+
+$$
+x = \left( \frac{-1}{R\left(T_C + 273.15\right)} \right) \tag{4}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+After calculating the variables, $x$ and $y$, I need to fit equation (2) to the data. This can be done using a spreadsheet program. The original data would first be entered in two columns, then new columns would be added for $y$ and $x$. Those columns would then be plotted as a $x-y$ scatterplot. Adding a linear trendline will fit equation (2) to the data, and in most spreadsheets the equation can be displayed on the graph along with the coefficient of determination, $R^2$. I would also like a measure of the undertainty in the values of the slope, $m$, and intercept, $b$. The way those are calculated will depend upon the specific spreadsheet program being used.
+
+An alternative approach is to simply use a linear least squares fitting function from a mathematics software package to do the fitting as described in Example [-@sec-example_L_7_1]. I'm going to use the 95% confidence interval as the measure of uncertainty. Looking at equation (2), I can see that $m$ is equal to $E$ and $b$ is equal to $\ln{k_0}$, so I need to calculate $k_0$ and its 95% confidence interval.
+
+:::
+
+The linear least squares fitting function will return the best values of $m$ and $b$, the upper and lower limits of their 95% confidence intervals, $m_{CI,u}$, $m_{CI,l}$, $b_{CI,u}$, and $b_{CI,l}$, and the coefficient of determination, $R^2$.
+
+$$
+E = m \tag{5}
+$$
+
+$$
+E_{CI,u} = m_{CI,u} \tag{6}
+$$
+
+$$
+E_{CI,l} = m_{CI,l} \tag{7}
+$$
+$$
+b = \ln{k_0} \qquad \Rightarrow \qquad k_0 = \exp{\left(b\right)} \tag{8}
+$$
+
+$$
+k_{0,CI,u} = \exp{\left(b_{CI,u}\right)} \tag{9}
+$$
+
+$$
+k_{0,CI,l} = \exp{\left(b_{CI,l}\right)} \tag{10}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I'll want to generate a model plot to assess the accuracy of the Arrhenius expression for these data. To do so, I can calculate model-predicted values, $y_model$. Then I can plot $y$ *vs*. $x$ and points and $y_model$ *vs*. $x$ as a line on the same axes.
 
 :::
 
 ```{r}
 #| echo: false
 #| output: false
-df <- read.csv(paste0(path_to_results,"reb_4_4_results.csv")) %>%
+df <- read.csv("examples/reb_4_5_4/results.csv") %>%
     select(-item)
+k0_uncert <- as.numeric(df$value[3]) - as.numeric(df$value[2])
+k0_uncert <- fmt_E_to_10(k0_uncert,3,3,1)
 df <- fmt_tibble_col(df,1,3,3,1)
 ```
 
+The calculations were performed as described above using a linear least squares fitting function. The following Arrhenius parameter values were estimated: $k_0$ = `r df$value[1]` `r df$units[1]`, 95% CI [`r df$value[2]`, `r df$value[3]`] and $E$ = `r df$value[4]` `r df$units[4]`, 95% CI [`r df$value[5]`, `r df$value[6]`]. The coefficient of determination, $R^2$, was found to equal `r df$value[7]`. The results were used to generate the model plot shown in @fig-example_4_5_4_fig.
 
-Using linear least squares software, the following Arrhenius parameter values were estimated: $k_0$ = `r df$value[1]` `r df$units[1]`, 95% CI [`r df$value[2]`, `r df$value[3]`] and $E$ = `r df$value[4]` `r df$units[4]`, 95% CI [`r df$value[5]`, `r df$value[6]`]. The coefficient of determination, $R^2$, was found to equal `r df$value[7]`. The results were used to generate the model plot shown in @fig-example_4_4_fig.
-
-![Arrhenius plot comparing the model (line) to the experimental data (points).](`r paste0(path_to_figures,'reb_4_4_Arrhenius_plot.png')`){#fig-example_4_4_fig width="80%"}
+![Arrhenius plot comparing the model (line) to the experimental data (points).](examples/reb_4_5_4/Arrhenius_plot.png){#fig-example_4_5_4_fig width="80%"}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -562,12 +587,12 @@ The last thing I need to do is to assess the accuracy of the resulting Arrhenius
 
 :::
 
-The uncertainty in $k_0$, that is the difference between the upper and lower limits of the 95% confidence interval, is 4.69 x 10^7^ `r df$units[1]`. This is quite large compared to the estimated value of $k_0$, `r df$value[1]` `r df$units[1]`. Estimated pre-exponential factors are often found to have large uncertainties. The uncertainty in the activation energy is 10.5 kJ mol^-1^ (18%) compared to the estimated value of `r df$value[4]` kJ mol^-1^. The coefficient of determination is quite close to 1.0, however, and the model plot shows good agreement between the experimental data and the model with no trends in the deviations. Overall, it appears that the experimental data are consistent with the Arrhenius expression.
+The uncertainty in $k_0$, that is the difference between the upper and lower limits of the 95% confidence interval, is `r k0_uncert` `r df$units[1]`. This is quite large compared to the estimated value of $k_0$, `r df$value[1]` `r df$units[1]`. Estimated pre-exponential factors are often found to have large uncertainties. The uncertainty in the activation energy is `r as.numeric(df$value[6]) - as.numeric(df$value[5])` `r df$units[4]` (18%) compared to the estimated value of `r df$value[4]`  `r df$units[4]`. The coefficient of determination is quite close to 1.0. While the model plot shows good agreement between the experimental data and the model there does appear to be a trend in the deviations. At low $T_{-1}$ the points fall above the line, and intermediate values they are below it, and at the the largest value it is again above the line. Nonetheless, the deviations are small, and it appears that the experimental data are consistent with the Arrhenius expression within the range of temperatures studied.
 
 :::{.callout-note collapse="false"}
 ## Note
 
-This example illustrated the preferred way to report a value together with its 95% confidence interval: "value units, 95% CI [lower bound, upper bound]," Thus $E$ = `r df$value[4]` `r df$units[4]`, 95% CI [`r df$value[5]`, `r df$value[6]`] means that the estimated value of $E$ is `r df$value[4]` `r df$units[4]`, and if the experiments were repeated many times, 95% of those times the estimated value of $E$ would be between `r df$value[5]` `r df$units[4]` and `r df$value[6]` `r df$units[4]`. 
+This example illustrated the preferred way to report a value together with its 95% confidence interval: "value units, 95% CI [lower bound, upper bound]," Thus $E$ = `r df$value[4]` `r df$units[4]`, 95% CI [`r df$value[5]`, `r df$value[6]`] means that the estimated value of $E$ is `r df$value[4]` `r df$units[4]`, and if the same experiments were repeated many times, 95% of those times the estimated value of $E$ would be between `r df$value[5]` `r df$units[4]` and `r df$value[6]` `r df$units[4]`. 
 
 :::
 
@@ -604,7 +629,7 @@ This example illustrated the preferred way to report a value together with its 9
 | $R$ | Ideal gas constant. |
 | $R^2$ | Coefficient of determination. |
 | $S_{D/U,inst}$ | Instantaneous selectivity for product $D$ over product $U$; $D$ and $U$ can also be groups of products. |
-| $T$ | Temperature. |
+| $T$ | Temperature; a subscripted "C" denotes the units are Celsius. |
 | $V$ | Volume. |
 | $V_{cat}$ | Volume of catalyst. |
 | $Y_{D/i,inst}$ | Instantaneous yield of product $D$ from reactant $i$. |
