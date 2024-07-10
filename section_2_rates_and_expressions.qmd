@@ -489,19 +489,21 @@ The data are available in the .csv file  [reb_4_5_4_data.csv](./examples/reb_4_5
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This assignment presents experimental data and then asks whether those data are "consistent with" the Arrhenius expression, @eq-arrhenius. In other words, does the Arrhenius expression accurately predict the value of the rate coefficient, $k$, at each of the Celsius tempertures, $T_C$, listed in @tbl-data_reb_4_5_4. I'll start by summarizing the assignment. That is, I'll list the quantities whose values are given in the problem statement, assigning them to approprite variable symbols. In this problem I'm given several values of $T_C$ and $k$; I'll underline these in my listing to indicate that they are vector quantities. I know I'll need the ideal gas constant, so I'll add that to the given and known quantities.
+This assignment presents experimental data and then asks whether those data are "consistent with" the Arrhenius expression, @eq-arrhenius. In other words, does the Arrhenius expression accurately predict the value of the rate coefficient, $k$, at each of the Celsius tempertures, $T_C$, listed in @tbl-data_reb_4_5_4. I'll start by summarizing the assignment. That is, I'll list the quantities whose values are given in the problem statement, assigning them to approprite variable symbols. I'll use an underline to denote the full set of values in the data set and no underline to denote one of those values. That is, $\underline{T_C}$ represents the set of experimental temperatures and $T_C$ represents one of those tmperatures. I know I'll need the ideal gas constant, so I'll add that as a known quantities.
 
 :::
 
 #### Assignment Summary
 
-**Given and Known**: $\underline{T_C}$, $\underline{k}$, and $R$ = 8.314 J mol^-1^ K^-1^.
-
-**Item of Interest**: Accuracy with which the Arrhenius expression, equation (1), represents the data in @tbl-data_reb_4_5_4.
+**Items of Interest:** $k_0$, $E$, $k_{0,CI,u}$, $k_{0,CI,l}$, $E_{CI,u}$, $E_{CI,l}$, and an assessment of the accuracy of equation (1)
 
 $$
 k = k_0 \exp{ \left( \frac{-E}{RT} \right)} \tag{1}
 $$
+
+**Known Constant:** $R$ = 8.314 J mol^-1^ K^-1^.
+
+**Experimental Data:** $\underline{T_C}$ and $\underline{k_{\text{expt}}}$.
 
 #### Mathematical Formulation of the Solution
 
@@ -517,64 +519,94 @@ To answer this question, I'll need to fit the Arrhenius rate coefficient model t
 [Linearized Arrhenius Expression]{.underline}
 
 $$
-\begin{align}
-\ln{k} &= E \left( \frac{-1}{RT} \right) + \ln{k_0} \\
-y &= mx + b
-\end{align} \tag{2}
+\ln{\left(k \right)} = E \left( \frac{-1}{RT} \right) + \ln{\left(k_0 \right)} \tag{2}
 $$
 
 $$
-y = \ln{k} \tag{3}
-$$
-
-$$
-x = \left( \frac{-1}{R\left(T_C + 273.15\right)} \right) \tag{4}
+\begin{matrix} y = \ln{\left(k \right)} \\ x = \displaystyle \frac{-1}{RT} \end{matrix} \quad \Rightarrow \quad y = m x + b \quad \Rightarrow \quad \begin{matrix} m = E \\ b = \ln{\left(k_0 \right)} \end{matrix} \tag{3}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-After calculating the variables, $x$ and $y$, I need to fit equation (2) to the data. This can be done using a spreadsheet program. The original data would first be entered in two columns, then new columns would be added for $y$ and $x$. Those columns would then be plotted as a $x-y$ scatterplot. Adding a linear trendline will fit equation (2) to the data, and in most spreadsheets the equation can be displayed on the graph along with the coefficient of determination, $R^2$. I would also like a measure of the undertainty in the values of the slope, $m$, and intercept, $b$. The way those are calculated will depend upon the specific spreadsheet program being used.
+I could use a spreadsheet to do all of the necessary calculations, but since almost all other calculations in *Reaction Engineering Basics* are performed numerically, I'm going to use a linear model fitting function here.
 
-An alternative approach is to simply use a linear least squares fitting function from a mathematics software package to do the fitting as described in Example [-@sec-example_L_7_1]. I'm going to use the 95% confidence interval as the measure of uncertainty. Looking at equation (2), I can see that $m$ is equal to $E$ and $b$ is equal to $\ln{k_0}$, so I need to calculate $k_0$ and its 95% confidence interval.
+Linear model fitting functions can be found in many mathematics software packages. No matter which package is used, the linear model fitting function will require a set of $x$ values and a set of $y$ values as input, and it will return the best estimates of $m$ and $b$ based on the data provided to it. In most cases it will also return the coefficient of determination, $R^2$, and some measure of the uncertainties in $m$ and $b$. Here I'll assume the upper and lower limits of the 95% conficence intervals, $m_{CI,u}$, $m_{CI,l}$, $b_{CI,u}$, and $b_{CI,l}$ will be returned as the measures of uncertainty in $m$ and $b$. (@sec-apndx_parameter_est discusses using the standard errors for $m$ and $b$ as the measure of their uncertainty.)
 
-I'll want to generate a model plot to assess the accuracy of the Arrhenius expression for these data. To do so, I can calculate model-predicted values, $y_{model}$. Then I can plot $y$ *vs*. $x$ as points and $y_{model}$ *vs*. $x$ as a line on the same axes.
+So, before I can fit the linear model to the data, I need to calculate $\underline{x}$ and $\underline{y_{\text{expt}}}$ as indicated above. I'll use the following notation, for example, to mean take each value of $k_{\text{expt}}$ in the experimental data set, calculate the corresponding value of $y_{\text{expt}}$, and combine the results as a data set.
+
+$$
+\underline{k_{\text{expt}}} \qquad \Rightarrow \qquad y_{\text{expt}} = \ln{\left(k_{\text{expt}}\right)} \qquad \Rightarrow \qquad \underline{y_{\text{expt}}}
+$$
+
+I can then provide the resulting data sets to a linear model fitting function to get $m$, $b$, $R^2$, $m_{CI,u}$, $m_{CI,l}$, $b_{CI,u}$, and $b_{CI,l}$.
+
+I then need to use the definitions of $m$ and $b$ above to calculate the pre-exponential factor, activation energy, and their 95% confidence intervals.
 
 :::
 
+**Parameter Estimates and Statistics**
+
+The best estimates for $k_0$, $E$, their 95% confidence intervals, and the coefficient of determination, $R^2$, can be found using the following sequence of calculations.
+
+$$
+\underline{k_{\text{expt}}} \qquad \Rightarrow \qquad y_{\text{expt}} = \ln{\left(k_{\text{expt}}\right)} \qquad \Rightarrow \qquad \underline{y_{\text{expt}}} \tag{4}
+$$
+
+$$
+\underline{T_C} \qquad \Rightarrow \qquad x = \left( \frac{-1}{R\left(T_C + 273.15\right)} \right) \qquad \Rightarrow \qquad \underline{x} \tag{5}
+$$
+
+$$
+\begin{matrix} \underline{x} \\ \underline{y_{\text{expt}}} \end{matrix}  \qquad \begin{matrix} \text{linear model} \\ \Rightarrow \\ \text{fitting function} \end{matrix} \qquad \begin{matrix} m, m_{CI,u}, m_{CI,l} \\ b, b_{CI,u}, b_{CI,l} \\ R^2 \end{matrix} \tag{6}
+$$
+
+$$
+E = m \tag{7}
+$$
+
+$$
+E_{CI,u} = m_{CI,u} \tag{8}
+$$
+
+$$
+E_{CI,l} = m_{CI,l} \tag{9}
+$$
+$$
+b = \ln{k_0} \qquad \Rightarrow \qquad k_0 = \exp{\left(b\right)} \tag{10}
+$$
+
+$$
+k_{0,CI,u} = \exp{\left(b_{CI,u}\right)} \tag{11}
+$$
+
+$$
+k_{0,CI,l} = \exp{\left(b_{CI,l}\right)} \tag{12}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I'll want to generate a model plot to assess the accuracy of the Arrhenius expression for these data. To do so, I can use the estimated values of $k_0$ and $E$ to calculate model-predicted values, $k_{model}$ using equation (1). Then I can plot $k_{\text{expt}}$ *vs*. $\frac{1}{T_C + 273.15}$ as points and $k_{model}$ *vs*. $\frac{1}{T_C + 273.15}$ as a line on the same axes.
+
+:::
+
+**Model Plot**
+
+Using the estimated values of $k_0$ and $E$ and the experimental temperature data, $\underline{T_C}$, the model-predicted responses, $\underline{k_{\text{model}}}$ can be calculated as shown below.
+
+$$
+\underline{T_C} \quad \Rightarrow \quad k_{\text{model}} = k_0 \exp{ \left( \frac{-E}{R\left(T_C + 273.15\right)} \right)} \quad \Rightarrow \quad \underline{k_{\text{model}}} \tag{13}
+$$
+
+A model plot can then be created by plotting $k_{\text{expt}}$ *vs*. $\frac{1}{T_C + 273.15}$ as points and $k_{model}$ *vs*. $\frac{1}{T_C + 273.15}$ as a line on the same axes.
+
 **Performing the Analysis**
 
-The assignment can be completed as follows:
+The calculations can be completed as follows:
 
-1. Calculate $x$ and $y$ for each experiment in the data set using equations (3) and (4).
-2. Use a linear least squares fitting function to estimate the best values of $m$ and $b$ in equation (2), along with the upper and lower limits of their 95% confidence intervals, $m_{CI,u}$, $m_{CI,l}$, $b_{CI,u}$, and $b_{CI,l}$, and the coefficient of determination, $R^2$.
-3. Use the results to calculate the Arrhenius pre-exponential factor and activation energy as follows:
-
-$$
-E = m \tag{5}
-$$
-
-$$
-E_{CI,u} = m_{CI,u} \tag{6}
-$$
-
-$$
-E_{CI,l} = m_{CI,l} \tag{7}
-$$
-$$
-b = \ln{k_0} \qquad \Rightarrow \qquad k_0 = \exp{\left(b\right)} \tag{8}
-$$
-
-$$
-k_{0,CI,u} = \exp{\left(b_{CI,u}\right)} \tag{9}
-$$
-
-$$
-k_{0,CI,l} = \exp{\left(b_{CI,l}\right)} \tag{10}
-$$
-
-5. Use the estimated parameters to calculate the model-predicted rate coefficient using equation (1).
-6. Generate a model plot showing the experimental rate coefficient *vs*. $T^{-1}$ as points and the model-predicted rate coefficient *vs*. $T^{-1}$ as a line.
+1. Calculate the parameter estimates and statistics, $k_0$, $E$, $k_{0,CI,u}$, $k_{0,CI,l}$, $E_{CI,u}$, $E_{CI,l}$, and $R^2$, as described above.
+2. Generate a model plot as described above.
 
 ```{r}
 #| echo: false
@@ -588,7 +620,7 @@ df <- fmt_tibble_col(df,1,3,3,1)
 
 #### Results and Discussion
 
-The calculations were performed as described above using a linear least squares fitting function. The following Arrhenius parameter values were estimated: $k_0$ = `r df$value[1]` `r df$units[1]`, 95% CI [`r df$value[2]`, `r df$value[3]`] and $E$ = `r df$value[4]` `r df$units[4]`, 95% CI [`r df$value[5]`, `r df$value[6]`]. The coefficient of determination, $R^2$, was found to equal `r df$value[7]`. The results were used to generate the model plot shown in @fig-example_4_5_4_fig.
+The calculations were performed as described above using a linear model fitting function. The following Arrhenius parameter values were estimated: $k_0$ = `r df$value[1]` `r df$units[1]`, 95% CI [`r df$value[2]`, `r df$value[3]`] and $E$ = `r df$value[4]` `r df$units[4]`, 95% CI [`r df$value[5]`, `r df$value[6]`]. The coefficient of determination, $R^2$, was found to equal `r df$value[7]`. The results were used to generate the model plot shown in @fig-example_4_5_4_fig.
 
 ![Arrhenius plot comparing the model (line) to the experimental data (points).](examples/reb_4_5_4/Arrhenius_plot.png){#fig-example_4_5_4_fig width="80%"}
 
