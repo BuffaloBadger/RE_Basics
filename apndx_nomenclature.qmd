@@ -1,4 +1,4 @@
-# Acronyms, Notation, and Sign Conventions {#sec-apndx_notation}
+# Acronyms, Notation, Sign Conventions, and Computing {#sec-apndx_notation}
 
 This appendix describes acronyms, notation, and sign conventions that are used throughout *Reaction Engineering Basics*.
 
@@ -11,6 +11,7 @@ The primary use of acronyms in *Reaction Engineering Basics* is to identify reac
 | ATE | Algebraic-transcendental equation |
 | BSTR | Batch stirred-tank reactor |
 | BVODE | Boundary value ordinary differential equation |
+| CI | Confidence interval. |
 | CSTR | Continuous (flow) stirred-tank reactor |
 | DAEs | Differential-algebraic equations |
 | IVODE | Initial value ordinary differential equation |
@@ -95,3 +96,43 @@ During the derivation of some of the equations presented in *Reaction Engineerin
 * If a reagent is neither a reactant nor a product in a given reaction , its stoichiometric coefficient in that reaction is **zero**.
 * Heat *added to* a system is **positive**.
 * Work *done by* a system is **positive**.
+
+## Computing
+
+*Reaction Engineering Basics* does not present any computer code. This is intentional because different readers will prefer to use different mathematics software packages. Instead, the numerical implementation of calculations is described in a general way that (hopefully) is sufficient for understanding the examples in the book and for writing the necessary code using any software package.
+
+In many instances, the code described in *Reaction Engineering Basics* will not be as computationally efficient as it could be. However, the calculations needed for completing *Reaction Engineering Basics* example assignments runs very quickly anyway. The intention here is not to describe the fastest or best way to perform the calculations, but instead to make it as easy as possible to understand what the code does. Similarly, the code described in *Reaction Engineering Basics* sometimes makes use of global variables. There are situations where the use of global variables is unwise, but in the context of *Reaction Engineering Basics* their use makes it easier to understand what the code does, and it does not introduce any problems.
+
+### Code Structure
+
+*Reaction Engineering Basics* uses "function" to refer to a unit of computer code. Some software packages may use "subroutine," "module," etc. *Reaction Engineering Basics* assumes there are two types of functions: utility functions and example calculation functions.
+
+**Utility Functions**
+
+These functions are either provided by the software package or they are written by the user and stored in a way that they can be called from within any other user-written function. In other words, they are always available. Typically they perform a general task that is used when solving problems a wide range problems.
+
+**Example Calculation Functions**
+
+The calculations used when completing the example assignments in *Reaction Engineering Basics* are divided among a number of functions, each of which performs a specific task. *Reaction Engineering Basics* assumes that these component functions are all included within a single master function. The master function is assumed to have the following components:
+
+Given and Known Constants
+: All constants provided in the assignment narrative or known from other sources are defined first. They are defined so that they are available within any of the internal functions listed below. That is, they are globally available within the master function.
+
+Globally Available Variables
+: In some situations, variables that an internal function needs cannot be passed to that function as arguments. When this happens in *Reaction Engineering Basics*, a global variable is defined to hold each value that cannot be passed as an argument. When the value of the global variable is set or changed by one function, the new value becomes available to all other functions, avoiding the need to pass it as an argument.
+
+Model Functions
+: In any *Reaction Engineering Basics* example assignment it is necessary to solve equations that model a reactor. In some assignments model equations for other equipment (heat exchangers, stream splitters, and stream mixers) or experiments also must be solved. For each set of model equations that need to be solved, an internal function that does so is written within the master function.
+
+Derivatives and Residuals Functions
+: The ATE, IVODE, and BVODE solvers that are built into software packages must be provided with the name of a function that the user has written for the purpose of evaluating the derivatives in a set of ODEs being solve or the residuals corresponding to a set of ATES being solved. These user-written functions are written as internal functions within the master function. (The arguments to these functions and the quantities they return are fixed by the software package being used. If these functions need variables other than the arguments, they are provided as globally available variables in *Reaction Engineering Basics.*)
+
+Calculations Function
+: *Reaction Engineering Basics* assumes that the master function contains an internal function that coordinates calling the other internal functions and performing the calculations. The calculations function also reads in any data that is stored in files, and it is responsible for displaying and saving the results, including graphs.
+
+Single Executable Statement
+: *Reaction Engineering Basics* assumes that following all of the components listed above, the master function contains a single exceutable line of code that simply calls the calculations function.
+
+### Numerical Methods
+
+
