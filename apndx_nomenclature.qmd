@@ -99,40 +99,95 @@ During the derivation of some of the equations presented in *Reaction Engineerin
 
 ## Computing
 
-*Reaction Engineering Basics* does not present any computer code. This is intentional because different readers will prefer to use different mathematics software packages. Instead, the numerical implementation of calculations is described in a general way that (hopefully) is sufficient for understanding the examples in the book and for writing the necessary code using any software package.
+*Reaction Engineering Basics* does not present any computer code. This is intentional because different readers will prefer to use different mathematics software packages. Instead, the numerical implementation of calculations is described in a general way that (hopefully) is sufficient for understanding the examples in the book and for writing the necessary code using any software package. However, it is necessary to make a few assumptions in order to describe the numerical implementation of calculations.
 
-In many instances, the code described in *Reaction Engineering Basics* will not be as computationally efficient as it could be. However, the calculations needed for completing *Reaction Engineering Basics* example assignments runs very quickly anyway. The intention here is not to describe the fastest or best way to perform the calculations, but instead to make it as easy as possible to understand what the code does. Similarly, the code described in *Reaction Engineering Basics* sometimes makes use of global variables. There are situations where the use of global variables is unwise, but in the context of *Reaction Engineering Basics* their use makes it easier to understand what the code does, and it does not introduce any problems.
-
-### Code Structure
-
-*Reaction Engineering Basics* uses "function" to refer to a unit of computer code. Some software packages may use "subroutine," "module," etc. *Reaction Engineering Basics* assumes there are two types of functions: utility functions and example calculation functions.
+In *Reaction Engineering Basics*, "function" is used to refer to a unit of computer code. Some software packages may use "subroutine," "script," "module," etc. instead. It is further assumed that functions can contain other functions. The numerical implementation of the calculations for completing any one example assignments can then be described in terms of two kinds of functions: utility functions and example calculations functions.
 
 **Utility Functions**
 
-These functions are either provided by the software package or they are written by the user and stored in a way that they can be called from within any other user-written function. In other words, they are always available. Typically they perform a general task that is used when solving problems a wide range problems.
+Utility functions are either provided by the software package or they are written by the user and stored in a way that they can be called from within any other user-written function. In other words, they are always available. Typically they perform a general task that must be performed frequently. *Reaction Engineering Basics* assumes the following utility functions are available. It is further assumed that they must be provided with the indicated input arguments and will return the indicated values.
 
-**Example Calculation Functions**
+* **Arrhenius parameter estimation function** (see [Example -@sec-example_L_7_1])
+    * Input
+        * a set of rate coefficients
+        * a set of corresponding temperatures (in absolute units)
+        * the ideal gas constant
+    * Returns
+        * the Arrhenius pre-exponential factor and its 95% confidence interval
+        * the activation energy and its 95% confidence interval
+        * the coefficient of determination
+* **IVODE solver** (see @sec-apndx_solve_ivodes)
+    * Input
+        * the initial values of the independent variable and the dependent variables
+        * a stopping criterion (variable and its final value)
+        * the name of a derivatives function
+            * user-written
+            * input must be the values of the independent variable and the dependent variables at the start of an integration step
+            * it must return the values of the derivatives that appear in the ODEs being solved
+    * Returns
+        * corresponding sets of values of the independent variable and the dependent variables spanning the range from their initial values to the point where the stopping criterion is satisfied
+        * a flag or message indicating whether it was successful
+* **ATE solver** (see @sec-apndx_solve_ates)
+    * Input
+        * an initial guess for the unknowns
+        * the name of a residuals function
+            * user-written
+            * input must be a guess for the unknowns
+            * it must return the values of the residuals corresponding to the set of ATEs being solved.
+    * Returns
+        * a set of values of the unknowns that solve the ATEs
+        * a flag or message indicating whether it was successful
+* **Numerical fitting function** (see @sec-apndx_parameter_est)
+    * Input
+        * a guess for the unknown parameters in the model being fit to the data
+        * set(s) of values of the experimentally adjusted input(s)
+        * a corresponding set of values of the experimentally measured response
+        * the name of a predicted responses function
+            * user written
+            * input must be a set of values for the parameters in the model and sets of values of the experimentally adjusted inputs
+            * it must return a corresponding set of values of the model-predicted response
+    * Returns
+        * the values of the unknown parameters in the model
+        * the 95% confidence interval for each unknown parameter in the model
+        * the coefficient of determination
+        * a flag or message indicating whether it was successful
+* **BVODE solver** (see @sec-apndx_solving_bvodes)
+    * Input
+        * the upper and lower bounds of the independent variable
+        * guesses for average values of the dependent variables between the upper and lower bounds of the independent variable
+        * the name of a boundary residuals function
+            * user written
+            * input must be the value of each dependent variable at the lower bound and the value of each dependent variable at the upper bound
+            * it must return the values of the residuals corresponding to the boundary contitions
+        * the name of a derivatives function
+            * user written
+            * input must be corresponding sets of values of the independent variable and the dependent variables
+            * it must return corresponding sets of values of the derivatives that appear in the ODEs being solved
+    * Returns
+        * corresponding sets of values of the independent variable and the dependent variables spanning the range from one boundary to the other
+        * a flag or message indicating whether it was successful
 
-The calculations used when completing the example assignments in *Reaction Engineering Basics* are divided among a number of functions, each of which performs a specific task. *Reaction Engineering Basics* assumes that these component functions are all included within a single master function. The master function is assumed to have the following components:
+**An Example Master Function**
+
+*Reaction Engineering Basics* assumes the numerical implementation of the calculations for any one example assignment occurs within a single master function. Typically the numerical implementation is divided among a number of functions within the master function, and the utility functions listed above can be called from anywhere within it. The master function can contain the following components:
 
 Given and Known Constants
-: All constants provided in the assignment narrative or known from other sources are defined first. They are defined so that they are available within any of the internal functions listed below. That is, they are globally available within the master function.
+: All constants provided in the assignment narrative, or known from other sources, are defined first. They are defined so that they are available within any of the internal functions listed below. That is, they are globally available within the master function.
 
 Globally Available Variables
-: In some situations, variables that an internal function needs cannot be passed to that function as arguments. When this happens in *Reaction Engineering Basics*, a global variable is defined to hold each value that cannot be passed as an argument. When the value of the global variable is set or changed by one function, the new value becomes available to all other functions, avoiding the need to pass it as an argument.
+: In some situations, variables that an internal function needs cannot be passed to that function as arguments. When this happens, a global variable is defined to hold each value that cannot be passed as an argument. When the value of the global variable is set or changed by one internal function, the new value becomes available to all other internal functions, avoiding the need to pass it as an argument.
 
 Model Functions
-: In any *Reaction Engineering Basics* example assignment it is necessary to solve equations that model a reactor. In some assignments model equations for other equipment (heat exchangers, stream splitters, and stream mixers) or experiments also must be solved. For each set of model equations that need to be solved, an internal function that does so is written within the master function.
+: In any *Reaction Engineering Basics* example assignment it is necessary to solve equations that model a reactor. In some assignments model equations for other equipment (heat exchangers, stream splitters, and stream mixers) or experiments also must be solved. For each set of model equations that need to be solved, an internal function that does so is included within the master function.
+
+Predicted Responses Functions
+: When estimating unknown parameters in a model, a function that calculates the model-predicted responses must be included within the master function.
 
 Derivatives and Residuals Functions
-: The ATE, IVODE, and BVODE solvers that are built into software packages must be provided with the name of a function that the user has written for the purpose of evaluating the derivatives in a set of ODEs being solve or the residuals corresponding to a set of ATES being solved. These user-written functions are written as internal functions within the master function. (The arguments to these functions and the quantities they return are fixed by the software package being used. If these functions need variables other than the arguments, they are provided as globally available variables in *Reaction Engineering Basics.*)
+: The ATE, IVODE, and BVODE solvers that are built into software packages must be provided with the name of a function that the user has written for the purpose of evaluating the derivatives in a set of ODEs being solve or the residuals corresponding to a set of ATES being solved. These user-written functions are written as internal functions within the master function. (The arguments to these functions and the quantities they return are fixed by the software package being used. If these functions need variables other than the arguments, a globally available variable is used)
 
 Calculations Function
 : *Reaction Engineering Basics* assumes that the master function contains an internal function that coordinates calling the other internal functions and performing the calculations. The calculations function also reads in any data that is stored in files, and it is responsible for displaying and saving the results, including graphs.
 
 Single Executable Statement
 : *Reaction Engineering Basics* assumes that following all of the components listed above, the master function contains a single exceutable line of code that simply calls the calculations function.
-
-### Numerical Methods
-
-
