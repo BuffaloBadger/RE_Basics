@@ -112,7 +112,7 @@ source('~/Libraries/R/fmt_tibble_col.R')
 
 As noted above, the analysis of data from a CSTR is quite similar to the analysis of BSTR data (@sec-6_bstr_data_analysis) or PFR data (@sec-6_pfr_data_analysis). Perhaps the most significant difference for analysis of CSTR data is that the reactor design equations are ATEs whereas for BSTRs and PFRs they are IVODEs. In each of the examples in this chapter presents a single, same-temperature block of data is analyzed.
 
-If one wished or needed to analyzed many such data blocks, the analysis illustrated here could be repeated for each data block. The Arrhenius expression, @eq-arrhenius, could then be fit to the resulting rate coefficient *versus* temperature data. This is illustrated in Examples -@sec-example_4_5_4, -@sec-example_L_7_1, -@sec-example_19_5_1, and -@sec-example_19_5_2 (using the linearized model). Alternatively, the CSTR model could be formulated in terms of $k_0$ and $E$ and the complete data set could be analyzed at once as illustrated in [Example -@sec-example_19_5_2].
+If one wished or needed to analyzed many such data blocks, the analysis illustrated here could be repeated for each data block. The Arrhenius expression, @eq-arrhenius, could then be fit to the resulting rate coefficient *versus* temperature data. This is illustrated in Example -@sec-example_4_5_4. Alternatively, the CSTR model could be formulated in terms of $k_0$ and $E$ and the complete data set could be analyzed at once as illustrated in [Example -@sec-example_19_5_2].
 
 The first example here considers a liquid-phase reaction. Assuming liquids to be incompressible, ideal mixtures means that the inlet and outlet volumetric flow rates are equal. In contrast, for a gas-phase reacting fluid the inlet and outlet volumetric flow rates will not be equal if the reaction causes a change in the total number of moles. That situation is illustrated in [Example -@sec-example_20_5_2]. The final example in this chapter illustrates the assessment of a rate expression that contains both forward and reverse rate coefficients.
 
@@ -208,7 +208,7 @@ $$
 
 I will solve the CSTR design equatiions for the outlet molar flow rates of A, B, Y, and Z. Then I can use the CSTR model when I need to calculate the model-predicted response. The design equations are ATEs, and to solve them numerically, I'll need to provide a guess for those outlet molar flow rates and a residuals function.
 
-I could just make a single random guess for the ATE unknowns, and it would be used as the guess when solving the CSTR design equations for each of the experiments. However, if the model is provided with the experimental adjusted inputs and the experimental response for each experiment, a separate guess for the ATE unknowns can be calculated for each experiment. That is, the inlet concentrations and the volumetric flow rate can be used to calculate the inlet molar flow rates of the reagents. 
+I could just make a single random guess for the ATE unknowns, and it would be used as the guess when solving the CSTR design equations for each of the experiments. However, if the model is provided with the adjusted experimental inputs and the experimental response for each experiment, a separate guess for the ATE unknowns can be calculated for each experiment. That is, the inlet concentrations and the volumetric flow rate can be used to calculate the inlet molar flow rates of the reagents. 
 
 $$
 C_i = \frac{\dot{n}_i}{\dot{V}} \qquad \Rightarrow \qquad \dot{n}_i = C_i \dot{V}
@@ -232,7 +232,9 @@ $$
 
 The other thing I need in order to solve the design equations numerically is a residuals function (see @sec-apndx_solve_ates). I'll need to write the residuals function knowing that it will be given values for the ATE unknowns ($\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, and $\dot{n}_{Z,1}$), and it will have access to the given and known constants in the assignment summary. It must evaluate the residuals in equations (3) through (6) and return their values. Before that can be done, any other unknown quantities appearing in equations (3) through (6) must be calculated.
 
-Examining equations (3) through (6), I can see that there are five additional unknown quantities: the four inlet molar flow rates and the reaction rate. I just generated the equations for calculating the inlet molar flow rates. The rate can be calculated using equation (2), but to do that I need the outlet concentrations of A and B and the rate coefficient. It isn't possible to calculate the rate coefficient using the information provided to the residuals function, so the rate coefficient will need to be provided. The outlet concentrations must be used in the rate expression, and to calculate them, I can again use the definition of concentration, @eq-concentration_open.
+Examining equations (3) through (6), I can see that there are five additional unknown quantities: the four inlet molar flow rates and the reaction rate. I just generated the equations for calculating the inlet molar flow rates. Assuming that the adjusted experimental inputs will be provided, I can use the previous equations to calculate the inlet molar flow rates.
+
+The rate can be calculated using equation (2), but to do that I need the outlet concentrations of A and B and the rate coefficient. It isn't possible to calculate the rate coefficient using the information provided to the residuals function, so the rate coefficient will need to be provided. The outlet concentrations must be used in the rate expression, and to calculate them, I can again use the definition of concentration, @eq-concentration_open.
 
 :::
 
@@ -280,7 +282,13 @@ $$
 
 [Residuals Function]{.underline}
 
-Given the values of the ATE unknowns ($\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, and $\dot{n}_{Z,1}$), the required input above, and the given and known constants from the assignment summary, the remaining unknown quantities appearing in the residual expressions can be computed using the following sequence of calculations. Then the residuals can be evaluated using equations (3) through (6).
+Arguments: $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, and $\dot{n}_{Z,1}$.
+
+Return Variables: $\epsilon_1$, $\epsilon_2$, $\epsilon_3$, and $\epsilon_4$.
+
+Algorithm (given the known constants and required input above):
+
+1. Calculate unknown quantities appearing in the residual expressions.
 
 $$
 \dot{n}_{A,0} = C_{A,0}\dot{V} \tag{7}
@@ -310,9 +318,14 @@ $$
 r = kC_{A,1}C_{B,1} \tag{2}
 $$
 
-[Solving the Steady-State CSTR Design equations]{.underline}
+2. Calculate and return the residuals using equations (3) through (6).
 
-The reactor design equations can be solved by calling an ATE solver, providing it with the name of the residuals function and the guess for the ATE unknowns. Assuming the solver was successful, it will return one set of values of the ATE unknowns that solve the design equations (there could be other solutions).
+[Solving the Steady-State CSTR Design Equations]{.underline}
+
+1. Given the known constants and required input, calculate initial guesses for the unknowns as described above.
+2. Call an ATE solver passing the initial guesses and the name of the residuals function to it.
+
+Assuming the solver was successful, it will return one set of values of the ATE unknowns that solve the design equations (there could be other solutions).
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -331,25 +344,45 @@ Indicators of accuracy are that $R^2$ is close to 1, the upper and lower limits 
 
 [Predicted Responses Function]{.underline}
 
-Given a value for $k$ and the set of adjusted experimental inputs, the reactor model above can be used to calculate corresponding sets of values of $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, and $\dot{n}_{Z,1}$. The model predicted response can then be calculated as using equation (18). This can be repeated for each experiment to generate a set of model-predicted responses.
+Arguments: $\underline{\dot{V}}$, $\underline{C}_{A,0}$, $\underline{C}_{B,0}$, $\underline{C}_{Y,0}$, $\underline{C}_{Z,0}$, and $k$.
 
+Return values: $\underline{C}_{Y,1,model}$
+
+Algorithm (given the known constants from the assignment summary):
+
+1. Determine the number of experimental data and allocate storage $\underline{C}_{Y,1,model}$.
+2. Loop through the data 
+	a. Make required input for the reactor model (above) available to it.
+	b. Solve the CSTR reactor design equations.
+	c. Calculate and save the model-predicted response.
+
+$$C_{Y,1} = \frac{\dot{n}_{Y,1}}{\dot{V}} \tag{18}
 $$
-C_{Y,1} = \frac{\dot{n}_{Y,1}}{\dot{V}} \tag{18}
-$$
+
+3. Return  the set of model-predicted responses
 
 [Parameter Estimates and Statistics]{.underline}
 
-A numerical fitting function can be used to estimate $k$. A guess for $k$, the set of adjusted experimental inputs, the set of experimental responses, and the name of the predicted responses function above will need to be provided to it. Assuming it is successful, it will return the best estimate for $k$, its 95% confidence interval, and the coefficient of determination, $R^2$.
+1. Make an initial guess for the values of the parameters to be estimated.
+2. Call a numerical fitting function passing the following arguments
+	a. the adjusted experimental inputs, $\underline{\dot{V}}$, $\underline{C}_{A,0}$, $\underline{C}_{B,0}$, $\underline{C}_{Y,0}$, and $\underline{C}_{Z,0}$,
+	b. the experimental responses, $\underline{C}_{Y,1}$,
+	c. the initial guess from step 1, and
+	d. the name of the predicted responses function above.
+
+Assuming the fitting function is successful, it will return the best estimate for $k$, the upper and lower limits of its 95% confidence interval, $k_{CI,l}$ and $k_{CI,u}$, and the coefficient of determination, $R^2$.
 
 [Assessment Graphs]{.underline}
 
-After estimating $k$, the set of model predicted responses for the data set being analyzed, $\underline{C}_{Y,model}$, can be calculated using the predicted responses function above. A corresponding set of residuals, $\underline{\epsilon}$, can be calculated using equation (19).
+1. Use the estimated value of $k$ and the predicted responses function above to calculate the model-predicted responses for all of the experiments, $\underline{C}_{Y,1,model}$.
+2. Plot $\underline{C}_{Y,1}$ *vs.* $\underline{C}_{Y,1,model}$ as points and the $C_{Y,1} - C_{Y,1,model}$ diagonal as a line to generate a parity plot.
+3. Calculate the experimental residuals for all of the experiments.
 
 $$
 \epsilon = C_{Y,1} - C_{Y,1,model} \tag{19}
 $$
 
-Plotting $\underline{C}_{Y,1}$ *vs.* $\underline{C}_{Y,1,model}$ as points and the $C_{Y,1} - C_{Y,1,model}$ diagonal as a line yields the parity plot. Plotting $\underline{\epsilon}$ *vs.* each of the adjucted experimental inputs, $\underline{\dot{V}}$, $\underline{C}_{A,0}$, $\underline{C}_{B,0}$, $\underline{C}_{Y,0}$, and $\underline{C}_{Z,0}$, yields the residuals plots.
+4. Plot $\underline{\epsilon}$ *vs.* each of the adjusted experimental inputs, $\underline{\dot{V}}$, $\underline{C}_{A,0}$, $\underline{C}_{B,0}$, $\underline{C}_{Y,0}$, and $\underline{C}_{Z,0}$, to generate residuals plots.
 
 [Assessment of Model Accuracy]{.underline}
 
@@ -362,7 +395,9 @@ The following are indicators that the model is accurate.
 
 **Performing the Analysis**
 
-The complete analysis can be performed by reading the adjusted experimental inputs and the experimental responses from the file, [reb_20_1_data.csv](examples/reb_20_5_1/reb_20_5_1_data.csv), estimating $k$, and assessing the accuracy of the predicted responses function as described above.
+1. Make the given and known constants available to all functions.
+2. Read the adjusted experimental inputs and the experimental responses from the file, [reb_20_1_data.csv](examples/reb_20_5_1/reb_20_5_1_data.csv).
+3. Estimate the paramters and statistics, generate the assessment graphs, and assess the model accuracy as described above.
 
 #### Numerical Implementation of the Calculations
 
@@ -370,19 +405,13 @@ The computer code that performs the calculations could be structured in a number
 
 1. Make the given and known constants available within all functions.
 2. Define variables to make the current values of $k$, $\dot{V}$, $C_{A,0}$, $C_{B,0}$, $C_{Y,0}$, $C_{Z,0}$, and $C_{Y,1}$ available to all functions.
-3. Write a residuals function as described in the mathematical formulation; it should
-    a. receive $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, and $\dot{n}_{Z,1}$ as arguments and
-    b. calculate and return $\epsilon_1$, $\epsilon_2$, $\epsilon_3$, and $\epsilon_4$.
-4. Write a steady-state CSTR model function as described in the mathematical formulation; it should calculate and return $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, and $\dot{n}_{Z,1}$ for the current experiment.
-5. Write a predicted responses function as described in the mathematical formulation; it should
-    a. receive $\underline{\dot{V}}$, $\underline{C}_{A,0}$, $\underline{C}_{B,0}$, $\underline{C}_{Y,0}$, $\underline{C}_{Z,0}$, and $k$ as arguments,
-    b. make $k$, $\dot{V}$, $C_{A,0}$, $C_{B,0}$, $C_{Y,0}$, $C_{Z,0}$, and $C_{Y,1}$ available to all functions, and
-    c. calculate and return $\underline{C}_{Y,1,model}$.
+3. Write a residuals function as described above
+4. Write a model function that solves the steady-state CSTR design equations as described above.
+5. Write a predicted responses function as described above.
 6. Write a calculations function that
-    a. reads $\underline{\dot{V}}$, $\underline{C}_{A,0}$, $\underline{C}_{B,0}$, $\underline{C}_{Y,0}$, $\underline{C}_{Z,0}$, and $\underline{C}_{Y,1}$ from the data file.
-    b. defines an initial guess for $k$.
-    c. calls a numerical fitting function as described in the mathematical formulation, passing that guess, $\underline{\dot{V}}$, $\underline{C}_{A,0}$, $\underline{C}_{B,0}$, $\underline{C}_{Y,0}$, $\underline{C}_{Z,0}$, $\underline{C}_{Y,1}$, and the name of the predicted responses function from step 5 as arguments and receiving $k$, $k_{CI,l}$, $k_{CI,u}$, and $R^2$ as return values.
-    d. generates a parity plot and the residuals plots, and
+    a. reads $\underline{\dot{V}}$, $\underline{C}_{A,0}$, $\underline{C}_{B,0}$, $\underline{C}_{Y,0}$, $\underline{C}_{Z,0}$, and $\underline{C}_{Y,1}$ from the data file,
+    b. calculates the parameter estimates and statistics as described above,
+    c. generates a parity plot and the residuals plots, and
     e. displays and/or saves the results.
 7. Call the calculations function from step 6.
 
@@ -476,7 +505,7 @@ The first few data points are shown in @tbl-example_20_5_2_data. The full data s
 #| label: tbl-example_20_5_2_data
 #| tbl-cap: First 6 experimental data points.
 kbl(df[1:6,], format = "markdown", align = "ccc", 
-  col.names = c('$\\tau$ (s)', 'y~A,in~', 'C~Z,out~ (mmol L^-1^)'))
+  col.names = c('$\\tau$ (s)', 'y~A,0~', 'C~Z,1~ (mmol L^-1^)'))
 ```
 
 ---
@@ -484,79 +513,228 @@ kbl(df[1:6,], format = "markdown", align = "ccc",
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-expert: start by summarizing, use appropriate symbols, describe subscripts and other notation, id adj inputs and expt responses, anything else
+In this kinetics data analysis assignment, an isothermal, gas-phase CSTR was used. I'll start by summarizing the assignment using appropriate variable symbols. I'll use a subscripted "0" to denote values in the reactor feed and a subscripted "1" for the outlet. "CI,l" and "CI,u" will denote the lower and upper limits of the 95% confidence interval. I'll underline variables that represent sets of values. The reactor volume is not given, but since all of the known quantities are intensive, a volume can be chosen as a basis for the calculations.
 
 :::
 
 #### Assignment Summary
 
-**Reactor System:**
+**Reactor System:** Steady-state, isothermal, gas-phase CSTR
 
 **Reactor Schematic:**
 
-**Items of Interest:**
+![Schematic representation of the steady-state CSTR used in the experiments.](Graphics/cstr_isothermal_ss_schematic.png){#fig-example_20_5_2_schematic}
 
-**Given and Known Constants:**
+**Items of Interest:** $k$, $k_{CI,l}$, $k_{CI,u}$, $\alpha_A$, $\alpha_{A,CI,l}$, $\alpha_{A,CI,u}$, $\alpha_B$, $\alpha_{B,CI,l}$, $\alpha_{B,CI,u}$, and an assessment of the accuracy of equation (2).
 
-**Adjusted Experimental Inputs:**
+**Given and Known Constants:** $P$ = 3 atm, $\dot{n}_{Z,0}$ = 0, $T$ = 450 + 273.15 K, $R$ = 0.08206 L atm mol^-1^ K^-1^.
 
-**Experimental Response:**
+**Adjusted Experimental Inputs:** $\underline{\tau}$ and $\underline{y}_{A,0}$
 
-**Basis:**
+**Experimental Response:** $\underline{C}_{Z,1}$
+
+**Basis:** $V$ = 1.0 L
 
 #### Mathematical Formulation of the Analysis
 
-[The analysis described here will be performed separately for each same-temperature block of data.]
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
 
-expert: know reactor model will be needed, so generate that first, id necessary balances, give general form @eq-cstr_ss_mole_balance and simplify, ATEs will be solved numerically, so write in the form of residual expressions.
+I will need to generate a function that predicts the responses using the rate expression. To do that, I'll need a model for the reactor, so I'll generate the reactor model first. Referring back to @sec-3_design_eqns, I know that when the reactor operates at a known temperature, the mole balances can be solved independently from the other design equations. Solving the mole balances will give me everything I need to calculate the predicted response. So, I won't need to include energy balances in the design equations; all I need here is a set of mole balances for this reactor. The mole balance design equation for a steady-state CSTR with only one reaction taking place is given in @eq-cstr_mole_bal_one_reaction.
+
+$$
+0 = \dot{n}_{i,in} - \dot{n}_i + \nu_i r V
+$$
+
+The stoichiometric coefficients of A, B, and Z are -1, -1 and 1, respectively. The problem also states that the feed contained only reagents A and B, so the inlet molar flow rate of reagent Z is equal to zero. Substitution of those values leads to equations (3) through (5), which I've written as residual expressions since they will be solved numerically.
+
+:::
 
 **Steady-State CSTR Model**
 
 [Design Equations]{.underline}
 
-[list of equations]
+$$
+0 = \epsilon_1 = \dot{n}_{A,0} - \dot{n}_{A,1} - rV \tag{3}
+$$
 
-expert: id unknowns to be found by solving ATEs, to solve them numerically need a guess and a residuals function, for kinetics data analysis discuss using response to calculate guess otherwise just say what might try and may need to adapt, must write the residuals fcn, it  will receive values for those unknowns and will have access to given and known, must evaluate and return residuals, before doing so need to calculate any additional unknowns in them (id), give equations, id vars that can't be calculated with available info and must be provided
+$$
+0 = \epsilon_2 = \dot{n}_{B,0} - \dot{n}_{B,1} - rV \tag{4}
+$$
 
-[Required Input:]{.underline} [list of variables]
+$$
+0 = \epsilon_3 = - \dot{n}_{Z,1} + rV \tag{5}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+There are three reactor design equations, and I'll solve them numerically for the outlet molar flow rates of A, B, and Z. To do that, I'll need to use an ATE solver and provide it with a guess for the ATE unknowns, $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, and $\dot{n}_{Z,1}$, and a residuals function.
+
+I can use the experimental data to guess the ATE unknowns for each experiment. If I ignore the change in volumetric flow rate, I can guess the outlet molar flow rate of Z using the experimentally measured outlet concentration, the experimental space time, and the volume I chose as a basis. Then I can use stoichiometry to guess the outlet molar flow rates of A and B.
+
+$$
+\dot{n}_{Z,1} = \dot{V}_0 C_{Z,1} = \frac{V}{\tau} C_{Z,1}
+$$
+
+$$
+\dot{n}_{A,1} = \dot{n}_{A,0} - \dot{n}_{Z,1} = \dot{V}_0 C_{A,0} - \dot{n}_{Z,1} = \frac{V}{\tau} \frac{y_{A,0}P}{RT} - \dot{n}_{Z,1}
+$$
+
+$$
+\dot{n}_{B,1} = \frac{V}{\tau} \frac{\left(1-y_{A,0}\right)P}{RT} - \dot{n}_{Z,1}
+$$
+
+I also need to write a residuals function to pass to the ATE solver. It must receive the ATE unknowns, $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, and $\dot{n}_{Z,1}$, as arguments and return the residuals, $\epsilon_1$, $\epsilon_2$, and $\epsilon_3$. It will have access to the given and known constants and the basis from the assignment summary. 
+
+Before I can calculate the residuals using equations (3) through (5), I'll need to calculate $\dot{n}_{A,0}$, $\dot{n}_{B,0}$, and $r$. I can't calculate $\dot{n}_{A,0}$ or $\dot{n}_{B,0}$ from the information available to the residuals function. However, if the adjusted experimental inputs are provided, I can calculate them as I did above.
+
+$$
+\dot{n}_{A,0} = \dot{V}_0 C_{A,0} = \frac{V}{\tau} \frac{y_{A,0}P}{RT}
+$$
+
+$$
+\dot{n}_{B,0} = \frac{V}{\tau} \frac{\left(1-y_{A,0}\right)P}{RT}
+$$
+
+I can use the rate expression, equation (2), to calculate the rate, but to do that I need $k$, $\alpha_A$, $\alpha_B$, $P_A$, and $P_B$. The kinetics parameters cannot be calculated using the information available to the residuals function, so they, too, will need to be provided. Calculation of the partial pressures is straightforward.
+
+$$
+P_A = \frac{\dot{n}_{A,1}P}{\left(\dot{n}_{A,1} + \dot{n}_{B,1} + \dot{n}_{Z,1}\right)RT}
+$$
+
+$$
+P_B = \frac{\dot{n}_{B,1}P}{\left(\dot{n}_{A,1} + \dot{n}_{B,1} + \dot{n}_{Z,1}\right)RT}
+$$
+
+:::
+
+[Required Input:]{.underline} $\tau$, $y_{A,0}$, $C_{Z,1}$, $k$, $\alpha_A$, and $\alpha_B$.
 
 [Guesses for the Design Equations Unknowns]{.underline}
 
-[Given the experimental response from an experiment, a guess for the ATE unknowns can be generated using the following sequence of calculations.
+Given the experimental response from an experiment, a guess for the ATE unknowns can be generated using the following sequence of calculations.
 
-[list of equations]]
+$$
+\dot{n}_{Z,1} = \dot{V}_0 C_{Z,1} = \frac{V}{\tau} C_{Z,1} \tag{6}
+$$
+
+$$
+\dot{n}_{A,1} = \dot{n}_{A,0} - \dot{n}_{Z,1} = \dot{V}_0 C_{A,0} - \dot{n}_{Z,1} = \frac{V}{\tau} \frac{y_{A,0}P}{RT} - \dot{n}_{Z,1} \tag{7}
+$$
+
+$$
+\dot{n}_{B,1} = \frac{V}{\tau} \frac{\left(1-y_{A,0}\right)P}{RT} - \dot{n}_{Z,1} \tag{8}
+$$
 
 [Residuals Function]{.underline}
 
-Given the values of the ATE unknowns (id), the required input above, and the given and known constants from the assignment summary, the remaining unknown quantities appearing in the residual expressions can be computed using the following sequence of calculations. Then the residuals can be evaluated using [equation numbers].
+Arguments: $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, and $\dot{n}_{Z,1}$
 
-[list of equations]
+Return Variables: $\epsilon_1$, $\epsilon_2$, and $\epsilon_3$
+
+Algorithm (given the known constants and required input above): 
+
+1. Calculate the other unknown quantities appearing in the residual expressions.
+
+$$
+\dot{n}_{A,0} = \frac{V}{\tau} \frac{y_{A,0}P}{RT} \tag{9}
+$$
+
+$$
+\dot{n}_{B,0} = \frac{V}{\tau} \frac{\left(1-y_{A,0}\right)P}{RT} \tag{10}
+$$
+
+$$
+P_A = \frac{\dot{n}_{A,1}P}{\left(\dot{n}_{A,1} + \dot{n}_{B,1} + \dot{n}_{Z,1}\right)RT} \tag{11}
+$$
+
+$$
+P_B = \frac{\dot{n}_{B,1}P}{\left(\dot{n}_{A,1} + \dot{n}_{B,1} + \dot{n}_{Z,1}\right)RT} \tag{12}
+$$
+
+$$
+r = kP_A^{\alpha_A}P_B^{\alpha_B} \tag{13}
+$$
+
+2. Evaluate and return the residuals using equations (3) through (5).
 
 [Solving the Steady-State CSTR Design equations]{.underline}
 
-The reactor design equations can be solved by calling an ATE solver, providing it with the name of the residuals function and a/the guess for the ATE unknowns. Assuming the solver was successful, it will return one set of values of the ATE unknowns that solve the design equations (there could be other solutions).
+1. Given the known constants and required input above, calculate guesses for the ATE unknowns using equations (6) through (8).
+2. Call an ATE solver passing the guesses for the ATE unknowns and the name of the residuals function, above, to it.
 
-expert: will use numerical fitting func to estimate unknown params in rate expression, [list], will need to provide it with guesses for those parameters , set of adj expt inputs, corres set of expt responses and name of a predicted responses function that will need to write, pred resp func will be given values for the params in the rate expression and the set of adj expt inputs, using that info and the given and known from the assignment summary, it must calculate and return the corres set of  model-pred responses, for any one expt can use the reactor model as described above to calculate [list], give equations to calclculate response pred by model, inside pred resp function all I need to do is loop through the experiments in the data set, assuming it is successful, num fitting fcn will return params, 95% CI and coeff of det, will need to assess accuracy, so will make parity and residuals plots, to do so calc model predicted responses and residuals, then plot expt vs model-predicted and residuals vs each adj input, indicators of accuracy are R2 close to 1, upper and lower limits of the CI close to the est value, points on the parity plot close to diagonal, and random scatter of residuals about zero.
+Assuming the solver was converges, it will return one set of values of the ATE unknowns that solve the design equations (there could be other solutions).
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I will estimate the rate expression parameters, $k$, $\alpha_A$, and $\alpha_B$, by creating a model that predicts the responses for each of the experiments and then fitting that model to the experimental data. I'll use a numerical fitting function to do so, and one of the inputs it will require is a predicted responses function, which I'll need to write.
+
+The predicted responses function must accept the rate parameters, $k$, $\alpha_A$, and $\alpha_B$, and the adjusted experimental inputs, $\underline{\tau}$ and $\underline{y}_{A,0}$, as arguments. It must calculate the model-predicted responses for all of the experiments, $\underline{C}_{Z,1}$, and return them. Having already developed the reactor model, writing this function is relatively straightforward. All that the predicted responses function needs to do is loop through the experiments solving the CSTR reactor model and using the result to calculate the predicted response for that experiment.
+
+At the point where the reactor design equations need to be solved, the model-predicted response function will need to make the adjusted  Solving the reactor design equations for an experiment will yield $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, and $\dot{n}_{Z,1}$. The model-predicted response, $C_{Z,1}$, can then be calculated using the definition of concentration and the ideal gas law.
+
+$$
+C_{Z,1} = \frac{\dot{n}_{Z,1}}{\dot{V}_1} = \frac{\dot{n}_{Z,1}P}{\left(\dot{n}_{A,1} + \dot{n}_{B,1} + \dot{n}_{Z,1}\right)RT}
+$$
+
+ 
+that was measured in each experiment and fitting it to the experimentally measured responses. For each experimental data point, the predicted responses model will solve the reactor design equations to find the reactor outputs, $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, and $\dot{n}_{Z,1}$, and use them calculate the model predicted response.
+will use numerical fitting func to fit the predicted responses model to the experimental data.
+In addition to the experimental data, It must be provided with guesses for the parameters in the rate expression, and the name of a predicted responses function.
+will need to write the predicted responses function. it will be given values for the parameters in the rate expression and the set of adjusted experimental inputs
+using that info and the given and known from the assignment summary, it must calculate and return the corresponding set of  model-predicted responses
+for any one experiment can use the reactor model as described above to calculate [list], 
+then can calculate the predicted response [describe necessary equations]
+so within the predicted responses function all I need to do is loop through the experiments in the data set
+assuming it is successful, the numerical fitting function will return params, 95% CI and coefficient of determination
+will need to assess accuracy, so will make parity and residuals plots
+to do so calc model predicted responses and residuals
+then plot experimental vs model-predicted responses and residuals vs each adjusted experimental input,
+indicators of accuracy are R2 close to 1, upper and lower limits of the CI close to the est value, points on the parity plot close to diagonal, and random scatter of residuals about zero.}
+
+:::
 
 **Parameter Estimation**
 
-[Predicted Responses Function]{.underline}
+[Predicted-responses Function:]{.underline}
 
-Given a value for [params] and the set of adjusted experimental inputs, the reactor model above can be used to calculate corresponding sets of values of [ind & dep vars] spanning the range from the start of the experiment to the time when the experimental response, [id it], was measured. The model predicted response can then be calculated as follows. This can be repeated for each experiment to generate a set of model-predicted responses.
+Arguments:
+
+Return values:
+
+Algorithm (given the known constants from the assignment summary):
+
+1. Determine the number of experimental data and allocate storage for corresponding model-predicted responses.
+2. Loop through the data 
+	a. make required input for the reactor model available to it
+	b. Solve the reactor design equations
+	c. Calculate and save the model-predicted response
+3. Return  the set of model-predicted responses
 
 [Parameter Estimates and Statistics]{.underline}
 
-A numerical fitting function can be used to estimate [params]. Guesses for [params], the set of adjusted experimental inputs, the set of experimental responses, and the predicted responses function above will need to be provided to it. Assuming it is successful, it will return [list params and CIs], and the coefficient of determination, $R^2$.
+1. Make an initial guess for the values of the parameters to be estimated
+2. Call a numerical fitting function passing the following arguments
+	a. the adjusted experimental inputs
+	b. the experimental responses
+	c. the initial guess from step 1
+	d. the name of the predicted responses function
+
+Assuming the fitting function is successful, it will return the best estimates for the parameters, the upper and lower limits of their 95% confidence intervals, and the coefficient of determination.
 
 [Assessment Graphs]{.underline}
 
-After estimating [params], the set of model predicted responses for the data set being analyzed, [id with underline] can be calculated using the predicted responses function above. A corresponding set of residuals, $\underline{\epsilon}$, can be calculated using equation #.
+1. Use the estimated values of [list of parameters] and the predicted responses function above to calculate the model-predicted responses for all of the experiments, [insert variable].
+2. Plot [expt response var] *vs.*[pred resp var]  as points and the  [expt response var] - [pred resp var]  diagonal as a line to generate a parity plot.
+3. Calculate the experimental residuals for all of the experiments.
 
-[equation]
+[eqn]
 
-Plotting [expt resp] *vs.* [model-predicted resp] yields the parity plot. Plotting $\underline{\epsilon}$ *vs.*... yields the residuals plots.
+4. Plot [resids var] *vs.* each of the adjusted experimental inputs, [list], to generate residuals plots.
 
-[Assessment of Model Accuracy]{.underline}
+[Accuracy Assessment]{.underine}
 
 The following are indicators that the model is accurate.
 
@@ -567,21 +745,6 @@ The following are indicators that the model is accurate.
 
 [Performing the analysis described above for each same-temperature data block will yield.... The Arrhenius expression, @eq-arrhenius, can be fit to those data to estimate... and the accuracy with which the Arrhenius expression represents the data can be assessed as described in [Example -@sec-example_4_5_4].]
 
-expert: list quantities of interest, describe what can be calculated at this point, id any necessary ancillary equations or completing the analysis
-
-**Performing the Analysis**
-
-The complete analysis can be performed as follows.
-
-[list of steps]
-
-#### Numerical Implementation of the Calculations
-
-The computer code that performs the calculations could be structured in a number of ways. Here, using the coding structure suggested in @sec-apndx_notation, the numerical implementation begins with the creation of a single computer function for this example, and doing the following within that function:
-
-1. Make the given and known constants available within all functions.
-
-#### Results and Discussion
 
 
 
@@ -606,94 +769,10 @@ The computer code that performs the calculations could be structured in a number
 
 
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
 
-This problem describes reactor experiments, provides the data from the experiments, and asks me to assess the accuracy of a rate expression, so it is a kinetics data analysis problem. Knowing that I will be creating a response function, I'll start by listing the reactor type, constants given in the problem statement, the adjusted experimental inputs, the experimental response, and the rate expression parameters I need to estimate.
 
-:::
 
-**Reactor**: CSTR
 
-**Given**: $P = 3 \text{ atm}$ and $T = 450 + 273.15 \text{ K}$.
-
-**Adjusted Inputs**: $\underline{\tau}$ and $\underline{y}_{A,in}$.
-
-**Experimental Response**: $\underline{C}_Z$.
-
-**Rate Expression Parameters**:  $k$, $\alpha_A$, and $\alpha_B$.
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-I need to generate a response function that predicts the responses using the rate expression. To start, I need a model for the reactor. Referring back to @sec-3_design_eqns, I know that when the reactor operates at a known temperature, the mole balances can be solved independently from the other design equations, so all I need here is a set of mole balances for this reactor. The mole balance design equation for a steady-state CSTR with only one reaction taking place is given in @eq-cstr_mole_bal_one_reaction.
-
-$$
-0 = \dot{n}_{i,in} - \dot{n}_i + \nu_i r V
-$$
-
-The stoichiometric coefficients of A, B, and Z are -1, -1 and 1, respectively. The problem also states that the feed contained only reagents A and B, so the inlet molar flow rate of reagent Z is equal to zero. Substitution of those values leads to equations (3) through (5).
-
-:::
-
-**Reactor Model**
-
-Mole balances on A, B, and Z are shown in equations (3) through (5).
-
-$$
-0 = \dot{n}_{A,in} - \dot{n}_A - rV \tag{3}
-$$
-
-$$
-0 = \dot{n}_{B,in} - \dot{n}_B - rV \tag{4}
-$$
-
-$$
-0 = \cancelto{0}{\dot{n}_{Z,in}} - \dot{n}_Z + rV \tag{5}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-Within the response function I will need to numerically solve equations (3) through (5) for the outlet molar flow rates of A, B, and Z. To do that, I must provide equations for calculating every other quantity in the equations from those unknowns and known constants. So I'll go through each of the mole balances, and any equations that will be substituted into them, and write equations for the quantities other than the unknowns and known constants.
-
-At first, looking at the mole balances, it appears that I'm not given sufficient information, but upon careful reading of the problem statement I see that all of the quantities provided are *intensive* quantities. When that is true, I can choose the value for one *extensive* quantity and use it as the basis for my calculations. I'm going to choose a reactor volume of 1 L as the basis for my calculations.
-
-The mole balance design equations also contain the inlet molar flow rates of A and B. The problem statement does not provide any flow rates, but having chosen a volume as a basis, I can use the definition of space time, @eq-space_time, (which is one of the adjusted inputs) to calculate the inlet volumetric flow rate. Then I can use the ideal gas law to calculate the total inlet molar flow rate and the inlet mole fractions of A and B to calculate their inlet molar flow rates.
-
-When I substitute the rate expression into the mole balances, that will introduce the partial pressures of A and B. Equations for the partial pressures can be written using the unknowns and the defining equation for partial pressure. The rate coefficient and the reaction orders will be passed to the response function as arguments, so I don't need equations for them.
-
-:::
-
-**Ancillary Equations**
-
-$$
-V = 1 \text{ L }\left( \text{Basis} \right) \tag{6}
-$$
-
-$$
-\dot{V}_{in} = V/\tau \tag{7}
-$$
-
-$$
-\dot{n}_{in,\text{total}} = \frac{P\dot{V}_{in}}{RT} \tag{8}
-$$
-
-$$
-\dot{n}_{A,in} = y_{A,in}\dot{n}_{in,\text{total}} \tag{9}
-$$
-
-$$
-\dot{n}_{B,in} = \left(1 - y_{A,in}\right)\dot{n}_{in,\text{total}} \tag{10}
-$$
-
-$$
-P_A = y_A P = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_Z}P \tag{11}
-$$
-
-$$
-P_B = y_B P = \frac{\dot{n}_B}{\dot{n}_A + \dot{n}_B + \dot{n}_Z}P \tag{12}
-$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
