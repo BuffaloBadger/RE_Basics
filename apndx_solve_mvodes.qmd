@@ -1,323 +1,155 @@
-# Solving Differential-Algebraic Equations {#sec-apndx_solve_mvodes}
+# Solving Missing-Value ODEs {#sec-apndx_solve_mvodes}
 
-A set of differential-algebraic equations (DAEs) includes two subsets of equations. One subset contains IVODEs and the other contains ATEs. The distinguishing feature of DAEs is that the IVODEs and the ATEs are coupled. That is, there are some unknowns that appear in both the IVODEs and the ATEs. In *Reaction Engineering Basics*, DAEs are only encountered when analyzing simple reactor systems that include a PFR.
+This appendix examines the numerical solution of sets of IVODEs wherein one or more necessary constants are missing, but an equal number of extra final values are known. The missing constants may be initial values of the dependent variables or they may be constants that appear within the IVODEs. Sets of equations of this type are referred to as missing value ordinary differential equations (MVODEs) in *Reaction Engineering Basics*. This appendix shows that MVODEs can be solved numerically using an ATE solver (see @sec-apndx_solve_ates) in conjunction with an IVODE solver (see @sec-apndx_solve_ivodes). No other solvers are needed.
 
-When a set of ATEs is solved numerically, a computer program called an ATE solver is used. @sec-apndx_solve_ates describes how ATE solvers work, what they require as input, and how to use them. Similarly, when a set of IVODEs is solved numerically an IVODE solver is used. @sec-apndx_solve_ivodes describes how IVODE solvers work, what they require as input, and how to use them.
+## Identifying MVODEs and Preparing to Solve Them Numerically
 
-When a set of DAEs of the kind encountered in *Reaction Engineering Basics* needs to be solved, it isn't necessary to use a DAE solver. The DAEs can be solved using ATE and IVODE solvers. Thus, assuming the reader is familiar with Appendices [-@sec-apndx_solve_ates] and [-@sec-apndx_solve_ivodes], this appendix does not need to describe how a DAE solver works, what it requires as input, or how to use it. However, in order to solve the DAEs using ATE and IVODE solvers, the equations need to be formulated properly. The purpose of this appendix, then, is to describe how to mathematically formulate the solution of a set of DAEs so that they can be solved using ATE and IVODE solvers.
+The sets of MVODEs that are solved in *Reaction Engineering Basics* are linear, first-order ODEs, as was the case for IVODEs in @sec-apndx_solve_ivodes. Recall that the initial values used when solving a set of IVODEs are constants, and that constants may also appear within the IVODEs. The values of these constants must be known before the IVODEs can be solved numerically. Recall also that the final value of either the independent variable or one of the dependent variables must also be known in order to solve a set of IVODEs numerically.
 
-## DAEs in *Reaction Engineering Basics*
+The first distinguishing feature of a set of MVODEs is that one or more constants (initial values of the dependent variables and/or constants that appear within the ODEs) are not known and cannot be calculated directly. Herein these constants are referred to as "missing values." The second distinguishing feature of MVODEs for each missing value, an the final value of an additional dependent variable is known. For example if a set of four MVODEs contains two missing values, then three final values will be known: one for each of the two missing values plus the one needed to solve the IVODEs.
 
-In *Reaction Engineering Basics* the IVODE subset of the DAEs will always be the reactor design equations for a PFR. The ATE subset of the DAEs will be mole and energy balances on other equipment connected to the PFR. Specifically the ATEs will be mole and energy balances on a heat exchanger when analyzing a thermally back-mixed PFR or mole and energy balances on a stream mixer when analyzing a recycle PFR.
+For the purpose of describing how to prepare to solve a set of MVODEs, the following variables will be used.
 
-@sec-apndx_solve_ivodes describes how to solve IVODEs with an unknown initial value or when an unknown constant appears in the IVODEs. In essence, an implicit ATE is written for the unknown initial value or constant. The IVODEs then are solved each time the residual for the implicit ATE is evaluated. The solution of a set of DAEs as described here uses a very similar approach.
+* $x$ - the independent variable
+* $y_i$ - dependent variable $i$
+* $y_{i,f}$ - the known final value of $y_i$
+* $N_{mv}$ - the number of missing values
+* $\underline{v}_m$ - the set of missing values.
 
-## Mathematical Formulation of the Solution of DAEs {#sec-form_soln_daes}
+If the final value of $x$ is known, it should be used as the stopping criterion (sc), otherwise any one of $y_{i,f}$ can be used as the stopping criterion. In preparation for solving the MVODEs, each of the $y_{i,f}$ that is not being used as the stopping criterion should be used to write an implicit ATE for finding $\underline{v}_m$. More specifically, the final value found by solving the ODEs, $y_i \big\vert_{sc}$, should be set equal to $y_{i,f}$ as shown in @eq-mvode_implicit_eqn.
 
-After summarizing the assignment, the mathematical formulation of the solution should begin with the formulation of a model for the PFR only. Doing so will reveal whether the PFR design equations can be solved independently from the equations for all other equipment in the system. If they can, then the IVODEs are not mathematically coupled to any ATEs, and the information in this appendix is not needed. In many cases, however, formulating the PFR design equations will show that they cannot be solved independently. Specifically, the necessary initial values of one or more dependent variables will be unknown.
+$$
+0 = y_i \big\vert_{sc} - y_{i,f} = \epsilon
+$$ {#eq-mvode_implicit_eqn}
 
-If the IVODEs cannot be solved independently, the next step is to formulate a model for the heat exchanger or stream mixer that precedes the PFR in the system. Formulation of this model will reveal that there are more unknowns than equations. If the equations in this model were going to be solved analytically, this would mean that they could not be solved independently. In essence, in order to solve the PFR model, the solution of the heat exchanger or mixer model would be needed, and to solve the heat exchanger or mixer model, the solution to the PFR design equations would be needed.
+@eq-mvode_implicit_eqn can be used to write an implicit ATE for each of the $y_{i,f}$ that is not being used as the stopping criterion. Doing so will yield a set $N_{mv}$ implicit ATEs that can be solved to find the $N_{mv}$ missing values. These equations can be seen to be implicit equations for $\underline{v}_m$ by noting that the final values found by solving the MVODEs, $y_n \big\vert_{sc}$, depend upon the values of the missing values. Thus, solving these equations amounts to finding the missing values that cause the implicit ATEs to be true.
 
-When the heat exchanger or stream mixer model (ATEs) is going to be solved numerically, however, that is not the case. As noted, the number of unknown quantities will be greater than the number of ATEs. The unknown quantities appearing in the ATEs will include the initial values of the IVODE dependent variables, among other unknown quantities. **The key to solving the ATEs** is to include the unknowns that are also initial values in the IVODEs among the unknowns to be found by solving the ATEs.
+## Mathematical Formulation of the Numerical Solution of a Set of MVODEs
 
-As described in @sec-apndx_solve_ates, when an ATE solver is used to solve the ATEs numerically, it must be provided with two things. The first is an initial guess for the solution of the ATEs. The second is a residuals function. The residuals function must accept a guess for the solution of the ATEs as an argument. It must use that guess to calculate the values of any remaining unknown quantities appearing in the residuals expressions, evaluate the residuals, and return their values.
+Having identified the equations as a set of MVODEs with $N_{mv}$ missing values and having written $N_{mv}$ implicit ATEs for finding the values of the missing values, mathematical formulation of the solution is quite straightforward. Formulation of the numerical solution of the ODEs proceeds exactly as described in @sec-apndx_solve_ivodes. Because the missing values cannot be calculated, the formulation will show $\underline{v}_m$ as required input for the function that calls the IVODE solver, and those missing values that appear within the ODEs will also be indicated as other input required by the derivatives function.
 
-So in the present situation, the ATEs are being solved to find the IVODE initial values (and perhaps other quantities). As such, when the residuals function will receive a guess that includes the IVODE initial values. Using those initial values, the IVODEs can be solved numerically within the residuals function. The results from doing so can then be used to calculate any additional unknown quantities appearing in the residuals expressions, after which, the residuals can be evaluated.
+The formulation of the numerical solution of the implicit ATEs proceeds exactly as described in @sec-apndx_solve_ates. The missing values are the ATE unknowns, so they will provided as arguments to the residuals function. The residuals function algorithm simply calls the function that solves the IVODEs, extracts the necessary $y_i \big\vert_{sc}$ from the results, and evaluates the ATE residuals, @eq-mvode_implicit_eqn.
 
-The key point is that the IVODEs are solved numerically [within]{.underline} the residuals function where the necessary initial values are available. The numerical solution of the IVODEs can be accomplished exactly as described in @sec-apndx_solve_ivodes.
-
-## Numerical Implementation of the Solution of DAEs {#sec-impl_soln_daes}
-
-The mathematical formulation of the solution began with the formulation of a PFR model wherein the PFR reactor design equations are solved. The numerical implementation of the solution begins with writing related computer functions. Specifically, a PFR model function and a derivatives function must be written as detailed here.
-
-derivatives function
-: receives the values of the independent and dependent variables at the start of an integration step as arguments, uses them to evaluate the derivatives and returns their values.
-
-PFR model function
-: receives the initial values of the dependent variables as arguments, calls an IVODE solver, passing the initial values, stopping criterion, and the name of the derivatives function above, checks that a solution was obtained, and returns corresponding sets of values of the independent variable and each of the dependent variables spanning the range from the reactor inlet to the reactor outlet.
-
-The next step in the mathematical formulation was the formulation of a model for the heat exchanger or stream mixer. The next step in the numerical implementation is writing related computer functions. The heat exchanger/stream mixer model is a set of ATEs, so a heat exchanger/stream mixer model function that solves those ATEs and a residuals function must be written as described here.
-
-residuals function
-: receives a guess for the solution of the ATEs that includes the initial values needed to solve the PFR design equations, calls the reactor model function, passing those initial values as argument, to solve the IVODEs, uses the results to calculate any other unknown quantities appearing in the ATEs, evaluates the residuals and returns their values.
-
-heat exchanger/stream mixer model function
-: receives an initial guess for the solution of the heat exchanger/stream mixer design equations (i. e. the ATEs), calls an ATE solver, passing the initial guess and the name of the residuals function above as arguments, checks that the ATE solver converged, and returns one solution of the ATEs.
-
-The numerical implementation is completed by writing an analysis function that uses the preceding functions to perform the analysis and calculate the quantities of interest
-
-analysis function
-: establishes a mechanism for making quantities available to all functions, sets an initial guess for the solution of the other equipment ATEs, calls the other equipment model function to get a solution of the ATEs, and perfroms any additional calculations that are necessary.
+The steps involved in solving the MVODEs then consist of (1) calling the function that solves the implicit ATEs to get the missing values and then (2) calling the function that solves the IVODEs, providing the missing values to it, to get corresponding sets of values of the independent and dependent variables spanning the range from their initial values to the point where the stopping criterion was satisfied.
 
 ## Example
 
-This appendix did not introduce any new numerical methods. The one new topic it touched on was how to structure the solution mathematically so that the analysis can be performed using ATE and IVODE solvers. As such, there aren't any new numerical methods that need to be demonstrated, and it isn't clear that an example is necessary. As a compromise, [Example -@sec-example_17_3_1] is reproduced here, but with different expert thinking callouts that are intended to highlight how the solution of the ATEs was formulated to allow solution of the DAEs. The equations used in the example are not derived here, see [Example -@sec-example_17_3_1] for that.
+The following example illustrates the solution of a set of MVODEs as described above.
 
-### Numerical Aspects of Modeling a Recycle PFR {#sec-example_K}
+### Formulation of the Solution of PFR Design Equations with Missing Values {#sec-example_K_3_1}
 
-```{r}
-#| echo: false
-#| output: false
-library(tidyverse)
-source("~/Libraries/R/fmt_tibble_col.R")
-```
-
-{{< include examples/reb_K_4_1/narrative.qmd >}}
-
-{{< include examples/reb_K_4_1/equations.qmd >}}
-
-#### Assignment Summary
-
-**System Schematic**
-
-![Schematic representation of the recycle PFR](Graphics/recycle_pfr.png){#fig-example_K_4_1_schematic width="60$"}
-
-**Reactor Type**: Adiabatic PFR
-
-**Quantities of Interest**: $C_{A,3}$, $C_{Z,3}$, and $T_3$
-
-{{< include examples/reb_K_4_1/given.qmd >}}
-
-#### Mathematical Formulation of the Solution
-
-**PFR Model**
-
-[Design Equations]{.underline}
+A reaction engineer needs to solve the PFR design equations shown in equations (1) through (3) to find the volumetric flow rate, $\dot{V}$ and the outlet temperature, $T\big \vert_{z=L}$. The initial values and stopping criterion are shown in @tbl-example_K_3_1_initial_values.  The rate can be calculated using equation (4). The values of $D$, $\Delta H$, $\breve{C}_p$, $k_0$, $E$, $R$, $L$, $\dot{n}_{A,0}$, and $T_0$ are known as is the outlet molar flow rate of A, $\dot{n}_{A,1}$.
 
 $$
-\frac{d \dot{n}_{A,PFR}}{d z} = - \frac{\pi D^2}{4}r_1 \tag{3}
+\frac{d\dot{n}_A}{dz} = - \frac{\pi D^2}{4} r \tag{1}
+$$ 
+
+$$
+\frac{d\dot{n}_Z}{dz} = \frac{\pi D^2}{4} r \tag{2}
 $$
 
 $$
-\frac{d \dot{n}_{Z,PFR}}{d z} = \frac{\pi D^2}{4}r_1 \tag{4}
+\frac{dT}{dz} = \frac{-\pi D^2 r \Delta H}{4 \dot{V} \breve{C}_p} \tag{3}
 $$
-
-$$
-\frac{dT_{PFR}}{dz} = - \frac{\pi D^2}{4} \frac{r_1 \Delta H_1}{\dot{V}_{PFR} \breve{C}_p} \tag{5}
-$$
-
-[Initial Values and Stopping Criterion]{.underline}
 
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
 | $z$ | $0$ | $L$ |
-| $\dot{n}_{A,PFR}$ | $\dot{n}_{A,1}$ | |
-| $\dot{n}_{Z,PFR}$ | $\dot{n}_{Z,1}$ | |
-| $T_{PFR}$ | $T_1$ | |
+| $\dot{n}_A$ | $\dot{n}_{A,0}$ | |
+| $\dot{n}_Z$ | $0$ | |
+| $T$ | $T_0$ | |
   
-: Initial values and stopping criterion for solving  equations, (3) through (5). {#tbl-example_17_3_1_initial_values}
+: Initial values and stopping criterion for solving  equations, (1) - (3). {#tbl-example_K_3_1_initial_values}
+
+$$
+r= k_0 \exp{\left( \frac{-E}{RT}\right)} \frac{\dot{n}_A}{\dot{V}} \tag{4}
+$$
+
+The volumetric flow rate, $\dot{V}$ is unknown and appears in the differential equations. At the same time two final values, $z=L$ and $\dot{n}_A = \dot{n}_{A,1}$ are known, making equations (1) through (3) MVODEs. Formulate their solution.
+
+---
+
+**Implicit ATE for Calculating $\dot{V}$**
+
+$$
+0 = \dot{n}_A \big \vert_{z=L} - \dot{n}_{A,1} = \epsilon \tag{5}
+$$
+
+**ODE Design Equations**
 
 [Derivatives Function]{.underline}
 
-Given the values of $z$, $\dot{n}_{A,PFR}$, $\dot{n}_{Z,PFR}$, and $T_{PFR}$ and those listed in the assignment summary, the unknown quantities appearing in equations (3) through (5) can be evaluated using the following sequence of calculations. The derivatives can then be evaluated using equations (3) through (5).
+$\qquad$ Arguments: $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$.
+
+$\qquad$ Other input: $\dot{V}$.
+
+$\qquad$ Return values: $\frac{d\dot{n}_A}{dz}$, $\frac{d\dot{n}_Z}{dz}$, and $\frac{dT}{dz}$.
+
+$\qquad$ Algorithm:
+
+$\qquad \qquad$ 1. Calculate other unknowns in the ODE design equations
 
 $$
-\dot{V}_3 = \dot{V}_0
+r= k_0 \exp{\left( \frac{-E}{RT}\right)} \frac{\dot{n}_A}{\dot{V}} \tag{4}
 $$
 
-$$
-\dot{V}_4 = R_R \dot{V}_3
-$$
+$\qquad \qquad$ 2. Evaluate and return the derivatives using equaions (1) - (3).
 
-$$
-\dot{V}_2 = \dot{V}_3 + \dot{V}_4
-$$
+[Function that solves the ODE design equations]{.underline}
 
-$$
-\dot{V}_{PFR} = \dot{V}_2
-$$
+$\qquad$ Argument: $\dot{V}$.
 
-$$
-k_1 = k_{0,1} \exp \left( \frac{-E_1}{RT} \right)
-$$
+$\qquad$ Algorithm:
 
-$$
-C_A = \frac{\dot{n}_A}{\dot{V}} 
-$$
+1. Make $\dot{V}$ available to the derivatives function.
+2. Call an IVODE solver
+    a. Passing the initial values, stopping criterion, and the derivatives function as arguments
+    b. Receiving $\underline{z}$, $\underline{\dot{n}}_A$, $\underline{\dot{n}}_Z$, and $\underline{T}$ spanning the range from $z=0$ to $z=L$.
+3. Return the results from the IVODE solver.
 
-$$
-C_Z = \frac{\dot{n}_Z}{\dot{V}} 
-$$
-
-$$
-r_1 = k_1 C_A C_Z
-$$
-
-[Solving the PFR Design Equations]{.underline}
-
-:::{.callout-tip collapse="false"}
-## Click Here to Hide What an Expert Might be Thinking at this Point
-
-I cannot solve the PFR reactor model because I do not know the initial values, $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$. I need equations for calculating those values, so I'll write mole and energy balances on the stream mixer, M.
-
-:::
-
-**Stream Mixer Model**
-
-[Design Equations]{.underline}
-
-$$
-0 = \dot{n}_{A,1} - \dot{n}_{A,0} - \dot{n}_{A,4} = \epsilon_1 \tag{6|}
-$$ 
-
-$$
-0 = \dot{n}_{Z,1} - \dot{n}_{Z,0} - \dot{n}_{Z,4} = \epsilon_2 \tag{7}
-$$ 
-
-$$
-0 = \dot{V}_0 \breve{C}_p \left( T_1 - T_0 \right) + \dot{V}_4\breve{C}_p \left( T_1 - T_4 \right) = \epsilon_3 \tag{8}
-$$
-
-:::{.callout-tip collapse="false"}
-## Click Here to Hide What an Expert Might be Thinking at this Point
-
-These three ATEs contain nine unknowns. Three of them, $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$, are the initial values I need in order to solve the PFR reactor model equations. The others are $\dot{n}_{A,0}$, $\dot{n}_{Z,0}$, $\dot{n}_{A,4}$, $\dot{n}_{Z,4}$, $\dot{V}_4$, and $T_4$. I can easily calculate $\dot{n}_{A,0}$, $\dot{n}_{Z,0}$, and $\dot{V}_4$.
-
-:::
-
-$$
-\dot{n}_{A,0} = \dot{V}_0 C_{A,0}
-$$
-
-$$
-\dot{n}_{Z,0} = \dot{V}_0 C_{Z,0}
-$$
-
-$$
-\dot{V}_3 = \dot{V}_0
-$$
-
-$$
-\dot{V}_4 = R_R \dot{V}_3
-$$
-
-:::{.callout-tip collapse="false"}
-## Click Here to Hide What an Expert Might be Thinking at this Point
-
-That leaves me with three ATEs containing six unknowns: $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, $T_1$, $\dot{n}_{A,4}$, $\dot{n}_{Z,4}$, and $T_4$. I know that in this situation, the key is to include the initial values for the IVODEs among the unknowns to be found by solving the ATEs. In this example there are only three ATEs, so they can be solved to find the three unknown initial values, $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$.
-
-:::
+**ATE**
 
 [Residuals Function]{.underline}
 
-Equations (6) through (8) will be solved for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$. The residuals must be evaluated given a guess for those quantities. Using that guess and the values listed in the assignment summary, the PFR model equations can be solved for $\dot{n}_{A,PFR}$, $\dot{n}_{Z,PFR}$, and $T_{PFR}$. Then the following sequence of calculations can be used to find $\dot{n}_{A,4}$, $\dot{n}_{Z,4}$, and $T_4$.
+$\qquad$ Argument: $\dot{V}$
 
-$$
-\dot{n}_{A,2} = \dot{n}_{A,PFR} \big \vert_{z=L} 
-$$
+$\qquad$ Return value: $\epsilon$
 
-$$
-\dot{n}_{Z,2} = \dot{n}_{Z,PFR} \big \vert_{z=L} 
-$$
+$\qquad$ Algorithm:
 
-$$
-T_4 = T_3 = T_2 = T_{PFR} \big \vert_{z=L} 
-$$
+1. Call the function that solves the ODEs, above
+    a. passing $\dot{V}$ as the argument
+    b. receiving $\underline{z}$, $\underline{\dot{n}}_A$, $\underline{\dot{n}}_Z$, and $\underline{T}$
+2. evaluate and return $\epsilon$ using equation (5).
 
-$$
-\dot{n}_{A,4} = \frac{R_R}{1 + R_R}\dot{n}_{A,2} 
-$$
+**Calculating the Quantities of Interest**
 
-$$
-\dot{n}_{Z,4} = \frac{R_R}{1 + R_R}\dot{n}_{Z,2} 
-$$
+1. Guess a value for $\dot{V}$.
+2. Call an ATE solver passing the guess and the residuals function, above, as arguments and receiving $\dot{V}$.
+3. Call the function, above, that solves the ODE design equations passing $\dot{V}$ as the argument and receiving $\underline{z}$, $\underline{\dot{n}}_A$, $\underline{\dot{n}}_Z$, and $\underline{T}$.
+4. Extract $T\big \vert_{z=L}$ from the returned $\underline{T}$.
 
-The residuals, $\epsilon_1$, $\epsilon_2$, and $\epsilon_3$, can then be evaluated using equations (6) through (8).
-
-[Solving the Stream Mixer Design Equations]{.underline}
-
-The stream mixer design equations can be solved by calling an ATE solver, providing it with the initial guess for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ and a function that evaluates the residuals as described above. The results returned by the solver should be checked to make sure the solver converged. Assuming it did converge, it will return the values of $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$.
-
-**Performing the Analysis**
-
-The complete analysis can be performed as follows.
-
-1. Guess the values of $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$.
-2. Use the stream splitter model as described above to calculate $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$.
-3. Provide the results to the PFR model and use it as described above to get corresponding sets of values of $z$, $\dot{n}_{A,PFR}$, $\dot{n}_{Z,PFR}$, and $T_{PFR}$ that span the range from the reactor inlet to the reactor outlet.
-4. Perform the following sequence of calculations to find the quantities of interest, $C_{A,3}$, $C_{Z,3}$, and $T_3$.
-
-$$
-\dot{n}_{A,2} = \dot{n}_{A,PFR} \big \vert_{z=L} 
-$$
-
-$$
-\dot{n}_{Z,2} = \dot{n}_{Z,PFR} \big \vert_{z=L} 
-$$
-
-$$
-T_4 = T_{PFR} \big \vert_{z=L} 
-$$
-
-$$
-\dot{n}_{A,4} = \frac{R_R}{1 + R_R}\dot{n}_{A,2} 
-$$
-
-$$
-\dot{n}_{Z,4} = \frac{R_R}{1 + R_R}\dot{n}_{Z,2} 
-$$
-
-$$
-\dot{n}_{A,3} = \dot{n}_{A,2} - \dot{n}_{A4}
-$$
-
-$$
-\dot{n}_{Z,3} = \dot{n}_{Z,2} - \dot{n}_{Z4}
-$$
-
-$$
-\dot{V}_3 = \dot{V}_0
-$$
-
-$$
-C_{A,3} = \frac{\dot{n}_{A,3}}{\dot{V}_3}
-$$
-
-$$
-C_{Z,3} = \frac{\dot{n}_{Z,3}}{\dot{V}_3}
-$$
-
-#### Numerical implementation of the Solution
-
-Create a computer function and within that function do the following:
-
-1. Make the given and known constants available everywhere within the function.
-2. Write a derivatives function that
-	a. receives the independent and dependent variables, $z$, $\dot{n}_A$, $\dot{n}_Z$, and $T$, as arguments,
-	b. evaluates the derivatives as described above for the PFR model, and
-	c. returns the values of $\frac{d\dot{n}_{A,PFR}}{dz}$, $\frac{d\dot{n}_{Z,PFR}}{dz}$, and $\frac{dT_{PFR}}{dz}$.
-3. Write a PFR function that
-	a. $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ as arguments,
-	b. solves the PFR reactor design equations as described above for the PFR model, and
-	e. returns corresponding sets of values of $z$, $\dot{n}_{A,PFR}$, $\dot{n}_{Z,PFR}$, and $T_{PFR}$.
-4. Write a residuals function that
-	a. receives $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ as arguments,
-	b. evaluates the residuals as described above for the stream mixer model, and
-	c. returns the values of $\epsilon_1$, $\epsilon_2$, and $\epsilon_3$.
-5. Write a stream mixer model function that
-	a. receives guesses for $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ as arguments,
-	b. calculates $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$ as described above for the stream mixer model, and 
-	d. returns the resulting values of $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$.
-6. Write an analysis function that performs the analysis as described above and displays the results.
-7. Call the analysis function.
-
-## Symbols Used in @sec-apndx_solve_daes
+## Symbols Used in @sec-apndx_solve_mvodes
 
 | Symbol | Meaning |
 |:-------|:--------|
 | $k_0$ | Arrhenius pre-exponential factor; an additional subscript indexes the reaction. |
 | $\dot{n}$ | Molar flow rate; additional subscripts denote the reagent and identify the flow stream. |
 | $r$ | Reaction rate; additional subscripts index the reaction. |
+| $sc$ | Stopping criterion. |
+| $\underline{v}_m$ | The set of missing values. |
+| $x$ | Independent variable. |
+| $y$ | Dependent variable, if present the first subscript indexes the dependent variables and a second subscripted $f$ denotes the final value. |
 | $z$ | Axial distance from the inlet of a PFR. |
 | $\breve{C}_p$ | Volumetric heat capacity. |
-| $D$ | PFR diameter. |
+| $D$ | Diameter. |
 | $E$ | Activation energy; an additional subscript indexes the reaction. |
 | $L$ | Length of a PFR. |
-| $P$ | Pressure. |
+| $N_{mv}$ | Number of missing values. |
 | $R$ | Ideal gas constant. |
-| $R_R$ | Recycle ratio. |
 | $T$ | Temperature; an additional subscript denotes the flow stream. |
 | $\dot{V}$ | Volumetric flow rate; an additional subscript denotes the flow stream. |
+| $\epsilon$ | Implicit ATE residual. |
 | $\Delta H$ | Heat of reaction; an additional subscript indexes the reaction. |
 
 : {tbl-colwidths="[20,80]"}
