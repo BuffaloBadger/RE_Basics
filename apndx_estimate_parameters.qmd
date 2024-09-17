@@ -217,26 +217,131 @@ Ultimately, deciding whether the model is sufficiently accurate is a judgement c
 
 In *Reaction Engineering Basics*, with only a few exceptions, parameter estimation will involve using a numerical fitting function to fit a predicted responses function to experimental data, and within the predicted responses function the reactor design equations for the experimental reactor will be solved numerically. A convenient way to mathematically formulate the calculations is to sequentially formulate the reactor model, the predicted responses function, the use of a numerical fitting function, and the generation of assessment graphs. Then the calculations can be succinctly summarized in terms of those components.
 
-The formulation of the **reactor model** should
+The **reactor model** should be formulated as described in @sec-3_reactor_model_func. The rate expression parameters and the adjusted experimental inputs for one experiment should be shown as required input.
 
-* list the reactor design equations
-* identify the initial values and stopping criterion for IVODEs or the initial guesses needed for ATEs
-* list any required input must be provided in order to solve the design equations
-* describe the derivatives function or residuals function including
-    * the arguments provided to it
-    * the quantities it returns
-    * the algorithm and equations it uses to calculate the return values
-* describe the use of an ATE or IVODE solver to solve the design equations including
-    * calculating unknown initial values, unknown final values, or initial guesses
-    * the arguments passed to the solver and the quantities returned by it
+The formulation of the **predicted responses function** should list the arguments provided to it (the rate expression parameters and the adjusted experimental inputs for all experiments) and the values it returns (the model predicted responses for all experiments). It should provide the algorithm it uses, noting that for each expeirment it uses the reactor model to solve the design equations and then the results to calculate the model-predicted response.
 
-The formulation of the **predicted responses function** should list the arguments provided to it and the values it returns. It should provide the algorithm it uses, noting that for each expeirment it uses the reactor model to solve the design equations and then the results to calculate the model-predicted response.
+The use of a numerical fitting function to **estimate the rate expression parameters and statistics** should be described including making an initial guess for the rate expression parameters, identifying the arguments that will be passed to the fitting function, identifying quantities that will be returned by the fitting function, and describing any final calculations that must be performed on the returned values.
 
-The use of a **numerical fitting function** to estimate the rate expression parameters and statistics should be described including making an initial guess for the rate expression parameters, identifying the arguments that will be passed to the fitting function, identifying quantities that will be returned by the fitting function, and describing any final calculations that must be perfromed on the returned values
+Finally, the generation of **assessment graphs** should be described, noting what will be plotted and how the plotted quantities will be calculated.
 
-The generation of **assessment graphs** should be described, noting what will be plotted and how the plotted quantities will be calculated.
+## Example
 
-Finally a succinct **summary** of how to use the components described above to perform the calculations should be added.
+The following example illustrates the mathematical formulation of the estimation of rate expression parameters as described above.
+
+### Formulation of the Estimation of Rate Expression Parameters Using BSTR Data
+
+A reaction engineer conducted kinetics experiments using an isothermal BSTR. The adjusted experimental inputs consisted of the temperature, the initial concentration of reagent A and the final time and the response was the fina concentration of reagent A. The proposed rate expression is shown in equation (1) where $k_0$ and $E$ are rate expression parameters. The engineer generated the following BSTR model.
+
+<center>**BSTR Model**</center>
+
+[Design Equations]{.underline}
+
+$$
+\frac{dn_A}{dt} = -rV \tag{3}
+$$
+
+$$
+\frac{dn_Z}{dt} = rV \tag{4}
+$$
+
+[Initial Values and Stopping Criterion]{.underline}
+
+| Variable | Initial Value | Stopping Criterion |
+|:-------|:-------:|:-------:|
+| $t$ | $0$ | $t_f$ |
+| $n_A$ | $n_{A,0}$ |  |
+| $n_Z$ | $0$ | |
+
+: Initial values and stopping criterion for solving the design equations, equations (3) and (4). {#tbl-example_19_5_1_initial_values tbl-colwidths="[20, 40, 40]"}
+
+[Required Input:]{.underline} $k_0$,, $E$, $C_{A,0}$, $T$, and $t_f$
+
+[Derivatives Function]{.underline}
+
+$\qquad$ Arguments: $t$, $n_A$, and $n_Z$
+
+$\qquad$ Return values: $\frac{dn_A}{dt}$, and $\frac{dn_Z}{dt}$
+
+$\qquad$ Algorithm:
+
+$\qquad \qquad$ 1. Evaluate the unknowns in equations (3) and (4).
+
+$$
+k = k_0\exp{\left( \frac{-E}{RT}\right)} \tag{5}
+$$
+
+$$
+C_A = \frac{n_A}{V} \tag{6}
+$$
+
+$$
+r = kC_A \tag{2}
+$$
+
+$\qquad \qquad$ 2. Evaluate the derivatives using equations (3) and (4).
+
+$$
+C_A = \frac{n_A}{V} \tag{5}
+$$
+
+$$
+r = kC_A \tag{2}
+$$
+
+[Solving the Design Equations]{.underline}
+
+1. Calculate unknown initial and final values.
+
+$$
+n_{A,0} = C_{A,0}V \tag{7}
+$$
+
+2. Call an IVODE solver passing the initial values, stopping criterion and name of the derivatives function as arguments.
+
+3. Receive and return corresponding sets of values of $t$, $n_A$, and $n_B$ that span the range from the start of the experiment to the time when the response was measured.
+
+Formulate the estimation of the rate expression parameters using this model.
+
+---
+
+<center>**Predicted Responses Function**</center>
+
+[Arguments:]{.underline} $\underline{T}$, $\underline{C}_{A,0}$, $\underline{t}_{f}$, $k_0$, and $E$.
+
+[Return values:]{.underline} $\underline{C}_{A,f}$
+
+[Algorithm:]{.underline}
+
+1. Loop through the experiments, and for each experiment
+    a. Make the adjusted experimental inputs for the experiment and the values of the rate expression parameters available to the BSTR model.
+    b. Use the BSTR model to solve the design equations for $\underline{t}$, $\underline{n}_A$, and $\underline{n}_Z$.
+    c. Calculate and save the predicted response.
+
+$$
+C_{A,f,model} = \frac{n_A\big\vert_{t=t_f}}{V} \tag{8}
+$$
+
+2. Return the set of model-predicted responses.
+
+<center>**Parameter Estimation**</center>
+
+1. Set an initial guess for $k_0$ and $E$.
+2. Call a numerical fitting function 
+	a. passing the adjusted experimental inputs, $\underline{T}$, $\underline{C}_{A,0}$, and $\underline{t}_{f}$, the experimental responses, $\underline{C}_{A,f}$, the initial guess for the parameters, and the predicted responses function, above, as arguments
+	b. receiving the parameter estimates, $k_0$ and $E$, the upper and lower limits of the 95% confidence interval for each parameter estimate, $k_{0,CI,l}$, $k_{0,CI,u}$, ,$E_{CI,l}$ and $E_{CI,u}$, and the coefficient of determination, $R^2$.
+
+<center>**Generation of Assessment Graphs**</center>
+
+1. Calculate the model-predicted responses using the parameter estimates by calling the predicted responses function.
+2. Calculate the experiment residuals.
+
+$$
+\epsilon_{expt} = C_{A,f} - C_{A,f,model} \tag{9}
+$$
+
+3. Generate a parity plot showing $\underline{C}_{A,f,expt}$ *vs.* $\underline{C}_{A,f,model}$.
+4. Generate residuals plots showing $\underline{\epsilon}_{expt}$ *vs.* $\underline{T}$, *vs.* $\underline{C}_{A,0}$, and *vs.* $\underline{t}_{f}$.
 
 ## Symbols Used in @sec-apndx_parameter_est
 
@@ -245,17 +350,22 @@ Finally a succinct **summary** of how to use the components described above to p
 | $b$ | intercept of a linear function. |
 | $j$ | Subscript indexing the reactions taking place. |
 | $k$ | Rate coefficient, a subscript is used to index the reactions if more than one are occurring. |
-| $k_{0,}$ | Pre-exponential factor for a rate coefficient, an additional subscript is used to index the reactions if more than one are occurring. |
+| $k_{0}$ | Pre-exponential factor for a rate coefficient, an additional subscript is used to index the reactions if more than one are occurring. |
 | $m$ | Slope in a linear function, subscripts index the slopes when there are more than one. |
+| $n_i$ | Molar amount of reagent $i$, an additional subscripted $0$ denotes the initial molar amount. |
+| $r$ | Reaction rate. |
+| $t$ | Elapsed time, an additional subscripted $f$ denotes the final time. |
 | $x$ | Adjusted input variable, a subscript denotes the experiment or the input. |
 | $y$ | Response, additional subscripts denote the experiment and whether the response was measured (expt) or predicted (model). |
 | $\hat{y}$ | Model-predicted response, a subscript is used to index the responses in an experimental data set. |
+| $C_i$ | Concentration of reagent $i$, an additional subscripted $0$ denotes the initial concentration, an additional subscripted $f$ denotes the final concentration. |
 | $CI$ | 95% confidence interval; when used as a subscript followed by "u" or "l" it indicates that the current variable is an upper or lower 95% confidence interval limit. |
 | $E$ | Activation energy, a subscript is used to index the reactions if more than one are occurring. |
 |$N$ | Number of experiments in a data set. |
 | $R$ | Ideal gas constant. |
 | $R^2$ | Coefficient of determination. |
 | $T$ | Temperature. |
+| $V$ | Volume. |
 | $\lambda$ | Standard error in a parameter estimate, an additional subscript denotes the specific parameter. |
 | $\beta$ | Base-10 log of a pre-exponential factor when used as a rate expression parameter in place of the actual pre-exponential factor. |
 | $\epsilon_{expt}$ | Experiment residual; a subscript denotes the experiment. |
