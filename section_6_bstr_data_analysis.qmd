@@ -42,7 +42,7 @@ As already noted, each BSTR experiment will be isothermal, so one of the experim
 
 In many cases, the rate of liquid-phase reactions is not affected by total pressure. Nonetheless, the pressure in a liquid-phase system will not change as the reaction proceeds. So if desired, total pressure can be used as a factor for liquid-phase reactions, and different pressure levels can be specified in the experimental design.
 
-For gas-phase reactions, the pressure is closely tied to the composition and the total pressure will change as the reaction proceeds if the reaction causes a change in the total number of moles in the system. Since reactor volume and temperature are constant in a BSTR kinetics experiment, the initial composition for a gas phase system is determined by the total pressure and the relative amounts of the reagents. 
+For gas-phase reactions, the pressure is closely tied to the composition. If the reaction causes a change in the total number of moles in the system, the total pressure will change as the reaction proceeds. Since reactor volume and temperature are constant in a BSTR kinetics experiment, the initial composition for a gas phase system is determined by the total pressure and the relative amounts of the reagents. 
 
 Two experimental inputs affect the composition of the reacting fluid during the experiments. One is the initial composition described above, and the other is the time that has elapsed when the response is measured. In any one experiment, the composition will change continually as the reaction proceeds, so responses measured at different elapsed times during the same experiment will correspond to different compositions. It makes sense to measure the response as many times as possible during each experiment to minimize the time and cost of the experimental study.
 
@@ -56,29 +56,27 @@ One other possibility for the measured response from BSTR kinetics experiments i
 
 ## BSTR Data Analysis
 
-Kinetics data analysis is discussed in general terms in @sec-6_kin_data_gen. It requires generation of a model for the reactor used in the experiments. The reactor model is used within a predicted responses function to predict the response for each experiment. The prdicted responses function is called by a numerical fitting function which fits the predicted reponses model to the experimental data. In this chpater that process is applied to analysis of data from an isothermal BSTR. @sec-6_kin_data_gen aslo describes analysis of same-temperature blocks of kinetics data and mentions the use of approximate reactor models. The analysis of BSTR kinetics data using those approaches is also considered in this chapter.
+Kinetics data analysis is discussed in general terms in @sec-6_kin_data_gen. It requires generation of a model for the reactor used in the experiments. The reactor model, @sec-3_reactor_model_func, is used within a predicted responses function to predict the response for each experiment. The prdicted responses function is called by a numerical fitting function which fits the predicted reponses model to the experimental data. In this chpater that process is applied to analysis of data from an isothermal BSTR. @sec-6_kin_data_gen also describes analysis of same-temperature blocks of kinetics data using linear least squares, and it mentions the use of approximate reactor models. The analysis of BSTR kinetics data using those approaches is also considered in this chapter.
 
-The reactor that needs to be modeled is an isothermal BSTR wherein a single reaction is taking place. **The reactor model** is generated in the same way that BSTR reactor models are generated in @sec-4_bstr_analysis. Specifically, the reactor modeling includes writing the design equations, initial values, and a stopping criterion, writing a derivatives function, identifying any input that will need to be provided, and using an IVODE solver to solve the BSTR design equations.
-
-During kinetics data experiments, the reactor operates isothermally and only one reaction takes place. Because the reactor operates isothermally at a known temperature, the mole balance design equations can be solved independently of the energy balances. Calculation of the composition at any time after the start of the reaction does not require use of the energy balances. Therefore only mole balances on the reagents are included among the design equations. In addition, since only one reaction is taking place, it isn't necessary to index the reaction. As a consequence, the BSTR design equations for an isothermal, single-reaction experiment take the form shown in @eq-bstr_mole_bal_one_reaction.
+The reactor that needs to be modeled is an isothermal BSTR wherein a single reaction is taking place. **The reactor model** is generated in the same way that BSTR reactor models are generated in @sec-4_bstr_analysis. Since the reactor operates isothermally and only one reaction takes place, the mole balance design equations can be solved independently of the energy balances. Calculation of the composition at any time after the start of the reaction does not require use of the energy balances. Therefore only mole balances on the reagents are included among the design equations. In addition, since only one reaction is taking place, it isn't necessary to index the reaction. As a consequence, the BSTR design equations for an isothermal, single-reaction experiment take the form shown in @eq-bstr_mole_bal_one_reaction.
 
 $$
 \frac{dn_i}{dt} = \nu_i r V
 $$ {#eq-bstr_mole_bal_one_reaction}
 
-The instant the reaction begins can be defined as $t=0$. The initial values then equal the molar amounts of each of the reagents at that instant. The response may be measured several times during a BSTR kinetics experiment, yielding several data points from each experiment. The initial values are the same for each of those experiments, but the stopping criterion for each experiments is that the elapsed time is equal to the time at which the response was measured.
+The instant the reactor stabilizes at the desired temperature can be defined as $t=0$. The initial values then equal the molar amounts of each of the reagents at that instant. The response may be measured several times during a BSTR kinetics experiment, yielding several data points from each experiment. The initial values are the same for each of data points, but the stopping criterion for each data point is the elapsed time at which the response was measured.
 
-The derivatives function receives the values of the independent and dependent variables at the start of an integration step and returns the values of the derivatives appearing in the design equations at those conditions. To do so, it typically needs to calculate unknown quantities appearing in the design equations, and then use the design equations to evaluate the derivatives.
+The derivatives function for a kinetics experiment receives the the elapsedd time and the molar amounts of each of the reagents at the start of an integration step and returns the corresponding values of the derivative of each molar amount with respect to time. To do so, it typically needs to calculate unknown quantities appearing in the design equations, and then use the design equations to evaluate the derivatives. During kinetics data analysis, the rate expression parameters will be changing as the predicted responses function is being fit to the experimental. Consequently the current values of the rate expression parameters will need to be made available to the derivatives function.
 
-If additional quantities are needed for solving the design equations that required input must be provided to the BSTR model. When a set of kinetics data are being analyzed, the BSTR design equations need to be solved for each experiment in the data set. For this reason, the adjusted experimental inputs for the experiment being analyzed are usually passed to the reactor model function as an argument during kinetics data analysis. Similarly, the design equations will be solved using different sets of values for the parameters appearing in the proposed rate expression, so the rate expression parameters must be provided to the BSTR model. The rate expression parameters, and possiblly some of the adjusted experimenatl inputs may be needed by the derivatives function in addition to the arguments passed to it. The reactor model function can make these quantities available to the derivatives function.
+When a set of kinetics data are being analyzed, the predicted responses function will need to solve the BSTR design equations for each experiment in the data set. For this reason, the adjusted experimental inputs for the experiment being analyzed are usually passed to the reactor model function as an argument during kinetics data analysis.
 
-The final component of the BSTR model is an IVODE solver. The solver is passed the derivatives function, initial values, and the stopping criterion. It solves the design equations and returns sets of corresponding values of the time and the molar amounts of each of the reagents spanning the time from the start of the experimant to the time when the response was measured. These sets of values are then returned by the BSTR model.
+The final component of the BSTR model is a description of the sequence of function calls and calculations used to solve the design equations. An IVODE solver is used to solve the BSTR design equations. It is passed the derivatives function, initial values, and the stopping criterion for the experiment being analyzed. It solves the design equations and returns sets of corresponding values of the time and the molar amounts of each of the reagents spanning the range from the $t=0$ to the time when the response was measured in that experiment. These sets of values are then returned by the BSTR model.
 
 **The predicted responses fucntion** that must be written is straightforward. It receives the set of adjusted inputs from all of the experiments and values for each of the parameters that appear in the proposed rate expression. It simply loops through the experiments. For each experiment it uses the BSTR model to solve the design equations and then calculates the predicted response using the results from solving the design quations. After all of the experiments have been evaluated, it returns the set of model-predicted responses for the experiments.
 
-A **numerical fitting function** is used to fit the predicted responses model to the experimental data. The details of using the numerical fiting function will depend upon the specific software being used, but the arguments provided to it and the results it returns are essentially the same for any software package. The arguments that must be provided to a numerical fitting function consist of a guess for the unknown rate expression parameters, the values of each of the experimentally adjusted inputs for all of the experiments in the data set being analyzed, the corresponding values of the measured response for every experiment, and the name of the predicted responses function described above.
+A **numerical fitting function** is used to fit the predicted responses model to the experimental data. The details of using the numerical fiting function will depend upon the specific software being used, but the arguments provided to it and the results it returns are essentially the same for any software package. The arguments that must be provided to a numerical fitting function consist of a guess for the unknown rate expression parameters, the values of each of the experimentally adjusted inputs for all of the experiments in the data set being analyzed, the corresponding values of the measured response for every experiment, and the predicted responses function described above.
 
-Assuming the numerical  fitting function is successful, it will returns the estimated values of each parameter appearing in the rate expression, the upper and lower bounds of the 95% confidence interval for each parameter, and the coefficient of determination, $R^2$. Instead of the 95% confidence intervals for the rate expression parameters, the fitting function might return the standard error. It also might return the set of predicted responses corresponging to the estimated paramter values. If the predicted responses are not returned by the fitting function, they can be calculated using the predicted responses function. A parity plot and residuals plots then can be generated, and the accuracy of the proposed rate expression can be assessed as described in @sec-6_kin_data_gen.
+Assuming the numerical  fitting function is successful, it will return the estimated values of each parameter appearing in the rate expression, the upper and lower bounds of the 95% confidence interval for each parameter, and the coefficient of determination, $R^2$. Instead of the 95% confidence intervals for the rate expression parameters, the fitting function might return the standard error. It also might return the set of predicted responses corresponging to the estimated paramter values. If the predicted responses are not returned by the fitting function, they can be calculated using the predicted responses function. A parity plot and residuals plots then can be generated, and the accuracy of the proposed rate expression can be assessed as described in @sec-6_kin_data_gen.
 
 ### BSTR Kinetics Data Analysis Using a Linearized Model
 
@@ -90,19 +88,21 @@ $$
 \frac{dn_i}{dt} = \nu_i r V \qquad \Rightarrow \qquad n_i = f\left( n_i, t \right)
 $$ {#eq-integrated_bstr_mole_bal}
 
-Assuming that the mole balance can be solved to find the function, $f$, the resulting algebraic/transcendental equation (ATE) is re-written so that by defining new variables, it becomes a linear equation as shown in @eq-linearized_equation and reproduced below. It isn't always possible to linearize the integrated reactor model, in which case this approach again can't be used.
+Assuming that the mole balance can be solved to find the function, $f$, the resulting algebraic/transcendental equation (ATE) is re-written so that by defining new variables, $y$ and $x_1$ through $x_n$, it becomes a linear equation as shown in @eq-linearized_equation and reproduced below. The number of $x_i$ variables depends upon the number of parameters in the proposed rate epxression. It isn't always possible to linearize the integrated reactor model, in which case this approach again can't be used.
 
 $$
 y = m_1x_1 + m_2x_2 + \cdots + m_nx_n + b
 $${#eq-linearized_equation}
 
-The rate expression parameters cannot appear in the defining equation for the new variables, $y$ and the $x_i$. Additionally, the definition of each slope, $m_i$, and the intercept, $b$, must contain a unique combination of the rate expression parameters; it may not contain any adjusted inputs or the response, and it cannot be a known constant. With those restrictions, the total number of slopes and intercepts will equal the number of rate expression parameters.
+The rate expression parameters cannot appear in the defining equations for the new variables, $y$ and the $x_i$. Additionally, the definition of each slope, $m_i$, and the intercept, $b$, must contain a unique combination of the rate expression parameters; it may not contain any adjusted inputs or the response, and it cannot be a known constant. With those restrictions, the total number of slopes and intercepts will equal the number of rate expression parameters.
 
-The values of $y$ and the $x_i$ are calculated for each experiment, and a spreadsheet, calculator, or linear least-squares function is used to fit the @eq-linearized_equation to the resulting $x-y$ data. Doing so yields the best value of each slope, $m_i$, and the intercept, $b$, along with the 95% confidence interval (or standard error) for each and the coefficient of determination, $R^2$. During linearization of the reactor model, the slopes and intercept were defined in terms of the rate expression parameters. Those definitions are used to calculate the best estimates and the uncertainty for each rate expression parameter.
+The values of $y$ and the $x_i$ are calculated for each experiment, a spreadsheet, calculator, or linear least-squares function is used to fit the @eq-linearized_equation to the resulting $x-y$ data. Doing so yields the best value of each slope, $m_i$, and the intercept, $b$, along with the 95% confidence interval (or standard error) for each and the coefficient of determination, $R^2$. During linearization of the reactor model, the slopes and intercept were defined in terms of the rate expression parameters. Those definitions are used to calculate the best estimates and the uncertainty for each rate expression parameter.
+
+Very commonly when there is only one $x$ (i. e. when $y=mx$ or $y = mx + B$) this is all done in a spreadsheet. The adjusted inputs and the responses are entered as columns. New columns are created for $y$ and $x$ which are calculated using the original data. A plot of $y$ *vs.* $x$ is generated, a trendline is added, and the equation for the trendline is displayed on the graph. The rate expression parameters are then calculated using the slope and intercept in the displayed equation. Most spreadsheets can be configured to show or calculate the coefficient of determination and the uncertainty in the slope and intercept, as well.
 
 Analyzing all of the same-temperature data blocks results in a secondary data set consisting of the value of each rate expression parameters at each of the data block temperatures. Assuming the unknown parameters are rate coefficients or equilibrium constants for which thermodynamic data are unavailable, the second stage of analysis then involves fitting the Arrhenius expression to this secondary data set. This has already been described in @sec-2_rates_rate_express and @sec-apndx_parameter_est and illustrated in [Example -@sec-example_4_5_4], so it won't be discussed here.
 
-This approach to kinetics data analysis has great historical significance and is still very commonly used and taught. It is not emphasized in *Reaction Engineering Basics* because it cannot always be used, and when it is used, the pre-exponential factors, activation energies, and unknown heats of reaction appearing in the propose rate expressions are estimated using other estimates and not using the full data set.
+This approach to kinetics data analysis has great historical significance and is still very commonly used and taught. It is not emphasized in *Reaction Engineering Basics* because it cannot always be used, and when it is used, the pre-exponential factors, activation energies, and unknown heats of reaction appearing in the proposed rate expressions are estimated using other estimates and not using the experimental data directly.
 
 ### Parameter Estimation Using an Approximate Reactor Model
 
@@ -140,7 +140,7 @@ $$
 t_{1/2} = \frac{\left(2^{\alpha -1} - 1\right)}{kC_{A,0}^{\alpha - 1}\left( \alpha - 1 \right)}
 $$ {#eq-half_life_other_order}
 
-@eq-half_life_first_order and @eq-half_life_other_order suggest that the reaction order, $\alpha$, can be determined by measuring the half-life in a series of experiments using different initial concentrations of A. If the half-life is the same for all initial concentrations, the reaction is first order. Otherwise, a log-log plot of the half-life *vs*. the initial concentration should yield a straight line, and the slope should equal $1-\alpha$ as can be seen by taking the logs of each side of equation @eq-half_life_other_order. Note that $k$ and $\alpha$ were treated as constants in this analysis, so each block of experiments at a single temperature must be evaluated separately.
+@eq-half_life_first_order and @eq-half_life_other_order suggest that the reaction order, $\alpha$, can be determined by measuring the half-life in a series of experiments using different initial concentrations of A. If the half-life is the same for all initial concentrations, the reaction is first order and the rate coefficient is 0.693 divided by the half-life. Otherwise, a log-log plot of the half-life *vs*. the initial concentration should yield a straight line, and the slope should equal $1-\alpha$ as can be seen by taking the logs of each side of equation @eq-half_life_other_order. Note that $k$ and $\alpha$ were treated as constants in this analysis, so each block of experiments at a single temperature must be evaluated separately.
 
 ## Examples {#sec-examples_intro_19}
 
@@ -153,13 +153,7 @@ library(kableExtra)
 source('./Code/fmt_tibble_col.R')
 ```
 
-This chapter presents examples of kinetics data analysis using data generated in an isothermal BSTR. [Chapters -@sec-6_cstr_data_analysis], and [-@sec-6_pfr_data_analysis] illustrate kinetics data analysis using data generated in ideal CSTRs and PFR, respectively. Kinetics data analysis assignments have 3 distinguishing characteristics:
-
-* A reactor that was used to conduct experiments involving a known reaction is described.
-* The data resulting from performing those experiments are provided.
-* The assignment is to generate a rate expression or estimate the parameters in a proposed rate expression and assess the accuracy of the rate expression using those data.
-
-Analysis using the full data set is preferred, and doing so is described in the first four examples that follow. [Example -@sec-example_19_5_5] illustrates kinetics data analysis using same-temperature data blocks and linear least squares parameter estimation. [Example -@sec-example_19_5_6] illustrates differential data analysis using an approcimate reactor model.
+This chapter presents examples of kinetics data analysis using data generated in an isothermal BSTR. [Chapters -@sec-6_cstr_data_analysis], and [-@sec-6_pfr_data_analysis] illustrate kinetics data analysis using data generated in ideal CSTRs and PFR, respectively. Analysis using the full data set is preferred, and doing so is described in the first four examples that follow. [Example -@sec-example_19_5_5] illustrates kinetics data analysis using same-temperature data blocks and linear least squares parameter estimation using a spreadsheet. [Example -@sec-example_19_5_6] illustrates differential data analysis using same-temperature data blocks, an approximate reactor model, and a spreadsheet.
 
 ### Assessing a First-Order Rate Expression for a Liquid-Phase Reaction {#sec-example_19_5_1}
 
@@ -190,11 +184,11 @@ kbl(d[1:8,], format = "markdown", align = "cc", col.names = c('Experiment','T (�
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This is a kinetics data analysis assigment involving data from an isothermal BSTR. I'll begin by summarizing the assignment. I'll assign an appropriate variable symbol to each quantity provided in the narrative. I'll use a subscripted "0" to denote quantities at the start of the reaction, a subscripted "f" to denote quantities at the time the response was measured, a subscripted "CI,l" to denote the lower limit of a 95% confidence interval, and asubscripted "CI,u" to denote the upper limit of a 95% confidenceinterval.  I'll underline symbols that represent a set of values.
+This is a kinetics data analysis assigment involving data from an isothermal BSTR. I'll begin by summarizing the assignment. I'll assign an appropriate variable symbol to each quantity provided in the narrative. I'll use a subscripted "0" to denote quantities at the start of the reaction, a subscripted "f" to denote quantities at the time the response was measured, a subscripted "CI,l" to denote the lower limit of a 95% confidence interval, and a subscripted "CI,u" to denote the upper limit of a 95% confidenceinterval.  I'll underline symbols that represent a set of values.
 
 The adjusted experimental inputs were the temperature, initial concentration of A and the elapsed time at which the response was measured. The measured response was the concentration of A.
 
-The assignment asks for the best estimates for the Arrhenius pre-exponential factor and activation energy. It also asks for an assessemnt of the accuracy of the rate expression. That makes the coefficient of determination, the uncertainties in the estimated parameters, a parity plot, and residuals plots quantities of interest, as well, since they are needed in order to assess the accuracy of the rate expression.
+The assignment asks for the best estimates for the Arrhenius pre-exponential factor and activation energy. It also asks for an assessemnt of the accuracy of the rate expression. That makes the coefficient of determination, the uncertainties in the estimated parameters, a parity plot, and residuals plots quantities of interest, as well, since I'll need them to assess the accuracy of the rate expression.
 
 :::
 
@@ -219,17 +213,13 @@ The assignment asks for the best estimates for the Arrhenius pre-exponential fac
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I know I'll need a reactor model, so I'll generate that first. In kinetics experiments the reactor operates isothermally, so the mole balance design equations can be solved independently of the energy balances. The composition at the time the response is measured can be calculate by solving the mole balances, so an energy balance on the reacting fuid and an energy balance on a heat exchange fluid do not need to be included among the reactor design equations. The general form of the mole balance takes the form given in @eq-bstr_mole_bal_one_reaction when only one reaction is taking place. It can be used to write a mole balance on each reagent present in the system.
+I know I'll need a reactor model, so I'll generate that first. In kinetics experiments the reactor operates isothermally, so the mole balance design equations can be solved independently of the energy balances. The composition at the time the response is measured can be calculate by solving the mole balances, so an energy balance on the reacting fuid and an energy balance on a heat exchange fluid do not need to be included among the reactor design equations. Only one reaction is takeing place, so the general form of the mole balance takes the form given in @eq-bstr_mole_bal_one_reaction. It can be used to write a mole balances for A and Z.
 
 $$
 \frac{dn_i}{dt} = \nu_i r V
 $$
 
-The BSTR reactor design equations are IVODEs, so I need initial values and a stopping criterion in order to solve them numerically. I can define $t=0$ to be the instant the experiment started. The initial values then equal the molar amounts of A and Z at that time. Reagent Z was not present at the start of any of the experiments being analyzed here, so its initial value is zero. For each experiment I know the elapsed time at which the response was measured, so I can use that as the stopping criterion.
-
-In order to solve the design equations numerically, I'll need to write a derivatives function. It will receive the values of the independent and dependent variables at the start of an integrations step, and it needs to return the corresponding values of the derivatives appearing in the design equations. Before the derivatives can be evaluated, any unknown quantities appearing in the design equations must be calculated. The only unknown in the design equations here is the rate. The only unknown here is the rate, which can be calculated using equation (2), but to do that, the concentration of A and the rate coefficient need to be calculated. The concentration of A can be calculated using the defining equation for concentration and the Arrhenius expression, @eq-arrhenius, can be used to calculate the rate coefficient. However, the Arrhenius pre-exponential factor and activation energy are not known and will need to be provided. Also, since the temperature changes from one experiment to the next, it will need to be provided, too.
-
-I'll use an IVODE solver to solve the design equations. I'll need to provide it with the initial values, stopping criterion, and the name of the derivatives function. The mole balances will be solved for each of the experiments, which means the initial values will be changing each time the design equations are solved. Consequently, the initial values for the experiment being modeled will need to be provided.
+The BSTR reactor design equations are IVODEs, so the model must include initial values, a stopping criterion and a derivatives function (see @sec-apndx_solve_ivodes). I can define $t=0$ to be the instant the experiment started. The initial values then equal the molar amounts of A and Z at that time. Reagent Z was not present at the start of any of the experiments being analyzed here, so its initial value is zero. For each experiment I know the elapsed time at which the response was measured, so I can use that as the stopping criterion.
 
 :::
 
@@ -247,7 +237,7 @@ $$
 
 [Initial Values and Stopping Criterion]{.underline}
 
-| Variable | Initial Value | Stopping Criterion |
+| Variable | Initial Value | Final Value |
 |:-------|:-------:|:-------:|
 | $t$ | $0$ | $t_f$ |
 | $n_A$ | $n_{A,0}$ |  |
@@ -255,17 +245,26 @@ $$
 
 : Initial values and stopping criterion for solving the design equations, equations (3) and (4). {#tbl-example_19_5_1_initial_values tbl-colwidths="[20, 40, 40]"}
 
-[Required Input:]{.underline} $k_0$,, $E$, $C_{A,0}$, $T$, and $t_f$
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I'll need to write the derivatives function, and it must receive the values of the independent and dependent variables at the start of an integrations step as its only arguments. It must return the corresponding values of the derivatives of $n_A$ and $n_B$ with respect to $t$. 
+
+Within the derivatives function the given and known constants and the arguments are available. Before the derivatives can be evaluated, any other quantities appearing in them must be calculated. The only other quantity in the design equations here is the rate, which can be calculated using equation (2), but to do that, the concentration of A and the rate coefficient need to be calculated. 
+
+The concentration of A can be calculated using the defining equation for concentration. The Arrhenius expression, @eq-arrhenius, can be used to calculate the rate coefficient, but to do so the Arrhenius pre-exponential factor, activation energy, and the temperature are needed. As the predicted responses model is fit to the experimental data, the pre-exponential factor and activation energy will be changing. The temperature will be different depending upon which experimental data point is being analyzed. Thus, the pre-exponential factor, activation energy and temperature are not known and cannot be calculated, so they must be made available to the derivatives function.
+
+:::
 
 [Derivatives Function]{.underline}
 
-$\qquad$ Arguments: $t$, $n_A$, and $n_Z$
+$\qquad$ Arguments: $t$, $n_A$, and $n_Z$.
 
-$\qquad$ Return values: $\frac{dn_A}{dt}$, and $\frac{dn_Z}{dt}$
+$\qquad$ Must be Available: $k_0$, $E$, and $T$.
+
+$\qquad$ Return values: $\frac{dn_A}{dt}$, and $\frac{dn_Z}{dt}$.
 
 $\qquad$ Algorithm:
-
-$\qquad \qquad$ 1. Evaluate the unknowns in equations (3) and (4).
 
 $$
 k = k_0\exp{\left( \frac{-E}{RT}\right)} \tag{5}
@@ -279,17 +278,28 @@ $$
 r = kC_A \tag{2}
 $$
 
-$\qquad \qquad$ 2. Evaluate the derivatives using equations (3) and (4).
-
 $$
-C_A = \frac{n_A}{V} \tag{5}
+\frac{dn_A}{dt} = -rV \tag{3}
 $$
 
 $$
-r = kC_A \tag{2}
+\frac{dn_Z}{dt} = rV \tag{4}
 $$
 
-[Solving the Design Equations]{.underline}
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I'll use an IVODE solver to solve the design equations. I'll need to provide it with the initial values, stopping criterion, and the derivatives function, above. The initial molar amount of A can be calculated from its initial concentration, but that will be varying from one experiment to the next. Also, the time at which the response was measured will vary from one experiment to the next. Therefore, the initial concentration of A and the time at which the response was measured for the experiment being analyzed must be provided to the reactor model as input.
+
+:::
+
+[BSTR Model Function]{.underline}
+
+$\qquad$ Arguments: $C_{A,0}$ and $t_f$.
+
+$\qquad$ Return Values: $\underline{t}$, $\underline{n}_A$, and $\underline{n}_B$
+
+$\qquad$ Algorithm:
 
 1. Calculate unknown initial and final values.
 
@@ -297,18 +307,20 @@ $$
 n_{A,0} = C_{A,0}V \tag{7}
 $$
 
-2. Call an IVODE solver passing the initial values, stopping criterion and name of the derivatives function as arguments.
+2. Call an IVODE solver passing the initial values, stopping criterion and derivatives function as arguments.
 
-3. Receive and return corresponding sets of values of $t$, $n_A$, and $n_B$ that span the range from the start of the experiment to the time when the response was measured.
+3. Receive corresponding sets of values of $t$, $n_A$, and $n_B$ that span the range from $t=0$ to $t=t_f$ from the IVODE solver and return them.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I'll use a numerical fitting function to estimate the parameters in the rate expression. One of the things I'll need to provide to it is a predicted responses function. Writing the predicted responses function is fairly straightforward. It receives the adjusted experimental inputs for all of the experiments and values for all of the parameters appearing in the proposed rate expression.
+The reactor model cannot be fit to the experimental data. Instead it must be used to create a predicted response model that relates the adjusted experimental inputs for an experiment to the predicted response for that experiment.
 
-All it needs to do is go through the expreriments one by one. For each experiment it uses the BSTR model to solve the design equations, and then uses the results to calculate the response. In order to solve the BSTR design equations, the predicted responses function must make the adjusted experimental inputs for the experiment being modeled and the rate expression parameters available to the BSTR model. Then, in this assignment, solving the design equations will give the molar amounts of A and Z at times spanning the range from the start of the experiment to the time when the response was measured. The concentration at that time can be calculated using the definition of concentration.
+To do that, the BSTR model above can be solved for any one experiment. Doing so will yield $\underline{t}$, $\underline{n}_A$, and $\underline{n}_Z$. The predicted response, the final concentration of A, can then be calculated using the defining equation for concentration.
 
-Once the set of model-predicted responses for all of the expreiments has been calculated, it is returned by the predicted responses function.
+I'll use a numerical fitting function to estimate the parameters in the rate expression. One of the things I'll need to provide to it is a predicted responses function that calculates the predicted response for each experiment as just described, and then returns the results. I must write the predicted responses function, and doing so is fairly straightforward. 
+
+The predicted responses function must receive the adjusted experimental inputs for all of the experiments and values for each of the parameters appearing in the proposed rate expression as its only arguments. It must return the predicted responses for all of the experiments. All it needs to do is go through the experiments one by one and calculate the predicted response as just described. There are two important things to remember when doing this. One is to immediately make the rate expression parameters available to the derivatives function. The second is to make the temperature available to the derivatives function before solving the reactor design equations. (As noted in the BSTR model description above, the initial concentration and the final time will be passed to the model function as arguments for solving the design equations. An alternative approach would be to additionally pass the experimental temperature and then make it avialable to the derivatives function from within the BSTR model.)
 
 :::
 
@@ -316,30 +328,31 @@ Once the set of model-predicted responses for all of the expreiments has been ca
 
 [Arguments:]{.underline} $\underline{T}$, $\underline{C}_{A,0}$, $\underline{t}_{f}$, $k_0$, and $E$.
 
-[Return values:]{.underline} $\underline{C}_{A,f}$
+[Return values:]{.underline} $\underline{C}_{A,f,model}$
 
 [Algorithm:]{.underline}
 
-1. Loop through the experiments, and for each experiment
-    a. Make the adjusted experimental inputs for the experiment and the values of the rate expression parameters available to the BSTR model.
-    b. Use the BSTR model to solve the design equations for $\underline{t}$, $\underline{n}_A$, and $\underline{n}_Z$.
-    c. Calculate and save the predicted response.
+1. Make $k_0$ and $E$ available to the derivatives function.
+2. For each experiment in the data set
+    a. Make the temperature available to the derivatives function.
+    b. Call the BSTR model function, passing $C_{A,0}$ and $t_f$ as arguments, to solve the BSTR design equations and receive $\underline{t}$, $\underline{n}_A$, and $\underline{n}_Z$.
+    c. Calculate the predicted response.
 
 $$
 C_{A,f,model} = \frac{n_A\big\vert_{t=t_f}}{V} \tag{8}
 $$
 
-2. Return the set of model-predicted responses.
+3. Return the set of model-predicted responses, $\underline{C}_{A,f,model}$.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I'll use a numerical fitting function from a software package to fit the predicted responses model to the experimental data. I will need to provide four things to it:
+Now that I have a predicted responses function, I can use a numerical fitting function from a software package to fit the predicted response model to the experimental data. I will need to provide four things to it:
 
 * an initial guess for each of the rate expression parameters
 * the adjusted experimental inputs for all of the experiments
 * the experimental responses for all of the experiments
-* the name of the predicted responses function
+* the predicted responses function
 
 Assuming the numerical fitting function is successful, it will return the estimated value of $k_0$, the lower and upper limits of its 95% confidence interval, $k_{0,CI,l}$ and $k_{0,CI,u}$, the estimated value of $E$, the lower and upper limits of its 95% confidence interval, $E_{CI,l}$ and $E_{CI,u}$, and the coefficient of determination, $R^2$.
 
@@ -347,19 +360,22 @@ I'm asked to assess the accuracy of the resulting model. To help with that, I ca
 
 :::
 
-<center>**Parameter Estimates, Statistics, and Assessment Graphs**</center>
+<center>**Parameter Estimation**</center>
 
-1. Call a numerical fitting function passing the adjusted experimental inputs, the experimental responses, the initial guess for the parameters, and the name of the predicted responses function.
-2. Receive the parameter estimates, $k_0$ and $E$, the upper and lower limits of their 95% confidence intervals, $k_{0,CI,l}$, $k_{0,CI,u}$, ,$E_{CI,l}$ and $E_{CI,u}$, and the coefficient of determination, $R^2$.
-3. Calculate the model-predicted responses using the parameter estimates by calling the predicted responses function.
-4. Calculate the experimental residuals.
+1. Set an initial guess for the parameters ($k_{0,guess}$ and $E_{guess}$)
+2. Call a numerical fitting function passing the adjusted experimental inputs for all of the experiments ($\underline{T}$, $\underline{C}_{A,0}$, and $\underline{t}_{f}$), the experimental responses ($\underline{C}_{A,f}$), the initial guess for the parameters from step 1, and the predicted responses function, above, as arguments, and receive the parameter estimates ($k_0$ and $E$), their 95% confidence intervals (k_{0,CI,l}$, $k_{0,CI,u}$, $E_{CI,l}$, and $E_{CI,u}$), and the coefficient of determination, $R^2$.
+
+<center>**Generation of Assessment Graphs**</center>
+
+1. Call the predicted responses function above, passing the estimated parameters ($k_0$ and $E$) and the adjusted experimental inputs for all of the experiments ($\underline{T}$, $\underline{C}_{A,0}$, and $\underline{t}_{f}$) as arguments and receive the predicted responses for all of the experiments ($\underline{C}_{A,f,model}$).
+2. Calculate the experiment residuals.
 
 $$
-\epsilon_{expt} = C_{A,f} - C_{A,f,model} \tag{9}
+\underline{\epsilon}_{expt} = \underline{C}_{A,f} - \underline{C}_{A,f,model} \tag{9}
 $$
 
-5. Generate a parity plot showing $\underline{C}_{A,f,expt}$ *vs.* $\underline{C}_{A,f,model}$.
-6. Generate residuals plots showing $\underline{\epsilon}_{expt}$ *vs.* $\underline{T}$, *vs.* $\underline{C}_{A,0}$, and *vs.* $\underline{t}_{f}$.
+3. Generate a parity plot showing $\underline{C}_{A,f,expt}$ *vs.* $\underline{C}_{A,f,model}$.
+4. Generate residuals plots showing $\underline{\epsilon}_{expt}$ versus  *vs.* $\underline{T}$, *vs.* $\underline{C}_{A,0}$, and *vs.* $\underline{t}_{f}$.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -373,8 +389,8 @@ At this point, I have everything I need to calculate the quantities of interest.
 The complete analysis can be performed using a computer as follows.
 
 1. Read the adjusted experimental inputs and experimental responses data from the file, [reb_19_5_1_data.csv]('examples/reb_19_5_1/reb_19_5_1_data.csv').
-2. Calculate the quantities of interest, $k_0$, $k_{0,CI,l}$, $k_{0,CI,u}$, $E$, $E_{CI,l}$, $E_{CI,u}$, $R^2$, $\underline{C}_{A,f,expt}$ *vs.* $\underline{C}_{A,f,model}$ (as a parity plot), and $\underline{\epsilon}_{expt}$ *vs.* $\underline{T}$, *vs.* $\underline{C}_{A,0}$, and *vs.* $\underline{t}_{f}$ (as residuals plots), as described above.
-3. Display the results and or save them to a file.
+2. Estimate the parameters and generate the assessment graphs as described above.
+3. Display the results and/or save them to a file.
 
 #### Results and Discussion
 
@@ -404,16 +420,16 @@ The resulting parity plot and residuals plots are presented in @fig-example_19_5
 
 ![](examples/reb_19_5_1/reb_19_5_1_residuals_tf.png){width=60%}
 
-Experimental residuals plotted against each of the adjusted experimental inputs, $T$, $C_{A,0$}, and $t_f$.
+Experiment residuals plotted against each of the adjusted experimental inputs, $T$, $C_{A,0$}, and $t_f$.
 
 :::
 
-The proposed rate expression offers a very accurate representation of the experimental data and can be accepted for use in the range of temperature and composition studied. The coefficient of determination is close to 1.0, the upper and lower limits of the confidence intervals for both parameters are close to their estimated values, the data in the parity plot fall very close to the $C_{A,expt} = C_{A,model}$ diagonal, and the experimental residuals scatter randomly about zero in all three residuals plots.
+The proposed rate expression offers a very accurate representation of the experimental data and can be accepted for use in the range of temperature and composition studied. The coefficient of determination is essentially equal to 1.0, the upper and lower limits of the confidence intervals for both parameters are close to their estimated values, the data in the parity plot fall very close to the parity line, and the experiment residuals scatter randomly about zero in all three residuals plots.
 
 ::: {.callout-note appearance="simple"}
 ## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
 
-Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_28.html)
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code for doing so, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_28.html)
 
 :::
 
@@ -444,17 +460,14 @@ kbl(d[1:5,], format = "markdown", align = "cc",
 
 ---
 
-
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
 I can see that this is a kinetics data analysis problem involving an isothermal BSTR. I'll begin by summarizing the assignment. I'll assign appropriate variables symbols to each quantity that is provided. I'll use a subscripted "0" to denote quantities at the start of the experiment, a subscripted "f" to denote quantities at the time the response was measured, and I'll underline variables representing a set of values of that quantity.
 
-From the problem narrative I know that the temperature, initial pressures of A and B, and the final time are the adjusted experimental inputs in the experioment. The response is the conversion. 
+From the problem narrative I know that the temperature, initial pressures of A and B, and the final time are the adjusted experimental inputs in the experioment. The response is the conversion of A. 
 
-The assignment only asks for an assessment of the accuracy of the proposed rate expression, but to do that, I'll need to estimate the Arrhenius pre-exponential factor and the activation energy, so I'll include them as quantities of interest, and I'll use a subscripted "CI,u" and "CI,l" to denote the upper and lower limits of the 95% confidence interval.
-
-Finally, this assignment asks me to perform the analysis two different ways, I'll start with the analysis using a numerical fitting function with the full reactor model.
+The assignment asks for an assessment of the accuracy of the proposed rate expression. To do that I'll estimate the pre-exponential factor, its 95% confidence interval, the activation energy, and its 95% confidence interval. I'll also calculate the coefficient of determination, so I'll list all of these as quantities of interest, using a subscripted "CI,l" and "CI,u" to denote the uppser and lower limits of the confidence intervals. I'll also make a parity plot and residuals plots, so I will additionally list the quantities needed for those graphs as being of interest.
 
 :::
 
@@ -466,7 +479,7 @@ Finally, this assignment asks me to perform the analysis two different ways, I'l
 
 ![Schematic representation of the experimental BSTR wherein molar amounts vary with time while the temperature is constant.](Graphics/bstr_isothermal_schematic.png){#fig-example_19_5_2_schematic}
 
-**Items of Interest:** $k_0$, $k_{0,CI,l}$, $k_{0,CI,u}$, $E$, $E_{CI,l}$, $E_{CI,u}$, and an assessment of the accuracy of the rate expression given in equation (2).
+**Quantities of Interest:** $k_0$, $k_{0,CI,l}$, $k_{0,CI,u}$, $E$, $E_{CI,l}$, $E_{CI,u}$, $R^2$, $\underline{f}_A$ *vs.* $\underline{f}_{A,model}$ (as a parity plot), and $\underline{\epsilon}_{expt}$ *vs.* $\underline{T}$, *vs.* $\underline{P}_{A,0}$, *vs.* $\underline{P}_{B,0}$, and *vs.* $\underline{t}_f$ (as residuals plots).
 
 **Given and Known Constants:** $V = 500\text{ cm}^3$.
 
@@ -474,48 +487,46 @@ Finally, this assignment asks me to perform the analysis two different ways, I'l
 
 **Experimental Response:** $\underline{f}_A$.
 
-#### Mathematical Formulation of the Analysis using the Complete Reactor Model
+#### Mathematical Formulation of the Calculations
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I know that I'm going to need a model for the isothermal BSTR used in the experiments, so I'll develop that first. The data were collected in three same-temperature blocks, but I'm going to try analyzing all of the data at one time. That means that the BSTR model needs to be written with $k_0$ and $E$ as the parameters.
+I know that I'm going to need a model for the isothermal BSTR used in the experiments, so I'll develop that first. I only need the mole balance design equations because they can be solved independently of the energy balances when the reactor is isothermal, and solving them will give me everything I need to calculate the predicted conversion.
 
-When a reactor operates isothermally at a known temperature, the mole balances can be solved indpendently of any other design equations for the reactor. In this case, I can calculate everything I need from the mole balances, so I only need to include mole balances in the design equations. Here I'll write a mole balance on each of the reagents. The general form of the BSTR mole balance is given in @eq-bstr_mole_balance. Since there is only one reaction, the summation reduces to a single term and I don't need subscripts denoting the reaction.
+I'll write a mole balance on each of the reagents. The general form of the BSTR mole balance is given in @eq-bstr_mole_balance. Since there is only one reaction, the summation reduces to a single term and I don't need subscripts denoting the reaction.
 
 $$
 \frac{dn_i}{dt} = V \sum_j \nu_{i,j}r_j \qquad \Rightarrow \qquad \frac{dn_i}{dt} = \nu_i r V
 $$
 
-The rate coefficient in equation (2) needs to be written in terms of the Arrhenius expression, @eq-arrhenius, and substituted into the mole balances.
-
-The design equations are IVODEs, so I know I'll need initial values and a stopping criterion in order to solve them numerically. I can define the instant that the experiment starts to be t=0. In that case the initial values are simply the molar amounts of each reagent at the start of the experiment. Here, the initial molar amounts of Y and Z were always equal to zero. I know the time when the response was measured, so I can use that as the stopping criterion.
+The design equations are IVODEs that I'll solve numerically, so the reactor model must also include initial values, a stopping criterion, and a derivatives function. I can define the instant that the experiment starts to be t=0. In that case the initial values are simply the molar amounts of each reagent at the start of the experiment. Here, the initial molar amounts of Y and Z were always equal to zero. I know the time when the response was measured, so I can use that as the stopping criterion.
 
 :::
 
-**BSTR Model**
+<center>**BSTR Model**</center>
 
 [Design Equations]{.underline}
 
 $$
-\frac{dn_A}{dt} = -Vr = -k_0 V \exp{\left( \frac{-E}{RT} \right)}P_AP_B \tag{3}
+\frac{dn_A}{dt} = -Vr \tag{3}
 $$
 
 $$
-\frac{dn_B}{dt} = -Vr = -k_0 V \exp{\left( \frac{-E}{RT} \right)}P_AP_B \tag{4}
+\frac{dn_B}{dt} = -Vr \tag{4}
 $$
 
 $$
-\frac{dn_Y}{dt} = Vr = k_0 V \exp{\left( \frac{-E}{RT} \right)}P_AP_B \tag{5}
+\frac{dn_Y}{dt} = Vr \tag{5}
 $$
 
 $$
-\frac{dn_Z}{dt} = Vr = -k_0 V \exp{\left( \frac{-E}{RT} \right)}P_AP_B \tag{6}
+\frac{dn_Z}{dt} = Vr \tag{6}
 $$
 
 [Initial Values and Stopping Criterion]{.underline}
 
-| Variable | Initial Value | Stopping Criterion |
+| Variable | Initial Value | Final Value |
 |:-------|:-------:|:-------:|
 | $t$ | $0$ | $t_f$ |
 | $n_A$ | $n_{A,0}$ |  |
@@ -523,137 +534,167 @@ $$
 | $n_Y$ | $0$ | |
 | $n_Z$ | $0$ | |
 
-: Initial values and stopping criterion for solving the design equations, equations (3) through (6). {#tbl-example_19_5_2_initial_values tbl-colwidths="[20, 40, 40]"}
+: Initial values and stopping criterion for solving the design equations, (3) through (6). {#tbl-example_19_5_2_initial_values tbl-colwidths="[20, 40, 40]"}
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-In addition to initial values and a stopping criterion, I'll also need to write a derivatives function in order to solve the IVODE design equations numerically. That function will be given the values of the independent and dependent variables at the start of an integration step. The given and known constants in the assignment summary will also be available. The derivatives function has to evaluate the derivatives using equations (3) through (6). In order to do that, I'll first need to calculate any unknown quantities appearing in the design equations. The unknowns in this case are the pre-exponential factor, $k_0$, the activation energy, $E$, the partial pressure of A, $P_A$, and the partial pressure of B, $P_B$.
+I will need to write the derivatives function. It must receive the values of the independent and dependent variables ($t$, $n_A$, $n_B$, $n_Y$, and $n_Z$) at the start of an integration step as its only arguments, and it must return the values of the derivatives of the dependent variables with respect to the independent variable ($\frac{dn_A}{dt}$, $\frac{dn_B}{dt}$, $\frac{dn_Y}{dt}$, and $\frac{dn_Z}{dt}$).
 
-It isn't possible to calculate $k_0$ or $E$ with the information available to the derivatives function, so their values will need to be provided to the derivatives function. The partial pressures of A and B can be calculated using the ideal gas law, but to do that, the temperature is needed. Because the temperature changes from experiment to experiment, it's value will have to be provided to the derivatives function, too.
+Within the derivatives function the given and known constants and the arguments will be available. Any other quantities appearing in the design equations must be calculated before the derivatives can be evaluated using equations (3) through (6). The only unknown quantity in the design equations is $r$, and it can be calculated using equation (2).
 
-I'll use an IVODE solver to solve the design equations. I'll need to provide the initial and final values in @tbl-example_19_5_1_initial_values to it along with the name of the derivatives function I write. I can calculate the initial molar amounts of A and B for any experiment using their initial partial pressures, but since the partial pressures change from one experiment to the next, they will need to be provided. The stopping criterion, that is the time at which the response was measured, also changes from experiment to experiment and will need to be provided.
+To calculate the rate using equation (2), the pre-exponential factor, activation energy, temperature, and partial pressures of A and B are needed. The partial pressures can be calculated using the ideal gas law, but that also requires the temperature.
+
+As the predicted responses model is fit to the experimental data, the pre-exponential factor and the activation energy will be changing, and as different experiments are analyzed, the temperature will be changing. Therefore the kinetics parameters and the temperature will need to be made available to the derivatives function.
 
 :::
 
-[Required Input:]{.underline} $k_0$, $E$, $T$, $P_{A,0}$, $P_{B,0}$, $t_f$
-
 [Derivatives Function]{.underline}
 
-Given the values of the independent and dependent variables at the start of an integration step, the required input listed above, and the given and known constants from the assignment summary, the unknown quantities appearing in the derivatives expressions, (3) through (6), can be computed using the following sequence of calculations. Then the derivatives can be evaluated using equations (3) through (6).
+$\qquad$ Arguments: $t$, $n_A$, $n_B$, $n_Y$, and $n_Z$.
+
+$\qquad$ Must be Available: $k_0$, $E$, and $T$.
+
+$\qquad$ Return values: $\frac{dn_A}{dt}$, $\frac{dn_B}{dt}$, $\frac{dn_Y}{dt}$, and $\frac{dn_Z}{dt}$.
+
+$\qquad$ Algorithm:
 
 $$
-P_A = \frac{n_A RT}{V} \tag{7}
+k = k_0 \exp{ \left( \frac{-E}{RT}  \right)} \tag{7}
 $$
 
 $$
-P_B = \frac{n_B RT}{V} \tag{8}
+P_A = \frac{n_A RT}{V} \tag{8}
+$$
+
+$$
+P_B = \frac{n_B RT}{V} \tag{9}
 $$
 
 $$
 r = kP_AP_B \tag{2}
 $$
 
-[Solving the BSTR/PFR Design equations]{.underline}
-
-Given the required input and the given and known constants from the assignment summary, the unknown initial and final values in @tbl-example_19_5_1_initial_values can be computed using the following sequence of calculations.
-
 $$
-n_{A,0} = \frac{P_{A,0}V}{RT} \tag{9}
+\frac{dn_A}{dt} = -Vr \tag{3}
 $$
 
 $$
-n_{B,0} = \frac{P_{B,0}V}{RT} \tag{10}
+\frac{dn_B}{dt} = -Vr \tag{4}
 $$
 
-The reactor design equations can then be solved by calling an IVODE solver, providing it with the initial values, stopping criterion, and name of the derivatives function above. Assuming the solver was successful, it will return corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, and $n_Z$ that span the range from their initial values to their values at the point where the stopping criterion was satisfied.
+$$
+\frac{dn_Y}{dt} = Vr \tag{5}
+$$
+
+$$
+\frac{dn_Z}{dt} = Vr \tag{6}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I will use numerical fitting func to estimate the unknown parameters, $k_0$, and $E$. I will need to provide it with a guess for $k_0$, and $E$, the set of adjusted experimental inputs being analyzed, the corresponding set of experimental responses and the name of a predicted responses function that I will need to write. The preddicted responses function will be given values for $k_0$, and $E$ and the set of adjusted experimental inputs. Using that information and the given and known constants from the assignment summary, it must calculate and return the corresponding set of model-predicted responses.
-
-For any one experiment I can use the reactor model as described above to calculate the final molar amounts of A, B, Y, and Z at the time the response was measured. Then I can use the defining equation for conversion, @eq-conversion_def_closed, to calculate the model-predicted conversion. So all I need to do in the predicted response model is to loop through the experiments in the data set to calculate the predicted responses and return them.
-
-Assuming it is successful, the numerical fitting function will return the estimated values of $k_0$, and $E$, the lower and upper limits of their 95% confidence interval, $k_{0,CI,ll}$ $k_{0,CI,ul}$, $E_{CI,ll}$, and $E_{CI,ul}$ and the coefficient of determination, $R^2$. After estimating $k_0$, and $E$, I can calculate the model-predicted responses and use them to generate a parity plot of the experimental conversion *vs.* the model-predicted conversion. I can also calculate the differences between the experimental and model-predicted conversions, that is the residuals, and use them to generate residuals plots of the residuals versus each of the adjusted experimental inputs.
-
-If the model is accurate I expect the lower and upper limits of the 95% confidence intervals for $k_0$, and $E$ to be close in value to their estimated values. (However, it is sometimes the case that the uncertainty in the pre-exponential factor is larger; this is OK as long as the following accuracy criteria are satisfied.) If the model is accurate, $R^2$ should also be close to 1.0, the points in the parity plot should lie close to a diagonal line, and the deviations of the residuals from zero in the residuals plots should be random with no apparent trends.
+I'll use an IVODE solver to solve the design equations. I'll need to provide the initial values and stopping criterion in @tbl-example_19_5_1_initial_values to it along with the the derivatives function above. I can calculate the initial molar amounts of A and B for any experiment using their initial partial pressures, but since the partial pressures change from one experiment to the next, the initial partial pressures for the experiment being analyzed will need to be provided, and since their calculation requires the temperature, it, too must be provided. Similarly, the stopping criterion, that is the time at which the response was measured, also changes from experiment to experiment and will need to be provided as input to the reactor model.
 
 :::
 
-**Parameter Estimation**
+[BSTR Model Function]{.underline}
 
-[Predicted Responses Function]{.underline}
+$\qquad$ Arguments: $T$, $P_{A,0}$, $P_{B,0}$, and $t_f$.
 
-Given values for $k_0$, and $E$ and the set of adjusted experimental inputs, the BSTR model above can be used to calculate corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, and $n_Z$ spanning the range from the start of the experiment to the time when the experimental response, $f_A$, was measured. The model predicted response can then be calculated as follows. This can be repeated for each experiment to generate a set of model-predicted responses.
+$\qquad$ Return Values: $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_Y$, and $\underline{n}_Z$.
 
-$$
-f_{A,model} = \frac{n_A\big\vert_{t=0} - n_A\big\vert_{t=t_f}}{n_A\big\vert_{t=0}} \tag{11}
-$$
+$\qquad$ Algorithm:
 
-[Parameter Estimates and Statistics]{.underline}
-
-A numerical fitting function can be used to estimate $k_0$, and $E$. 
-Guesses for $k_0$, and $E$, the set of adjusted experimental inputs, the set of experimental responses, and the predicted responses function above will need to be provided to it. Assuming it is successful, it will return $k_0$, $k_{0,CI,l}$, $k_{0,CI,u}$, $E$, $E_{CI,ll}$, $E_{CI,ul}$, and the coefficient of determination, $R^2$.
-
-[Assessment Graphs]{.underline}
-
-After estimating $k_0$, and $E$, the set of model predicted responses for the data set being analyzed, $\underline{f}_{A,model}$ can be calcualted using the BSTR model above. A corresponding set of residuals, $\underline{\epsilon}$, can be calculated using equation (12).
+1. Calculate the unknown initial values.
 
 $$
-\epsilon = f_A - f_{A,model} \tag{12}
+n_{A,0} = \frac{P_{A,0}V}{RT} \tag{10}
 $$
 
-Plotting $\underline{f}_A$ *vs.* $\underline{f}_{A,model}$ yields the parity plot. Plotting $\underline{\epsilon}$ *vs.* $\underline{P}_{A,0}$, *vs.* $\underline{P}_{B,0}$, and *vs.* $\underline{t}_f$ yields the residuals plots.
+$$
+n_{B,0} = \frac{P_{B,0}V}{RT} \tag{11}
+$$
 
-[Assessment of Model Accuracy]{.underline}
+2. Call an IVODE solver passing the initial values, stopping criterion and derivatives function as arguments.
 
-The following are indicators that the model is accurate.
-
-* $R^2$ is close to 1.0.
-* $k_{0,CI,l}$ and $k_{0,CI,u}$ are close in value to the estimated value of $k_0$.
-* $E_{CI,l}$ and $E_{CI,u}$ are close in value to the estimated value of $E$.
-* The plotted data in the parity plot fall close to a diagonal $f_A = $f_{A,model}$ line.
-* The plotted residuals in each residuals plot scatter randomly about zero with no apparent trends in the deviations.
+3. Receive corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, and $n_Z$ that span the range from $t=0$ to $t=t_f$ from the IVODE solver and return them.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-At this point, I have everything I need to calculate the quantities of interest. I'll need to read in the data, separate them into same-temperature blocks, and estimate the paramters as described above.
+I need to use the BSTR model above to create a predicted responses model that can be fit to the experimental data. To do that the BSTR model can be solved for any one experiment to get $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_Y$, and $\underline{n}_Z$. The final molar amount of A can then be used calculate the conversion.
+
+I will use numerical fitting func to estimate the unknown parameters, $k_0$, and $E$. I will need to provide it with a guess for $k_0$, and $E$, the set of adjusted experimental inputs being analyzed, the corresponding set of experimental responses and a predicted responses function that I will need to write. 
+
+The predicted responses function must receive the rate expression parameters ($k_0$, and $E$) and adjusted experimental inputs for all of the experiments ($\underline{T}$, $\underline{P}_{A,0}$, $\underline{P}_{B,0}$, and $\underline{t}_f$) as its only arguments. It must calculate and return the model-predicted responses for all of the experiments ($\underline{f}_{A,model}$). The predicted responses function simply needs to go through the experiments one by one and calculated the predicted conversion of A as just described. Before it starts going through the experiments it needs to make the rate expression parameters available to the derivatives function, and each time it starts to analyze an experiment it needs to make the temperature available to the derivatives function.
 
 :::
 
-**Performing the Analysis**
+<center>**Predicted Responsis Function**</center>
 
-The complete analysis can be performed as follows.
+[Arguments:]{.underlline} $\underline{T}$, $\underline{P}_{A,0}$, $\underline{P}_{B,0}$, $\underline{t}_f$, $k_0$, and $E$.
+
+[Return values:]{.underlline} $\underline{f}_{A,model}$
+
+[Algorithm:]{.underlline}
+
+1. Make $k_0$ and $E$ available to the derivatives function.
+2. For each experiment in the data set
+    a. Make the temperature available to the derivatives function.
+    b. Call the BSTR model function passing $T$, $P_{A,0}$, $P_{B,0}$, and $t_f$ as arguments to solve the design equations and receive $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_Y$, and $\underline{n}_Z$.
+    c. Calculate the predicted response.
+
+$$
+n_{A,0} = \frac{P_{A,0}V}{RT} \tag{10}
+$$
+
+$$
+f_{A,model} = \frac{n_{A,0} - n_A\big\vert_{t=t_f}}{n_{A,0}} \tag{12}
+$$
+
+3. Return the set of model-predicted responses, $\underline{f}_{A,model}$.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I can use a numerical fitting function to fit the predicted response model to the experimental data. I will need to provide it with a guess for the rate expression parameters, the adjusted experimental inputs for all of the experiments, the experimental responses for all of the experiments, and the predicted responses function.
+
+Assuming it is successful, the numerical fitting function will return the estimated values of $k_0$, and $E$, the lower and upper limits of their 95% confidence interval, $k_{0,CI,ll}$ $k_{0,CI,ul}$, $E_{CI,ll}$, and $E_{CI,ul}$ and the coefficient of determination, $R^2$. 
+
+After estimating $k_0$, and $E$, I can calculate the model-predicted responses and use them to generate a parity plot of the experimental conversion *vs.* the model-predicted conversion. I can also calculate the differences between the experimental and model-predicted conversions, that is the experiment residuals, and use them to generate residuals plots of the residuals versus each of the adjusted experimental inputs.
+
+:::
+
+<center>**Parameter Estimation**</center>
+
+1. Set an initial guess for the parameters ($k_{0,guess}$, and $E_{guess}$)
+2. Call a numerical fitting function passing the adjusted experimental inputs for all of the experiments ($\underline{T}$, $\underline{P}_{A,0}$, $\underline{P}_{B,0}$, and $\underline{t}_f$), the experimental responses ($\underline{f}_A$), the initial guess for the parameters from step 1, and the predicted responses function, above, as arguments, and receive the parameter estimates ($k_0$, and $E$), their 95% confidence intervals ($k_{0,CI,l}$, $k_{0,CI,u}$, $E_{CI,ll}$, and $E_{CI,ul}$), and the coefficient of determination, $R^2$.
+
+<center>**Generation of Assessment Graphs**</center>
+
+1. Call the predicted responses function above, passing the estimated parameters ($k_0$, and $E$) and the adjusted experimental inputs for all of the experiments ($\underline{T}$, $\underline{P}_{A,0}$, $\underline{P}_{B,0}$, and $\underline{t}_f$) as arguments and receive the predicted responses for all of the experiments ($\underline{f}_{A,model}$).
+2. Calculate the experiment residuals.
+
+$$
+\underline{\epsilon}_{expt} = \underline{f}_A - \underline{f}_{A,model} \tag{13}
+$$
+
+3. Generate a parity plot showing $\underline{f}_A$ vs. $\underline{f}_{A,model}$.
+4. Generate residuals plots showing $\underline{\epsilon}_{expt}$ *vs.* $\underline{T}$, *vs.* $\underline{P}_{A,0}$, *vs.* $\underline{P}_{B,0}$, and *vs.* $\underline{t}_f$.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point, I have everything I need to calculate the quantities of interest. I'll need to read in the data, perform the calculations and report the results.
+
+:::
+
+<center>**Perform the Calculations**</center>
 
 1. Read the adjusted experimental inputs and experimental responses data from the file, [reb_19_5_2_data.csv]('examples/reb_19_5_2/reb_19_5_2_data.csv').
-3. Estimate $k_0$, $k_{0,CI,l}$, $k_{0,CI,u}$, $E$, $E_{CI,ll}$, and $E_{CI,ul}$ as described above.
-4. Assess the accuracy of the model as described above.
-
-#### Numerical Implementation of the Calculations
-
-The computer code that performs the calculations could be structured in a number of ways. Here, using the coding structure suggested in @sec-apndx_notation, the numerical implementation begins with the creation of a single computer function for this example, and doing the following within that function:
-
-1. Make the given and known constants available within all functions.
-2. Define variables to hold the current values of $k_0$, $E$ and $T$ and make them available to all functions. (This is necessary because these quantities cannot be passed to the derivatives function as arguments.)
-3. Write a derivatives function as described in the mathematival formulation; it should
-    a. receive the independent and dependent variables, $t$, $n_A$, $n_B$, $n_Y$, and $n_Z$, as arguments and
-    b. evaluate and return the derivatives, $\frac{dn_A}{dt}$, $\frac{dn_B}{dt}$, $\frac{dn_Y}{dt}$ and $\frac{dn_Z}{dt}$.
-4. Write a BSTR model function as described in the mathematival formulation; it should
-    a. receive $P_{A,0}$, $P_{B,0}$, and $t_f$ as arguments and
-    b. calculate and return corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, and $n_Z$ that span the range from $t=0$ to $t=t_f$.
-5. Write a predicted responses function as described in the mathematical formulation; it should
-    a. receive $k_0$, $E$, $\underline{T}$, $\underline{P}_{A,0}$, $\underline{P}_{B,0}$, and $\underline{t}_f$ as arguments,
-    b. make $k_0$, $E$, and $T$ available to all functions, and
-    c. calculate and return $\underline{f}_{A,model}$
-6. Write a calculations function that
-    a. reads the adjusted experimental inputs and experimental responses from the provided file.
-    b. defines guesses for $k_0$ and $E$.
-    c. calls a numerical fitting function as described in the mathematical formulation, passing that guess, the adussted experimental inputs data, the experimental resonses data, and name of the predicted responses function from step 5 as arguments, and receiving $k_0$, $k_{0,CI,l}$, $k_{0,CI,u}$, $E$, $E_{CI,ll}$, $E_{CI,ul}$, and $R^2$ as return values.
-    d. generates a parity plot and residuals plots.
-    e. displays and/or saves the results.
-7. call the calculations function from step 6.
+2. Estimate the parameters and generate the assessment graphs as described above.
+4. Display the results and/or save them to a file.
 
 #### Results and Discussion
 
@@ -683,7 +724,7 @@ R^2^: `r d$value[7]`
 
 ![](examples/reb_19_5_2/reb_19_5_2_residuals_tf.png)
 
-Residuals plots for $P_{A,0}$,$P_{B,0}$, $T$, and $t_f$,  .
+Residuals plots for $P_{A,0}$, $P_{B,0}$, $T$, and $t_f$.
 
 :::
 
@@ -695,8 +736,8 @@ Residuals plots for $P_{A,0}$,$P_{B,0}$, $T$, and $t_f$,  .
 I now need to assess the accuracy of the model and make a decision whether to accept it, recommend additional experiments, or reject it. Here, all of the accuracy criteria are satisfied.
 
 * The coefficient of determination is close to 1.0.
-* The upper and lower limits of the 95% confidence interval for $E$ are close to the estimated value. (The confidence interval for $k_0$ is very large, but this is often seen for the pre-exponential factor.)
-* The data points in the parity plots all lie close to the diagonal line.
+* The upper and lower limits of the 95% confidence intervals for $k_0$ and $E$ are close to the estimated values.
+* The data points in the parity plot all lie close to the parity line.
 * The data points in the residuals plots scatter randomly about zero, and no apparent trend can be seen in the deviations.
 
 These results indicate that the model is accurate and should be accepted.
@@ -705,270 +746,12 @@ These results indicate that the model is accurate and should be accepted.
 
 The rate expression in equation (2) is accurate when the Arrhenius expression is used to represent the temperature dependence of $k$. Equation (2) should be accepted as the rate expression with `r d$value[1]` `r d$units[1]` as the pre-exponential factor and `r d$value[4]` `r d$units[4]` as the activation energy.
 
----
-
-#### Analysis using a Linearized Reactor Model
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-The assignment instructs me to repeat the analysis using a linearized reactor model. That means I must use a *single* mole balance on one of the products or reactants to model the reactor. (Because the reactor is isothermal, I can solve the mole balance independently of the energy balances.) The response in this problem is the fractional conversion of reagent A, so I'll write the mole balance on reagent A.
-
-The mole balance will be a differential equation. I know that I will need to solve that IVODE *analytically* before I'll be able to linearize the model.
-
-:::
-
-**Linearized Reactor Model**
-
-A mole balance on reagent A is shown in equation (12), where the rate expression, equation (2) has been substituted into the mole balance.
-
-$$
-\frac{dn_A}{dt} = -kVP_AP_B \tag{12}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-I need to solve equation (12) *analytically* before I can linearize it. To do that, I need to express every variable quantity appearing in it in terms of the dependent variable, $n_A$, and the independent variable $t$. In any one experiment, $k$ and $V$ will be constant, but $P_A$ and $P_B$ will change as the reaction proceeds. Consequently, I need to express $P_A$ and $P_B$ in terms of $n_A$ and $t$.
-
-:::
-
-Using the ideal gas law, the partial pressures can be eliminated, equation (13).
-
-$$
-\frac{dn_A}{dt} = -kV\left( \frac{n_ART}{V} \right)\left( \frac{n_BRT}{V} \right) = \frac{-k\left(RT\right)^2}{V}n_An_B \tag{13}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-Expressing $P_B$ using the ideal gas law introduced the molar amount of B, $n_B$. It is not a constant, so it must be expressed in terms of $n_A$ and $t$. This can be accomplished using the apparent extent of reaction (see @sec-1_reaction_progress).
-
-Start by expressing the molar amount of reagent B in terms of its initial amount and the apparent extent of the reaction.
-
-$$
-n_B = n_{B,0} - \xi
-$$
-
-Then express $\xi$ in terms of the molar amount of reagent A.
-
-$$
-n_A = n_{A,0} - \xi \qquad \Rightarrow \qquad \xi = n_{A,0} - n_A
-$$
-
-Substuting the second expression into the first gives an expression for the molar amount of reagent B.
-
-$$
-n_B = n_{B,0} - n_{A,0} + n_A
-$$
-
-:::
-
-After expressing the molar amount of B in terms of the molar amount of A, equation (14) results.
-
-$$
-\frac{dn_A}{dt} = \frac{-k\left(RT\right)^2}{V}n_A\left( n_{B,0} - n_{A,0} + n_A \right) \tag{14}
-$$
-
-Separation of variables and integration then leads to equation (15).
-
-$$
-\frac{1}{n_{A,0}-n_{B,0}} \ln{\frac{n_{A,0}\left( n_{B,0} - n_{A,0} + n_A  \right)}{n_{B,0}n_A}} = \frac{-k\left(RT\right)^2}{V} t\tag{15}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See Where That Came From
-
-Rearrange equation (15) so only $n_A$ appears on the left side and only $t$ appears on the right.
-
-$$
-\frac{dn_A}{n_A\left( n_{B,0} - n_{A,0} + n_A \right)} = \frac{-k\left(RT\right)^2}{V}dt
-$$
-
-Then integrate noting that at $t=0$, $n_A = n_{A,0}$, at any later time, $t$, the molar amount of reagent A is $n_A$, and $k$, $R$, $T$, and $V$ are constants that can be taken outside of the integral.
-
-$$
-\int_{n_{A,0}}^{n_A}\frac{dn_A}{n_A\left( n_{B,0} - n_{A,0} + n_A \right)} = \frac{-k\left(RT\right)^2}{V}\int_{t_0}^tdt
-$$
-
-$$
-\frac{1}{n_{B,0}-n_{A,0}} \left(\ln{\frac{ n_{B,0} - n_{A,0} + n_A  }{n_A}}\right)\Bigg\vert_{n_{A,0}}^{n_A} = \frac{-k\left(RT\right)^2}{V} t\Big\vert_{t_0}^t
-$$
-
-Evaluating at the upper and lower limits and taking the difference on each side then yields equation (15).
-
-:::
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-Looking at equation (15), I can see that the first fraction will become infinite if $n_{A,0} = n_{B,0}$, and some of the experiments have equal initial partial pressures of reagents A and B. If $n_{A,0} = n_{B,0}$ then $n_A$ will equal $n_B$ at all times because one A is consumed every time one B is consumed in the reaction. In this case, the rate expression becomes $r=kP_A^2$, so the reactor model is as follows.
-
-$$
-\frac{dn_A}{dt} = -kVP_A^2
-$$
-
-Rearrange so only $n_A$ appears on the left side and only $t$ appears on the right.
-
-$$
-\frac{dn_A}{n_A^2} = \frac{-k\left(RT\right)^2}{V}dt
-$$
-
-Then integrate noting that at $t=0$, $n_A = n_{A,0}$, at any later time, $t$, the molar amount of reagent A is $n_A$, and $k$, $R$, $T$, and $V$ are constants that can be taken outside of the integral.
-
-$$
-\int_{n_{A,0}}^{n_A}\frac{dn_A}{n_A^2} = \frac{-k\left(RT\right)^2}{V}\int_{t_0}^tdt
-$$
-
-$$
-\frac{-1}{n_A}\Bigg\vert_{n_{A,0}}^{n_A} = \frac{-k\left(RT\right)^2}{V} t\Big\vert_{t_0}^t
-$$
-
-Evaluating at the upper and lower limits and taking the difference on each side then yields equation (16), below.
-
-:::
-
-If $n_{A,0} = n_{B,0}$, separation of variables and integration leads to equation (16).
-
-$$
-\frac{1}{n_{A,0}} - \frac{1}{n_A} = \frac{-k\left(RT\right)^2}{V} t\tag{16}
-$$
-
-:::{.callout-note collapse="false"}
-## Note
-
-Someone just starting to learn about kinetic data analysis might not have noticed that the initial fraction in equation (15) will become infinite if $n_{A,0} = n_{B,0}$. In that case, the analysis would have failed a little later, indicating that something was wrong. Eventually the new learner might figure out the problem, but this is one of those times when a little prior experience (or the ability to ask a teacher who has such experience) really helps. 
-
-:::
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-Having solved the mole balance ODE, the next step is to linearize it. In this problem nothing needs to be done. It is already linear. That means that I next need to calculate the values of $x$ and $y$ for each experimental data point.
-
-:::
-
-If $y$ is defined as shown in equation (17) for experiments where $n_{A,0} = n_{B,0}$, or as shown in equation (18) when $n_{A,0} \ne n_{B,0}$, and $x$ is defined as shown in equation (19), it can be seen that the model for both cases is a linear equation with a slope equal to $k$, equation (20).
-
-$$
-y = \frac{1}{n_{A,0}} - \frac{1}{n_A} \tag{17}
-$$
-
-$$
-y = \frac{1}{n_{B,0}-n_{A,0}} \ln{\frac{n_{A,0}\left( n_{B,0} - n_{A,0} + n_A  \right)}{n_{B,0}n_A}} \tag{18}
-$$
-
-$$
-x = \frac{-t\left(RT\right)^2}{V} \tag{19}
-$$
-
-$$
-y=kx \tag{20}
-$$
-
-**Ancillary Equations**
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-Now that I have a linearized model, I need to calculate $x$ and $y$ for every experiment and then fit equation (20) to the resulting data. Looking at equations (17) through (19) I see that to calculate $y$ I will need the initial molar amounts of reagents A and B and the final amount of reagent A. The initial molar amounts can be calculated using equations (9) and (10), but I need an equation for $n_A$. The initial amount of A and its conversion are known, and can be used to calculate $n_A$.
-
-:::
-
-$$
-n_A = n_{A,0} \left( 1 - f_A \right) \tag{21}
-$$
-
-**Calculations**
-
-1. For each temperature level used in the experiments:
-    a. Calculate $n_{A,0}$, $n_{B,0}$, and $n_A$ using equations (9), (10), and (21).
-    b. Calculate the values of $x$ and $y$ for each experiment using equations (17) or (18) and equation (19).
-    c. Using a spreadsheet or linear least squares software, fit equation (20) to the resulting data.
-    d. Use the resulting value of $k$ to create a model plot ($y$ *vs*. $x$ as points and the model, $y=kx$, as a line) for that temperature.
-2. Fit the Arrhenius expression to the $k$ *vs*. $T$ data from step 1c. (see [Example -@sec-example_4_5_4])
-
-**Results**
-
-```{r}
-#| echo: false
-#| output: false
-d <- read.csv("examples/reb_19_5_2/reb_19_5_2_linear_results.csv")
-# T, k, k_ll, k_ul, R_sq_
-d <- fmt_tibble_col(d, 2:5, 3, 2, 2)
-d$k_full = paste0(d$k,' min^-1^, 95% CI [',d$k_ll,', ',d$k_ul,']')
-```
-
-The parameter estimation results are listed in @tbl-example_19_5_2_k_lin. @fig-example_19_5_2_model shows the model plots.
-
-```{r}
-#| echo: false
-#| warning: false
-#| label: tbl-example_19_5_2_k_lin
-#| tbl-cap: Parameter estimation results using the linearized model.
-d <- d %>% select(T, k_full, R_sq)
-kbl(d, format = "markdown", align = "cc", col.names = c("T (째C)", "k", "R^2^"))
-```
-
-::: {#fig-example_19_5_2_model layout-ncol=3}
-
-![](examples/reb_19_5_2/reb_19_5_2_model_475.png)
-
-![](examples/reb_19_5_2/reb_19_5_2_model_500.png)
-
-![](examples/reb_19_5_2/reb_19_5_2_model_525.png)
-
-Model plots from parameter estimation using the linearized model.
-:::
-
-```{r}
-#| echo: false
-#| output: false
-dd <- read.csv("examples/reb_19_5_2/reb_19_5_2_Arrhenius_params.csv")
-dd <- fmt_tibble_col(dd, 2, 3, 2, 2)
-# item, value, units
-```
-
-The Arrhenius expression was fit to the rate coefficients shown in @tbl-example_19_5_2_k_lin with the following results.
-
-k~0~: `r dd$value[1]` `r dd$units[1]`, 95% CI [`r dd$value[2]`, `r dd$value[3]`]  
-E: `r dd$value[4]` `r dd$units[4]`, 95% CI [`r dd$value[5]`, `r dd$value[6]`]  
-R^2^: `r dd$value[7]`
-
-The Arrhenius plot is shown in @fig-example_19_5_2_Arr_lin.
-
-![Arrhenius plot for rate coefficients estimated using the linearized model.](examples/reb_19_5_2/reb_19_5_2_Arrhenius_plot.png){#fig-example_19_5_2_Arr_lin width='60%'}
-
-**Assessment**
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-I now need to assess the accuracy of the model and make a decision whether to accept it, recommend additional experiments, or reject it. As was the case when using the response function, all of the accuracy criteria are satisfied, and the rate expression should be accepted.
-
-* The coefficient of determination is close to 1.0 for each of the three temperature levels and for the Arrhenius plot.
-* The upper and lower limits of the 95% confidence interval are close to the parameter value for all three estimates of $k$ and for the estimate of $E$. The confidence interval for $k_0$ is larger, but again, this is often seen for the pre-exponential factor.
-* The data points in the model plots and the Arrhenius plot all lie close to the line representing the model.
-* The data points in the model and Arrhenius plots scatter randomly from the line representing the model, and there is no apparent trend in the deviations.
-
-:::
-
-The rate expression in equation (2) is accurate when the Arrhenius expression is used to represent the temperature dependence of $k$. Equation (2) should be accepted as the rate expression with `r dd$value[1]` `r dd$units[1]` as the pre-exponential factor and `r dd$value[4]` `r dd$units[4]` as the activation energy.
-
-#### Comparision of the Two Analyses
-
-The two analyses produce virtually identical results. This is expected because the same data set and rate expression were used, and neither of the reactor models introduces any approximations. Recall, when a differential analysis was used in [Example -@sec-example_19_5_1], there was greater uncertainty in the parameters obtained by differential analysis because differential data analysis uses an appeoximate mole balance equation.
-
-Analysis using a linearized model, as in this example, is just as accurate as analysis using a response function. The only issues associated with using a linearized model are that for some rate expressions it may not be possible to solve the mole balance design equation analytically, and when it can be solved analytically, it may not be possible to linearize it. Analysis using a response function can always be used.
-
 ::: {.callout-note appearance="simple"}
-
 ## [SC]{style="color:blue"}o[RE]{style="color:red"} Connection
 
-Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_28.html)
+Videos showing how to complete this assignment using either Matlab or Python, along with the Matlab and Python code for doing so, are available in [SCoRE](http://buffalobadger.github.io/SCoRE/class_28.html)
 
 :::
-
 
 ### Assessing a Gas-Phase Rate Expression Using Total Pressure as the Response {#sec-example_19_5_3}
 
@@ -1379,7 +1162,7 @@ The predicted responses function will be given values for $V_{max}$ and $K_m$ an
 
 For any one experiment, I can use the reactor model as described above to calculate the final value of $n_P$, and from that I can calculate the final concentration since the volume is known and constant. Within the predicted responses function I will simply loop through the experiments doing so for each one. Then I will return the results.
 
-Assuming the numerical fitting function is successful, it will return estimates for the unknown parameters, their 95% confidence intervals, and the coefficient of determination, $R^2$. Since I need to assess the accuracy of the model, I will also generate a parity plot and residuals plots. The estimated parameters can be used to calculate the model-predicted responses. Plotting them against the experimental responses yields the parity plot. Taking their difference yields the residuals, and plotting the residuals against each of the adjusted exprerimental inputs yields the parity plots.
+Assuming the numerical fitting function is successful, it will return estimates for the unknown parameters, their 95% confidence intervals, and the coefficient of determination, $R^2$. Since I need to assess the accuracy of the model, I will also generate a parity plot and residuals plots. The estimated parameters can be used to calculate the model-predicted responses. Plotting them against the experimental responses yields the parity plot. Taking their difference yields the residuals, and plotting the residuals against each of the adjusted experimental inputs yields the parity plots.
 
 The indicators of an accurate model are that $R^2$ is close to 1, the upper and lower limits of the 95% confidence interval for each estimated parameter are close to its value, the points on the parity plot lie close to the $C_{P,f} = C_{P,f,model}$ diagonal, and the scatter about zero in the residuals plots is random with no apparent trends.
 
@@ -1514,6 +1297,319 @@ Videos showing how to complete this assignment using either Matlab or Python, al
 :::
 
 ### Kinetics Data Analysis using Same-Temperature Data Blocks and Linear Least Squares {#sec-example_19_5_5}
+
+Recall [Example -@sec-example_19_5_2], below. This example repeats that assignment using linear least squares fitting and a spreadsheet.
+
+{{< include examples/reb_19_5_2/narrative.qmd >}}
+
+{{< include examples/reb_19_5_2/equations.qmd >}}
+
+```{r}
+#| echo: false
+#| output: false
+d <- read.csv("examples/reb_19_5_2/reb_19_5_2_data.csv")
+# T, PA0, PB0, t, fA
+```
+
+The first few data points are shown in @tbl-example_19_5_2_data. The full data set is available in the file [reb_19_5_2_data.csv](examples/reb_19_5_2/reb_19_5_2_data.csv).
+
+```{r}
+#| echo: false
+#| warning: false
+#| label: tbl-example_19_5_5_data
+#| tbl-cap: First 5 of the 189 experimentally generated data.
+kbl(d[1:5,], format = "markdown", align = "cc", 
+  col.names = c('T (째C)', 'P~A,0~ (atm)', 'P~B,0~ (atm)', 't~f~ (min)', 
+  'f~A~'))
+```
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The assignment is the same as it was in [Example -@sec-example_19_5_2], except for the quantities of interest. When a linearized model is used, the data are analyzed in same temperature blocks. Instead of a single parity plot and one residuals plot for each adjusted input, the graphs used for assessment will be a model plot for each temperature and an Arrhenius plot. So I'll copy the assignment summary from [Example -@sec-example_19_5_2] and change the quantities of interest.
+
+:::
+
+#### Assignment Summary
+
+**Reactor System:** Isothermal, gas-phase BSTR
+
+**Reactor Schematic:**
+
+![Schematic representation of the experimental BSTR wherein molar amounts vary with time while the temperature is constant.](Graphics/bstr_isothermal_schematic.png){#fig-example_19_5_2_schematic}
+
+**Quantities of Interest:** $k_0$, $k_{0,CI,l}$, $k_{0,CI,u}$, $E$, $E_{CI,l}$, $E_{CI,u}$, $R^2$, model plots for each same-temperature data block, and an Arrhenuis plot.
+
+**Given and Known Constants:** $V = 500\text{ cm}^3$.
+
+**Adjusted Experimental Inputs:** $\underline{T}$, $\underline{P}_{A,0}$, $\underline{P}_{B,0}$, and $\underline{t}_f$.
+
+**Experimental Response:** $\underline{f}_A$.
+
+#### Mathematical Formulation of the Calculations
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+If I'm going to use linear least squares to do the fitting, I must use a *single* mole balance on one of the products or reactants to model the reactor. (Because the reactor is isothermal, I can solve that mole balance independently of the energy balances.) The response in this problem is the fractional conversion of reagent A, so I'll write the mole balance on reagent A.
+
+The mole balance will be a differential equation. I know that I will need to solve that IVODE *analytically* before I'll be able to linearize the model.
+
+:::
+
+<center>**Linearized Reactor Model**</center>
+
+A mole balance on reagent A is shown in equation (3), where the rate expression, equation (2), has been substituted into the mole balance.
+
+$$
+\frac{dn_A}{dt} = -kVP_AP_B \tag{3}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I need to solve equation (3) *analytically* before I can linearize it. To do that, I need to express every variable quantity appearing in it in terms of the dependent variable, $n_A$, and the independent variable $t$. In any one experiment, $k$ and $V$ will be constant, but $P_A$ and $P_B$ will change as the reaction proceeds. Consequently, I need to express $P_A$ and $P_B$ in terms of $n_A$ and $t$.
+
+:::
+
+Using the ideal gas law, the partial pressures can be eliminated, equation (4).
+
+$$
+\frac{dn_A}{dt} = -kV\left( \frac{n_ART}{V} \right)\left( \frac{n_BRT}{V} \right) = \frac{-k\left(RT\right)^2}{V}n_An_B \tag{4}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Expressing $P_B$ using the ideal gas law introduced the molar amount of B, $n_B$. It is not a constant, so it must be expressed in terms of $n_A$ and $t$. This can be accomplished using the apparent extent of reaction (see @sec-1_reaction_progress).
+
+Start by expressing the molar amount of reagent B in terms of its initial amount and the apparent extent of the reaction.
+
+$$
+n_B = n_{B,0} - \xi
+$$
+
+Then express $\xi$ in terms of the molar amount of reagent A.
+
+$$
+n_A = n_{A,0} - \xi \qquad \Rightarrow \qquad \xi = n_{A,0} - n_A
+$$
+
+Substuting the second expression into the first gives an expression for the molar amount of reagent B.
+
+$$
+n_B = n_{B,0} - n_{A,0} + n_A
+$$
+
+:::
+
+After expressing the molar amount of B in terms of the molar amount of A, equation (5) results.
+
+$$
+\frac{dn_A}{dt} = \frac{-k\left(RT\right)^2}{V}n_A\left( n_{B,0} - n_{A,0} + n_A \right) \tag{5}
+$$
+
+Separation of variables and integration then leads to equation (6).
+
+$$
+\frac{1}{n_{A,0}-n_{B,0}} \ln{\frac{n_{A,0}\left( n_{B,0} - n_{A,0} + n_A  \right)}{n_{B,0}n_A}} = \frac{-k\left(RT\right)^2}{V} t\tag{6}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See Where That Came From
+
+Rearrange equation (6) so only $n_A$ appears on the left side and only $t$ appears on the right.
+
+$$
+\frac{dn_A}{n_A\left( n_{B,0} - n_{A,0} + n_A \right)} = \frac{-k\left(RT\right)^2}{V}dt
+$$
+
+Then integrate noting that at $t=0$, $n_A = n_{A,0}$, at any later time, $t$, the molar amount of reagent A is $n_A$, and $k$, $R$, $T$, and $V$ are constants that can be taken outside of the integral.
+
+$$
+\int_{n_{A,0}}^{n_A}\frac{dn_A}{n_A\left( n_{B,0} - n_{A,0} + n_A \right)} = \frac{-k\left(RT\right)^2}{V}\int_{t_0}^tdt
+$$
+
+$$
+\frac{1}{n_{B,0}-n_{A,0}} \left(\ln{\frac{ n_{B,0} - n_{A,0} + n_A  }{n_A}}\right)\Bigg\vert_{n_{A,0}}^{n_A} = \frac{-k\left(RT\right)^2}{V} t\Big\vert_{t_0}^t
+$$
+
+Evaluating at the upper and lower limits and taking the difference on each side then yields equation (6).
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Looking at equation (6), I can see that the first fraction will become infinite if $n_{A,0} = n_{B,0}$, and some of the experiments have equal initial partial pressures of reagents A and B. If $n_{A,0} = n_{B,0}$ then $n_A$ will equal $n_B$ at all times because one A is consumed every time one B is consumed in the reaction. In this case, the rate expression becomes $r=kP_A^2$, so the reactor model is as follows.
+
+$$
+\frac{dn_A}{dt} = -kVP_A^2
+$$
+
+Rearrange so only $n_A$ appears on the left side and only $t$ appears on the right.
+
+$$
+\frac{dn_A}{n_A^2} = \frac{-k\left(RT\right)^2}{V}dt
+$$
+
+Then integrate noting that at $t=0$, $n_A = n_{A,0}$, at any later time, $t$, the molar amount of reagent A is $n_A$, and $k$, $R$, $T$, and $V$ are constants that can be taken outside of the integral.
+
+$$
+\int_{n_{A,0}}^{n_A}\frac{dn_A}{n_A^2} = \frac{-k\left(RT\right)^2}{V}\int_{t_0}^tdt
+$$
+
+$$
+\frac{-1}{n_A}\Bigg\vert_{n_{A,0}}^{n_A} = \frac{-k\left(RT\right)^2}{V} t\Big\vert_{t_0}^t
+$$
+
+Evaluating at the upper and lower limits and taking the difference on each side then yields equation (7), below.
+
+:::
+
+If $n_{A,0} = n_{B,0}$, separation of variables and integration leads to equation (7).
+
+$$
+\frac{1}{n_{A,0}} - \frac{1}{n_A} = \frac{-k\left(RT\right)^2}{V} t\tag{7}
+$$
+
+:::{.callout-note collapse="false"}
+## Note
+
+Someone just starting to learn about kinetic data analysis might not have noticed that the initial fraction in equation (6) will become infinite if $n_{A,0} = n_{B,0}$. In that case, the analysis would have failed a little later, indicating that something was wrong. Eventually the new learner might figure out the problem, but this is one of those times when a little prior experience (or the ability to ask a teacher who has such experience) really helps. 
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Having solved the mole balance ODE, the next step is to linearize it. In this problem nothing needs to be done. It is already linear. That means that I next need to calculate the values of $x$ and $y$ for each experimental data point.
+
+:::
+
+If $y$ is defined as shown in equation (8) for experiments where $n_{A,0} = n_{B,0}$, or as shown in equation (9) when $n_{A,0} \ne n_{B,0}$, and $x$ is defined as shown in equation (10), it can be seen that the model for both cases is a linear equation with a slope equal to $k$, equation (11).
+
+$$
+y = \frac{1}{n_{A,0}} - \frac{1}{n_A} \tag{8}
+$$
+
+$$
+y = \frac{1}{n_{A,0}-n_{B,0}} \ln{\frac{n_{A,0}\left( n_{B,0} - n_{A,0} + n_A  \right)}{n_{B,0}n_A}} \tag{9}
+$$
+
+$$
+x = \frac{-t\left(RT\right)^2}{V} \tag{10}
+$$
+
+$$
+y=kx \tag{11}
+$$
+
+<center>**Linear Least Squares Parameter Estimation**</center>
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point, I can use linear least squares to estimate $k$ for each same-temperature data block. To do that, I simply need to calculate $x$ and $y$ for each data point in the data block being analyzed. Then I can fit equation (11) to those data, and the resulting slope will equal $k$.
+
+Once I have estimated $k$ at each of the same-temperature data block temperatures I will have a set of $k$ *vs.* $T$ data. I can estimate the Arrhenius parameters by linearizing the Arrhenius expression and fitting the result to the $k$ *vs.* $T$ data as was done in [Example -@sec-example_4_5_4].
+
+All of this can be accomplished using a spreadsheet.
+
+:::
+
+The values of $x$ and $y$ can be calculated for every experimental data point using equation (10) and either equation (8) (if $n_{A,0} = n_{B,0}$) or equation (9). Before doing so, the initial molar amounts of A and B and the final molar amount of A must be calculated using the experimental data for each experiment, equations (12) through (14).
+
+$$
+n_{A,0} = \frac{P_{A,0}V}{RT} \tag{12}
+$$
+
+$$
+n_{B,0} = \frac{P_{B,0}V}{RT} \tag{13}
+$$
+
+$$
+n_A = n_{A,0} \left( 1 - f_A \right) \tag{14}
+$$
+
+[Estimation of $k$ *vs.* $T$]{.underline}
+
+1. Split the data into same-temperature blocks.
+2. For each block
+    a. calculate $x$ and $y$
+    b. fit equation (11) to the resulting data to estimate $k$
+
+The Arrhenius expression can then be fit to the resulting $k$ *vs.* $T$ data. Recall from @sec-apndx_parameter_est that the Arrhenius expression can be linearized by taking the logarithm of each side, @eq-x_and_y_in_linear_arrhenius, reproduced here as equation (13).
+
+$$
+\begin{matrix} y = \ln{k_j} \\ x = \displaystyle \frac{-1}{RT} \end{matrix} \quad \Rightarrow \quad y = m x + b \quad \Rightarrow \quad \begin{matrix} m = E_j \\ b = \ln{k_{0,j}} \end{matrix} \tag{13}
+$$
+
+The $k$ *vs.* $T$ data can be used to calculate $x$ and $y$ in equation (13), and $m$ and $b$ can be estimated by fitting $y=mx+b$ to the resulting $x$ - $y$ data. The estimated  values of $k_0$ and $E$ then can be calculated as shown in equation (13).
+
+[Estimation of $k_0$ and $E$]{.underline}
+
+1. Using the $k$ *vs.* $T$ data above, calculate a corresponding set of $y$ *vs.* $x$ data using equation (13).
+2. Fit $y=mx + b$ to those data to find $m$ and $b$.
+3. Calculate $k_0$ and $E$ using equation (13).
+
+#### Implementation of the Calculations Using a Spreadsheet
+
+To perform the calculations, the file provided with assignment, [reb_19_5_2_data.csv](examples/reb_19_5_2/reb_19_5_2_data.csv), was opened in a spreadsheet program. The spreadsheet consisted of five columns (A through E) with headings of T, PA0, PB0, tf, and fA, corresponding the the headings shown in @tbl-example_19_5_5_data. Each column contained 189 rows below the heading, one for each experiment.
+
+Five columns were added to the right of the fA column, as shown in @fig-example_19_5_5_screenshot. In column F the temperature in K was calculated from the Celsius temperature in column A. In columns G, H, and I, the initial molar amounts of A and B and the final molar amount of A were calculated using equations (12) through (14). Finally, $x$ and $y$ were calculated using equation (10) and either equation (8) for experiments where $n_{A,0} = n_{B,0}$, or equation (9) when $n_{A,0} \ne n_{B,0}$.
+
+![First five rows of the spreadsheed used to perform the analysis.](examples/reb_19_5_5/Screenshot.png){#fig-example_19_5_5_screenshot width="90%"}
+
+Next the $x$ and $y$ columns for experiments with $T$ = 475 째C were selected and used to generate a scatter plot. A linear trendline with an intercept of zero was added to the graph, and it was set to display the equation for the trendline and the $R^2$ value. The resulting plot is shown in @fig-example_19_5_5_model_plot. The displayed equation is $y=1.10\text{E}-06x$, indicating that the slope is 1.10 x 10^-6^ mol cm^-3^ min^-1^ atm^-2^. This is also the value of $k$ as shown in equation (11).
+
+![Model plot for the 475 째C data from the spreadsheed used to perform the analysis.](examples/reb_19_5_5/475C_model_plot.png){#fig-example_19_5_5_model_plot width="80%"}
+
+Model plots, not shown, for the 500 째C and 525 째C data were generated the same manner. The temperatures, estimated rate coefficients and coefficients of determination are shown in @tbl-example_19_5_5_rate_coefficients. A new spreadsheet was created with columns for the temperatures and rate coefficients. Columns were then added for the temperature in K, $x$ ($\frac{-1}{RT}$), and $y$ ($\ln{ k}$) from equation (13). A plot of $y$ *vs.* $x$ was generated, a linear trendline ($y=mx+b$) was added and the graph was set to display the trendline equation and the coefficient of determination. A screenshot from the spreadsheet is shown as @fig-example_19_5_5_arrhenius.
+
+| Temperature | $k$ | $R^2$ |
+|:------:|:-------:|:-------:|
+| 475 째C | 1.1 x 10^-6^ | 0.998 |
+| 500 째C | 1.75 x 10^-6^ | 0.999 |
+| 525 째C | 2.72 x 10^-6^ | 0.999 |
+
+:Estimated rate coefficients for each of the same-temperature data blocks. {#tbl-example_19_5_5_rate_coefficients tbl-colwidths="[33,33,33]"}
+
+![Screenshot of spreadsheet used to perform the Arrhenius analysis.](examples/reb_19_5_5/Arrhenius_screenshot.png){#fig-example_19_5_5_arrhenius width="80%"}
+
+It can be seen in @fig-example_19_5_5_arrhenius that the slope of the Arrhenius plot is 21482 cal mol^-1^ and the intercept is 0.7295. As shown in equation (13), the slope is equal to the activation energy, $E$, and the intercept is equal to the natural logarithm of $k_0$. The pre-exponential factor can be calcuated using equation (14), and it is found to equal 2.07 mol cm^-3^ min^-1^ atm^-2^.
+
+#### Discussion
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I now need to assess the accuracy of the model and make a decision whether to accept it, recommend additional experiments, or reject it. All of the accuracy criteria are satisfied, and the rate expression should be accepted.
+
+* The coefficient of determination is close to 1.0 for each of the three temperature levels and for the Arrhenius plot.
+* The data points in the model plots and the Arrhenius plot all lie close to the line representing the model.
+* The data points in the model and Arrhenius plots scatter randomly from the line representing the model, and there is no apparent trend in the deviations.
+
+:::
+
+The rate expression in equation (2) is accurate when the Arrhenius expression is used to represent the temperature dependence of $k$. Equation (2) should be accepted as the rate expression with $k_0$ = 2.07 mol cm^-3^ min^-1^ atm^-2^ and $E$ equal to 21.5 kcal mol^-1^.
+
+#### Comparision of the Two Analyses
+
+The same rate expression was assessed using the same data set in [Example -@sec-example_19_5_2] and in this example. In [Example -@sec-example_19_5_2] a response function was fit to all of the data to estimate the best values of $k_0$ and $E$. In this example a linearized reactor model was fit to the three same-temperature data sets, and the Arrhenius expression was fit to the resulting rate coefficient estimates. In both cases it was concluded that the rate expression was accurate. #tbl-example_19_5_5_results_comparison compares the resulting parameter estimates.
+
+| Method | $k_0$ | $E$ |
+|:------:|:-------:|:-------:|
+| Response Function | 2.52 mol cm^-3^ min^-1^ atm^-2^ | 21.8 kcal mol^-1^ |
+| Linearized Model | 2.07 mol cm^-3^ min^-1^ atm^-2^ | 21.5 kcal mol^-1^ |
+
+: Comparison of estimated rate epxression parameters. {#tbl-example_19_5_5_results_comparison tbl-colwidths="[33,33,33]"}
+
+It is possible to estimate the uncertainty in the parameter estimates when using a spreadsheet, but that was not done here. The pre-exponential factor and activation energy for the response function method shown in @tbl-example_19_5_5_results_comparison are based directly upon the experimental data. In contrast, the pre-exponential factor and activation energy for the linearized model are estimates that are based on estimates of the rate coefficients, each of which is based upon a fraction of the data. 
+
+Apart from this example and the one that follows, kinetics data analysis in *Reaction Engineering Basics* uses a response function so that each parameter is estimated from the full data set. While it is arguably easier to use a linearized model and a spreadsheet, that approach cannot always be used, and the estimated parameters are based upon other estimates that are each based upon only a fraction of the data.
 
 ### Kinetics Data Analysis using Same-Temperature Data Blocks and an Approximate Reactor Model {#sec-example_19_5_6}
 
@@ -1654,7 +1750,6 @@ I'll use an IVODE solver to solve the design equations. I'll need to provide it 
 | $\nu_i$ | Stoichiometric coefficient of reagent $i$. |
 | $\Delta n_i$ | Change in $n_i$. |
 | $\Delta t$ | Change in $t$. |
-
 
 : {tbl-colwidths="[20,80]"}
 
