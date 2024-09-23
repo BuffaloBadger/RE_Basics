@@ -1561,7 +1561,7 @@ To perform the calculations, the file provided with assignment, [reb_19_5_2_data
 
 Five columns were added to the right of the fA column, as shown in @fig-example_19_5_5_screenshot. In column F the temperature in K was calculated from the Celsius temperature in column A. In columns G, H, and I, the initial molar amounts of A and B and the final molar amount of A were calculated using equations (12) through (14). Finally, $x$ and $y$ were calculated using equation (10) and either equation (8) for experiments where $n_{A,0} = n_{B,0}$, or equation (9) when $n_{A,0} \ne n_{B,0}$.
 
-![First five rows of the spreadsheed used to perform the analysis.](examples/reb_19_5_5/Screenshot.png){#fig-example_19_5_5_screenshot width="90%"}
+![First five rows of the spreadsheed used to perform the analysis.](examples/reb_19_5_5/spreadsheet_screenshot.png){#fig-example_19_5_5_screenshot width="90%"}
 
 Next the $x$ and $y$ columns for experiments with $T$ = 475 °C were selected and used to generate a scatter plot. A linear trendline with an intercept of zero was added to the graph, and it was set to display the equation for the trendline and the $R^2$ value. The resulting plot is shown in @fig-example_19_5_5_model_plot. The displayed equation is $y=1.10\text{E}-06x$, indicating that the slope is 1.10 x 10^-6^ mol cm^-3^ min^-1^ atm^-2^. This is also the value of $k$ as shown in equation (11).
 
@@ -1613,7 +1613,7 @@ Apart from this example and the one that follows, kinetics data analysis in *Rea
 
 ### Kinetics Data Analysis using Same-Temperature Data Blocks and an Approximate Reactor Model {#sec-example_19_5_6}
 
-Recall [Example -@sec-example_19_5_1], below. This example repeats that assignment using a linearized, approximate reactor model. 
+Recall [Example -@sec-example_19_5_1], below. This example repeats that assignment using a linearized, approximate reactor model and a spreadsheet. 
 
 {{< include examples/reb_19_5_1/narrative.qmd >}}
 
@@ -1642,7 +1642,7 @@ kbl(d[1:8,], format = "markdown", align = "cc", col.names = c('Experiment','T (�
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This assignment is the same as [Example -@sec-example_19_5_1], and so the same summary can be used except that the quantities of interest are different. The data can be broken into four same-temperature blocks (65, 73, 82 and 90 °C). Each of those blocks will be analyzed separately to estimate the rate coefficient at those temperatures. Then the resulting $k$ *vs.* $T$ data will be analyzed to find the Arrhenius parameters, their 95% confidence intervals, and the coefficient of determination. Instead of a parity plot and residuals plots, a model plot and an Arrhenius plot will be used to assess the accuracy of the proposed rate expression.
+This assignment is the same as [Example -@sec-example_19_5_1], and so the same summary can be used except that the quantities of interest are different. The data can be broken into four same-temperature blocks (65, 73, 82 and 90 °C). Each of those blocks will be analyzed separately to estimate the rate coefficient at those temperatures. Then the resulting $k$ *vs.* $T$ data will be analyzed to find the Arrhenius parameters and the coefficient of determination. Instead of a parity plot and residuals plots, a model plot and an Arrhenius plot will be used to assess the accuracy of the proposed rate expression.
 
 :::
 
@@ -1654,7 +1654,7 @@ This assignment is the same as [Example -@sec-example_19_5_1], and so the same s
 
 ![Schematic representation of the experimental BSTR wherein molar amounts vary with time while the temperature is constant.](Graphics/bstr_isothermal_schematic.png){#fig-example_19_5_1_schematic}
 
-**Quantities of Interest:** $k\big\vert_{T=65\text{°C}}$, $k\big\vert_{T=73\text{°C}}$, $k\big\vert_{T=82\text{°C}}$, $k\big\vert_{T=90\text{°C}}$, $k_0$, $k_{0,CI,l}$, $k_{0,CI,u}$, $E$, $E_{CI,l}$, $E_{CI,u}$, $R^2$, a model plot ($y_{model}$ *vs.* $x$ as a line and $y_{expt}$ *vs.* $x$ as points), and an Arrhenius plot.
+**Quantities of Interest:** $k\big\vert_{T=65\text{°C}}$, $k\big\vert_{T=73\text{°C}}$, $k\big\vert_{T=82\text{°C}}$, $k\big\vert_{T=90\text{°C}}$, $k_0$, $k_{0,CI,l}$, $k_{0,CI,u}$, $E$, $E_{CI,l}$, $E_{CI,u}$, $R^2$, model plots, and an Arrhenius plot.
 
 **Given and Known Constants**: $V = 1\text{ L}$, $R$ = 8.314 x 10^-3^ kJ mol^-1^ K^-1^.
 
@@ -1669,13 +1669,13 @@ This assignment is the same as [Example -@sec-example_19_5_1], and so the same s
 
 In any kinetics data analysis, a model for the experimental reactor is needed, so I'll by generating that. Because the kinetics experiments are isothermal, the mole balance design equations can be solved independently of the energy balances. In addition, everything that is needed for kinetics data analysis can be found by solving the mole balance design equations, so they are the only equations that need to be included in the design equations.
 
-In these experiments there is only one reaction taking place and there aren't any non-reactive reagents, so the minimum number of mole balance is one. Here I will use a mole balance on reagent A to model the system.
+In these experiments there is only one reaction taking place and there aren't any non-reactive reagents, so the minimum number of mole balance is one. Here I will use a mole balance on reagent A to model the system. Here I'm going to approximate it and then linearize it. That is, I'm going to approximate the derivative in the design equation using backwards differences.
 
 $$
 \frac{dn_A}{dt} = \nu_A r V = -rV
 $$
 
-I have three options for using this model equation: solve it numerically and use it in conjunction with a predicted responses function, integrate it analytically and attempt to linearize it, or approximate it and try to linearize it. Here I'm going to approximate it and then linearize it. That is, I'm going to approximate the derivative in the design equation using backwards differences.
+I will use backward differences (see @sec-sec-apndx_pre_knowledge) to approximate the derivative. That means that each data point will use the response from the previous data point as well as for the data point itself. I will substitute the rate expression into the approximate design equation.
 
 :::
 
@@ -1684,40 +1684,116 @@ I have three options for using this model equation: solve it numerically and use
 [Design Equation]{.underline}
 
 $$
-\frac{dn_A}{dt} \approxeq \frac{\Delta n_A}{\Delta t} \approxeq \frac{n_A\big \vert_{t=t_i} - n_A \big \vert_{t=t_{i-1}}}{t_i - t_{i-1}} = -rV \tag{3}
+\frac{dn_A}{dt} \approxeq \frac{\Delta n_A}{\Delta t} \approxeq \frac{n_A\big \vert_{t=t_i} - n_A \big \vert_{t=t_{i-1}}}{t_i - t_{i-1}} = -kC_AV \tag{3}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Looking at the design equation, I can see it is already linear. That is, I can define new variables, $y$, $x$, $m$ and $b$, so the design equation becomes $y=mx+b$.
+Looking at the design equation, I can see it is already linear. I can also see that if I divide both sides by $V$, I can define new variables, $y$, $x$, and $m$, so the design equation becomes $y=mx$. Having divided by $V$, it will be easier to calculate $y$ because the concentration was measured in the experiments, not the molar amounts.
 
 :::
 
-[Linearized Design Equation]{.underline}
-
 $$
-y=mx+b \tag{4}
+\frac{C_A\big \vert_{t=t_i} - C_A \big \vert_{t=t_{i-1}}}{t_i - t_{i-1}} = -kC_A \tag{4}
 $$
 
 $$
-y = 
+\begin{matrix} y = \displaystyle \frac{ C_A\big \vert_{t=t_i} - C_A \big \vert_{t=t_{i-1}}}{t_i - t_{i-1}} \\ x = -C_A \end{matrix} \quad \Rightarrow \quad y = m C_A \quad \Rightarrow \quad m = -k \tag{5}
+$$
 
+<center>**Linear Least Squares Parameter Estimation**</center>
 
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
 
+At this point I can use linear least squares to estimate $k$ for each same-temperature data block. All I need to do is calculate $y$ for each data point in the block being analyzed. Then I can fit equation (5) to the $x$-$y$ data and the slope will equal $k$.
 
-
-
-
-so I'll generate that first. In kinetics experiments the reactor operates isothermally, so the mole balance design equations can be solved independently of the energy balances. The composition at the time the response is measured can be calculate by solving the mole balances, so an energy balance on the reacting fuid and an energy balance on a heat exchange fluid do not need to be included among the reactor design equations. The general form of the mole balance takes the form given in @eq-bstr_mole_bal_one_reaction when only one reaction is taking place. It can be used to write a mole balance on each reagent present in the system.
-
-The BSTR reactor design equations are IVODEs, so I need initial values and a stopping criterion in order to solve them numerically. I can define $t=0$ to be the instant the experiment started. The initial values then equal the molar amounts of A and Z at that time. Reagent Z was not present at the start of any of the experiments being analyzed here, so its initial value is zero. For each experiment I know the elapsed time at which the response was measured, so I can use that as the stopping criterion.
-
-In order to solve the design equations numerically, I'll need to write a derivatives function. It will receive the values of the independent and dependent variables at the start of an integrations step, and it needs to return the corresponding values of the derivatives appearing in the design equations. Before the derivatives can be evaluated, any unknown quantities appearing in the design equations must be calculated. The only unknown in the design equations here is the rate. The only unknown here is the rate, which can be calculated using equation (2), but to do that, the concentration of A and the rate coefficient need to be calculated. The concentration of A can be calculated using the defining equation for concentration and the Arrhenius expression, @eq-arrhenius, can be used to calculate the rate coefficient. However, the Arrhenius pre-exponential factor and activation energy are not known and will need to be provided. Also, since the temperature changes from one experiment to the next, it will need to be provided, too.
-
-I'll use an IVODE solver to solve the design equations. I'll need to provide it with the initial values, stopping criterion, and the name of the derivatives function. The mole balances will be solved for each of the experiments, which means the initial values will be changing each time the design equations are solved. Consequently, the initial values for the experiment being modeled will need to be provided.
+Once I have estimated $k$ at each of the same-temperature data block temperatures, I will have a set of $k$ *vs.* $T$ data. I can fit the Arrhenius experssion to those data to estimate the pre-exponential factor and activation energy. All of this can be done in a spreadsheet.
 
 :::
+
+[Estimation of $k$ *vs.* $T$]{.underline}
+
+1. Split the data into same-temperature blocks.
+2. For each block
+    a. Calculate $y$ using equation (5).
+    b. fit $y=mC_A$ to the resulting data to estimate $m$.
+    c. Calculate $k = -m$.
+
+The Arrhenius expression can then be fit to the resulting $k$ *vs.* $T$ data. Recall from @sec-apndx_parameter_est that the Arrhenius expression can be linearized by taking the logarithm of each side, @eq-x_and_y_in_linear_arrhenius, reproduced here as equation (6).
+
+$$
+\begin{matrix} y = \ln{k_j} \\ x = \displaystyle \frac{-1}{RT} \end{matrix} \quad \Rightarrow \quad y = m x + b \quad \Rightarrow \quad \begin{matrix} m = E_j \\ b = \ln{k_{0,j}} \end{matrix} \tag{6}
+$$
+
+The $k$ *vs.* $T$ data can be used to calculate $x$ and $y$ in equation (6), and $m$ and $b$ can be estimated by fitting $y=mx+b$ to the resulting $x$ - $y$ data. The estimated  values of $k_0$ and $E$ then can be calculated as shown in equation (6).
+
+[Estimation of $k_0$ and $E$]{.underline}
+
+1. Using the $k$ *vs.* $T$ data above, calculate a corresponding set of $y$ *vs.* $x$ data using equation (6).
+2. Fit $y=mx + b$ to those data to find $m$ and $b$.
+3. Calculate $k_0$ and $E$ using equation (6).
+
+#### Implementation of the Calculations Using a Spreadsheet
+
+To perform the calculations, the file provided with assignment, [reb_19_5_1_data.csv](examples/reb_19_5_1/reb_19_5_1_data.csv), was opened in a spreadsheet program. The spreadsheet consisted of five columns (A through E) with headings of Experiment, T, CA0, tf, and CAf, corresponding the the headings shown in @tbl-example_19_5_6_data. Each column contained 72 rows below the heading, one for each data point. Before begining the analysis, the data were sorted by the temperature, then experiment and then tf.
+
+Two columns were added to the right of the CAf column, as shown in @fig-example_19_5_6_screenshot. In column F the temperature in Kelvin was calculated from the Celsius temperature in column B. In column G, $y$ was calculated using equation (5). If $y$ was being calculated for the first data point in an experiment, the initial concentration, $C_{A,0}$ was used as $C_A \big \vert_{t=t_1-1}$ and 0 was used as $t\big \vert_{t=t_1-1}$, otherwise $C_{A,f}$ and $t_f$ from the previous data point were used.
+
+![Portion of the spreadsheet used to perform the analysis showing the model plot for the block of 65 °C data.](examples/reb_19_5_6/spreadsheet_model_plot.png){#fig-example_19_5_6_screenshot width="90%"}
+
+Next the $C_{A,f}$ and $y$ columns for experiments with $T$ = 65 °C were selected and used to generate a scatter plot. A linear trendline with an intercept of zero was added to the graph, and it was set to display the equation for the trendline and the $R^2$ value. @fig-example_19_5_6_screenshot includes the resulting plot. The displayed equation is $y=-0.0137x$, indicating that the slope is -0.0137 min^-1^, so according to equation (5), $k = 0.0137$ min^-1^.
+
+Model plots, not shown, for the 73, 82, and 90 °C data blocks were generated the same manner. The temperatures, estimated rate coefficients and coefficients of determination are shown in @tbl-example_19_5_6_rate_coefficients. 
+
+| Temperature (°C) | $k$ (min^-1^) | $R^2$ |
+|:------:|:-------:|:-------:|
+| 65 | 0.0137 | 0.9825 |
+| 73 | 0.0246 | 0.9884 |
+| 82 | 0.0469 | 0.9968 |
+| 90 | 0.0826 | 0.9975 |
+
+:Estimated rate coefficients for each of the same-temperature data blocks. {#tbl-example_19_5_6_rate_coefficients tbl-colwidths="[33,33,33]"}
+
+A new spreadsheet was created with columns for the temperatures and rate coefficients. Columns were then added for the temperature in K, $x$ ($\frac{-1}{RT}$), and $y$ ($\ln{ k}$) from equation (6). A plot of $y$ *vs.* $x$ was generated, a linear trendline ($y=mx+b$) was added and the graph was set to display the trendline equation and the coefficient of determination. A screenshot from the spreadsheet is shown as @fig-example_19_5_6_arrhenius.
+
+![Screenshot of spreadsheet used to perform the Arrhenius analysis.](examples/reb_19_5_6/Arrhenius_spreadsheet.png){#fig-example_19_5_6_arrhenius width="80%"}
+
+It can be seen in @fig-example_19_5_6_arrhenius that the slope of the Arrhenius plot is 73.34 kJ mol^-1^ and the intercept is 21.788. As shown in equation (6), the slope is equal to the activation energy, $E$, and the intercept is equal to the natural logarithm of $k_0$. The pre-exponential factor can be calculated, and it is found to equal 2.90 x 10^9^ min^-1^.
+
+#### Discussion
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I now need to assess the accuracy of the model and make a decision whether to accept it, recommend additional experiments, or reject it. All of the accuracy criteria are satisfied, and the rate expression should be accepted.
+
+* The coefficient of determination is close to 1.0 for each of the three temperature levels and for the Arrhenius plot.
+* The data points in the Arrhenius plot all lie close to the line representing the model.
+* The data points in the model plot shown in @fig-example_19_5_6_screenshot scatter by a moderate amount from the line, but the scatter in the other model plots (not shown) got smaller as the temperature increased. Overall, the scatter can be deemed acceptable knowing that an approximate model was being used.
+* The data points in the model and Arrhenius plots scatter randomly from the line representing the model, and there is no apparent trend in the deviations.
+
+:::
+
+The rate expression in equation (2) is acceptably accurate when the Arrhenius expression is used to represent the temperature dependence of $k$. Equation (2) should be accepted as the rate expression with $k_0$ = 2.90 x 10^9^ min^-1^ and $E$ equal to 73.34 kJ mol^-1^.
+
+#### Comparision of the Two Analyses
+
+The same rate expression was assessed using the same data set in [Example -@sec-example_19_5_1] and in this example. In [Example -@sec-example_19_5_1] a response function was fit to all of the data to estimate the best values of $k_0$ and $E$. In this example a linearized, approximate reactor model was fit to the four same-temperature data sets, and the Arrhenius expression was fit to the resulting rate coefficient estimates. In both cases it was concluded that the rate expression was accurate. #tbl-example_19_5_6_results_comparison compares the resulting parameter estimates.
+
+| Method | $k_0$ | $E$ |
+|:------:|:-------:|:-------:|
+| Response Function | 3.67 x 10^8^ min^-1^ | 67.6 kJ mol^-1^ |
+| Linearized Model | 2.90 x 10^9^ min^-1^ | 73.34 kJ mol^-1^ |
+
+: Comparison of estimated rate epxression parameters. {#tbl-example_19_5_6_results_comparison tbl-colwidths="[33,33,33]"}
+
+It is possible to estimate the uncertainty in the parameter estimates when using a spreadsheet, but that was not done here. The pre-exponential factor and activation energy for the response function method shown in @tbl-example_19_5_6_results_comparison are based directly upon the experimental data. In contrast, the pre-exponential factor and activation energy for the linearized model are estimates that are based on estimates of the rate coefficients, each of which is based upon a fraction of the data. 
+
+@fig-example_19_5_6_parity shows parity plots for parameters estimated using the full data set and a predicted responses model and for parameters in the present example using an approximate model. While both show good agreement between the measured and predicted responses, it is clear that the deviations for the predictions based upon the approximate model are greater. The parameters from the approximate model appear to consistently under-predict the experimental responses. This can be attributed to both the approximate model and the procedure wherein initial estimates (of each rate coefficient at one block temperature) are made using only part of the data and then final estimates (of the pre-exponential factor an activation energy) are generated from the first set of estimates.
+
+![Parity plots based upon the parameter estimates from a full model (blue, [Example -@sec-example_19_5_1]) and parameter estimates from the approximate model (red, this Example).](examples/reb_19_5_6/reb_19_5_6_parity.png){#fig-example_19_5_6_parity width="80%"}
 
 ---
 
