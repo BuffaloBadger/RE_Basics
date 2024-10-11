@@ -461,27 +461,26 @@ When the rate coefficient in @tbl-example_21_5_1_results is used in the proposed
 
 ### Power-Law Kinetics of a Heterogeneous Catalytic Reaction {#sec-example_21_5_2}
 
-{< include ../RE_Basics_Examples/reb_21_2/problem_statement.qmd >}}
+{{< include examples/reb_21_5_2/narrative.qmd >}}
 
-``{r}
+{{< include examples/reb_21_5_2/equations.qmd >}}
+
+```{r}
 #| echo: false
 #| output: false
-path_to_data <- './Data/'
-path_to_results <- '../RE_Basics_Examples/reb_21_2/Results/'
-path_to_figures <- './Graphics/'
-d <- read.csv(paste0(path_to_data,"reb_21_2_data.csv"))
- # A_in, Y_in, Z_in, fA
+d <- read.csv("examples/reb_21_5_2/reb_21_5_2_data.csv")
+ # yA, yB, yY, yZ, PA
 ```
 
-The first few data points are shown in @tbl-example_21_2_data; the full data set are available in the file, [reb_21_2_data.csv](r paste0(path_to_data,'reb_21_2_data.csv')`).
+The first few data points are shown in @tbl-example_21_5_2_data; the full data set are available in the file, [reb_21_5_2_data.csv](examples/reb_21_5_2/reb_21_5_2_data.csv).
 
-``{r}
+```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_21_2_data
+#| label: tbl-example_21_5_2_data
 #| tbl-cap: First 8 of the 64 experimentally generated data.
 kbl(d[1:8,], format = "markdown", align = "ccccc", 
-  col.names = c('y~A,in~','y~B,in~','y~Y,in~', 'y~Z,in~', 'P~A,out~ (atm)'))
+  col.names = c('y~A,0~','y~B,0~','y~Y,0~', 'y~Z,0~', 'P~A,1~ (atm)'))
 ```
 
 ---
@@ -506,7 +505,7 @@ This is a kinetics data analysis problem. I will begin by listing the reactor ty
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The first step in solving a kinetics data analysis problem is to create a response function. The response function solves the reactor design equations for the experimental reactor and uses the results to calculate a predicted value for each measured response. Thus, the first thing I need to do is to write the reactor design equations for the experimental reactor. Since the reactor is isobaric and isothermal, and its temperature is known, I can model it using only mole balances on the reagents A, B, Y, and Z. The reaction is catalytic and the size of the reactor is not provided. The mass of catalyst is provided, so I will use a form of the PFR mole balance where the catalyst mass is the independent variable, @eq-pfr_mole_bal_one_rxn_using_m, and the rate is normalized by the catalyst mass. The stoichiometric coefficients of A, B, Y, and Z are -1, -1, 1, and 1, respectively.
+The first step in solving a kinetics data analysis problem is to create a response function. The response function solves the reactor design equations for the experimental reactor and uses the results to calculate a predicted value for each measured response. Thus, the first thing I need to do is to write the reactor design equations for the experimental reactor. Since the reactor is isobaric and isothermal, and its temperature is known, I can model it using only mole balances on the reagents A, B, Y, and Z. The reaction is catalytic and the size of the reactor is not provided. The mass of catalyst is provided, so I will use a form of the PFR mole balance where the catalyst mass is the independent variable, and the rate is normalized by the catalyst mass. The stoichiometric coefficients of A, B, Y, and Z are -1, -1, 1, and 1, respectively.
 
 $$
 \frac{d \dot n_i}{dm} =\nu_{i} r
@@ -624,12 +623,12 @@ The response function is created with the following structure:
 1. Pass the response function, the adjusted inputs, and the experimental responses to parameter estimation software to find $k$, $\alpha_A$, $\alpha_B$, $\alpha_Y$, and $\alpha_Z$,, the uncertainty in $k$, $\alpha_A$, $\alpha_B$, $\alpha_Y$, and $\alpha_Z$,, and the coefficient of determination, $R^2$.
 2. Use the resulting values of $k$, $\alpha_A$, $\alpha_B$, $\alpha_Y$, and $\alpha_Z$, to create a parity plot ($P_{A,\text{ expt}}$ *vs*. $P_{A,\text{ model}}$) and residuals plots ($P_{A,\text{ expt}} - P_{A,\text{ model}}$ *vs*. $y_{A,in}$, *vs*. $y_{B,in}$, *vs*. $y_{Y,in}$, and *vs*. $y_{Z,in}$,)
 
-**Results**
+#### Results, Analysis, and Discussion
 
-``{r}
+```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results,'reb_21_2_results.csv'))
+d <- read.csv('examples/reb_21_5_2/reb_21_5_2_results.csv')
 d <- fmt_tibble_col(d, 2, 3, 2, 1)
 a <- c('k','α~A~','α~B~','α~Y~','α~Z~','R^2^')
 b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
@@ -641,21 +640,27 @@ b <- c(b1,b2,b3,b4,b5,d$value[16])
 d <- data.frame(a,b)
 ```
 
-The calculations were performed as described above. The resulting values of the rate expression parameters, their 95% confidence intervals, and the coefficient of determination, $R^2$, are shown in @tbl-example_21_2_results. The parity plot is shown in @fig-example_21_2_parity, and the residuals plots are shown in @fig-example_21_2_residuals_plots.
+The calculations were performed as described above. The resulting values of the rate expression parameters, their 95% confidence intervals, and the coefficient of determination, $R^2$, are shown in @tbl-example_21_5_2_results. The parity plot is shown in @fig-example_21_5_2_parity, and the residuals plots are shown in @fig-example_21_5_2_residuals_plots.
 
-``{r}
+```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_21_2_results
+#| label: tbl-example_21_5_2_results
 #| tbl-cap: Parameter estimation results
 kbl(d, format = "markdown", align = "cc", col.names = NULL)
 ```
 
-![Parity Plot.](r paste0(path_to_figures,'reb_21_2_parity.png')`){#fig-example_21_2_parity width=80%}
+![Parity Plot.](/examples/reb_21_5_2/reb_21_5_2_parity.png){#fig-example_21_5_2_parity width=80%}
 
-:: {#fig-example_21_2_residuals_plots layout-ncol=2}
+::: {#fig-example_21_5_2_residuals_plots layout-ncol=2}
 
+![](examples/reb_21_5_2/reb_21_5_2_A_residual.png)
 
+![](examples/reb_21_5_2/reb_21_5_2_B_residual.png)
+
+![](examples/reb_21_5_2/reb_21_5_2_Y_residual.png)
+
+![](examples/reb_21_5_2/reb_21_5_2_Z_residual.png)
 
 Residuals Plots.
 :::
@@ -669,7 +674,7 @@ The coefficient of determination is close to 1.0, the points on the parity plot 
 
 :::
 
-Based upon the parity plot, residuals plots and coefficient of determination, the rate expression in equation (2) accurately predicts the experimental results when the parameters have the values shown in @tbl-example_21_2_results. The confidence intervals are not narrow relative to the parameters' values, but they are acceptable. It is possible that additional experiments at different conditions would tighten the confidence intervals for the parameters.
+Based upon the parity plot, residuals plots and coefficient of determination, the rate expression in equation (2) accurately predicts the experimental results when the parameters have the values shown in @tbl-example_21_5_2_results. The confidence intervals are not narrow relative to the parameters' values, but they are acceptable. It is possible that additional experiments at different conditions would tighten the confidence intervals for the parameters.
 
 ---
 
@@ -688,26 +693,24 @@ If expressions for the temperature dependence of $\alpha_A$, $\alpha_B$, $\alpha
 
 :::
 
-### Mechanistic Kinetics of a Heterogeneous Catalytic Reaction {#sec-example_21_3}
+### Mechanistic Kinetics of a Heterogeneous Catalytic Reaction {#sec-example_21_5_3}
 
-{< include ../RE_Basics_Examples/reb_21_3/problem_statement.qmd >}}
+{{< include examples/reb_21_5_3/narrative.qmd >}}
 
-``{r}
+{{< include examples/reb_21_5_3/equations.qmd >}}
+
+```{r}
 #| echo: false
 #| output: false
-path_to_data <- './Data/'
-path_to_results <- '../RE_Basics_Examples/reb_21_3/Results/'
-path_to_figures <- './Graphics/'
-d <- read.csv(paste0(path_to_data,"reb_21_2_data.csv"))
- # A_in, Y_in, Z_in, fA
+d <- read.csv("examples/reb_21_5_2/reb_21_5_2_data.csv")
 ```
 
-The first few data points are shown in @tbl-example_21_3_data; the full data set are available in the file, [reb_21_2_data.csv](r paste0(path_to_data,'reb_21_2_data.csv')`).
+The first few data points are shown in @tbl-example_21_5_3_data; the full data set are available in the file, [reb_21_5_2_data.csv](examples/reb_21_5_2/reb_21_5_2_data.csv).
 
-``{r}
+```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_21_3_data
+#| label: tbl-example_21_5_3_data
 #| tbl-cap: First 8 of the 64 experimentally generated data.
 kbl(d[1:8,], format = "markdown", align = "ccccc", 
   col.names = c('y~A,in~','y~B,in~','y~Y,in~', 'y~Z,in~', 'P~A,out~ (atm)'))
@@ -828,12 +831,12 @@ The response function is created with the following structure:
 1. Pass the response function, the adjusted inputs, and the experimental responses to parameter estimation software to find $k$, $K_A$, $K_B$, $K_Y$, and $K_Z$, the uncertainty in $k$, $K_A$, $K_B$, $K_Y$, and $K_Z$, and the coefficient of determination, $R^2$.
 2. Use the resulting value of $k$, $K_A$, $K_B$, $K_Y$, and $K_Z$ to create a parity plot ($P_{A,\text{ expt}}$ *vs*. $P_{A,\text{ model}}$) and residuals plots ($P_{A,\text{ expt}} - P_{A,\text{ model}}$ *vs*. $y_{A,in}$, *vs*. $y_{B,in}$, *vs*. $y_{Y,in}$, and *vs*. $y_{Z,in}$,)
 
-**Results**
+#### Results, Analysis, and Discussion
 
-``{r}
+```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results,'reb_21_3_results.csv'))
+d <- read.csv('examples/reb_21_5_3/reb_21_5_3_results.csv')
 d <- fmt_tibble_col(d, 2, 3, 2, 2)
 a <- c('k','K~A~','K~B~','K~Y~','K~Z~','R^2^')
 b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
@@ -845,21 +848,27 @@ b <- c(b1,b2,b3,b4,b5,d$value[16])
 d <- data.frame(a,b)
 ```
 
-The calculations were performed as described above. The resulting values of the rate expression parameters, their 95% confidence intervals, and the coefficient of determination, $R^2$, are shown in @tbl-example_21_3_results. The parity plot is shown in @fig-example_21_3_parity, and the residuals plots are shown in @fig-example_21_3_residuals_plots.
+The calculations were performed as described above. The resulting values of the rate expression parameters, their 95% confidence intervals, and the coefficient of determination, $R^2$, are shown in @tbl-example_21_5_3_results. The parity plot is shown in @fig-example_21_5_3_parity, and the residuals plots are shown in @fig-example_21_5_3_residuals_plots.
 
-``{r}
+```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_21_3_results
+#| label: tbl-example_21_5_3_results
 #| tbl-cap: Parameter estimation results
 kbl(d, format = "markdown", align = "cc", col.names = NULL)
 ```
 
-![Parity Plot.](r paste0(path_to_figures,'reb_21_3_parity.png')`){#fig-example_21_3_parity width=80%}
+![Parity Plot.](examples/reb_21_5_3/reb_21_5_3_parity.png){#fig-example_21_5_3_parity width=80%}
 
-:: {#fig-example_21_3_residuals_plots layout-ncol=2}
+::: {#fig-example_21_5_3_residuals_plots layout-ncol=2}
 
+![](examples/reb_21_5_3/reb_21_5_3_A_residual.png)
 
+![](examples/reb_21_5_3/reb_21_5_3_B_residual.png)
+
+![](examples/reb_21_5_3/reb_21_5_3_Y_residual.png)
+
+![](examples/reb_21_5_3/reb_21_5_3_Z_residual.png)
 
 Residuals Plots.
 :::
@@ -899,10 +908,10 @@ $$
 
 **Follow-up**
 
-``{r}
+```{r}
 #| echo: false
 #| output: false
-d <- read.csv(paste0(path_to_results,'reb_21_3_two_par_results.csv'))
+d <- read.csv('examples/reb_21_5_3/reb_21_5_3_results_follow_up.csv')
 d <- fmt_tibble_col(d, 2, 3, 2, 2)
 a <- c("k'","K~B~'",'R^2^')
 b1 <- paste0(d$value[1],' ',d$units[1],', 95% CI [',d$value[2],', ',d$value[3],']')
@@ -911,21 +920,27 @@ b <- c(b1,b2,d$value[7])
 d <- data.frame(a,b)
 ```
 
-The analysis was repeated a third time using equation (15) as the rate expression. The parameter estimation results are shown in @tbl-example_21_3_results_2_par. The parity plot is shown in @fig-example_21_3_parity_two_par and the residuals plots are shown in @fig-example_21_3_residuals_plots_two_par.
+The analysis was repeated a third time using equation (15) as the rate expression. The parameter estimation results are shown in @tbl-example_21_5_3_results_2_par. The parity plot is shown in @fig-example_21_5_3_parity_two_par and the residuals plots are shown in @fig-example_21_5_3_residuals_plots_two_par.
 
-``{r}
+```{r}
 #| echo: false
 #| warning: false
-#| label: tbl-example_21_3_results_2_par
+#| label: tbl-example_21_5_3_results_2_par
 #| tbl-cap: Parameter estimation results for equation (15)
 kbl(d, format = "markdown", align = "cc", col.names = NULL)
 ```
 
-![Parity Plot for Rate Expression (3).](r paste0(path_to_figures,'reb_21_3_2_par_parity.png')`){#fig-example_21_3_parity_two_par width=80%}
+![Parity Plot for Rate Expression (3).](examples/reb_21_5_3/reb_21_5_3_parity_follow_up.png){#fig-example_21_5_3_parity_two_par width=80%}
 
-:: {#fig-example_21_3_residuals_plots_two_par layout-ncol=2}
+::: {#fig-example_21_5_3_residuals_plots_two_par layout-ncol=2}
 
+![](examples/reb_21_5_3/reb_21_5_3_A_residual_follow_up.png)
 
+![](examples/reb_21_5_3/reb_21_5_3_B_residual_follow_up.png)
+
+![](examples/reb_21_5_3/reb_21_5_3_Y_residual_follow_up.png)
+
+![](examples/reb_21_5_3/reb_21_5_3_Z_residual_follow_up.png)
 
 Residuals for Rate Expression (15).
 :::
