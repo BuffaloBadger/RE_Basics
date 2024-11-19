@@ -293,23 +293,25 @@ The last component of the BSTR model is a function that solves the design equati
 
 :::
 
-[BSTR Model Function]{.underline}
+[BSTR Reactor Function]{.underline}
 
-$\qquad$ Arguments: $C_{A,0}$ and $t_f$.
+$\qquad$ Arguments: $T$, $C_{A,0}$ and $t_f$.
 
 $\qquad$ Return Values: $\underline{t}$, $\underline{n}_A$, and $\underline{n}_B$
 
 $\qquad$ Algorithm:
 
-1. Calculate unknown initial and final values.
+1. Make $T$ globally available.
+
+2. Calculate unknown initial and final values.
 
 $$
 n_{A,0} = C_{A,0}V \tag{7}
 $$
 
-2. Call an IVODE solver passing the initial values, stopping criterion and derivatives function as arguments.
+3. Call an IVODE solver passing the initial values, stopping criterion and derivatives function as arguments.
 
-3. Receive corresponding sets of values of $t$, $n_A$, and $n_B$ that span the range from $t=0$ to $t=t_f$ from the IVODE solver and return them.
+4. Receive corresponding sets of values of $t$, $n_A$, and $n_B$ that span the range from $t=0$ to $t=t_f$ from the IVODE solver and return them.
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -334,12 +336,11 @@ The predicted responses function must receive the adjusted experimental inputs f
 
 1. Make $k_0$ and $E$ available to the derivatives function.
 2. For each experiment in the data set
-    a. Make the temperature available to the derivatives function.
-    b. Call the BSTR model function, passing $C_{A,0}$ and $t_f$ as arguments, to solve the BSTR design equations and receive $\underline{t}$, $\underline{n}_A$, and $\underline{n}_Z$.
-    c. Calculate the predicted response.
+    a. Call the BSTR model function, passing $C_{A,0}$ and $t_f$ as arguments, to solve the BSTR design equations and receive $\underline{t}$, $\underline{n}_A$, and $\underline{n}_Z$.
+    b. Calculate the predicted response.
 
 $$
-C_{A,f,model} = \frac{n_A\big\vert_{t=t_f}}{V} \tag{8}
+C_{A,f,model} = \frac{\underline{n}_A\big\vert_{t=t_f}}{V} \tag{8}
 $$
 
 3. Return the set of model-predicted responses, $\underline{C}_{A,f,model}$.

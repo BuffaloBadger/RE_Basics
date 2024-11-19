@@ -1,6 +1,6 @@
 # The Steady-State Axial Dispersion Model {#sec-7_axial_dispersion}
 
-The ideal PFR model assumes there is no mixing in the axial direction. This chapter presents the steady-state version of a model wherein terms have been added to the PFR mole and energy balances to allow mixing in the axial direction. It is called the axial dispersion model. The design equations for the axial dispersion model are derived from the PFR design equations in **[add cross-ref to appendix]**. It should be noted that the axial dispersion model is usually written using the linear velocity of the fluid in the $z$ direction, $u_z$, but for consistenccy with the other chapters of *Reaction Engineering Basics,* it is written in terms of the volumetric flow rate, $\dot{V}$, in this chapter.
+The ideal PFR model assumes there is no mixing in the axial direction. This chapter presents the steady-state version of a model wherein terms have been added to the PFR mole and energy balances to allow mixing in the axial direction. It is called the axial dispersion model. The design equations for the axial dispersion model are derived from the PFR design equations in @sec-apndx_axial_dispersion. It should be noted that the axial dispersion model is usually written using the linear velocity of the fluid in the $z$ direction, $u_z$, but for consistenccy with the other chapters of *Reaction Engineering Basics,* it is written in terms of the volumetric flow rate, $\dot{V}$, in this chapter.
 
 ## Axial Dispersion
 
@@ -20,13 +20,27 @@ So, when used to account for axial mixing due to turbulence, the axial dispersio
 
 ## Axial Dispersion Reactor Design Equations
 
-As noted, the axial dispersion model is simply the ideal PFR model with dispersion terms added to the mole and energy balances. Importantly, plug flow is still assumed. In **[add cross-ref to appendix]** the axial dispersion mole and energy balances and the associated initial values and boundary conditions are derived, the steady-state forms are generated, and then they are converted to an equivalent set of first-order CVODEs. Familiarity with the first-order design equations and the variables ($\omega_i$ and $\omega_T$) introduced with them is assumed here.
+As noted, the axial dispersion model is simply the ideal PFR model with dispersion terms added to the mole and energy balances. Importantly, plug flow is still assumed. In @sec-apndx_axial_dispersion the axial dispersion mole and energy balances and the associated initial values and boundary conditions are derived, the steady-state forms are generated, and then they are converted to an equivalent set of first-order CVODEs. Familiarity with the first-order design equations and the variables ($\omega_i$ and $\omega_T$) introduced with them is assumed here.
 
 @fig-axial_dispersion_inlet presents a schematic representation of an adiabatic reactor that can be modeled using the axial dispersion model. It is important to note that the concentrations and temperature at the inlet to the reactor will not equal the feed concentrations and temperature. This is a result of axial mixing occurring at the reactor inlet thereby causing some of the feed to mix with fluid already in the reactor.
 
 ![Due to mixing in the axial direction, the concentrations and temperature at the inlet are not equal to the feed concentrations and temperature.](Graphics/axial_dispersion_adiabatic.png){#fig-axial_dispersion_inlet width="50%"}
 
-The mole and energy balances for the axial dispersion model are shown in [Equations -@eq-axial_disp_conc_var] through [-@eq-axial_disp_vfr_deriv]. [Equations -@eq-axial_disp_conc_var] and [-@eq-axial_disp_temp_var] are essentially defining equations for $\omega_i$ and $\omega_T$. [Equations -@eq-axial_disp_conc] and [-@eq-axial_disp_temp] are the PFR design equations with the dispersion terms added. If the reacting fluid is an ideal, incompressible liquid mixture, the volumetric flow rate is constant and equal to $\dot{V}_{feed}$, the derivative of the volumetric flow rate in @eq-axial_disp_conc equals zero and @eq-axial_disp_vfr_deriv is not needed. If there is pressure drop in the reactor, a momentum balance must be added to the design equations, and if an external heat exchange fluid transfers sensible heat to or from the reactor, an energy balance on the exchange fluid must be added.
+It becomes important to differentiate between the values of variables in the feed, at the reactor inlet, and at the reactor outlet. Here, if the location is not identified using a vertical bar and subscript, e. g. $C_A \big\vert_{z=0}$ for the concentration of reagent A at the reactor inlet, an additional subscript is added to the variable symbol. Thus, $C_{A,feed}$ denotes the concentration of A in the feed, $C_A \big\vert_{z=0}$ or $C_{A,0}$ denotes the concentration of A at the reactor inlet, and $C_A \big\vert_{z=L}$ or $C_{A,1}$ denotes the concentration at the reactor outlet.
+
+The mole and energy balances for the axial dispersion model are shown in [Equations -@eq-axial_disp_conc] through [-@eq-axial_disp_temp_var]. [Equations -@eq-axial_disp_conc] and [-@eq-axial_disp_temp] are the PFR design equations with the dispersion terms added. @eq-axial_disp_vfr_deriv is the total mass balance, re-written in terms of the volumetric flow rate. If the reacting fluid is an ideal, incompressible liquid mixture, the volumetric flow rate is constant and equal to $\dot{V}_{feed}$, the derivative of the volumetric flow rate in @eq-axial_disp_conc equals zero, and @eq-axial_disp_vfr_deriv is not needed. [Equations -@eq-axial_disp_conc_var] and [-@eq-axial_disp_temp_var] are essentially defining equations for $\omega_i$ and $\omega_T$. If there is pressure drop in the reactor, a momentum balance must be added to the design equations. If an external heat exchange fluid transfers sensible heat to or from the reactor, an energy balance on the exchange fluid must be added, but it will be an ATE, not an ODE.
+
+$$
+- D_{ax}\frac{d \omega_i}{d z} + \frac{4 C_i}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_i + \sum_j \nu_{i,j}r_j
+$${#eq-axial_disp_conc}
+
+$$
+- \lambda_{ax}\frac{d \omega_T}{d z} = - \frac{4 \dot{V}}{\pi D^2} \left(\sum_i C_i \hat{C}_{p,i}\right) \omega_T + \frac{4U}{D}\left(T_{ex} - T\right) - \sum_j r_j \Delta H_j
+$${#eq-axial_disp_temp}
+
+$$
+\frac{d\dot{V}}{dz} = \frac{-\sum_i \left(M_i \frac{dC_i}{dz}\right)}{\sum_i \left(M_i C_i\right)}
+$${#eq-axial_disp_vfr_deriv}
 
 $$
 \frac{dC_i}{dz} = \omega_i
@@ -36,35 +50,25 @@ $$
 \frac{dT}{dz} = \omega_T
 $${#eq-axial_disp_temp_var}
 
-$$
-- D_{ax}\frac{d \omega_i}{d z} + \frac{4 C_i}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_i + \sum_j \nu_{i,j}r_j
-$${#eq-axial_disp_conc}
+The initial values of each $\omega_i$ and of $\omega_T$ are coupled values. They can be found by solving the implicit, coupled values equations, [-@eq-implicit_omega_i] and [-@eq-implicit_omega_T]. If the design equations include an energy balance on a heat exchange fluid, the exchange fluid energy balance can be added to these coupled values equations they can be solved to additionally find $T_{ex}$.
 
 $$
-- \lambda_{ax}\frac{d \omega_T}{d z} =- \frac{4 \dot{V}}{\pi D^2} \left(\sum_i C_i \hat{C}_{p,i}\right) \omega_T + \frac{4U}{D}\left(T_{ex} - T\right) - \sum_j r_j \Delta H_j
-$${#eq-axial_disp_temp}
-
-$$
-\frac{d\dot{V}}{dz} = \frac{-\dot{m} \displaystyle \sum_i \left(M_i \omega_i \right)}{\left( \displaystyle \sum_i \left(M_i C_i \right)\right)^2}
-$${#eq-axial_disp_vfr_deriv}
-
-The Danckwerts boundary conditions shown in [Equations -@eq-danckwerts_conc] and [-@eq-danckwerts_temp] can be used to calculate initial values for the concentrations and the temperature. It isn't possible to write expressions for calculating the initial values of each $\omega_i$ and of $\omega_T$ directly. Their initial and final values are coupled, leading to implicit equations for calculating the initial initial values, [-@eq-implicit_omega_i] and [-@eq-implicit_omega_T].  Noting that at stead-state, the mass flow rate of the feed equals the mass flow rate at the reactor inlet leads to @eq-vfr_bound_cond for the initial value of the volumetric flow rate if the reacting fluid is an ideal gas. If a momentum balance is included among the design equations, the feed pressure can be used as the initial value. If there is an exchange fluid energy balance, it will be an ATE and the exchange fluid temperature will be coupled with the ODE design equations.
-
-$$
-C_{i,0} = \frac{\dot{V}_{feed}C_{i,feed} + D_{ax} \frac{\pi D^2}{4} \omega_{i,0}}{\dot{V}_{feed}}
-$${#eq-danckwerts_conc}
-
-$$
-T_0 = \frac{\dot{V}_{feed} \left(\sum_i C_i \hat{C}_{p,i}\right) T_{feed} + \lambda_{ax} \frac{\pi D^2}{4} \omega_{T,0}}{\dot{V}_{feed} \left(\sum_i C_i \hat{C}_{p,i}\right)}
-$${#eq-danckwerts_temp}
-
-$$
-\left(\omega_{i,0}, \omega_{T,0}\right)\,:\, \omega_{i,L} = 0 = \epsilon_i
+\left(\omega_{i,0},\, \omega_{T,0}\right) \,:\, \omega_{i,1} = 0
 $${#eq-implicit_omega_i}
 
 $$
-\left(\omega_{i,0}, \omega_{T,0}\right)\,:\, \omega_{T,L} = 0 = \epsilon_T
+\left(\omega_{i,0},\, \omega_{T,0}\right) \,:\, \omega_{T,1} = 0
 $${#eq-implicit_omega_T}
+
+The Danckwerts boundary conditions,[Equations -@eq-danckwerts_conc] and [-@eq-danckwerts_temp] can be used to calculate initial values for the concentrations and the temperature. Noting that at stead-state, the mass flow rate of the feed equals the mass flow rate at the reactor inlet leads to @eq-vfr_bound_cond for the initial value of the volumetric flow rate if the reacting fluid is an ideal gas. If a momentum balance is included among the design equations, the feed pressure can be used as the initial value.
+
+$$
+C_{i,0} = \frac{\dot{V}_{feed}C_{i,feed} - D_{ax} \frac{\pi D^2}{4} \omega_{i,0}}{\dot{V}_0}
+$${#eq-danckwerts_conc}
+
+$$
+T_0 = \frac{\dot{V}_{feed}\sum_i\left(C_{i,feed} \hat{C}_{p,i} \right) T_{feed} - \lambda_{ax} \frac{\pi D^2}{4} \omega_{T,0}}{\dot{V}_{0} \sum_i\left(C_{i,0} \hat{C}_{p,i} \right) }
+$${#eq-danckwerts_temp}
 
 $$
 \dot{V}_0 = \frac{\dot{m}}{\displaystyle \sum_i \left(M_i C_{i,0}\right)}
@@ -72,7 +76,7 @@ $${#eq-vfr_bound_cond}
 
 ## Axial Dispersion Reactor Model
 
-This section describes the essential components of an axial dispersion reactor model. Upon first reading, it may seem abstract and difficult to follow. If so, it may be helpful to review a few of the examples at the end of the chapter and then re-read this section. @fig-axial_disp_model_components illustrates the essential components of an axial dispersion reactor model and their relation to numerical equation solvers.
+This section describes the essential components of an axial dispersion reactor model. Upon first reading, it may seem abstract and difficult to follow. If so, it may be helpful to review the examples at the end of the chapter and then re-read this section. @fig-axial_disp_model_components illustrates the essential components of an axial dispersion reactor model and their relation to numerical equation solvers.
 
 ![Components of an axial dispersion reactor model.](Graphics/CVODE_Reactor_Model.png){#fig-axial_disp_model_components width="90%"}
 
@@ -84,18 +88,18 @@ As indicated by the dashed orange arrow in @fig-axial_disp_model_components, if 
 
 To summarize the axial dispersion model can access external given and known constants and globally available quantities. It also interfaces with an external ATE solver and an external IVODE solver. As @fig-axial_disp_model_components shows, the axial dispersion reactor model has several internal components that now can be described.
 
-**Design Equations** As with other reactor models, the first component of the axial dispersion reactor model is the design equations. The design equations were listed above, [Equations -@eq-axial_disp_conc_var] through [-@eq-axial_disp_vfr_deriv]. If there is pressure drop, a momentum balance must be added to them, as must an energy balance on an exchange fluid that transfers sensible heat at an unknown exchnage fluid temperature. As previously noted, the design equations are a set of CVODEs (see @sec-apndx_solve_cvodes). They will be solved using an IVODE solver, so they should be written as derivative expressions (see @sec-apndx_solve_ivodes).
+**Design Equations** As with other reactor models, the first component of the axial dispersion reactor model is the design equations. The design equations were listed above, [Equations -@eq-axial_disp_conc] through [-@eq-axial_disp_temp_var]. If there is pressure drop, a momentum balance must be added to them, as must an energy balance on an exchange fluid that transfers sensible heat at an unknown exchnage fluid temperature. As previously noted, the design equations are a set of CVODEs (see @sec-apndx_solve_cvodes). They will be solved using an IVODE solver, so they should be written as derivative expressions (see @sec-apndx_solve_ivodes).
 
-**Initial Values and Stopping Criterion** The initial values for solving the design equations were also listed in the preceding section. They are summarized in @tbl-axial_disp_init_value_table which indicates that the initial values for each $\omega_i$ and for $\omega_T$ are coupled values that cannot be calculated directly. If a momentum balance is included in the design equations, the table will have an additional row for the initial value of the pressure. Similarly, if the reacting fluid is a liquid, there will not be a row for the initial value of the volumetric flow rate.
+**Initial Values and Stopping Criterion** When solving the CVODE design equations numerically, initial values and a stopping criterion must be provided to the IVODE solver. The initial values for solving the design equations were also listed in the preceding section. They are summarized in @tbl-axial_disp_init_value_table which indicates that the initial values for each $\omega_i$ and for $\omega_T$ are coupled values that cannot be calculated directly. If a momentum balance is included in the design equations, the table will have an additional row for the initial value of the pressure. Similarly, if the reacting fluid is a liquid, there will not be a row for the initial value of the volumetric flow rate.
 
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
 | $z$ | $0$ | $L$ |
-| $C_i$ | $C_{i,0} = \frac{\dot{V}_{feed}C_{i,feed} + D_{ax} \frac{\pi D^2}{4} \omega_{i,0}}{\dot{V}_{feed}}$ |  |
-| $T$ | $T_0 = \frac{\dot{V}_{feed} \left(\sum_i C_i \hat{C}_{p,i}\right) T_{feed} + \lambda_{ax} \frac{\pi D^2}{4} \omega_{T,0}}{\dot{V}_{feed} \left(\sum_i C_i \hat{C}_{p,i}\right)}$ |  |
 | $\omega_i$ | $\omega_{i,0}$ (coupled value) |  |
 | $\omega_T$ | $\omega_{T,0}$ (coupled value) |  |
-| $\dot{V}$ | $\dot{V}_0 = \frac{\displaystyle \dot{m}}{\displaystyle \sum_i \left(M_i C_{i,0}\right)}$ |  |
+| $\dot{V}$ | $\dot{V}_0 = \frac{\dot{m}_{feed}}{\displaystyle \sum_i \left(M_i C_{i,0}\right)}$ |  |
+| $C_i$ | $C_{i,0} = \frac{\dot{V}_{feed}C_{i,feed} - D_{ax} \frac{\pi D^2}{4} \omega_{i,0}}{\dot{V}_0}$ |  |
+| $T$ | $T_0 = \frac{\dot{V}_{feed}\sum_i\left(C_{i,feed} \hat{C}_{p,i} \right) T_{feed} - \lambda_{ax} \frac{\pi D^2}{4} \omega_{T,0}}{\dot{V}_{0} \sum_i\left(C_{i,0} \hat{C}_{p,i} \right) }$ |  |
   
 : Initial values and stopping criterion for solving the axial dispersion design equations. {#tbl-axial_disp_init_value_table}
 
@@ -115,7 +119,7 @@ $$
 \left(\omega_{i,0}, \omega_{T,0}\right)\,:\, \omega_{T,L} = 0 = \epsilon_T
 $$
 
-If the model requires an exchange fluid energy balance involving sensible heat, @eq-axial_disp_ss_ex_energy_bal, the exchange fluid temperature is also a coupled value. It is coupled because $T_{ex}$ is needed to solve the IVODEs, but the reactor temperture profile in the first integral (found by solving the IVODEs) is needed to calculate $T_{ex}$.
+If the model requires an exchange fluid energy balance involving sensible heat, @eq-axial_disp_ss_ex_energy_bal, the exchange fluid temperature is also a coupled value. It is coupled because $T_{ex}$ is needed to solve the IVODEs, but the reactor temperture profile (found by solving the IVODEs) in the first integral below is needed to calculate $T_{ex}$.
 
 $$
 0 = \int_0^L \pi DU\left( T_{ex} - T \right)dz + \dot m_{ex} \int_{T_{ex,in}}^{T_{ex}} \tilde C_{p,ex}dT = \epsilon_{ex}
@@ -129,11 +133,11 @@ While it is just a guess, if it is too far off the ATE solver may not converge. 
 
 Before the coupled values equations can be solved the IVODEs must be solved. Consequently, the residuals function must first calculate each $C_i$ and $T$ using [Equations -@eq-danckwerts_conc] and [-@eq-danckwerts_temp]. Then, having all of the initial values, it can call the IVODE solver using those initial guesses along with the stopping criterion and derivatives function as arguments. The IVODE solver will return sets of values of $z$, each $C_i$, $T$, each $\omega_i$, and $\omega_T$, spanning the range from $z=0$ to $z=L$. If a momentum balance is among the design equations, it also will receive values of $P$, spanning the range from the reactor inlet to the reactor outlet. The returned values of each $\omega_i$ and of $\omega_T$ at the reactor outlet can then be used to evaluate the residuals using [Equations -@eq-implicit_omega_i] and [-@eq-implicit_omega_T].
 
-**Reactor Model Function** The reactor model function is the final component of the axial dispersion reactor model. Briefly, it simply needs to solve the coupled values equations using an ATE solver and then use the results to solve the design equations using an IVODE solver. More specifically the reactor model function works as follows.
+**Reactor Model Function** The reactor model function is the final component of the axial dispersion reactor model. Briefly, it simply needs to solve the coupled values equations using an ATE solver and then use the results to solve the axial dispersion design equations using an IVODE solver. More specifically the reactor model function works as follows.
 
 * Guess values for each $\omega_i$ and for $\omega_T$.
 * Get values for each $\omega_i$ and for $\omega_T$ by calling an ATE solver, passing the coupled values guesses and the residuals function as arguments.
-* Calculate the initial values of each $C_i$ and of $T$ using [Equations -@eq-danckwerts_conc] and [-@eq-danckwerts_temp].
+* Calculate the other initial values in @tbl-axial_disp_init_value_table.
 * Get sets of values of $z$, each $C_i$, $T$, each $\omega_i$, $\omega_T$, and $P$ (if there is a momentum balance among the design equations), spanning the range from $z=0$ to $z=L$ by calling an IVODE solver passing the initial values, stopping criterion, and derivatives function as arguments.
 * Return the profiles that the IVODE solver returned.
 
@@ -174,48 +178,48 @@ The first example that follows involves an adiabatic reaction of a liquid feed s
 **Design Equations**
 
 $$
-\frac{dC_A}{dz} = \omega_A \tag{3}
+- D_{ax}\frac{d \omega_A}{d z} + \frac{4 C_A}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_A - r \tag{3}
 $$
 
 $$
-\frac{dC_Y}{dz} = \omega_Y \tag{4}
+- D_{ax}\frac{d \omega_Y}{d z} + \frac{4 C_Y}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_Y + r \tag{4}
 $$
 
 $$
-\frac{dC_Z}{dz} = \omega_Z \tag{5}
+- D_{ax}\frac{d \omega_Z}{d z} + \frac{4 C_Z}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_Z + 3r \tag{5}
 $$
 
 $$
-\frac{dC_I}{dz} = \omega_I \tag{6}
+- D_{ax}\frac{d \omega_I}{d z} + \frac{4 C_I}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_I \tag{6}
 $$
 
 $$
-\frac{dT}{dz} = \omega_T \tag{7}
+- \lambda_{ax}\frac{d \omega_T}{d z} =- \frac{4 \dot{V}}{\pi D^2} \left(\sum_i C_i \hat{C}_{p,i}\right) \omega_T + \frac{4U}{D}\left(T_{ex} - T\right) - r \Delta H_j \tag{7}
 $$
 
 $$
-- D_{ax}\frac{d \omega_A}{d z} + \frac{4 C_A}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_A - r \tag{8}
+\frac{d\dot{V}}{dz} = \frac{- \left(M_I \omega_I + M_A \omega_A + M_Y \omega_Y + M_Z \omega_Z \right)}{\left( M_I C_I + M_A C_A + M_Y C_Y + M_Z C_Z\right)
+} \tag{8}
 $$
 
 $$
-- D_{ax}\frac{d \omega_Y}{d z} + \frac{4 C_Y}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_Y + r \tag{9}
+\frac{dC_A}{dz} = \omega_A \tag{9}
 $$
 
 $$
-- D_{ax}\frac{d \omega_Z}{d z} + \frac{4 C_Z}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_Z + 3r \tag{10}
+\frac{dC_Y}{dz} = \omega_Y \tag{10}
 $$
 
 $$
-- D_{ax}\frac{d \omega_I}{d z} + \frac{4 C_I}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_I \tag{11}
+\frac{dC_Z}{dz} = \omega_Z \tag{11}
 $$
 
 $$
-- \lambda_{ax}\frac{d \omega_T}{d z} =- \frac{4 \dot{V}}{\pi D^2} \left(\sum_i C_i \hat{C}_{p,i}\right) \omega_T + \frac{4U}{D}\left(T_{ex} - T\right) - r \Delta H_j \tag{12}
+\frac{dC_I}{dz} = \omega_I \tag{12}
 $$
 
 $$
-\frac{d\dot{V}}{dz} = \frac{-\dot{m} \left(M_I \omega_I + M_A \omega_A + M_Y \omega_Y + M_Z \omega_Z \right)}{\left( M_I C_I + M_A C_A + M_Y C_Y + M_Z C_Z\right)
-^2} \tag{13}
+\frac{dT}{dz} = \omega_T \tag{13}
 $$
 
 $$
@@ -227,52 +231,49 @@ $$
 | Variable | Initial Value | Stopping Criterion |
 |:------:|:-------:|:-------:|
 | $z$ | $0$ | $L$ |
+| $\omega_i$ | $\omega_{i,0}$ (coupled value) |  |
+| $\omega_T$ | $\omega_{T,0}$ (coupled value) |  |
+| $\dot{V}$ | $\dot{V}_0 = \frac{\dot{m}}{M_A C_{A,0} + M_Y C_{Y,0} + M_Z C_{Z,0} + M_I C_{I,0}}$ |  |
 | $C_A$ | $C_{A,0} = \frac{\dot{V}_{0}C_{A,feed} + D_{ax} \frac{\pi D^2}{4} \omega_{A,0}}{\dot{V}_{0}}$ |  |
 | $C_Y$ | $C_{Y,0} = \frac{\dot{V}_{0}C_{Y,feed} + D_{ax} \frac{\pi D^2}{4} \omega_{Y,0}}{\dot{V}_{0}}$ |  |
 | $C_Z$ | $C_{Z,0} = \frac{\dot{V}_{0}C_{Z,feed} + D_{ax} \frac{\pi D^2}{4} \omega_{Z,0}}{\dot{V}_{0}}$ |  |
 | $C_I$ | $C_{I,0} = \frac{\dot{V}_{0}C_{I,feed} + D_{ax} \frac{\pi D^2}{4} \omega_{I,0}}{\dot{V}_{0}}$ |  |
 | $T$ | $T_0 = \frac{\dot{V}_{feed} \left(C_A \hat{C}_{p,A} + C_Y \hat{C}_{p,Y} + C_Z \hat{C}_{p,X} + C_I \hat{C}_{p,I} \right) T_{feed} + \lambda_{ax} \frac{\pi D^2}{4} \omega_{T,0}}{\dot{V}_{feed} \left(C_A \hat{C}_{p,A} + C_Y \hat{C}_{p,Y} + C_Z \hat{C}_{p,X} + C_I \hat{C}_{p,I} \right)}$ |  |
-| $\omega_i$ | $\omega_{i,0}$ (coupled value) |  |
-| $\omega_T$ | $\omega_{T,0}$ (coupled value) |  |
-| $\dot{V}$ | $\dot{V}_0 = \frac{\dot{m}}{M_A C_{A,0} + M_Y C_{Y,0} + M_Z C_{Z,0} + M_I C_{I,0}}$ |  |
 | $P$ | $P_0$ |  |
   
-: Initial values and stopping criterion for solving the axial dispersion design equations with $z=0$ defined as the inlet to the reactor. {#tbl-axial_disp_init_value_table}
+: Initial values and stopping criterion for solving the axial dispersion design equations with $z=0$ defined as the inlet to the reactor. {#tbl-example_22_4_2_initial_values}
 
 **Derivatives Function**
 
-[Arguments]{.underline}: $z$, $C_A$, $C_Y$, $C_Z$, $C_I$, $T$, $\omega_A$, $\omega_Y$, $\omega_Z$, $\omega_I$, $\omega_T$, $\dot{V}$, and $P$.
+[Arguments]{.underline}: $z$, $\omega_A$, $\omega_Y$, $\omega_Z$, $\omega_I$, $\omega_T$, $\dot{V}$, $C_A$, $C_Y$, $C_Z$, $C_I$, $T$, and $P$.
 
-[Returns]{.underline}: $\frac{dC_A}{dz}$, $\frac{dC_Y}{dz}$, $\frac{dC_Z}{dz}$, $\frac{dC_I}{dz}$, $\frac{dT}{dz}$, $\frac{d\omega_A}{dz}$, $\frac{d\omega_T}{dz}$, $\frac{d\omega_Z}{dz}$, $\frac{d\omega_I}{dz}$, $\frac{d\omega_T}{dz}$, $\frac{d\dot{V}}{dz}$, and $\frac{dP}{dz}$.
+[Returns]{.underline}: $\frac{d\omega_A}{dz}$, $\frac{d\omega_Y}{dz}$, $\frac{d\omega_Z}{dz}$, $\frac{d\omega_I}{dz}$, $\frac{d\omega_T}{dz}$, $\frac{d\dot{V}}{dz}$, $\frac{dC_A}{dz}$, $\frac{dC_Y}{dz}$, $\frac{dC_Z}{dz}$, $\frac{dC_I}{dz}$, $\frac{dT}{dz}$, and $\frac{dP}{dz}$.
 
 [Algorithm]{.underline}:
 
 $$
-\dot{m} = \dot{V}_{feed} \left(M_A C_{A,feed} + M_Y C_{Y,feed} + M_Z C_{Z,feed} + M_I C_{I,feed} \right) \tag{15}
+\frac{d\dot{V}}{dz} = \frac{- \left(M_I \omega_I + M_A \omega_A + M_Y \omega_Y + M_Z \omega_Z \right)}{\left( M_I C_I + M_A C_A + M_Y C_Y + M_Z C_Z\right)
+} \tag{8}
 $$
 
 $$
-\dot{V} = \frac{\dot{m}}{M_A C_{A} + M_Y C_{Y} + M_Z C_{Z} + M_I C_{I}} \tag{16}
-$$
-
-$$
-k_f = k_{0,f} \exp{\left( \frac{-E_f}{RT} \right)} \tag{17}
+k_f = k_{0,f} \exp{\left( \frac{-E_f}{RT} \right)} \tag{15}
 $$ 
 
 $$
-k_r = k_{0,r} \exp{\left( \frac{-E_r}{RT} \right)} \tag{18}
+k_r = k_{0,r} \exp{\left( \frac{-E_r}{RT} \right)} \tag{16}
 $$
 
 $$
-P_A = \frac{C_A}{C_A + C_Y + C_Z +C_I}P \tag{19}
+P_A = \frac{C_A}{C_A + C_Y + C_Z +C_I}P \tag{17}
 $$
 
 $$
-P_Y = \frac{C_Y}{C_A + C_Y + C_Z +C_I}P \tag{20}
+P_Y = \frac{C_Y}{C_A + C_Y + C_Z +C_I}P \tag{18}
 $$
 
 $$
-P_Z = \frac{C_Z}{C_A + C_Y + C_Z +C_I}P \tag{21}
+P_Z = \frac{C_Z}{C_A + C_Y + C_Z +C_I}P \tag{19}
 $$
 
 $$
@@ -280,48 +281,52 @@ r = k_fP_A - k_rP_YP_Z^3 \tag{2}
 $$
 
 $$
-\frac{dC_A}{dz} = \omega_A \tag{3}
+- D_{ax}\frac{d \omega_A}{d z} + \frac{4 C_A}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_A - r \tag{3}
 $$
 
 $$
-\frac{dC_Y}{dz} = \omega_Y \tag{4}
+- D_{ax}\frac{d \omega_Y}{d z} + \frac{4 C_Y}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_Y + r \tag{4}
 $$
 
 $$
-\frac{dC_Z}{dz} = \omega_Z \tag{5}
+- D_{ax}\frac{d \omega_Z}{d z} + \frac{4 C_Z}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_Z + 3r \tag{5}
 $$
 
 $$
-\frac{dC_I}{dz} = \omega_I \tag{6}
+- D_{ax}\frac{d \omega_I}{d z} + \frac{4 C_I}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_I \tag{6}
 $$
 
 $$
-\frac{dT}{dz} = \omega_T \tag{7}
+- \lambda_{ax}\frac{d \omega_T}{d z} =- \frac{4 \dot{V}}{\pi D^2} \left(\sum_i C_i \hat{C}_{p,i}\right) \omega_T + \frac{4U}{D}\left(T_{ex} - T\right) - r \Delta H_j \tag{7}
 $$
 
 $$
-\frac{d\dot{V}}{dz} = \frac{-\dot{m} \left(M_I \omega_I + M_A \omega_A + M_Y \omega_Y + M_Z \omega_Z \right)}{\left( M_I C_I + M_A C_A + M_Y C_Y + M_Z C_Z\right)
-^2} \tag{13}
+\frac{d\dot{V}}{dz} = \frac{- \left(M_I \omega_I + M_A \omega_A + M_Y \omega_Y + M_Z \omega_Z \right)}{\left( M_I C_I + M_A C_A + M_Y C_Y + M_Z C_Z\right)
+} \tag{8}
 $$
 
 $$
-\frac{d \omega_A}{d z} = \frac{-1}{D_{ax}}\left(- \frac{4 C_A}{\pi D^2}\frac{d \dot{V}}{d z} - \frac{4 \dot{V}}{\pi D^2}\omega_A - r\right) \tag{21}
+\frac{dC_A}{dz} = \omega_A \tag{9}
 $$
 
 $$
-\frac{d \omega_Y}{d z} = \frac{-1}{D_{ax}}\left(- \frac{4 C_Y}{\pi D^2}\frac{d \dot{V}}{d z} - \frac{4 \dot{V}}{\pi D^2}\omega_Y + r\right) \tag{22}
+\frac{dC_Y}{dz} = \omega_Y \tag{10}
 $$
 
 $$
-\frac{d \omega_Z}{d z} = \frac{-1}{D_{ax}}\left(- \frac{4 C_Z}{\pi D^2}\frac{d \dot{V}}{d z} - \frac{4 \dot{V}}{\pi D^2}\omega_Z + 3r\right) \tag{23}
+\frac{dC_Z}{dz} = \omega_Z \tag{11}
 $$
 
 $$
-\frac{d \omega_I}{d z} = \frac{-1}{D_{ax}} \left(- \frac{4 C_I}{\pi D^2}\frac{d \dot{V}}{d z} - \frac{4 \dot{V}}{\pi D^2}\omega_I \right) \tag{24}
+\frac{dC_I}{dz} = \omega_I \tag{12}
 $$
 
 $$
-\frac{d \omega_T}{d z} = \frac{-1}{\lambda_{ax}} \left(- \frac{4 \dot{V}}{\pi D^2} \left(\sum_i C_i \hat{C}_{p,i}\right) \omega_T + \frac{4U}{D}\left(T_{ex} - T\right) - r \Delta H_j\right) \tag{25}
+\frac{dT}{dz} = \omega_T \tag{13}
+$$
+
+$$
+\rho = \sum_i \left(M_i C_i\right) \tag{20}
 $$
 
 $$
@@ -331,7 +336,7 @@ $$
 **Coupled Values Equations**
 
 $$
-\left(\omega_{A,0}, \omega_{Y,0}, \omega_{Z,0}, \omega_{I,0}, \omega_{T,0}\right)\,:\, \omega_{A,L} = 0 = \epsilon_A \tag{26}
+\left(\omega_{A,0}, \omega_{Y,0}, \omega_{Z,0}, \omega_{I,0}, \omega_{T,0}\right)\,:\, \omega_{A,1} = 0 = \epsilon_A \tag{26}
 $$
 
 $$
@@ -380,7 +385,7 @@ $$
 
 [Algorithm]{.underline}: 
 
-1. Calculate $C_{A,0}$, $C_{Y,0}$, $C_{Z,0}$, $C_{I,0}$, $T_0$, and $\dot{V}_0$, @tbl-axial_disp_init_value_table.
+1. Calculate $C_{A,0}$, $C_{Y,0}$, $C_{Z,0}$, $C_{I,0}$, $T_0$, and $\dot{V}_0$, @tbl-example_22_4_2_initial_values.
 2. Get corresponding sets of values of $z$, $C_A$, $C_Y$, $C_Z$, $C_I$, $T$, $\omega_A$, $\omega_Y$, $\omega_Z$, $\omega_I$, $\omega_T$, $\dot{V}$, and $P$ spanning the range from $z=0$ to $z=L$ by calling an IVODE solver with the initial values, stopping criterion, and derivatives function as arguments.
 3. Use the returned values of $\omega_A$, $\omega_Y$, $\omega_Z$, $\omega_I$, and $\omega_T$ at $z=L$ to evaluate the residuals using equations (26) through (30).
 
@@ -394,7 +399,7 @@ $$
 
 1. Guess values for the coupled values, e. g. using equations (31) through (35).
 2. Get $\omega_{A,0}$, $\omega_{Y,0}$, $\omega_{Z,0}$, $\omega_{I,0}$, and $\omega_{T,0}$ by calling an ATE solver with the guess and the residuals function as arguments.
-3. Calculate the initial values and stopping criterion, @tbl-axial_disp_init_value_table.
+3. Calculate the initial values and stopping criterion, @tbl-example_22_4_2_initial_values.
 4. Get and return sets of values of $z$, $C_A$, $C_Y$, $C_Z$, $C_I$, $T$, $\omega_A$, $\omega_Y$, $\omega_Z$, $\omega_I$, $\omega_T$, $\dot{V}$, and $P$ spanning the range from $z=0$ to $z=L$ by calling an IVODE solver with the initial values, stopping criterion, and derivatives function as arguments.
 
 <center>**Quantities of Interest**</center>
