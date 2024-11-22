@@ -38,10 +38,10 @@ $$
 \frac{\partial C_i}{\partial t} - D_{ax} \frac{\partial ^2C_i}{\partial z^2} + \frac{4}{\pi D^2} \frac{\partial }{\partial z}\left( \dot{V} C_i \right) = \sum_j \nu_{i,j}r_j
 $$
 
-Applying the chain rule for the derivative of a product, $\frac{\partial }{\partial z}\left( \dot{V} C_i \right) = \dot{V} \frac{\partial C_i}{\partial z} + C_i \frac{\partial \dot{V}}{\partial z}$ then yields the desired form of the transient axial dispersion mole balance.
+Accounting rigorously for the change in the volumetric flow rate along the length of the reactor introduces significant mathematical complexity. Instead, it is common to let $\dot{V}$ equal the mean volumetric flow rate, which can be taken outside of the derivative, yielding the more tractable form of the transient axial dispersion mole balance.
 
 $$
-\frac{\partial C_i}{\partial t} - D_{ax}\frac{\partial^2 C_i}{\partial z^2} + \frac{4 \dot{V}}{\pi D^2}\frac{\partial C_i}{\partial z} + \frac{4 C_i}{\pi D^2}\frac{\partial \dot{V}}{\partial z} = \sum_j \nu_{i,j}r_j
+\frac{\partial C_i}{\partial t} - D_{ax} \frac{\partial ^2C_i}{\partial z^2} + \frac{4 \dot{V}}{\pi D^2} \frac{\partial C_i}{\partial z} = \sum_j \nu_{i,j}r_j
 $$
 
 ### The Transient Axial Dispersion Energy Balance
@@ -83,46 +83,18 @@ $$
 In this book transient, non-ideal, tubular reactors will not be analyzed. The transient design equations are presented here for the sake of completeness. When the reactor operates at steady-state, all of the time derivatives are equal to zero, and the spatial derivatives become ordinary derivatves.
 
 $$
-- D_{ax}\frac{d^2 C_i}{d z^2} + \frac{4 \dot{V}}{\pi D^2}\frac{d C_i}{d z} + \frac{4 C_i}{\pi D^2}\frac{d \dot{V}}{d z} = \sum_j \nu_{i,j}r_j
+- D_{ax} \frac{d^2C_i}{dz^2} + \frac{4 \dot{V}}{\pi D^2} \frac{dC_i}{dz} = \sum_j \nu_{i,j}r_j
 $$
 
 $$
 - \lambda_{ax}\frac{d^2 T}{d z^2} + \frac{4 \dot{V}}{\pi D^2} \left(\sum_i C_i \hat{C}_{p,i}\right) \frac{d T}{d z} = \frac{4U}{D}\left(T_{ex} - T\right) - \sum_j r_j \Delta H_j
 $$
 
-The mole and energy balances are second-order ordinary differential equations, and the number of dependent variables is one greater than the number of equations. This is due to the presence of the derivative of the volumetric flow rate with respect to $z$. As a consequence, either one dependent variable must be eliminated, or another ODE must be added. Noting that mass is neither created nor destroyed in the reactor a steady-state total mass balance can be used to provide the added ODE. 
-
-$$
-\frac{d \dot{m}}{dz} = 0.
-$$
-
-The mass flow rate is equal to the product of the volumetric flow rate and the fluid density.
-
-$$
-\frac{d}{dz}\left( \rho \dot{V}\right) = \rho \frac{d\dot{V}}{dz} + \dot{V} \frac{d\rho}{dz} = 0.
-$$
-
-Rearranging yields an expression for the derivative of the volumetric flow rate in terms of the fluid density.
-
-$$
-\frac{d\dot{V}}{dz} = \frac{-1}{\rho}\frac{d\rho}{dz}
-$$
-
-In general, the density is not a constant, but it can be expressed in terms of the concentrations and molecular weights of the reagents.
-
-$$
-\rho = \sum_i \left(M_i C_i\right) \qquad \Rightarrow \qquad \frac{d \rho}{dz} = \sum_i \left(M_i \frac{dC_i}{dz}\right)
-$$
-
-Substitution yields the desired ODE.
-
-$$
-\frac{d\dot{V}}{dz} = \frac{-\sum_i \left(M_i \frac{dC_i}{dz}\right)}{\sum_i \left(M_i C_i\right)}
-$$
+If the temperature of the heat exchange fluid is not known, an anergy balance on that fluid needs to be added to the design equations, and if there is pressure drop, a momentum balance must also be added.
 
 ### Steady-State Axial Dispersion Model Boundary Conditions
 
-The axial dispersion design conditions include second derivatives of each concentration and of temperature and the first derivative of the volumetric flow rate. Solving them then requires two boundary conditions for each concentration and for the temperature and one boundary condition for the volumetric flow rate. There are a few different ways to write the boundary conditions. The Danckwerts boundary conditions will be presented here.
+The axial dispersion design conditions include second derivatives of each concentration and of temperature. Solving them then requires two boundary conditions for each concentration and for the temperature. There are a few different ways to write the boundary conditions. The Danckwerts boundary conditions will be presented here.
 
 It is important to note that the concentrations and temperature at the inlet to the reactor (i. e. at $z=0$) will not equal the feed concentrations and temperature, as indicated in @fig-axial_dispersion_inlet. That is, due axial dispersion, there is mixing at the reactor inlet between the feed flow and the fluid within the reactor. 
 
@@ -131,21 +103,11 @@ It is important to note that the concentrations and temperature at the inlet to 
 The Danckwerts boundary conditions account for that mixing. (Here it has been assumed that the heat capacities are constant.)
 
 $$
-\dot{V}_{feed}C_{i,feed} - D_{ax} \frac{\pi D^2}{4} \frac{\partial C_i}{\partial z}\Bigg\vert_{z=0} = \dot{V}_0C_{i,0}
+\dot{V}C_{i,feed} = \dot{V} C_{i,0} - D_{ax} \frac{\pi D^2}{4} \frac{\partial C_i}{\partial z}\Bigg\vert_{z=0}
 $$
 
 $$
-\dot{V}_{feed}\sum_i\left(C_{i,feed} \hat{C}_{p,i} \right) T_{feed} - \lambda_{ax} \frac{\pi D^2}{4} \frac{\partial T}{\partial z}\Bigg\vert_{z=0} = \dot{V}_{0} \sum_i\left(C_{i,0} \hat{C}_{p,i} \right) T_0
-$$
-
-The volumetric flow rate at the inlet can be found by noting that the mass flow rate is constant.
-
-$$
-\dot{m}_{0} = \dot{m}_{feed} \qquad \Rightarrow \qquad \rho_0 \dot{V}_0 = \rho_{feed} \dot{V}_{feed} \qquad \Rightarrow \qquad \dot{V}_0 = \frac{\rho_{feed}}{\rho_0}\dot{V}_{feed}
-$$
-
-$$
-\dot{V}_0 = \frac{\sum_i \left(M_iC_{i,feed}\right)}{\sum_i\left(M_iC_{i,0}\right)}\dot{V}_{feed} = \frac{\dot{m}_{feed}}{\sum_i\left(M_iC_{i,0}\right)}
+\dot{V}\sum_i\left(C_{i,feed} \hat{C}_{p,i} \right) T_{feed} = \dot{V} \sum_i\left(C_{i,0} \hat{C}_{p,i} \right) T_0 - \lambda_{ax} \frac{\pi D^2}{4} \frac{\partial T}{\partial z}\Bigg\vert_{z=0}
 $$
 
 A second boundary condition is needed for each $C_i$ and for $T$. Because the reactor ends at $z=L$, it can be assumed that the concentrations and temperature will stop changing at that point. Doing so yields the additional boundary conditions.
@@ -173,7 +135,7 @@ $$
 Noting that then $\frac{d^2C_i}{dz^2} = \frac{d\omega_i}{dz}$ and $\frac{d^2T}{dz^2} = \frac{d\omega_T}{dz}$, substitution into the second-order design equations converts them to first-order ODEs.
 
 $$
-- D_{ax}\frac{d \omega_i}{d z} + \frac{4 C_i}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_i + \sum_j \nu_{i,j}r_j
+- D_{ax}\frac{d \omega_i}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_i + \sum_j \nu_{i,j}r_j
 $$
 
 $$
@@ -183,11 +145,11 @@ $$
 The boundary conditions must also be expressed in terms of the new variables. Substitution in the Danckwerts boundary conditions and rearrangement yields their equivalent first-order forms.
 
 $$
-C_{i,0} = \frac{\dot{V}_{feed}C_{i,feed} - D_{ax} \frac{\pi D^2}{4} \omega_{i,0}}{\dot{V}_0}
+C_{i,0} = C_{i,feed} + D_{ax} \frac{\pi D^2}{4 \dot{V}} \omega_{i,0}
 $$
 
 $$
-T_0 = \frac{\dot{V}_{feed}\sum_i\left(C_{i,feed} \hat{C}_{p,i} \right) T_{feed} - \lambda_{ax} \frac{\pi D^2}{4} \omega_{T,0}}{\dot{V}_{0} \sum_i\left(C_{i,0} \hat{C}_{p,i} \right) }
+T_0 =  T_{feed} + \lambda_{ax} \frac{\pi D^2}{4\dot{V} \sum_i\left(C_{i,0} \hat{C}_{p,i} \right)} \omega_{T,0}
 $$
 
 Similarly, substitution in the boundary conditions at $z=L$ yields the equivalent boundary conditions for the first-order design equations.
@@ -202,9 +164,7 @@ $$
 
 ## Axial Dispersion Design Equations as CVODEs
 
-Some of the boundary conditions are specified at the reactor inlet and some of them at the reactor outlet. In particular, the values of each $\omega_i$ and of $\omega_T$ are not known at the reactor inlet, and they are needed to calculate the values of each $C_i$ and of $T$ at the inlet. At the same time, the values of each $\omega_i$ and of $\omega_T$ are known at the reactor outlet. This makes it possible to solve the axial dispersion reactor design equations using an IVODE solver. That is, the reactor design equations are CVODEs (see @sec-apndx_solve_cvodes). 
-
-To solve the axial dispersion design equations using an IVODE solver, the unknown initial values of each $\omega_i$, $\omega_T$, and $\dot{V}$ are considered coupled values. The known values of each $\omega_i$ and $\omega_T$ at the outlet are used to write implicit equations for the inlet values together with he explicit equation for $\dot{V}_0$ from above.
+The axial dispersion model reactor design equations are CVODEs (see @sec-apndx_solve_cvodes). In particular, the initial values, $\omega_{i,0}$ and $\omega_{T,0}$, are coupled implicitly to their final values, $\omega_{i,1}$ and $\omega_{T,1}$.
 
 $$
 \left(\omega_{i,0},\, \omega_{T,0}\right) \,:\, \omega_{i,1} = 0
@@ -214,24 +174,32 @@ $$
 \left(\omega_{i,0},\, \omega_{T,0}\right) \,:\, \omega_{T,1} = 0
 $$
 
-Effectively, these equations mean find the values of each $\omega_i$ and $\omega_T$ at the inlet such that their values equal zero at the outlet. 
+If the reacting fluid is an incompressible liquid, then the average volumetric flow rate is equal to the feed volumetric flow rate.
 
-Then, when it is necessary to solve the the axial dispersion reactor design equations, these implicit equations can first solved using a ATE solver. Doing so yields the values of each $\omega_i$ and $\omega_T$ at the inlet with which the inlet values of each $C_i$ and of $T$ can be calculated. Then, knowing the inlet values of every dependent variable, the axial dispersion reactor design equations can be solved using an IVODE solver.
+$$
+\dot{V} = \dot{V}_{feed} \qquad \text{liquid}
+$$
+
+However if the reacting fluid is an ideal gas, the average volumetric flow rate is coupled to the outlet concentrations, temperature, and pressure.
+
+$$
+\dot{V} = \frac{\dot{V}_{feed} + \dot{V}_1}{2} = \frac{\dot{V}_{feed} + \frac{RT_1}{P_1}\sum_i \dot{n}_{i,1}}{2} = \frac{\dot{V}_{feed} + \frac{RT_1}{P_1}\sum_i \left(\dot{V} C_{i,1}\right)}{2}= \frac{\dot{V}_{feed} + \dot{V}\frac{RT_1}{P_1}\sum_i  C_{i,1}}{2}
+$$
+
+$$
+\dot{V} = \frac{\dot{V}_{feed}}{2 - \frac{RT_1}{P_1}\sum_i C_{i,1}} \qquad \text{ideal gas}
+$$
 
 ## Summary
 
-The axial dispersion mole and energy balances can be written as the following set of first-order CVODEs. If there is pressure drop in the reactor the PFR momentum balance should be added to the design equations. If the design equations include an energy balance on a heat exchange fluid, it will be an ATE that can be solved simultaneously with the coupled value equations, if necessary.
+The axial dispersion mole and energy balances can be written as the following set of first-order CVODEs. If there is pressure drop in the reactor the PFR momentum balance should be added to the design equations. If the design equations include an energy balance on a heat exchange fluid, it will be an ATE that can be solved simultaneously with the coupled value equations.
 
 $$
-- D_{ax}\frac{d \omega_i}{d z} + \frac{4 C_i}{\pi D^2}\frac{d \dot{V}}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_i + \sum_j \nu_{i,j}r_j
+- D_{ax}\frac{d \omega_i}{d z} = - \frac{4 \dot{V}}{\pi D^2}\omega_i + \sum_j \nu_{i,j}r_j
 $$
 
 $$
 - \lambda_{ax}\frac{d \omega_T}{d z} = - \frac{4 \dot{V}}{\pi D^2} \left(\sum_i C_i \hat{C}_{p,i}\right) \omega_T + \frac{4U}{D}\left(T_{ex} - T\right) - \sum_j r_j \Delta H_j
-$$
-
-$$
-\frac{d\dot{V}}{dz} = \frac{-\sum_i \left(M_i \frac{dC_i}{dz}\right)}{\sum_i \left(M_i C_i\right)}
 $$
 
 $$
@@ -252,23 +220,25 @@ $$
 \left(\omega_{i,0},\, \omega_{T,0}\right) \,:\, \omega_{T,1} = 0
 $$
 
-The remaining initial values then can be calculated as follows.
+The remaining initial values and the average volumetric flow rate then can be calculated as follows.
 
 $$
-C_{i,0} = \frac{\dot{V}_{feed}C_{i,feed} - D_{ax} \frac{\pi D^2}{4} \omega_{i,0}}{\dot{V}_0}
-$$
-
-$$
-T_0 = \frac{\dot{V}_{feed}\sum_i\left(C_{i,feed} \hat{C}_{p,i} \right) T_{feed} - \lambda_{ax} \frac{\pi D^2}{4} \omega_{T,0}}{\dot{V}_{0} \sum_i\left(C_{i,0} \hat{C}_{p,i} \right) }
+C_{i,0} = C_{i,feed} + D_{ax} \frac{\pi D^2}{4 \dot{V}} \omega_{i,0}
 $$
 
 $$
-\dot{V}_0 = \frac{\sum_i \left(M_iC_{i,feed}\right)}{\sum_i\left(M_iC_{i,0}\right)}\dot{V}_{feed} = \frac{\dot{m}_{feed}}{\sum_i\left(M_iC_{i,0}\right)}
+T_0 =  T_{feed} + \lambda_{ax} \frac{\pi D^2}{4\dot{V} \sum_i\left(C_{i,0} \hat{C}_{p,i} \right)} \omega_{T,0}
 $$
 
-Then, knowing the inlet values of every dependent variable, the axial dispersion design equations can be solved using an IVODE solver. If there is pressure drop in the reactor, the appropriate PFR momentum balance should be added to the design equations and the inlet pressure should be added to the initial values. If an exchange fluid energy balance is included in the design equations, it can be added to the coupled value equations and solved to find $T_{ex}$.
+$$
+\dot{V} = \dot{V}_{feed} \qquad \text{liquid}
+$$
 
-Finally, if the reacting fluid is an ideal, incompressible liquid mixture, the derivative of the volumetric flow rate will equal zero and an initial value for the volumetric flow rate will not be needed.
+$$
+\dot{V} = \frac{\dot{V}_{feed}}{2 - \frac{RT_1}{P_1}\sum_i C_{i,1}} \qquad \text{ideal gas}
+$$
+
+Then, knowing the initial value of every dependent variable and the average volumetric flow rate, the axial dispersion design equations can be solved using an IVODE solver.
 
 ## Symbols Used in @sec-apndx_axial_dispersion
 
