@@ -15,7 +15,10 @@ Primary Tasks
   - check quality of graphics
   - make graph and figure sizes consistent
   - Revise any tables or text where scientific notation uses E to use x 10^x instead.
+  - Eliminate any links to the Handouts folder
+  - Move graphics associated with examples from the Graphics folder to the appropriate examples sub-folder.
 - Final drafts: appendices A, B, and C
+- Eliminate the Data and Handouts folders
 - Final draft of front matter
   - add instructions for cloning
 - Add mechanism for reporting errors
