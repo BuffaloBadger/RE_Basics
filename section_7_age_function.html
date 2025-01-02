@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>22&nbsp; The Age function – Reaction Engineering Basics</title>
+<title>22&nbsp; The Age Distribution Functions – Reaction Engineering Basics</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -125,7 +154,7 @@ ul.task-list li input[type="checkbox"] {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./section_7_intro.html">Modeling Non-Ideal Reactors</a></li><li class="breadcrumb-item"><a href="./section_7_age_function.html"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">The Age function</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./section_7_intro.html">Modeling Non-Ideal Reactors</a></li><li class="breadcrumb-item"><a href="./section_7_age_function.html"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">The Age Distribution Functions</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -347,7 +376,7 @@ ul.task-list li input[type="checkbox"] {
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./section_7_age_function.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">The Age function</span></span></a>
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">The Age Distribution Functions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -476,15 +505,40 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-cumulative-and-instantaneous-age-distribution-functions" id="toc-the-cumulative-and-instantaneous-age-distribution-functions" class="nav-link active" data-scroll-target="#the-cumulative-and-instantaneous-age-distribution-functions"><span class="header-section-number">22.1</span> The Cumulative and Instantaneous Age Distribution Functions</a></li>
+  <li><a href="#measuring-a-reactors-cumulative-age-distribution-function" id="toc-measuring-a-reactors-cumulative-age-distribution-function" class="nav-link" data-scroll-target="#measuring-a-reactors-cumulative-age-distribution-function"><span class="header-section-number">22.2</span> Measuring a Reactor’s Cumulative Age Distribution Function</a>
+  <ul class="collapse">
+  <li><a href="#stimulus-and-response" id="toc-stimulus-and-response" class="nav-link" data-scroll-target="#stimulus-and-response"><span class="header-section-number">22.2.1</span> Stimulus and Response</a></li>
+  <li><a href="#response-to-an-impulse-stimulus" id="toc-response-to-an-impulse-stimulus" class="nav-link" data-scroll-target="#response-to-an-impulse-stimulus"><span class="header-section-number">22.2.2</span> Response to an Impulse Stimulus</a></li>
+  <li><a href="#response-to-a-step-change-stimulus" id="toc-response-to-a-step-change-stimulus" class="nav-link" data-scroll-target="#response-to-a-step-change-stimulus"><span class="header-section-number">22.2.3</span> Response to a Step Change Stimulus</a></li>
+  </ul></li>
+  <li><a href="#generating-the-cumulative-age-distribution-function-from-a-reactor-model" id="toc-generating-the-cumulative-age-distribution-function-from-a-reactor-model" class="nav-link" data-scroll-target="#generating-the-cumulative-age-distribution-function-from-a-reactor-model"><span class="header-section-number">22.3</span> Generating the Cumulative Age Distribution Function from a Reactor Model</a>
+  <ul class="collapse">
+  <li><a href="#cumulative-age-distribution-function-for-an-ideal-cstr" id="toc-cumulative-age-distribution-function-for-an-ideal-cstr" class="nav-link" data-scroll-target="#cumulative-age-distribution-function-for-an-ideal-cstr"><span class="header-section-number">22.3.1</span> Cumulative Age Distribution Function for an Ideal CSTR</a></li>
+  <li><a href="#cumulative-age-distribution-function-for-an-ideal-pfr" id="toc-cumulative-age-distribution-function-for-an-ideal-pfr" class="nav-link" data-scroll-target="#cumulative-age-distribution-function-for-an-ideal-pfr"><span class="header-section-number">22.3.2</span> Cumulative Age Distribution Function for an Ideal PFR</a></li>
+  </ul></li>
+  <li><a href="#assessing-reactor-ideality-using-the-cumulative-age-distribution-function" id="toc-assessing-reactor-ideality-using-the-cumulative-age-distribution-function" class="nav-link" data-scroll-target="#assessing-reactor-ideality-using-the-cumulative-age-distribution-function"><span class="header-section-number">22.4</span> Assessing Reactor Ideality Using the Cumulative Age Distribution Function</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples"><span class="header-section-number">22.5</span> Examples</a>
+  <ul class="collapse">
+  <li><a href="#sec-example_22_5_1" id="toc-sec-example_22_5_1" class="nav-link" data-scroll-target="#sec-example_22_5_1"><span class="header-section-number">22.5.1</span> Measuring the Cumulative Age Distribution Function using Impulse Response Data</a></li>
+  <li><a href="#sec-example_22_5_2" id="toc-sec-example_22_5_2" class="nav-link" data-scroll-target="#sec-example_22_5_2"><span class="header-section-number">22.5.2</span> Measuring the Cumulative Age Distribution Function using Step Change Response Data</a></li>
+  <li><a href="#sec-example_22_5_3" id="toc-sec-example_22_5_3" class="nav-link" data-scroll-target="#sec-example_22_5_3"><span class="header-section-number">22.5.3</span> Effect of Density Variation on the Cumulative Age Distribution Function of a PFR</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-sec-7_age_function" id="toc-symbols-used-in-sec-7_age_function" class="nav-link" data-scroll-target="#symbols-used-in-sec-7_age_function"><span class="header-section-number">22.6</span> Symbols Used in <span>Chapter 22</span></a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./section_7_intro.html">Modeling Non-Ideal Reactors</a></li><li class="breadcrumb-item"><a href="./section_7_age_function.html"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">The Age function</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./section_7_intro.html">Modeling Non-Ideal Reactors</a></li><li class="breadcrumb-item"><a href="./section_7_age_function.html"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">The Age Distribution Functions</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span id="sec-7_age_function" class="quarto-section-identifier"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">The Age function</span></span></h1>
+<h1 class="title"><span id="sec-7_age_function" class="quarto-section-identifier"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">The Age Distribution Functions</span></span></h1>
 </div>
 
 
@@ -501,9 +555,1199 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This chapter will be added as soon as I finish writing it.</p>
+<p>In the ideal reactors, fluid flow is either perfectly mixed or plug flow. In non-ideal reactors the flow may not be so well-defined. The cumulative age distribution function provides one means of characterizing fluid flow in a reactor. In addition, the related differential age distribution function can be useful when it is necessary to generate a model for a non-ideal reactor.</p>
+<section id="the-cumulative-and-instantaneous-age-distribution-functions" class="level2" data-number="22.1">
+<h2 data-number="22.1" class="anchored" data-anchor-id="the-cumulative-and-instantaneous-age-distribution-functions"><span class="header-section-number">22.1</span> The Cumulative and Instantaneous Age Distribution Functions</h2>
+<p>It is useful to define a hypothetical “fluid element” before considering the age distribution functions. A fluid element is a very small volume of fluid within the total reactor flow. A fluid element is perfectly mixed internally, but it does not mix with any other fluid elements in the reactor. Again, a fluid element is a hypothetical construct, and not something real.</p>
+<p>The age of a fluid element, <span class="math inline">\(\lambda\)</span>, is the length of time it stays in the reactor. That is, the age of a fluid element is another name for its residence time. The key point is that one fluid element leaving a reactor can have a different age than another fluid element that is also leaving the reactor.</p>
+<p>The cumulative age distribution function, <span class="math inline">\(F\left(\lambda\right)\)</span>, is defined in terms of the fluid leaving a reactor. Specifically, <span class="math inline">\(F\left(\lambda\right)\)</span> is the fraction of the fluid leaving the reactor that has an age less than or equal to <span class="math inline">\(\lambda\)</span>. Consequently, <span class="math inline">\(F\left(0\right)\)</span> is equal to zero because fluid can’t leave the reactor if it was never in the reactor (i. e. if it has an age of zero). Assuming that all fluid elements leave the reactor eventually, <span class="math inline">\(F\left(\infty\right)\)</span> is equal to 1.</p>
+<p>The differential age distribution function, <span class="math inline">\(dF\)</span>, is found by taking the derivative of the cumulative age distribution function and multiplying it by a differential change in the age, as shown in <a href="#eq-diff_age_dist_fcn" class="quarto-xref">Equation&nbsp;<span>22.1</span></a>. At any value of the age, <span class="math inline">\(\lambda\)</span>, it represents the fraction of fluid leaving the reactor that has an age between <span class="math inline">\(\lambda\)</span> and <span class="math inline">\(\lambda + d\lambda\)</span>, where <span class="math inline">\(d\lambda\)</span> is a differentially small increment in age. By definition then, the sum of the differential changes in the fraction of fluid with ages between 0 and <span class="math inline">\(\lambda\)</span> must equal the cumulative fraction of the fluid with age <span class="math inline">\(\lambda\)</span> as shown in <a href="#eq-integral_of_age_dist_fcn" class="quarto-xref">Equation&nbsp;<span>22.2</span></a>. All of the fluid elements leaving the reactor must have and age between zero an infinity, leading to <a href="#eq-diff_age_dist_upper_limit" class="quarto-xref">Equation&nbsp;<span>22.3</span></a>.</p>
+<p><span id="eq-diff_age_dist_fcn"><span class="math display">\[
+dF\left(\lambda\right) = \frac{dF}{d\lambda}d\lambda
+\tag{22.1}\]</span></span></p>
+<p><span id="eq-integral_of_age_dist_fcn"><span class="math display">\[
+F\left(\lambda\right) = \int_0^\lambda dF\left(t\right)
+\tag{22.2}\]</span></span></p>
+<p><span id="eq-diff_age_dist_upper_limit"><span class="math display">\[
+\int_0^\infty dF\left(t\right) = 1
+\tag{22.3}\]</span></span></p>
+<p>(In some reaction engineering books, <span class="math inline">\(F\)</span> is referred to as the age function, and <span class="math inline">\(dF\)</span> is called the age distribution function. Calling <span class="math inline">\(F\)</span> the age function can be confusing for new learners because <span class="math inline">\(F\)</span> actually represents a fraction of the fluid that depends upon age, and not age itself. For this reason, in <em>Reaction Engineering Basics</em>, <span class="math inline">\(F\)</span> is called the cumulative age distribution function and <span class="math inline">\(dF\)</span> is called the differential age distribution function.)</p>
+<p>The cumulative age distribution function represents a useful means of characterizing the flow in a reactor, and the differential age distribution function can be used to model a reactor where the flow is non-ideal. The latter uses are considered in subsequent chapters, but before they can be used, it is necessary to be able to measure the cumulative age distribution function for an actual reactor and to calculate it from the model for a reactor. Doing so is the focus of the rest of this chapter.</p>
+</section>
+<section id="measuring-a-reactors-cumulative-age-distribution-function" class="level2" data-number="22.2">
+<h2 data-number="22.2" class="anchored" data-anchor-id="measuring-a-reactors-cumulative-age-distribution-function"><span class="header-section-number">22.2</span> Measuring a Reactor’s Cumulative Age Distribution Function</h2>
+<p>A chemical species called a tracer is used to measure the cumulative age distribution function for a reactor. A tracer mixes intimately with the other fluid in the reactor, and its mass fraction or mass concentration can be easily determined from a sample of the reactor fluid. Examples of tracers include dyes and small amounts of a radioactive species that can be added easily to the fluid entering a reactor.</p>
+<section id="stimulus-and-response" class="level3" data-number="22.2.1">
+<h3 data-number="22.2.1" class="anchored" data-anchor-id="stimulus-and-response"><span class="header-section-number">22.2.1</span> Stimulus and Response</h3>
+<p>Measuring the cumulative age distribution function of an actual reactor begins by changing the mass concentration of tracer in the reactor inlet. This is referred to as applying a stimulus at the reactor inlet. In reaction engineering, step changes and impulses are the most common stimuli. Before applying the stimulus the mass concentration of tracer at the reactor inlet should be constant for sufficient time to allow the tracer concentration throughout the reactor to reach steady-state. The concentration of tracer in the feed prior to applying the tracer may equal zero, but this is not required. All that is required is that the tracer flow is at steady-state. Here, the instant the stimulus is applied will be defined as <span class="math inline">\(t=0\)</span>. The stimuli are applied instantaneously, so <span class="math inline">\(t\)</span> represents the elapsed time since the stimulus was applied.</p>
+<p>The whole purpose of applying a stimulus is to characterize the flow in the reactor. As such, it is essential that the stimulus be applied in a way that does not affect the volumetric flow within the reactor. This can be accomplished by first making sure that the volume of tracer being added is negligibly small compared to the total flow entering the reactor. Additionally, the added tracer temperature must be the same as the feed it is being added to. When these precautions are taken, the feed concentrations (or partial pressures) of all reagents and the feed temperature will be identical to those prior to applying the stimulus. Since the inlet reagent concentrations and temperature are the same, the concentration and temperature profiles within the reactor will also be the same.</p>
+<p>With the tracer flow at steady-state, a step change stimulus is applied by instantaneously increasing or decreasing the inlet mass concentration of tracer to a new value and holding it constant at that value. A plot of the <em>inlet</em> tracer concentration <em>vs.</em> time will then look like a stair step as viewed from the side, hence the name step change. The step may be upward or downward as indicated in <a href="#fig-step_change_stimulus_w_vs_t" class="quarto-xref">Figure&nbsp;<span>22.1</span></a>. After the change, the inlet mass concentration of tracer is held constant at the new value until the system attains a new steady state.</p>
+<div id="fig-step_change_stimulus_w_vs_t" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-step_change_stimulus_w_vs_t-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Graphics/step_up_stimulus_w_vs_t.png" class="img-fluid figure-img"></p>
+<figcaption>a</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Graphics/step_down_stimulus_w_vs_t.png" class="img-fluid figure-img"></p>
+<figcaption>b</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-step_change_stimulus_w_vs_t-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;22.1: Variation of the inlet tracer weight fraction over time when applying a step-change stimulus with the weight fraction (a) increasing and (b) decreasing.
+</figcaption>
+</figure>
+</div>
+<p>Again, with the tracer flow at steady-state, an impulse stimulus is applied by instantaneously injecting a fixed mass of tracer into the feed all at once. The inlet mass concentration before and after the injection are the same. Most often they are equal to zero, but again that is not a requirement. A plot of the <em>inlet</em> tracer concentration <em>vs.</em> time will look like a flat line with a spike at the injection time as shown in <a href="#fig-impulse_stimulus" class="quarto-xref">Figure&nbsp;<span>22.2</span></a>. Ideally the width of the spike (duration of the injection) is effectively zero.</p>
+<div id="fig-impulse_stimulus" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-impulse_stimulus-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/impulse_stimulus_w_vs_t.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-impulse_stimulus-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;22.2: Variation of the inlet tracer weight fraction over time when applying an impulse stimulus.
+</figcaption>
+</figure>
+</div>
+<p>Starting from the time the stimulus is applied at the reactor inlet, the mass concentration of tracer in the reactor outlet is measured as a function of time. The variation in the mass concentration of tracer at the reactor outlet over time is called the response. Importantly, the stimulus is applied at the reactor inlet and the response is measured at the reactor outlet. It is equally important that the response is measured for a period of time that is long enough for the outlet mass concentration of tracer to reach steady-state.</p>
+</section>
+<section id="response-to-an-impulse-stimulus" class="level3" data-number="22.2.2">
+<h3 data-number="22.2.2" class="anchored" data-anchor-id="response-to-an-impulse-stimulus"><span class="header-section-number">22.2.2</span> Response to an Impulse Stimulus</h3>
+<p>During the measurement of the cumulative age distribution function, the total mass flow rate through the reactor is constant. The concentration of tracer within the reactor must be at steady-state when the stimulus is applied. Consequently, prior to applying the impulse stimulus, the inlet and outlet mass fractions of tracer are constant and equal with a value that can be represented as <span class="math inline">\(w_{in}\big\vert_{t&lt;0}\)</span>. That amount of tracer is always flowing through the reactor, both before and after the stimulus. After the stimulus has been applied at <span class="math inline">\(t=0\)</span>, any tracer in the output steam in excess of <span class="math inline">\(w_{in}\big\vert_{t&lt;0}\)</span> (<a href="#fig-impulse_stimulus" class="quarto-xref">Figure&nbsp;<span>22.2</span></a>) must have come from the tracer added in the impulse.</p>
+<p>If <span class="math inline">\(\dot{m}_{total}\)</span> is the total mass flow rate through the reactor and <span class="math inline">\(w_{out}\)</span> is the instantaneous mass fraction of tracer leaving the reactor, then <span class="math inline">\(\dot{m}_{total} \left(w_{out} - w_{in}\big\vert_{t&lt;0}\right)\)</span> is the instantaneous outlet mass flow rate of tracer added in the impulse. Integrating that instantaneous mass flow rate over time from the instant the impulse was applied, defined here to equal zero, to a time, <span class="math inline">\(\lambda\)</span>, then gives the cumulative mass of tracer that was added in the impulse and that remained in the reactor for a time less than or equal to <span class="math inline">\(\lambda\)</span>. Dividing that cumulative mass of tracer that has emerged by the total mass injected in the implulse, <span class="math inline">\(m_{impulse}\)</span>, gives the fraction of the tracer injected in the impulse that remained in the reactor for a time less than or equal to <span class="math inline">\(\lambda\)</span>. That is, it gives the value of the cumulative age distribution function for an age of <span class="math inline">\(\lambda\)</span>, <a href="#eq-cum_age_from_impulse" class="quarto-xref">Equation&nbsp;<span>22.4</span></a>. Since the instant the impulse was applied is defined as time zero, <span class="math inline">\(\lambda\)</span> in <a href="#eq-cum_age_from_impulse" class="quarto-xref">Equation&nbsp;<span>22.4</span></a> is the elapsed time since the application of the impulse.</p>
+<p><span id="eq-cum_age_from_impulse"><span class="math display">\[
+F\left(\lambda\right) = \frac{\dot{m}_{total}\int_{0}^\lambda \left(w_{out} - w_{in}\big\vert_{t&lt;0}\right)dt}{m_{impulse}}
+\tag{22.4}\]</span></span></p>
+<p>Technically this measures the cumulative age distribution function for the tracer that was added in the impulse. However, because the tracer mixes intimately with the other fluid, its cumulative age distribution function is the same as the rest of the fluid.</p>
+<p>Assuming that all of the tracer that was added in the impulse eventually leaves the reactor yields <a href="#eq-total_tracer_in_impulse" class="quarto-xref">Equation&nbsp;<span>22.5</span></a>. If for some reason an engineer had data for the response to an impulse stimulus, but did not know the amount of tracer in the impulse, this equation could be used to calculate the denominator in <a href="#eq-cum_age_from_impulse" class="quarto-xref">Equation&nbsp;<span>22.4</span></a>, provided that the response was measured over a sufficiently long period following the stimulus for the tracer concentration to reach steady-state.</p>
+<p><span id="eq-total_tracer_in_impulse"><span class="math display">\[
+m_{impulse} = \dot{m}_{total}\int_{0}^\infty \left(w_{out} - w_{in}\big\vert_{t&lt;0}\right)dt
+\tag{22.5}\]</span></span></p>
+<p>The process described here for measuring the cumulative age distribution function will yield a set of <span class="math inline">\(\underline{w}_{out}\)</span> <em>vs.</em> <span class="math inline">\(\underline{\lambda}\)</span> data where <span class="math inline">\(\underline{\lambda}\)</span> is the set of elapsed times at which the outlet tracer mass fraction, <span class="math inline">\(w_{out}\)</span>, was measured. For each data point in that set, the integral in <a href="#eq-cum_age_from_impulse" class="quarto-xref">Equation&nbsp;<span>22.4</span></a> must be evaluated. One way to evaluate the integral is to use the trapezoid rule. Doing so for each data point, <span class="math inline">\(i\)</span>, will yield the corresponding value of <span class="math inline">\(F\left(\lambda_i\right)\)</span>. In other words, the process described here does not yield the cumulative age distribution as an analytical function, but as a table of values of <span class="math inline">\(F\left(\lambda\right)\)</span> <em>vs.</em> <span class="math inline">\(\lambda\)</span>. This is illustrated in Examples <a href="#sec-example_22_5_1" class="quarto-xref"><span>22.5.1</span></a> and <a href="#sec-example_22_5_2" class="quarto-xref"><span>22.5.2</span></a>.</p>
+<p>Equations <a href="#eq-cum_age_from_impulse" class="quarto-xref"><span>22.4</span></a> and <a href="#eq-total_tracer_in_impulse" class="quarto-xref"><span>22.5</span></a> are written in terms of the total mass flow rate and inlet and outlet mass fractions. This is convenient because at steady-state, the total mass flow rate is constant. However, the cumulative age distribution function can also be generated by measuring the mass or molar concentration of the tracer. Equations <a href="#eq-cum_age_from_impulse" class="quarto-xref"><span>22.4</span></a> and <a href="#eq-total_tracer_in_impulse" class="quarto-xref"><span>22.5</span></a> can be converted to use mass or molar concentrations using the relationships from <a href="section_1_intro_and_defs.html#sec-1_1_4_comp_reacting_systems" class="quarto-xref"><span>Section 1.1.4</span></a>.</p>
+</section>
+<section id="response-to-a-step-change-stimulus" class="level3" data-number="22.2.3">
+<h3 data-number="22.2.3" class="anchored" data-anchor-id="response-to-a-step-change-stimulus"><span class="header-section-number">22.2.3</span> Response to a Step Change Stimulus</h3>
+<p>As for the impulse stimulus, the mass flow through the reactor must be constant during the measurement of the cumulative age distribution function, and the concentration of tracer within the reactor must be at steady-state when the stimulus is applied. Consider the application of a step-change stimulus, <a href="#fig-step_change_stimulus_w_vs_t" class="quarto-xref">Figure&nbsp;<span>22.1</span></a> (a) or (b).</p>
+<p>Fluid elements entering (and leaving) the reactor prior to the application of the step change at <span class="math inline">\(t=0\)</span> have a tracer mass fraction of <span class="math inline">\(w_{in}\big\vert_{t&lt;0}\)</span>. After the step change, fluid elements entering the reactor have a tracer mass fraction of <span class="math inline">\(w_{in}\big\vert_{t&gt;0}\)</span>. Fluid leaving the reactor at an elapsed time, <span class="math inline">\(\lambda\)</span>, after the step change will be a mixture of two kinds of fluid elements.</p>
+<p>One kind of fluid element is one that has been in the reactor for a period of time greater than <span class="math inline">\(\lambda\)</span>. Since these fluid elements entered before the step change, their tracer weight fraction is <span class="math inline">\(w_{in}\big\vert_{t&lt;0}\)</span>. They can be considered “old” fluid elements.</p>
+<p>The other kind of fluid element is one that has been in the reactor for a period of time less than or equal to <span class="math inline">\(\lambda\)</span>. This kind of fluid element can be considered to be a “young” fluid element, and since they entered after the step change, their tracer weight fraction is <span class="math inline">\(w_{in}\big\vert_{t&gt;0}\)</span>.</p>
+<p>Suppose that a sample of mass, <span class="math inline">\(m\)</span>, is taken from the reactor outlet at an elapsed time of <span class="math inline">\(\lambda\)</span>. Then by the definition of <span class="math inline">\(F\left(\lambda\right)\)</span>, <span class="math inline">\(mF\left(\lambda\right)\)</span> is the mass of “young” fluid in the sample, and <span class="math inline">\(m\left(1-F\left(\lambda\right)\right)\)</span> is the mass of “old” fluid in the sample. The total mass of tracer in the sample, <span class="math inline">\(m w_{out}\big\vert_{t=\lambda}\)</span>, must equal the mass of tracer in the “young” fluid in the sample plus the mass of tracer in the “old” fluid in the sample.</p>
+<p><span class="math display">\[
+m w_{out}\big\vert_{t=\lambda} = m_{young}w_{young} + m_{old}w_{old}
+\]</span></p>
+<p>Expressing the masses of “young” and “old” fluid in terms of the cumulative age distribution function and substituting the tracer mass fractions of the “young” and “old” fluid yields <a href="#eq-step_mass_bal_on_sample" class="quarto-xref">Equation&nbsp;<span>22.6</span></a>. Solving <a href="#eq-step_mass_bal_on_sample" class="quarto-xref">Equation&nbsp;<span>22.6</span></a> for <span class="math inline">\(F\left(\lambda\right)\)</span> then yields an expression for calculating <span class="math inline">\(F\left(\lambda\right)\)</span> from the response to a step-change stimulus, <a href="#eq-cum_age_from_step" class="quarto-xref">Equation&nbsp;<span>22.7</span></a>.</p>
+<p><span id="eq-step_mass_bal_on_sample"><span class="math display">\[
+m w_{out}\big\vert_{t=\lambda} = mF\left(\lambda\right)w_{in}\big\vert_{t&gt;0} + m\left(1-F\left(\lambda\right)\right)w_{in}\big\vert_{t&lt;0}
+\tag{22.6}\]</span></span></p>
+<p><span id="eq-cum_age_from_step"><span class="math display">\[
+F\left(\lambda\right) = \frac{w_{out}\big\vert_{t=\lambda} - w_{in}\big\vert_{t&lt;0}}{w_{in}\big\vert_{t&gt;0} - w_{in}\big\vert_{t&lt;0}}
+\tag{22.7}\]</span></span></p>
+<p>As is the case when calculating the cumulative age distribution function from the response to an impulse, the procedure described here for analysis of the response to a step-change will not yield an analytical function, but instead, a table of values of <span class="math inline">\(F\left(\lambda\right)\)</span> <em>vs.</em> <span class="math inline">\(\lambda\)</span>. The procedure is illustrated in <a href="#sec-example_22_5_2" class="quarto-xref">Example&nbsp;<span>22.5.2</span></a>.</p>
+</section>
+</section>
+<section id="generating-the-cumulative-age-distribution-function-from-a-reactor-model" class="level2" data-number="22.3">
+<h2 data-number="22.3" class="anchored" data-anchor-id="generating-the-cumulative-age-distribution-function-from-a-reactor-model"><span class="header-section-number">22.3</span> Generating the Cumulative Age Distribution Function from a Reactor Model</h2>
+<p>Sometimes, instead of needing the cumulative age distribution function for an actual reactor, an engineer will need the cumulative age distribution function that corresponds to a reactor model. To generate it, the model is used to simulate the response to a step-change or impulse stimulus. This generates simulated <span class="math inline">\(\underline{w}_{out}\)</span> <em>vs.</em> <span class="math inline">\(\underline{\lambda}\)</span> data. Depending on whether the response to an impulse or a step-change was simulated, either <a href="#eq-cum_age_from_impulse" class="quarto-xref">Equation&nbsp;<span>22.4</span></a> or <a href="#eq-cum_age_from_step" class="quarto-xref">Equation&nbsp;<span>22.7</span></a> can be used to generate the cumulative age distribution function.</p>
+<p>One point to note is that the reactor design equations are usually written as mole balances, but Equations <a href="#eq-cum_age_from_impulse" class="quarto-xref"><span>22.4</span></a> and <a href="#eq-cum_age_from_step" class="quarto-xref"><span>22.7</span></a> are written in terms of mass fractions. Using the molecular weight of the the tracer, it is easy to interconvert between moles and mass.</p>
+<p>Additionally it can be noted that if the reactor design equations can be solved analytically, as shown below for an ideal CSTR, an analytical cumulative age distribution function can be generated. If the reactor design equations must be solved numerically, the corresponding cumulative age distribution function will take the form of a table of <span class="math inline">\(\underline{F}\left(\lambda\right)\)</span> <em>vs.</em> <span class="math inline">\(\underline{\lambda}\)</span>.</p>
+<section id="cumulative-age-distribution-function-for-an-ideal-cstr" class="level3" data-number="22.3.1">
+<h3 data-number="22.3.1" class="anchored" data-anchor-id="cumulative-age-distribution-function-for-an-ideal-cstr"><span class="header-section-number">22.3.1</span> Cumulative Age Distribution Function for an Ideal CSTR</h3>
+<p>Suppose a step-change stimulus is applied as described above to an ideal CSTR. The general form of a mole balance on the tracer is given in <a href="section_3_design_equations.html#eq-cstr_mol_balance" class="quarto-xref">Equation&nbsp;<span>6.24</span></a>. The volumetric flow rate is not affected by the stimulus, so the fluid volume and volumetric flow rate are constant, and their time-derivatives are zero. The tracer is not a reactant or a product, so its stoichiometric coefficient in all reactions is zero. Letting <span class="math inline">\(\overline{t} = \frac{V}{\dot{V}}\)</span>, the mole balance on the tracer simplifies as shown in <a href="#eq-tracer_bal_cstr" class="quarto-xref">Equation&nbsp;<span>22.8</span></a>.</p>
+<p><span class="math display">\[
+\frac{V}{\dot{V}}\frac{d \dot{n}_i}{dt} + \frac{\dot{n}_i}{\dot{V}}\cancelto{0}{\frac{dV}{dt}} - \frac{\dot{n}_iV}{\dot{V}^2}\cancelto{0}{\frac{d \dot{V}}{dt}} = \dot{n}_{i,in} - \dot{n}_i + V \sum_j \cancelto{0}{\nu_{i,j}}r_j
+\]</span></p>
+<p><span id="eq-tracer_bal_cstr"><span class="math display">\[
+\frac{d \dot{n}_{out}}{dt} = \frac{\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{out}}{\overline{t}}
+\tag{22.8}\]</span></span></p>
+<p>Before the application of the stimulus, the reactor was at steady-state with a tracer flow rate of <span class="math inline">\(\dot{n}_{in}\big\vert_{t&lt;0}\)</span>, so at the instant the stimulus is applied, <span class="math inline">\(t=0\)</span>, that is the outlet molar flow rate of tracer. This provides the initial value needed to solve the mole balance. Doing so yields <a href="#eq-tracer_bal_soln_cstr" class="quarto-xref">Equation&nbsp;<span>22.9</span></a>.</p>
+<p><span id="eq-tracer_bal_soln_cstr"><span class="math display">\[
+\dot{n}_{out} = \dot{n}_{in}\big\vert_{t&gt;0} - \left( \dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}\right)\exp{\left(-\frac{t}{\overline{t}}\right)}
+\tag{22.9}\]</span></span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See Where That Came From
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Start from <a href="#eq-tracer_bal_cstr" class="quarto-xref">Equation&nbsp;<span>22.8</span></a> and separate variables and integrate from the initial values to an arbitrary time and outlet molar flow.</p>
+<p><span class="math display">\[
+\int_{\dot{n}_{in}\big\vert_{t&lt;0}}^{\dot{n}_{out}}\frac{d \dot{n}_{out}}{\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{out}} = \int_0^t\frac{dt}{\overline{t}}
+\]</span></p>
+<p>Evaluate the integral.</p>
+<p><span class="math display">\[
+-\ln{\left(\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{out}\right)}\Bigg\vert_{\dot{n}_{in}\big\vert_{t&lt;0}}^{\dot{n}_{out}} = \frac{t}{\overline{t}}\Bigg\vert_0^t
+\]</span></p>
+<p><span class="math display">\[
+-\ln{\frac{\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{out}}{\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}}} = \frac{t}{\overline{t}}
+\]</span></p>
+<p>Multiply both sides by -1 and exponentiate.</p>
+<p><span class="math display">\[
+\frac{\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{out}}{\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}} = \exp{\left(-\frac{t}{\overline{t}}\right)}
+\]</span></p>
+<p>Solve for <span class="math inline">\(\dot{n}_{out}\)</span>.</p>
+<p><span class="math display">\[
+\dot{n}_{out} = \dot{n}_{in}\big\vert_{t&gt;0} - \left( \dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}\right)\exp{\left(-\frac{t}{\overline{t}}\right)}
+\]</span></p>
+</div>
+</div>
+</div>
+<p><a href="#eq-cum_age_from_step" class="quarto-xref">Equation&nbsp;<span>22.7</span></a> can then be used to generate the cumulative age distribution function for an ideal CSTR. First the mass fractions can be set equal to the tracer mass flow divided by the total mass flow. The total mass flow will cancel out. The numerator and denominator can then be multiplied by the molecular weight of the tracer to convert the mass flow rates to molar flow rates. Finally, <a href="#eq-tracer_bal_soln_cstr" class="quarto-xref">Equation&nbsp;<span>22.9</span></a> can be substituted, and the resulting equation can be rearranged to obtain <a href="#eq-cum_age_dist_cstr" class="quarto-xref">Equation&nbsp;<span>22.10</span></a>, the cumulative age distribution function for an ideal CSTR.</p>
+<p><span id="eq-cum_age_dist_cstr"><span class="math display">\[
+F_{CSTR}\left(\lambda\right) = 1 - \exp{\left(-\frac{\lambda}{\overline{t}}\right)}
+\tag{22.10}\]</span></span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See Where That Came From
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Start with <a href="#eq-cum_age_from_step" class="quarto-xref">Equation&nbsp;<span>22.7</span></a>.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{w_{out}\big\vert_{t=\lambda} - w_{in}\big\vert_{t&lt;0}}{w_{in}\big\vert_{t&gt;0} - w_{in}\big\vert_{t&lt;0}}
+\]</span></p>
+<p>Express the mass fractions in terms of the mass flow of tracer, <span class="math inline">\(\dot{m}\)</span>, and total mass flow, <span class="math inline">\(\dot{m}_{tot}\)</span>.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\frac{\dot{m}_{out}}{\dot{m}_{total}}\big\vert_{t=\lambda} - \frac{\dot{m}_{in}}{\dot{m}_{total}}\big\vert_{t&lt;0}}{\frac{\dot{m}_{in}}{\dot{m}_{total}}\big\vert_{t&gt;0} - \frac{\dot{m}_{in}}{\dot{m}_{total}}\big\vert_{t&lt;0}}
+\]</span></p>
+<p>Cancel out the total mass flow rate, and multiply the numerator and denominator by the inverse of the molecular weight of the tracer, <span class="math inline">\(M\)</span>.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\frac{\dot{m}_{out}}{M}\big\vert_{t=\lambda} - \frac{\dot{m}_{in}}{M}\big\vert_{t&lt;0}}{\frac{\dot{m}_{in}}{M}\big\vert_{t&gt;0} - \frac{\dot{m}_{in}}{M}\big\vert_{t&lt;0}}
+\]</span></p>
+<p>Replace the mass flow rate divided by the molecular weight with the molar flow rate of tracer.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\dot{n}_{out}\big\vert_{t=\lambda} - \dot{n}_{in}\big\vert_{t&lt;0}}{\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}}
+\]</span></p>
+<p>Substitute <a href="#eq-tracer_bal_soln_cstr" class="quarto-xref">Equation&nbsp;<span>22.9</span></a>, evaluated at <span class="math inline">\(t=\lambda\)</span>, for <span class="math inline">\(\dot{n}\big\vert_{t=\lambda}\)</span>.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\dot{n}_{in}\big\vert_{t&gt;0} - \left( \dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}\right)\exp{\left(-\frac{t}{\overline{t}}\right)} - \dot{n}_{in}\big\vert_{t&lt;0}}{\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}}
+\]</span></p>
+<p>Combine the first and last terms in the numerator.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\left(\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}\right) - \left( \dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}\right)\exp{\left(-\frac{t}{\overline{t}}\right)}}{\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}}
+\]</span></p>
+<p>Finally divide both the numerator and denominator by <span class="math inline">\(\left(\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}\right)\)</span>.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = 1 - \exp{\left(-\frac{\lambda}{\overline{t}}\right)}
+\]</span></p>
+</div>
+</div>
+</div>
+</section>
+<section id="cumulative-age-distribution-function-for-an-ideal-pfr" class="level3" data-number="22.3.2">
+<h3 data-number="22.3.2" class="anchored" data-anchor-id="cumulative-age-distribution-function-for-an-ideal-pfr"><span class="header-section-number">22.3.2</span> Cumulative Age Distribution Function for an Ideal PFR</h3>
+<p>The cumulative age distribution function for an ideal PFR could be generated in the same manner as that used to generate the expression for an ideal CSTR. However, due to the plug flow in the reactor, it is easier and faster to simply deduce the cumulative age distribution function by considering the response to an impulse stimulus.</p>
+<p>Ideally the impulse is injected as a differentially thick slug of fluid at the reactor inlet. Due to plug flow, the slug never mixes with any of the fluid ahead of it nor any of the fluid behind it. The slug mass moves from the inlet to the outlet at the total mass flow rate. The instantaneous volumetric flow rate of the slug is equal to the mass flow rate divided by the fluid density, <span class="math inline">\(\rho_{fluid}\)</span>. Dividing the instantaneous volumetric flow rate by the cross-sectional area of the tube then yields the instantaneous linear velocity of the slug, <a href="#eq-slug_velocity" class="quarto-xref">Equation&nbsp;<span>22.11</span></a>. The length of the PFR is simply its volume divided by the cross-sectional area, <a href="#eq-pfr_length" class="quarto-xref">Equation&nbsp;<span>22.12</span></a>.</p>
+<p><span id="eq-slug_velocity"><span class="math display">\[
+v = \frac{\dot{m}_{total}}{A\rho_{fluid}}
+\tag{22.11}\]</span></span></p>
+<p><span id="eq-pfr_length"><span class="math display">\[
+L = \frac{V_{PFR}}{A}
+\tag{22.12}\]</span></span></p>
+<p>For liquids, the density can be assumed to be constant. For gases, if the reactions taking place cause a change in the total molar flow rate, the temperature, or the pressure, the volumetric flow rate, and hence the density, will vary along the length of the reactor. In that case, the linear velocity will also vary along the reactor length, as can be seen from <a href="#eq-slug_velocity" class="quarto-xref">Equation&nbsp;<span>22.11</span></a>.</p>
+<p>By definition, the linear velocity is the derivative of the axial position with respect to time. Defining <span class="math inline">\(z=0\)</span> as the reactor inlet and <span class="math inline">\(z=L\)</span> as the reactor outlet, and noting that the density might change due to gas expansion or contraction, the time required for the slug to reach the outlet, <span class="math inline">\(\overline{t}\)</span>, can be calculated, <a href="#eq-pfr_residence_time" class="quarto-xref">Equation&nbsp;<span>22.13</span></a>. If the density is constant, or if the change in density is ignored, <a href="#eq-pfr_residence_time_const_rho" class="quarto-xref">Equation&nbsp;<span>22.14</span></a> results.</p>
+<p><span id="eq-pfr_residence_time"><span class="math display">\[
+\overline{t} = A\int_0^L\frac{dz}{\dot{V}}
+\tag{22.13}\]</span></span></p>
+<p><span id="eq-pfr_residence_time_const_rho"><span class="math display">\[
+\overline{t} = \frac{V_{PFR}}{\dot{V}}
+\tag{22.14}\]</span></span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See Where That Came From
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Start with the definition of linear velocity.</p>
+<p><span class="math display">\[
+v = \frac{dz}{dt}
+\]</span></p>
+<p>Substitute the linear velocity of the slug of tracer.</p>
+<p><span class="math display">\[
+\frac{\dot{m}_{total}}{A\rho_{fluid}} = \frac{dz}{dt}
+\]</span></p>
+<p>Separate the variables, noting that <span class="math inline">\(\frac{\dot{m}_{total}}{\rho_{fluid}} = \dot{V}\)</span>.</p>
+<p><span class="math display">\[
+dt = \frac{A\rho_{fluid}}{\dot{m}_{total}}dz \qquad \Rightarrow \qquad dt = \frac{A}{\dot{V}}dz
+\]</span></p>
+<p>Integrate from the instant the stimulus is applied, <span class="math inline">\(t=0\)</span>, at the PFR inlet, <span class="math inline">\(z=0\)</span>, to the time, <span class="math inline">\(\overline{t}\)</span>, the slug reaches the PFR outlet, <span class="math inline">\(z=L\)</span>.</p>
+<p><span class="math display">\[
+\int_0^\overline{t}{dt} = \int_0^L\frac{A}{\dot{V}}dz
+\]</span></p>
+<p>Evaluate the time integral. The cross-sectional area is a constant and can be taken outside of the spatial integral, but the volumetric flow rate may change due to a change in total moles, temperature, and/or pressure. In those cases the integral will need to be evaluated for the specific reactor under consideration.</p>
+<p><span class="math display">\[
+\overline{t} = A\int_0^L\frac{dz}{\dot{V}}
+\]</span></p>
+<p>If the volumetric flow rate is constant, it can be taken outside the spatial integral, and that integral can be evaluated, too.</p>
+<p><span class="math display">\[
+\overline{t} = \frac{A}{\dot{V}}\int_0^Ldz = \frac{A\left(L-0\right)}{\dot{V}} = \frac{V_{PFR}}{\dot{V}}
+\]</span></p>
+</div>
+</div>
+</div>
+<p>So, at elapsed times less than <span class="math inline">\(\overline{t}\)</span>, no tracer will emerge from the reactor. Then, at <span class="math inline">\(t=\overline{t}\)</span> all of the tracer will emerge at once. Thus, by definition, the cumulative age distribution function for an ideal PFR is given by <a href="#eq-cum_age_dist_pfr" class="quarto-xref">Equation&nbsp;<span>22.15</span></a>.</p>
+<p><span id="eq-cum_age_dist_pfr"><span class="math display">\[
+\begin{matrix}
+F_{PFR}\left(\lambda\right) = 0, \, \lambda &lt; \overline{t} \\
+F_{PFR}\left(\lambda\right) = 1, \, \lambda \ge \overline{t}
+\end{matrix}
+\tag{22.15}\]</span></span></p>
+</section>
+</section>
+<section id="assessing-reactor-ideality-using-the-cumulative-age-distribution-function" class="level2" data-number="22.4">
+<h2 data-number="22.4" class="anchored" data-anchor-id="assessing-reactor-ideality-using-the-cumulative-age-distribution-function"><span class="header-section-number">22.4</span> Assessing Reactor Ideality Using the Cumulative Age Distribution Function</h2>
+<p>The cumulative age distribution function can be used to partially test the ideality of a real reactor. To do so, <span class="math inline">\(F\left(\lambda\right)\)</span>, for the real reactor is measured as described above. <span class="math inline">\(\underline{F}\left(\lambda\right)\)</span> <em>vs.</em> <span class="math inline">\(\underline{\lambda}\)</span> and either <span class="math inline">\(F_{CSTR}\)</span> or <span class="math inline">\(F_{PFR}\)</span> are plotted on the same set of axes. If the plots do not superimpose, the real reactor cannot be modeled as an ideal CSTR or PFR.</p>
+<p>If the plots of <span class="math inline">\(\underline{F}\left(\lambda\right)\)</span> <em>vs.</em> <span class="math inline">\(\underline{\lambda}\)</span> and either <span class="math inline">\(F_{CSTR}\)</span> or <span class="math inline">\(F_{PFR}\)</span> do superimpose, it does <u>not</u> mean the real reactor can be modeled as an ideal CSTR or PFR. The reason for this is that measuring the age function does not fully characterize the mixing within a reactor. It is possible for a reactor to appear to be very well-mixed at a macroscopic level while the mixing is quite poor at a microscopic level. In essence, the test being used here will give a favorable result as long as the time scale for mixing the fluid within the reactor is very small compared to the amount of time the fluid spends in the reactor. However, there is a third time scale that is important, namely the time scale for reaction to occur. If the chemical reaction is very fast compared to the time scale for mixing the fluid in the reactor, then, in a CSTR, for example, a significant amount of reaction will take place before the fluid is well-mixed. In this case, the reactor should not be modeled as an ideal CSTR because on the time scale that the reaction is taking place, it is not perfectly mixed, even though its cumulative age distribuion function matches what would be expected for an ideal CSTR.</p>
+<p>Thus, the agreement of cumulative age distribuion functions of the real reactor and the ideal reactor model is a necessary, but not sufficient, criterion for ensuring the validity of modeling the real reactor as ideal. It is most likely to fail when studying very fast chemical reactions. Before generating kinetics data, the age function test nonetheless should be performed on the laboratory reactor, but one should not become complacent if the test is successful.</p>
+</section>
+<section id="examples" class="level2" data-number="22.5">
+<h2 data-number="22.5" class="anchored" data-anchor-id="examples"><span class="header-section-number">22.5</span> Examples</h2>
+<p>The first two examples that follow show how to measure the cumulative age distribution function using stimulus-response data. The first example also shows how a reactor’s cumulative age distribution can be compared to that for an equivalent ideal reactor. Additionally, they illustrate the importance of measuring the response for a sufficiently long period of time that the tracer concentration reaches steady-state. The third example illustrates the generation of a cumulative age distribution function from the model for a PFR. It additionally examines the effect of varying fluid density in a PFR upon the cumulative age distribution function.</p>
+<section id="sec-example_22_5_1" class="level3" data-number="22.5.1">
+<h3 data-number="22.5.1" class="anchored" data-anchor-id="sec-example_22_5_1"><span class="header-section-number">22.5.1</span> Measuring the Cumulative Age Distribution Function using Impulse Response Data</h3>
+<p>An engineer needed to measure the cumulative age distribution function for a 10 L stirred tank reactor in which a liquid-phase reaction was taking place. With the reactor operating at a flow rate of 3 L min<sup>-1</sup>, the engineer instantaneously added 5 mg of a tracer to the stirred tank, and measured the tracer concentration in the outlet as a function of time since the injection.</p>
+<p>The first few data are presented in <a href="#tbl-example_22_5_1_data" class="quarto-xref">Table&nbsp;<span>22.1</span></a>, and the full data set is saved in the file, <a href="examples/reb_22_5_1/data.csv">data.csv</a>. Use those data to generate the cumulative age distribution function for the reactor.</p>
+<div class="cell">
+<div id="tbl-example_22_5_1_data" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_22_5_1_data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;22.1: Stirred Tank Response Data.
+</figcaption>
+<div aria-describedby="tbl-example_22_5_1_data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Elapsed Time (min)</th>
+<th style="text-align: center;">Tracer Concentration (mg L<sup>-1</sup>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">0.500</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.5</td>
+<td style="text-align: center;">0.431</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">1.0</td>
+<td style="text-align: center;">0.369</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1.5</td>
+<td style="text-align: center;">0.321</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">2.0</td>
+<td style="text-align: center;">0.275</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This assignment asks me to generate the cumulative age distribution for a stirred tank reactor. It describes a stimulus wherein a fixed amount of tracer was added all at once to the reactor. That is an impulse stimulus. I’ll begin by summarizing the assignment, using appropriate variables to represent each quantity mentioned in the narrative, and I’ll use subscripted “in” and “out” to denote values at the reactor inlet and outlet, respectively. The reacting fluid is a liquid, so assuming it to be incompressible, the volumetric flow rate is constant and it is not necessary to differentiate between the inlet and outlet. The measured response is the mass concentration of tracer, which I’ll represent at <span class="math inline">\(C_{mass}\)</span>. I’ll underline variable symbols that represent a set of values.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary" class="level4" data-number="22.5.1.1">
+<h4 data-number="22.5.1.1" class="anchored" data-anchor-id="assignment-summary"><span class="header-section-number">22.5.1.1</span> Assignment Summary</h4>
+<p><strong>Reactor System</strong>: Stirred tank</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(\underline{F}\left(\lambda\right)\)</span> <em>vs.</em> <span class="math inline">\(\underline{\lambda}\)</span></p>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(V\)</span> = 10 L, <span class="math inline">\(\dot{V}\)</span> = 3 L min<sup>-1</sup>, <span class="math inline">\(m_{impulse}\)</span> = 5.0 mg, <span class="math inline">\(\underline{C}_{mass,out}\)</span> <em>vs.</em> <span class="math inline">\(\underline{t}\)</span></p>
+<p><strong>Stimulus</strong>: Impulse</p>
+</section>
+<section id="mathematical-formulation-of-the-analysis" class="level4" data-number="22.5.1.2">
+<h4 data-number="22.5.1.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-analysis"><span class="header-section-number">22.5.1.2</span> Mathematical Formulation of the Analysis</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><a href="#eq-cum_age_from_impulse" class="quarto-xref">Equation&nbsp;<span>22.4</span></a> relates the response to an impulse stimulus to the cumulative age distribution function. Since that equation is in terms of the tracer weight fraction, I’ll need to re-write it in terms of the data I have available.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\dot{m}_{total}\int_{0}^\lambda \left(w_{out} - w_{in}\big\vert_{t&lt;0}\right)dt}{m_{impulse}}
+\]</span></p>
+<p>Performing the multiplication and noting that the total mass flow times the mass fraction of tracer is equal to the mass flow rate of tracer, <span class="math inline">\(\dot{m}\)</span>, giving an expression in terms of the mass flow of tracer.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\int_{0}^\lambda \left(\dot{m}_{total}w_{out} - \dot{m}_{total}w_{in}\big\vert_{t&lt;0}\right)dt}{m_{impulse}} = \frac{\int_{0}^\lambda \left(\dot{m}_{out} - \dot{m}_{in}\big\vert_{t&lt;0}\right)dt}{m_{impulse}}
+\]</span></p>
+<p>The mass flow of tracer can then be expressed in terms of the volumetric flow rate and the mass concentration of tracer.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\int_{0}^\lambda \left(\dot{V}C_{mass,out} - \dot{V}C_{mass,in}\big\vert_{t&lt;0}\right)dt}{m_{impulse}}
+\]</span></p>
+<p>There wasn’t any tracer in the feed before the engineer applied the impulse, so <span class="math inline">\(C_{mass,in}\big\vert_{t&lt;0}\)</span> is equal to zero, and the volumetric flow rate is constant and can be taken outside of the integral.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\dot{V}\int_{0}^\lambda C_{mass,out}dt}{m_{impulse}}
+\]</span></p>
+</div>
+</div>
+</div>
+<p><strong>Cumulative Age Distribution Function</strong></p>
+<p>The cumulative age distribution function is related to the response to an impulse stimulus as shown in equation (1).</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\dot{V}\int_{0}^\lambda C_{mass,out}dt}{m_{impulse}} \tag{1}
+\]</span></p>
+<p>The integral in equation (1) can be evaluated for each data point using the trapezoid rule. If <span class="math inline">\(i\)</span> is used to index the measured responses, and <span class="math inline">\(N_i\)</span> is the number of measured responses, the value of the cumulative age distribution function from each response can be calculated using equation (2).</p>
+<p><span class="math display">\[
+F_i\left(\lambda_i\right) = \frac{\dot{V}}{m_{impulse}} \sum_{i=2}^{N_i}\left(\frac{C_{mass,i} + C_{mass,i-1}}{2}\left(t_i - t_{i-1}\right)\right)\tag{2}
+\]</span></p>
+</section>
+<section id="results-analysis-and-discussion" class="level4" data-number="22.5.1.3">
+<h4 data-number="22.5.1.3" class="anchored" data-anchor-id="results-analysis-and-discussion"><span class="header-section-number">22.5.1.3</span> Results, Analysis, and Discussion</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>When stimulus-response experiments are performed, the response should be measured for as long as it takes for the tracer flow to reach steady-state. I’m going to plot the response data to make sure that the tracer flow did, in fact reach steady-state.</p>
+</div>
+</div>
+</div>
+<p>The measured outlet tracer concentration is plotted against the elapsed time in <a href="#fig-example_22_5_1_response" class="quarto-xref">Figure&nbsp;<span>22.3</span></a>. The curve has the expected shape and limiting values. Specifically, the instant the 5.0 mg of tracer is injected to the 10 L of fluid in the reactor, the concentration jumps to 0.5 mg L<sup>-1</sup>, as would be expected if the mixing is very rapid. The outlet concentration then decreases steadily because tracer is flowing out, but none is being added to replace it. Eventually, the concentration of tracer goes to zero and holds at that new steady-state value.</p>
+<div id="fig-example_22_5_1_response" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_22_5_1_response-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="examples/reb_22_5_1/response.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_22_5_1_response-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;22.3: Response to the impulse stimulus.
+</figcaption>
+</figure>
+</div>
+<p>Using those response data, the calculations were performed as described above, and the resulting cumulative age distribution function is plotted in <a href="#fig-example_22_5_1_F_vs_lambda" class="quarto-xref">Figure&nbsp;<span>22.4</span></a>. The cumulative age distribution function equals zero at an age of zero and it asymptotically approaches a value of one as the age increases. This is the expected limiting behavior for <span class="math inline">\(F\left(\lambda\right)\)</span>.</p>
+<div id="fig-example_22_5_1_F_vs_lambda" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_22_5_1_F_vs_lambda-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="examples/reb_22_5_1/cum_age_dist.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_22_5_1_F_vs_lambda-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;22.4: Cumulative age distribution function generated from the experimental response to the impulse stimulus
+</figcaption>
+</figure>
+</div>
+<p>The space time, or average residence time, for this reactor is 3.3 min. The cumulative age distribution function for an ideal CSTR operating at that average residence time can be calculated using <a href="#eq-cum_age_dist_cstr" class="quarto-xref">Equation&nbsp;<span>22.10</span></a>. Doing so yields the curve also plotted in <a href="#fig-example_22_5_1_F_vs_lambda" class="quarto-xref">Figure&nbsp;<span>22.4</span></a>. While the assignment did not ask for an assessment of the ideality of the stirred tank, it clearly satisfies the necessary condition that its cumulative age distribution function matches that of an ideal CSTR.</p>
+<p>When the age function for a stirred tank is equal to that for an ideal CSTR operating at the same average residence time, it means that mixing in the stirred tank is very rapid relative to the residence time. If, however, the rate of reaction is much faster than the mixing time, the reactor cannot be modeled as an ideal CSTR, even though the stirred tank satisifes the necessary condition that its age function equals that of an equivalent ideal CSTR.</p>
+<p>Finally, if one carefully examines the response data in <a href="#fig-example_22_5_1_response" class="quarto-xref">Figure&nbsp;<span>22.3</span></a>, a small amount of random error can be seen, especially at larger elapsed times. Interestingly, random error appears to be absent when the response data are processed to find the cumulative age distribution function. The reason for this is the integral in equation (1). Integration tends to smooth out noisy data.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Earlier in this chapter it was stated that the period during which the response is measured should be long enough for the outlet tracer flow to attain steady state. In this example, an impulse stimulus was applied. Suppose that the response was only measured for five minutes after the application of the stimulus. <a href="#fig-example_22_5_1_response" class="quarto-xref">Figure&nbsp;<span>22.3</span></a> shows that after 5 min, the outlet tracer concentraion would be 0.11 mg L<sup>-1</sup>. It would not yet have reached its steady-state value of 0 mg L<sup>-1</sup>. Looking at equation (2), the values of <span class="math inline">\(F\)</span> would not change, and the graph showing the cumulative age distribution function would be the same as <a href="#fig-example_22_5_1_F_vs_lambda" class="quarto-xref">Figure&nbsp;<span>22.4</span></a> except that it would end at an age of 5 min, and <span class="math inline">\(F\)</span> would not reach a value of 1.0. In this case, it would be apparent that the response had not been measured for a sufficiently long time, but no errors would have been introduced.</p>
+<p>However, if the mass of the tracer in the impulse, <span class="math inline">\(m_{tracer}\)</span>, was unknown, and <a href="#eq-total_tracer_in_impulse" class="quarto-xref">Equation&nbsp;<span>22.5</span></a> had to be used, the mass of tracer in the impulse would be incorrect because only part of the response would be included in the integral. This, in turn would lead to incorrect values of <span class="math inline">\(F\)</span>. For example, if only the first 10 response data were included in <a href="#eq-total_tracer_in_impulse" class="quarto-xref">Equation&nbsp;<span>22.5</span></a>, it would predict that the mass of tracer in the impulse was 3.71 mg, and not the actual amount of 5 mg.</p>
+<p>That, in turn, changes the cumulative age distribution function as shown in <a href="#fig-example_22_5_1_comp" class="quarto-xref">Figure&nbsp;<span>22.5</span></a>. When the true impulse mass is used, the resulting cumulative age distribution function is correct, and it is apparent that the response was not measured for a sufficiently long time because <span class="math inline">\(F\)</span> never reaches a value of 1.</p>
+<div id="fig-example_22_5_1_comp" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_22_5_1_comp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="examples/reb_22_5_1/cum_age_dist_comp.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_22_5_1_comp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;22.5: Cumulative age distribution function based upon the first 10 response data calculated using the actual impulse mass and the impulse mass calculated using <a href="#eq-total_tracer_in_impulse" class="quarto-xref">Equation&nbsp;<span>22.5</span></a>.
+</figcaption>
+</figure>
+</div>
+<p>However, if <a href="#eq-total_tracer_in_impulse" class="quarto-xref">Equation&nbsp;<span>22.5</span></a> is used to calculate the impulse mass, <a href="#fig-example_22_5_1_comp" class="quarto-xref">Figure&nbsp;<span>22.5</span></a> shows that the values of <span class="math inline">\(F\)</span> are incorrect <u>and</u> those incorrect values indicate that <span class="math inline">\(F\)</span> reaches a value of 1 at the final measured response. For this reason, the response should be plotted or examined to make sure the outlet tracer concentration reached steady-state during the stimulus-response experiment before proceding to generate the cumulative age distribution function. If the response is not checked for completeness, it might go unnoticed that the cumulative age distribution function is incorrect!</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-example_22_5_2" class="level3" data-number="22.5.2">
+<h3 data-number="22.5.2" class="anchored" data-anchor-id="sec-example_22_5_2"><span class="header-section-number">22.5.2</span> Measuring the Cumulative Age Distribution Function using Step Change Response Data</h3>
+<p>A gas-phase reaction is taking place at steady-state in an adiabatic flow reactor. The reaction causes an increase in both the total number of moles and the temperature. As a consequence, the inlet volumetric flow rate is 10 L min<sup>-1</sup> and the outlet volumetric flow rate is 12.2 L min<sup>-1</sup>. The flowing feed gas contains an inert tracer at a concentration of 2 mmol L<sup>-1</sup>. To measure the cumulative age distribution function, the feed flow of the tracer, but nothing else, was stopped, and the molar concentration of tracer leaving the reactor was measured as a function of time. It should be noted that because the tracer flow rate was very, very small, the total inlet and outlet flow rates were not affected when the tracer flow was stopped.</p>
+<p>The first few measured outlet concentrations are presented in <a href="#tbl-example_22_5_2_data" class="quarto-xref">Table&nbsp;<span>22.2</span></a>, and the full data set is saved in the file, <a href="examples/reb_22_5_2/data.csv">data.csv</a>. Use those data to generate the cumulative age distribution function for the reactor.</p>
+<div class="cell">
+<div id="tbl-example_22_5_2_data" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_22_5_2_data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;22.2: Reactor Response Data.
+</figcaption>
+<div aria-describedby="tbl-example_22_5_2_data-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output-display">
+<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Elapsed Time (min)</th>
+<th style="text-align: center;">Tracer Concentration (mmol L<sup>-1</sup>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0.0</td>
+<td style="text-align: center;">1.640</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.2</td>
+<td style="text-align: center;">1.010</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.4</td>
+<td style="text-align: center;">0.624</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0.6</td>
+<td style="text-align: center;">0.367</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0.8</td>
+<td style="text-align: center;">0.234</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</figure>
+</div>
+</div>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This assignment describes an experiment wherein a tracer was flowing at a steady rate, when the amount was suddenly changed to a different steady level. That’s a step-change stimulus, and the assignment asks me to use the resulting response data to generate the cumulative age distribution function.</p>
+<p>I’ll begin by summarizing the assignment using appropriate variables to represent each given quantity. I’ll use subscripted “in” and “out” to denote the reactor inlet and outlet, and I’ll underline variable symbols that represent a set of values.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary-1" class="level4" data-number="22.5.2.1">
+<h4 data-number="22.5.2.1" class="anchored" data-anchor-id="assignment-summary-1"><span class="header-section-number">22.5.2.1</span> Assignment Summary</h4>
+<p><strong>Reactor System</strong>: Flow reactor of unspecified type</p>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(\underline{F}\left(\lambda\right)\)</span> <em>vs.</em> <span class="math inline">\(\underline{\lambda}\)</span></p>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(\dot{V}_{in}\)</span> = 10 L min<sup>1</sup>, <span class="math inline">\(\dot{V}_{out}\)</span> = 12.2 L min<sup>-1</sup>, <span class="math inline">\(C_{in}\big\vert_{t&lt;0}\)</span> = 2.0 mmol L<sup>-1</sup>, <span class="math inline">\(C_{in}\big\vert_{t&gt;0}\)</span> = 0.0, <span class="math inline">\(\underline{C}_{out}\)</span> <em>vs.</em> <span class="math inline">\(\underline{t}\)</span></p>
+<p><strong>Stimulus</strong>: Step Change</p>
+</section>
+<section id="mathematical-formulation-of-the-analysis-1" class="level4" data-number="22.5.2.2">
+<h4 data-number="22.5.2.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-analysis-1"><span class="header-section-number">22.5.2.2</span> Mathematical Formulation of the Analysis</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><a href="#eq-cum_age_from_step" class="quarto-xref">Equation&nbsp;<span>22.7</span></a> relates the cumulative age distribution function to the response to a step change stimulus. It is expressed in terms of mass fractions, but the experimental data are in terms of molar concentration, so I’ll need to convert it to those units.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{w_{out}\big\vert_{t=\lambda} - w_{in}\big\vert_{t&lt;0}}{w_{in}\big\vert_{t&gt;0} - w_{in}\big\vert_{t&lt;0}}
+\]</span></p>
+<p>Multiplying the numerator and denominator by the total mass flow rate, yields an expression in terms of the tracer mass flow rate.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\dot{m}_{total}w_{out}\big\vert_{t=\lambda} - \dot{m}_{total}w_{in}\big\vert_{t&lt;0}}{\dot{m}_{total}w_{in}\big\vert_{t&gt;0} - \dot{m}_{total}w_{in}\big\vert_{t&lt;0}} = \frac{\dot{m}_{out}\big\vert_{t=\lambda} - \dot{m}_{in}\big\vert_{t&lt;0}}{\dot{m}_{in}\big\vert_{t&gt;0} - \dot{m}_{in}\big\vert_{t&lt;0}}
+\]</span></p>
+<p>Dividing numerator and denominator by the molecular weight of the tracer yields an expression in terms of the tracer molar flow rate.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\frac{\dot{m}_{out}}{M}\big\vert_{t=\lambda} - \frac{\dot{m}_{in}\big\vert_{t&lt;0}}{M}}{\frac{\dot{m}_{in}\big\vert_{t&gt;0}}{M} - \frac{\dot{m}_{in}\big\vert_{t&lt;0}}{M}} = \frac{\dot{n}_{out}\big\vert_{t=\lambda} - \dot{n}_{in}\big\vert_{t&lt;0}}{\dot{n}_{in}\big\vert_{t&gt;0} - \dot{n}_{in}\big\vert_{t&lt;0}}
+\]</span></p>
+<p>Finally, the molar flow rates of tracer can be expressed in terms of the total volumetric flow rates and the molar concentration of tracer.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\dot{V}_{out}C_{out}\big\vert_{t=\lambda} - \dot{V}_{in}C_{in}\big\vert_{t&lt;0}}{\dot{V}_{in}C_{in}\big\vert_{t&gt;0} - \dot{V}_{in}C_{in}\big\vert_{t&lt;0}}
+\]</span></p>
+<p>Additionally, the concentration of tracer in the feed after the stimulus is equal to zero.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\dot{V}_{out}C_{out}\big\vert_{t=\lambda} - \dot{V}_{in}C_{in}\big\vert_{t&lt;0}}{ - \dot{V}_{in}C_{in}\big\vert_{t&lt;0}} = \frac{\dot{V}_{in}C_{in}\big\vert_{t&lt;0}- \dot{V}_{out}C_{out}\big\vert_{t=\lambda}}{ \dot{V}_{in}C_{in}\big\vert_{t&lt;0}}
+\]</span></p>
+</div>
+</div>
+</div>
+<p>The value of the cumulative age distribution function at each of the times when the response was measured can be calculated using equation (1).</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{\dot{V}_{in}C_{in}\big\vert_{t&lt;0}- \dot{V}_{out}C_{out}\big\vert_{t=\lambda}}{ \dot{V}_{in}C_{in}\big\vert_{t&lt;0}} \tag{1}
+\]</span></p>
+</section>
+<section id="results-analysis-and-discussion-1" class="level4" data-number="22.5.2.3">
+<h4 data-number="22.5.2.3" class="anchored" data-anchor-id="results-analysis-and-discussion-1"><span class="header-section-number">22.5.2.3</span> Results, Analysis, and Discussion</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Before I present the cumulative age distribution function results, I’ll plot the response data. By doing so, I can determine whether the tracer flow had attained steady-state during the interval when the response was recorded. Then, if it had, I’ll present the cumulative age distribution function results.</p>
+</div>
+</div>
+</div>
+<p>The response data are plotted in <a href="#fig-example_22_5_2_response" class="quarto-xref">Figure&nbsp;<span>22.6</span></a>. After the application of the stimulus there is no tracer flowing into the reactor. So after the stimulus, the tracer flow at the outlet should reach a steady-state value of zero. The figure shows that this is true, so the response data are suitable for generating the cumulative age distribution function.</p>
+<p>Before the step change, the steady-state inlet tracer concentration was 2 mM, but due to expansion of the gas, the steady state outlet concentration was ca. 1.64 mM. The instant the stimulus is applied at inlet, the outlet concentration of tracer will still equal 1.64 mM, as seen in <a href="#fig-example_22_5_2_response" class="quarto-xref">Figure&nbsp;<span>22.6</span></a>. Over time, as the tracer within the reactor flows out and no new tracer is added, the outlet tracer concentration falls to zero.</p>
+<div id="fig-example_22_5_2_response" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_22_5_2_response-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="examples/reb_22_5_2/response.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_22_5_2_response-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;22.6: Reactor response following the step-change stimulus.
+</figcaption>
+</figure>
+</div>
+<p>Knowing that the response had reached steady-state during the time it was measured, the calculations were performed as described above. The resulting cumulative age distribution function is shown in <a href="#fig-example_22_5_2_cum_age_dist" class="quarto-xref">Figure&nbsp;<span>22.7</span></a>. It displays the expected limiting behavior where <span class="math inline">\(F\left(0\right)=0\)</span> and <span class="math inline">\(F\left(\infty\right)=1\)</span>.</p>
+<div id="fig-example_22_5_2_cum_age_dist" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_22_5_2_cum_age_dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="examples/reb_22_5_2/cum_age_dist.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_22_5_2_cum_age_dist-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;22.7: Cumulative age distribution function for the reactor.
+</figcaption>
+</figure>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>The note at the end of <a href="#sec-example_22_5_1" class="quarto-xref">Example&nbsp;<span>22.5.1</span></a> showed, for an impulse stimulus, that if the response had not reached steady-state during the time it was monitored, and if the impulse mass was calculated using <a href="#eq-total_tracer_in_impulse" class="quarto-xref">Equation&nbsp;<span>22.5</span></a>, an incorrect cumulative age distribution function would be generated.</p>
+<p>However, if the impulse mass was measured and used in the calculation of the cumulative age distribution function, the results will be valid. However, the resulting cumulative age distribution function will not reach its final value of 1.0. The same thing will happen in the case of a step-change stimulus: if the response does not reach steady state during the time it is measured, the resulting cumulative age distribution function will be correct, but it will not reach its final value of 1.0. This is apparent from <a href="#eq-cum_age_from_step" class="quarto-xref">Equation&nbsp;<span>22.7</span></a>, reproduced below. When the response reaches steady-state, <span class="math inline">\(w_{out}\big\vert_{t=\lambda}\)</span> becomes equal to <span class="math inline">\(w_{in}\big\vert_{t&gt;0}\)</span>, making the numerator and denominator equal to each other and <span class="math inline">\(F\)</span> equal to 1.0. Prior to the response reaching steady-state, <span class="math inline">\(F\)</span> will be less than 1.0, but correct.</p>
+<p><span class="math display">\[
+F\left(\lambda\right) = \frac{w_{out}\big\vert_{t=\lambda} - w_{in}\big\vert_{t&lt;0}}{w_{in}\big\vert_{t&gt;0} - w_{in}\big\vert_{t&lt;0}}
+\]</span></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-example_22_5_3" class="level3" data-number="22.5.3">
+<h3 data-number="22.5.3" class="anchored" data-anchor-id="sec-example_22_5_3"><span class="header-section-number">22.5.3</span> Effect of Density Variation on the Cumulative Age Distribution Function of a PFR</h3>
+<p>A tubular reactor is being used for the gas-phase decomposition of reagent A according to reaction (1). The reactor operates at steady-state using a feed that contains 75% reagent A and 25% inert gas at 3 atm and 375 °C. The feed flows into the 2.5 cm, diameter, 8 m long reactor at 100 cm<sup>3</sup> s<sup>-1</sup> (0.44 g s<sup>-1</sup>). The reactor tube is surrounded by molten salt, also at 375 °C. The heat transfer coefficient is 187 kJ h<sup>-1</sup> m<sup>-2</sup> K<sup>-1</sup>. The reactor is packed with catalyst particles that have a 0.25 cm diameter and a sphericity of 0.7. The bed porosity is 0.6. The presence of the packing causes a pressure drop along the length of the reactor.</p>
+<p>The rate expression for the reaction is given in equation (2) where the Arrhenius pre-exponential factor and activation energy for the forward rate coefficient are 9.0 x 10<sup>17</sup> mol cm<sup>3</sup> s<sup>-1</sup> atm<sup>-1</sup> and 285 kJ mol<sup>-1</sup>, respectively. The Arrhenius parameters for the reverse rate coefficient are 4.09 x 10<sup>-4</sup> mol cm<sup>3</sup> s<sup>-1</sup> atm<sup>-4</sup> and 85 kJ mol<sup>-1</sup>. The heat of reaction is constant and equal to 200 kJ mol<sup>-1</sup>. The heat capacities of A, Y, Z, and I are constant and equal to 11.7 cal mol<sup>-1</sup> K<sup>-1</sup>, 8.3 cal mol<sup>-1</sup> K<sup>-1</sup>, 4.3 cal mol<sup>-1</sup> K<sup>-1</sup>, and 5.8 cal mol<sup>-1</sup> K<sup>-1</sup>, respectively. The gas viscosity is constant and equal to 0.27 cP.</p>
+<p>If this reactor is an ideal PFR, what is its cumulative age distribution function?</p>
+<p><span class="math display">\[
+A \rightleftarrows Y + 3 Z \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+r = k_fP_A - k_rP_YP_Z^3 \tag{2}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The assignment asks me to generate the cumulative age distribution function for an ideal PFR. It does not present stimulus-response data, so the cumulative age distribution function will need to be generated from a model for the reactor. I’ll begin by summarizing the assignment using appropriate variable symbols for the given quantities. I’ll use a subscripted “0” to denote quantities at the reactor inlet, and “1” for quantities at the outlet.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary-2" class="level4" data-number="22.5.3.1">
+<h4 data-number="22.5.3.1" class="anchored" data-anchor-id="assignment-summary-2"><span class="header-section-number">22.5.3.1</span> Assignment Summary</h4>
+<p><strong>Reactor System</strong>: Ideal, steady-state PFR with heat exchange and pressure drop</p>
+<p><strong>Reactor Schematic</strong>:</p>
+<div id="fig-example_22_5_3_schematic" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_22_5_3_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="examples/reb_22_5_3/pfr_non_adiabatic.png" class="img-fluid figure-img" style="width:50.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_22_5_3_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;22.8: Schematic representaion of the ideal PFR.
+</figcaption>
+</figure>
+</div>
+<p><strong>Quantity of Interest</strong>: <span class="math inline">\(F\left(\lambda\right)\)</span></p>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(y_{A,0}\)</span> = 0.75, <span class="math inline">\(y_{I,0}\)</span> = 0.25, <span class="math inline">\(P_0\)</span> = 3 atm, <span class="math inline">\(T_0\)</span> = 375 °C, <span class="math inline">\(D\)</span> = 2.5 cm, <span class="math inline">\(L\)</span> = 8 m, <span class="math inline">\(\dot{V}_0\)</span> = 100 cm<sup>3</sup> s<sup>-1</sup>, <span class="math inline">\(\dot{m}_{total}\)</span> = 0.44 g s<sup>-1</sup>, <span class="math inline">\(T_{ex}\)</span> = 375 °C, <span class="math inline">\(U\)</span> = 187 kJ h<sup>-1</sup> m<sup>-2</sup> K<sup>-1</sup>, <span class="math inline">\(D_p\)</span> = 0.25 cm, <span class="math inline">\(\Phi_s\)</span> = 0.7, <span class="math inline">\(\epsilon\)</span> = 0.6, <span class="math inline">\(k_{0,f}\)</span> = 9.0 x 10<sup>17</sup> mol cm<sup>3</sup> s<sup>-1</sup> atm<sup>-1</sup>, <span class="math inline">\(E_f\)</span> = 285 kJ mol<sup>-1</sup>, <span class="math inline">\(k_{0,r}\)</span> = 4.09 x 10<sup>-4</sup> mol cm<sup>3</sup> s<sup>-1</sup> atm<sup>-4</sup>, <span class="math inline">\(E_r\)</span> = 85 kJ mol<sup>-1</sup>, <span class="math inline">\(\Delta H\)</span> = 200 kJ mol<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,A}\)</span> = 11.7 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,Y}\)</span> = 8.3 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,Z}\)</span> = 4.3 cal mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,I}\)</span> = 5.8 cal mol<sup>-1</sup> K<sup>-1</sup>, and <span class="math inline">\(\mu\)</span> = 0.27 cP.</p>
+</section>
+<section id="mathematical-formulation-of-the-analysis-2" class="level4" data-number="22.5.3.2">
+<h4 data-number="22.5.3.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-analysis-2"><span class="header-section-number">22.5.3.2</span> Mathematical Formulation of the Analysis</h4>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The cumulative age distribution function for an ideal PFR is given in <a href="#eq-cum_age_dist_pfr" class="quarto-xref">Equation&nbsp;<span>22.15</span></a>.</p>
+<p><span class="math display">\[
+\begin{matrix}
+F_{PFR}\left(\lambda\right) = 0, \, \lambda &lt; \overline{t} \\
+F_{PFR}\left(\lambda\right) = 1, \, \lambda \ge \overline{t}
+\end{matrix}
+\]</span></p>
+<p>If the volumetric flow rate is constant, <span class="math inline">\(\overline{t}\)</span> can be calculated directly using <a href="#eq-pfr_residence_time_const_rho" class="quarto-xref">Equation&nbsp;<span>22.14</span></a>. Here, however, the gaseous reacting fluid will expand/contract due to the change in the total moles, temperature, and pressure along the length of the reactor. In this case the volumetric flow rate along the length of the reactor is needed to calculate <span class="math inline">\(\overline{t}\)</span> using <a href="#eq-pfr_residence_time" class="quarto-xref">Equation&nbsp;<span>22.13</span></a>. I need a model for the ideal PFR to calculate the volumetric flow rate profile, so I’ll generate the PFR model first.</p>
+<p>I need design equations to model the reactor. Mole balances are always included in the reactor design equations. I’ll write mole balances for each of the reagents, A, Y, Z, and I. The reactor is not isothermal, so I’ll also need an energy balance on the reacting fluid. There is a heat exchange fluid (actually molten salt), but I can solve the reactor design equations independently of an energy balance on the exchange fluid because I know the temperature of the exchange fluid. Therefore, I will not include an energy balance on the heat exchange fluid in the design equations. The assignment narrative says that there is a pressure drop, so I will also need to include a momentum balance.</p>
+<p>The general form of a mole balance for an ideal PFR is given in <a href="section_3_design_equations.html#eq-pfr_mol_balance" class="quarto-xref">Equation&nbsp;<span>6.33</span></a>.</p>
+<p><span class="math display">\[
+\frac{\partial \dot{n}_i}{\partial z} + \frac{\pi D^2}{4\dot{V}} \cancelto{0}{\frac{\partial\dot{n}_i}{\partial t}} - \frac{\pi D^2\dot{n}_i}{4\dot{V}^2} \cancelto{0}{\frac{\partial \dot{V}}{\partial t}}  =\frac{\pi D^2}{4}\cancelto{\nu_ir}{\sum_j \nu_{i,j}r_j}
+\]</span></p>
+<p>The present reactor operates at steady-state, so the time derivatives are both equal to zero. There is only one reaction taking place, so the summation reduces to a single term, and it isn’t necessary to index the reaction. The stoichiometric coefficients of A, Y, Z, and I are equal to -1, 1, 3, and 0, respectively.</p>
+<p><span class="math display">\[
+\frac{\partial \dot{n}_i}{\partial z} = \frac{\pi D^2}{4} \nu_ir
+\]</span></p>
+<p>The general form of the ideal PFR energy balance is given in <a href="section_3_design_equations.html#eq-pfr_energy_balance" class="quarto-xref">Equation&nbsp;<span>6.34</span></a>.</p>
+<p><span class="math display">\[
+\begin{split}
+    \left(\sum_i \dot{n}_i \hat{C}_{p,i} \right) \frac{\partial T}{\partial z} +&amp; \frac{\pi D^2}{4\dot{V}} \sum_i \left(\dot{n}_i \hat{C}_{p,i} \right) \cancelto{0}{\frac{\partial T}{\partial t}} - \frac{\pi D^2}{4} \cancelto{0}{\frac{\partial P}{\partial t}} \\ &amp;= \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4}\cancelto{r\Delta H}{\sum_j r_j \Delta H_j}
+\end{split}
+\]</span></p>
+<p>As with the mole balance, both time derivatives are equal to zero since the reactor operates at steady-state. Also, there is only one reaction, so the final sum reduces to a single term, and it isn’t necessary to index the reaction.</p>
+<p><span class="math display">\[
+\left(\sum_i \dot{n}_i \hat{C}_{p,i} \right) \frac{\partial T}{\partial z} = \pi D U\left( T_{ex} - T  \right) - \frac{\pi D^2}{4} r \Delta H
+\]</span></p>
+<p>The energy balance can be written in the form of a derivative expression by expanding the sum and dividing both sides of the equation by it.</p>
+<p><span class="math display">\[
+\frac{dT}{dz} = \frac{\pi DU\left(T_{ex} - T\right) - \frac{\pi D^2}{4}r\Delta H}{\dot{n}_A\hat{C}_{p,A} + \dot{n}_Y\hat{C}_{p,Y} + \dot{n}_Z\hat{C}_{p,Z} + \dot{n}_I\hat{C}_{p,I}}
+\]</span></p>
+<p>For a packed bed tubular reactor, the Ergun equation, <a href="section_3_design_equations.html#eq-pfr_ergun_eqn" class="quarto-xref">Equation&nbsp;<span>6.42</span></a>, is the momentum balance.</p>
+</div>
+</div>
+</div>
+<center>
+<strong>Ideal PFR Model</strong>
+</center>
+<p><strong>Design Equations</strong></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_A}{dz} = - \frac{\pi D^2}{4}r \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Y}{dz} = \frac{\pi D^2}{4}r \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Z}{dz} = 3\frac{\pi D^2}{4}r \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_I}{dz} = 0 \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dT}{dz} = \frac{\pi DU\left(T_{ex} - T\right) - \frac{\pi D^2}{4}r\Delta H}{\dot{n}_A\hat{C}_{p,A} + \dot{n}_Y\hat{C}_{p,Y} + \dot{n}_Z\hat{C}_{p,Z} + \dot{n}_I\hat{C}_{p,I}} \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dP}{dz} = - \frac{1-\epsilon}{\epsilon^3}\frac{G^2}{\rho \Phi_s D_p} \left[\frac{150\left(1-\epsilon\right)\mu}{\Phi_s D_p G} + 1.75\right] \tag{8}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The design equations are IVODEs, and they are written in the form of derivatives expressions. The independent variable is <span class="math inline">\(z\)</span>, and the dependent variables are <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, <span class="math inline">\(\dot{n}_I\)</span>, <span class="math inline">\(T\)</span>, and <span class="math inline">\(P\)</span>. I will solve them numerically, and to do so I need initial values and a stopping criterion. The reactor inlet can be defined as <span class="math inline">\(z=0\)</span>, and with that definition, the equations should be integrated until <span class="math inline">\(z=L\)</span>, so that is the stopping criterion. Having defined <span class="math inline">\(z=0\)</span> as the reactor inlet, the remaining initial values are the values of the dependent variables at the reactor inlet. For this system, there isn’t any Y or Z at the inlet, and the inlet temperature and pressure are given. The inlet molar flow rates of A and I can be found by using the ideal gas law to calculate the total inlet molar flow rate and then multiplying by the inlet mole fractions of A and I.</p>
+</div>
+</div>
+</div>
+<p><strong>Initial Values and Stopping Criterion</strong></p>
+<div id="tbl-example_22_5_3_initial_values" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_22_5_3_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;22.3: Initial values and stopping criterion for solving the design equations, (3) through (8).
+</figcaption>
+<div aria-describedby="tbl-example_22_5_3_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(L\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(y_{A,0}\displaystyle\frac{P_0\dot{V}_0}{RT_0}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_Y\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_I\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(y_{I,0}\displaystyle\frac{P_0\dot{V}_0}{RT_0}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(T_0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(P\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(P_0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In addition to the initial values and stopping criterion, I will also need to write a derivatives function that will be used by an IVODE solver to solve the design equations numerically. The derivatives function will receive the values of the independent and dependent variables at the start of an integration step, and it must calculate and return the corresponding values of the derivatives of the dependent variables with respect to the independent variable.</p>
+<p>Before the derivatives can be evaluated, all of the unknown quantities appearing in the derivatives expressions must be calculated. Looking at the derivatives expressions I see that <span class="math inline">\(r\)</span>, <span class="math inline">\(G\)</span>, and <span class="math inline">\(\rho\)</span> appear in the derivatives expressions and are unknown.</p>
+<p>The rate can be calculated using the rate expression given in the assignment narrative. Before that can be done, the rate coefficients must be calculated using the Arrhenius expression, <a href="section_2_rates_and_expressions.html#eq-arrhenius" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>. The partial pressures in the rate expression can be found by calculating the mole fractions of A, Y, and Z and multiplying the total pressure by them.</p>
+<p>The mass velocity, <span class="math inline">\(G\)</span>, is simply the total mass flow rate divided by the cross-sectional area of the tubular reactor. The density will vary as the gas expands/contracts. However, it can be calculated as the ratio of the total mass flow rate to the volumetric flow rate. The volumetric flow rate can be calculated using the ideal gas law.</p>
+<p>Once <span class="math inline">\(r\)</span>, <span class="math inline">\(G\)</span>, and <span class="math inline">\(\rho\)</span> have been calculated, the design equations can be evaluated and their values returned.</p>
+</div>
+</div>
+</div>
+<p><strong>PFR Derivatives Function</strong></p>
+<p><u>Arguments</u>: <span class="math inline">\(z\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_Y\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, <span class="math inline">\(\dot{n}_I\)</span>, <span class="math inline">\(T\)</span>, and <span class="math inline">\(P\)</span>.</p>
+<p><u>Returns</u>: <span class="math inline">\(\frac{d\dot{n}_A}{dz}\)</span>, <span class="math inline">\(\frac{d\dot{n}_Y}{dz}\)</span>, <span class="math inline">\(\frac{d\dot{n}_Z}{dz}\)</span>, <span class="math inline">\(\frac{d\dot{n}_I}{dz}\)</span>, <span class="math inline">\(\frac{dT}{dz}\)</span>, and <span class="math inline">\(\frac{dP}{dz}\)</span>.</p>
+<p><u>Algorithm</u>:</p>
+<p><span class="math display">\[
+k_f = k_{0,f}\exp{\left(\frac{-E_f}{RT}\right)} \tag{9}
+\]</span></p>
+<p><span class="math display">\[
+k_r = k_{0,r}\exp{\left(\frac{-E_r}{RT}\right)} \tag{10}
+\]</span></p>
+<p><span class="math display">\[
+P_A = \frac{\dot{n}_AP}{\dot{n}_A + \dot{n}_Y + \dot{n}_Z + \dot{n}_I} \tag{11}
+\]</span></p>
+<p><span class="math display">\[
+P_Y = \frac{\dot{n}_YP}{\dot{n}_A + \dot{n}_Y + \dot{n}_Z + \dot{n}_I} \tag{12}
+\]</span></p>
+<p><span class="math display">\[
+P_Z = \frac{\dot{n}_ZP}{\dot{n}_A + \dot{n}_Y + \dot{n}_Z + \dot{n}_I} \tag{13}
+\]</span></p>
+<p><span class="math display">\[
+r = k_fP_A - k_rP_YP_Z^3 \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+G = \frac{4\dot{m}_{total}}{\pi D^2} \tag{14}
+\]</span></p>
+<p><span class="math display">\[
+\rho = \frac{\dot{m}_{total}}{\dot{V}} = \frac{\dot{m}_{total}P}{\left(\dot{n}_A + \dot{n}_Y + \dot{n}_Z + \dot{n}_I\right)RT} \tag{15}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_A}{dz} = - \frac{\pi D^2}{4}r \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Y}{dz} = \frac{\pi D^2}{4}r \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Z}{dz} = 3\frac{\pi D^2}{4}r \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_I}{dz} = 0 \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dT}{dz} = \frac{\pi DU\left(T_{ex} - T\right) - \frac{\pi D^2}{4}r\Delta H}{\dot{n}_A\hat{C}_{p,A} + \dot{n}_Y\hat{C}_{p,Y} + \dot{n}_Z\hat{C}_{p,Z} + \dot{n}_I\hat{C}_{p,I}} \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dP}{dz} = - \frac{1-\epsilon}{\epsilon^3}\frac{G^2}{\rho \Phi_s D_p} \left[\frac{150\left(1-\epsilon\right)\mu}{\Phi_s D_p G} + 1.75\right] \tag{8}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>At this point I have everything I need to solve the reactor design equations numerically using an IVODE solver. I don’t need to solve them for different reactor parameters or inputs, so I’ll write a simple reactor function that calculates the initial values and then uses an IVODE solver to solve the design equations. Doing so will return corresponding sets of values of the independent and dependent variables that span the range from the reactor inlet to its outlet. The reactor function simply needs to return those profiles.</p>
+</div>
+</div>
+</div>
+<p><strong>PFR Reactor Function</strong></p>
+<p><u>Arguments</u>: none.</p>
+<p><u>Returns</u>: <span class="math inline">\(\underline{z}\)</span>, <span class="math inline">\(\underline{\dot{n}}_A\)</span>, <span class="math inline">\(\underline{\dot{n}}_Y\)</span>, <span class="math inline">\(\underline{\dot{n}}_Z\)</span>, <span class="math inline">\(\underline{\dot{n}}_I\)</span>, <span class="math inline">\(\underline{T}\)</span>, and <span class="math inline">\(\underline{P}\)</span></p>
+<p><u>Algorithm</u>:</p>
+<p><span class="math display">\[
+\begin{matrix}
+\text{initial values, stopping criterion, and PFR derivatives function}\\
+\Downarrow\\
+\text{IVODE solver}\\
+\Downarrow\\
+\underline{z}, \underline{\dot{n}}_A, \underline{\dot{n}}_Y, \underline{\dot{n}}_Z, \underline{\dot{n}}_I, \underline{T}, \underline{P}
+\end{matrix} \tag{16}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The cumulative age distribution function for an ideal PFR is given in <a href="#eq-cum_age_dist_pfr" class="quarto-xref">Equation&nbsp;<span>22.15</span></a>.</p>
+<p><span class="math display">\[
+\begin{matrix}
+F_{PFR}\left(\lambda\right) = 0, \, \lambda &lt; \overline{t} \\
+F_{PFR}\left(\lambda\right) = 1, \, \lambda \ge \overline{t}
+\end{matrix}
+\]</span></p>
+<p>I needed the reactor model to calculate <span class="math inline">\(\overline{t}\)</span>. <a href="#eq-pfr_residence_time" class="quarto-xref">Equation&nbsp;<span>22.13</span></a> is used to do so. More specifically, solving the PFR design equations will given the molar flow rates of the reagents, temperature and pressure along the length of the reactor. They can be used to calculate the volumetric flow rate along the length of the reactor.</p>
+<p><span class="math display">\[
+\overline{t} = A\int_0^L\frac{dz}{\dot{V}}
+\]</span></p>
+<p>The reactor profiles, including the calculated volumetric flow rate profile will not be analytical functions. They will take the form of a table of values. As such, the trapezoid rule can be used to evaluate the integral and calculate <span class="math inline">\(\overline{t}\)</span>.</p>
+</div>
+</div>
+</div>
+<center>
+<strong>Cumulative Age Distribution Function</strong>
+</center>
+<p><strong>Equations</strong></p>
+<p><span class="math display">\[
+\begin{matrix}
+F_{PFR}\left(\lambda\right) = 0, \, \lambda &lt; \overline{t} \\
+F_{PFR}\left(\lambda\right) = 1, \, \lambda \ge \overline{t}
+\end{matrix} \tag{17}
+\]</span></p>
+<p><span class="math display">\[
+\overline{t} = A\int_0^L\frac{dz}{\dot{V}} \tag{18}
+\]</span></p>
+<p>Let <span class="math inline">\(i\)</span> index the corresponding values of <span class="math inline">\(\underline{z}\)</span>, <span class="math inline">\(\underline{\dot{n}}_A\)</span>, <span class="math inline">\(\underline{\dot{n}}_Y\)</span>, <span class="math inline">\(\underline{\dot{n}}_Z\)</span>, <span class="math inline">\(\underline{\dot{n}}_I\)</span>, <span class="math inline">\(\underline{T}\)</span>, and <span class="math inline">\(\underline{P}\)</span> calculated using the PFR reactor function, and let <span class="math inline">\(N_i\)</span> equal the number of values in each of those arrays.</p>
+<p><span class="math display">\[
+\dot{V}_i = \frac{\left(\dot{n}_{A,i} + \dot{n}_{Y,i} + \dot{n}_{Z,i} + \dot{n}_{I,i}\right)RT_i}{P_i}\tag{19}
+\]</span></p>
+<p><span class="math display">\[
+A = \frac{\pi D^2}{4} \tag{20}
+\]</span></p>
+<p><span class="math display">\[
+\overline{t} = A \sum_{i=2}^{N_i} \left( \frac{1}{2}\left( \frac{1}{\dot{V}_{i-1}} + \frac{1}{\dot{V}_{i}} \right)\left( z_i - z_{i-1} \right) \right) \tag{21}
+\]</span></p>
+<p><strong>Algorithm</strong></p>
+<p><span class="math display">\[
+\begin{matrix}
+\text{PFR reactor function} \\
+\Downarrow \\
+\underline{z}, \underline{\dot{n}}_A, \underline{\dot{n}}_Y, \underline{\dot{n}}_Z, \underline{\dot{n}}_I, \underline{T}, \underline{P}
+\end{matrix} \tag{22}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\dot{V}_i = \frac{\left(\dot{n}_{A,i} + \dot{n}_{Y,i} + \dot{n}_{Z,i} + \dot{n}_{I,i}\right)RT_i}{P_i}\tag{19}
+\]</span></p>
+<p><span class="math display">\[
+A = \frac{\pi D^2}{4} \tag{20}
+\]</span></p>
+<p><span class="math display">\[
+\overline{t} = A \sum_{i=2}^{N_i} \left( \frac{1}{2}\left( \frac{1}{\dot{V}_{i-1}} + \frac{1}{\dot{V}_{i}} \right)\left( z_i - z_{i-1} \right) \right) \tag{21}
+\]</span></p>
+</section>
+<section id="results-analysis-and-discussion-2" class="level4" data-number="22.5.3.3">
+<h4 data-number="22.5.3.3" class="anchored" data-anchor-id="results-analysis-and-discussion-2"><span class="header-section-number">22.5.3.3</span> Results, Analysis, and Discussion</h4>
+<p>The calculations were performed as described above, and in fact, the volumetric flow rate does increase significantly, as shown in <a href="#fig-example_22_5_3_VFR_profile" class="quarto-xref">Figure&nbsp;<span>22.9</span></a>. This is largely due to the change in the total molar flow rate; the conversion is 80.9%. The temperature only drops slightly to 364 °C, and similarly the pressure drop to 2.61 atm is small.</p>
+<div id="fig-example_22_5_3_VFR_profile" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_22_5_3_VFR_profile-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="examples/reb_22_5_3/VFR_profile.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_22_5_3_VFR_profile-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;22.9: Variation of the volumetric flow rate along the length of the reactor.
+</figcaption>
+</figure>
+</div>
+<p>This has a significant effect upon <span class="math inline">\(\overline{t}\)</span>, which was found to equal 20.4 s. Consequently, the cumulative age distribution function is given by equation (22).</p>
+<p><span class="math display">\[
+\begin{matrix}
+F_{PFR}\left(\lambda\right) = 0, \, \lambda &lt; 20.4 s \\
+F_{PFR}\left(\lambda\right) = 1, \, \lambda \ge 20.4 s
+\end{matrix} \tag{22}
+\]</span></p>
+<p>If the expansion of the gas had been neglected with the density calculated using the inlet volumetric flow rate, <span class="math inline">\(\overline{t}\)</span> would have bee found to equal 39.3 s.</p>
+</section>
+</section>
+</section>
+<section id="symbols-used-in-sec-7_age_function" class="level2" data-number="22.6">
+<h2 data-number="22.6" class="anchored" data-anchor-id="symbols-used-in-sec-7_age_function"><span class="header-section-number">22.6</span> Symbols Used in <a href="#sec-7_age_function" class="quarto-xref"><span>Chapter 22</span></a></h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(dF\)</span></td>
+<td style="text-align: left;">Differential age distribution function.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(i\)</span></td>
+<td style="text-align: left;">Index of experimental data points.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(k\)</span></td>
+<td style="text-align: left;">Rate coefficient, subscripted “f” and “r” denote the forward and reverse reaction.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(k_0\)</span></td>
+<td style="text-align: left;">Arrhenius pre-exponential factor, subscripted “f” and “r” denote the forward and reverse reaction.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(m\)</span></td>
+<td style="text-align: left;">Mass of a fluid sample.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(m_{impulse}\)</span></td>
+<td style="text-align: left;">Total mass of tracer injected as an impulse stimulus.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{m}\)</span></td>
+<td style="text-align: left;">Mass flow rate of tracer.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{m}_{total}\)</span></td>
+<td style="text-align: left;">Total mass flow rate.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}\)</span></td>
+<td style="text-align: left;">Molar flow rate.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(r\)</span></td>
+<td style="text-align: left;">Reaction rate.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(t\)</span></td>
+<td style="text-align: left;">Time elapsed since the application of a stimulus.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\overline{t}\)</span></td>
+<td style="text-align: left;">Mean residence time.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(v\)</span></td>
+<td style="text-align: left;">Instantaneous linear flow velocity.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(w\)</span></td>
+<td style="text-align: left;">Mass fraction of tracer, subscripted “in” and “out” indicate the reactor inlet and outlet.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(y_i\)</span></td>
+<td style="text-align: left;">Mole fraction of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: left;">Axial distance from the reactor inlet.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(A\)</span></td>
+<td style="text-align: left;">Cross sectional area.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(C\)</span></td>
+<td style="text-align: left;">Molar concentration, an additional subscript denotes the reagent.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(C_{mass}\)</span></td>
+<td style="text-align: left;">Mass concentration, an additional subscript denotes the reagent.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\hat{C}_{p,i}\)</span></td>
+<td style="text-align: left;">Molar heat capacity of reagent <span class="math inline">\(k\)</span>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(D\)</span></td>
+<td style="text-align: left;">Tubular reactor diameter.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(D_p\)</span></td>
+<td style="text-align: left;">Effective catalyst particle diameter.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(E\)</span></td>
+<td style="text-align: left;">Arrhenius activation energy, subscripted “f” and “r” denote the forward and reverse reaction.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(F\)</span></td>
+<td style="text-align: left;">Cumulative age distribution function.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(G\)</span></td>
+<td style="text-align: left;">Mass velocity (mass flow rate divided by tube cross sectional area).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(L\)</span></td>
+<td style="text-align: left;">Reactor length.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(M\)</span></td>
+<td style="text-align: left;">Molecular weight of the tracer.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(N\)</span></td>
+<td style="text-align: left;">Number of indexed values in a set of values.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(U\)</span></td>
+<td style="text-align: left;">Overall heat transfer coefficient.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: left;">Volume of fluid in the reactor.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{V}\)</span></td>
+<td style="text-align: left;">Volumetric flow rate.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\epsilon\)</span></td>
+<td style="text-align: left;">Bed porosity.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\lambda\)</span></td>
+<td style="text-align: left;">Fluid age.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\mu\)</span></td>
+<td style="text-align: left;">Fluid viscosity.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\nu_{i,j}\)</span></td>
+<td style="text-align: left;">Stoichiometric coefficient of reagent <span class="math inline">\(i\)</span> in reaction <span class="math inline">\(j\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\rho_{fluid}\)</span> Fluid density.</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\tau\)</span></td>
+<td style="text-align: left;">Reactor space time.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\Delta H\)</span></td>
+<td style="text-align: left;">Standard heat of reaction.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\Phi_s\)</span></td>
+<td style="text-align: left;">Particle sphericity.</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
