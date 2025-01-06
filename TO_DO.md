@@ -1,6 +1,5 @@
 
 Primary Tasks
-- Revise chapter 22
 - First drafts: chapters 23 and 25 and appendices I and N
 - Re-order chapters and appendices per REB 2.0 MindNode outline
 - Final drafts: appendices D, E, F, G, H, I, J, K, L, M, and N
