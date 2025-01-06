@@ -1,3 +1,101 @@
 # Segregated Flow Reactor Models {#sec-7_seg_flow_models}
 
-This chapter will be added as soon as I finish writing it.
+@sec-7_age_function introduced the cumulative and differential age distribution functions. It showed how to measure the cumulative age distribution function, $F$, and how it is related to the differential age distribution function, $dF$. It also mentioned that $dF$ can be used to construct models for non-ideal reactors. This chapter presents two such models and illustrates their use.
+
+## The Differential Age Distribution Function
+
+Recall that $dF\left(\lambda\right)$ is equal to the fraction of the fluid leaving a reactor that has been in the reactor for a period of time between $\lambda$ and $\lambda + d\lambda$. It can be used to find the average value, over all of the fluid elements leaving the reactor, of anything that depends upon $\lambda$. Each fluid element is effectively a very small batch reactor. It is perfectly mixed, and it doesn't mix with any other fluid elements. The conversion, concentrations of reagents, etc. in a batch reactor, and hence in a fluid element, depend upon its residence time in the reactor.
+
+Consider all of the fluid elements leaving a reactor at any instant in time. Then suppose they must be sorted by age into "bins". Each bin is used for fluid elements with ages in a narrow range, and there is a bin for every age between zero and infinity. $dF\left(\lambda\right)$ is equal to the fraction of the fluid elements that are sorted into the bin for fluid elements with an age between $\lambda$ and $\lambda + d\lambda$.
+
+Now suppose, for example, that the average concentration of reagent $i$ over all of the bins needs to be calculated. The average concentration is equal to the fraction of the fluid elements in the first bin times the concentration of reagent $i$ in the first bin plus the fraction of the fluid elements in the second bin times the concentration of reagent $i$ in the second bin, and so on for all of the bins. In the limit that the bins become differentially small, the summation becomes and integral, @eq-avg_conc_from_diff_age_dist. The integral must include all of the fluid elements, and since the concentration is being integrated over fractions of the fluid, the lower and upper limits span the range from $F=0$ to $F=1$.
+
+$$
+\overline{C}_i = \int_0^1 C_{i,\lambda}dF\left(\lambda \right)
+$${#eq-avg_conc_from_diff_age_dist}
+
+The average value of any other property that depends upon the fluid age can be calculated the same way by simply replacing $C_i$ in @eq-avg_conc_from_diff_age_dist with the property of interest. Using the differential age distribution function in this way forms the basis for modeling non-ideal reactors. To use it, the differential age distribution function for the non-ideal reactor is needed. Generally, the differential age distribution function is not available, though.
+
+Stimulus-response experiments like those described in @sec-7_age_function can be used to generate the cumulative age distribution function for the non-ideal reactor to be modeled. Then, @eq-diff_age_dist_fcn can be used to replace $dF\left(\lambda\right)$, resulting in an expression in terms of the derivative of the cumulative age distribution function. For example, the average concentration of reagent $i$ can be found using @eq-avg_conc_from_cum_age_dist. The change in the integrand from $dF$ to $d\lambda$ requires a change in the limits of integration from 0 to 1 to from 0 to infinity.
+
+$$
+\overline{C}_i = \int_0^\infty C_{i,\lambda}\frac{dF}{d\lambda}\Bigg\vert_\lambda d\lambda
+$${#eq-avg_conc_from_cum_age_dist}
+
+It should be noted that measuring $F\left(\lambda\right)$ experimentally will yield a table of values of $F$ *vs*. $\lambda$, not an analytical function. As a consequence, the derivative in @eq-avg_conc_from_cum_age_dist will need to be computed numerically, after which the integration will also need to be performed numerically.
+
+## Segregated Flow Models
+
+Two levels of mixing are important for the development of segregated flow models for non-ideal reactors. The first kind of mixing is called micro-mixing. Micro-mixing occurs within fluid elements, and in the segregated flow models, micro-mixing is assumed to be perfect, just as in ideal BSTRs, SBSTRs, and CSTRs.
+
+Macro-mixing occurs whenever fluid enters the reactor. It can be considered to occur instantaneously, but is easier to describe as if it involves three stages. Specifically, when any fluid enters the fluid elements already present in the reactor cease to exist, the added fluid then mixes completely with the fluid in the reactor, after which new fluid elements form. Again, all of this occurs instantaneously. 
+
+Two general kinds of segregated flow reactor models can be defined based on when macro-mixing occurs. Their most basic versions are described next. Following that, some other variants of segregated flow models are mentioned.
+
+### The Early-Mixing Segregated Flow Model
+
+In the most basic version of the early-mixing segregated flow model, all of the feed enters the reactor at the same time and undergoes macro-mixing. The fluid elements spend varying amounts of time within the reactor according to the age distribution function. The average concentration of reagent $i$ is then calculated using @eq-avg_conc_from_cum_age_dist, and the concentration leaving the non-ideal reactor is taken to equal that average concentration. Similarly, the conversion of reagent $i$ would be calculated using @eq-conv_from_cum_age_dist, the outlet temperature would be calculated using @eq-temp_from_cum_age_dist, etc.
+
+$$
+\overline{f}_i = \int_0^\infty f_{i,\lambda}\frac{dF}{d\lambda}\Bigg\vert_\lambda d\lambda
+$${#eq-conv_from_cum_age_dist}
+
+$$
+\overline{T} = \int_0^\infty T_{\lambda}\frac{dF}{d\lambda}\Bigg\vert_\lambda d\lambda
+$${#eq-temp_from_cum_age_dist}
+
+In Equations [-@eq-avg_conc_from_cum_age_dist], [-@eq-conv_from_cum_age_dist], and [-@eq-temp_from_cum_age_dist], $C_{i,\lambda}$, $f_{i,\lambda}$, and $T_{\lambda}$, are the concentration, conversion, and temperature predicted by an ideal BSTR model for a reaction time of $\lambda$. That raises two points related to formulating and solving the ideal BSTR design equations for a fluid element.
+
+The first point concerns heat exchange. If the non-ideal reactor being modeled is isothermal, only the BSTR mole balances need to be used to model a fluid element, and if the non-ideal reactor is adiabatic, the BSTR mole balances and reacting fluid energy balance can be used to model a fluid element.
+
+If the non-ideal reactor being modeled uses a heat-exchange fluid, it isn't as clear how to formulate the BSTR design equations for a fluid element. That is because the volume of a fluid element is not known, nor is its heat transfer area. For this reason, the use of segregated flow reactor models for reactors with a heat exchange fluid will not be considered in *Reaction Engineering Basics*, but will be left for consideration in an intermediate level reaction engineering text.
+
+The second point related to modeling the fluid elements as ideal BSTRs is whether to assume constant volume or constant pressure. If the pressure drop in the non-ideal reactor being modeled is negligible, then the BSTR design equations for the fluid element should be solved assuming constant pressure. If the reacting fluid is a gas, this means that the fluid element volume may change due to expansion or contraction. If both the pressure and the volumetric flow rate change in the non-ideal reactor, as for a tubular reactor with significant pressure drop, a different variant of the segregated flow model, described below, should probably be used.
+
+Finally, in order to solve the BSTR design equations representing a fluid element, it is necessary to assume an initial fluid element volume, $V_{fe,0}$ and use it as the basis for the calculations. Because a basis must be assumed, the age distribution function can only be used to calculate the average value of intensive quantities. The intensive quantities of interest in the early-mixing segregated flow model are the concentrations of each of the reagents, the temperature, and, for gases, the fluid element volume ratio, $\kappa$, @eq-rel_fluid_elem_vol. The limitation of only being able to calculate the average values of intensive quantities can be incorporated easily in an early-mixing segregated flow model for a non-ideal reactor.
+
+$$
+\kappa = \frac{V_{fe}}{V_{fe,0}}
+$${#eq-rel_fluid_elem_vol}
+
+To summarize, a non-ideal, isothermal or adiabatic reactor with negligible pressure drop can be modeled using the early-mixing segregated flow model. The inputs to the model are the cumulative age distribution function, $F\left(\lambda\right)$, the inlet molar flow rate of every reagent, the inlet temperature, and either the pressure (for gases) or the inlet volumetric flow rate (for liquids or gases). The necessary calculations can be summarized as follows:
+
+1. Calculate the inlet concentration of every reagent.
+2. Formulate BSTR design equations to represent a fluid element by
+    a. Choosing an initial fluid element volume, $V_{fe,0}$, as a basis.
+    b. Solving the design equations assuming constant pressure to get the molar amounts of the reagents, the temperature, and, for gases, the fluid element volume, $V_{fe}$, as a function of reaction time.
+    c. Using those results to calculate the concentrations of the reagents, the temperature, and $\kappa$ as a function of reaction time.
+3. Use the derivative of the cumulative age distribution function and the BSTR model to calculate each average concentration, $\overline{C}_i$, the average temperature, $\overline{T}$, and, for gases, the average fluid element volume ratio, $\overline{\kappa}$.
+4. For gases, calculate the outlet volumetric flow rate, $\dot{V}_{out} =  \dot{V}_{in} \overline{\kappa}$.
+5. Calculate the outlet molar flow rates, $\dot{n}_{i,out} = \dot{V}_{out} \overline{C}_i$, and temperature, $T_{out} = \overline{T}$.
+
+### The Late-Mixing Segregated Flow Model
+
+So, in the early-mixing segregated flow models, all of the fluid enters the reactor at once, and fluid elements leave at varying times determined by the age distribution function. In the late mixing model, all of the fluid elements leave the reactor at the same time, but they enter at varying times determined by the age distribution function.
+
+don't need fluid elements, model reactor outlet composition, temperature, and volumetric flow rate in terms of the final composition, temperature and volume of an SBSTR where feed flow rate varies with time according to the age dist fcn.
+
+### Other Variants of Segregated Flow Models
+
+one of biggest drawbacks is treating fluid elements as isolated reactors. Doing so causes issues related to heat transfer. already noted issue if there is an exchange fluid, but in an adiabatic reactor there is no heat transfer between fluid elements. Another drawback comes from the use of the BSTR design eqns. If the non-ideal reactor operates at constant pressure or constant temperature that can be accomodated. Consider a PFR with pressure drop where neither P nor V are constant; not obvious how to handle that. plug flow equivalents of early-mixing and late-mixing SFMs.
+
+## Examples
+
+### An Early-Mixing Model of a Non-Ideal Reactor
+
+### A Late-Mixing Model of a Non-Ideal Reactor
+
+### An Early-Mixing Model of an Ideal CSTR
+
+## Symbols Used in @sec-7_seg_flow_models
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $dF$ | Differential age distribution function. |
+| $f_i$ | Fractional conversion of reagent $i$; an overbar indicates the average value, and a subscripted, $\lambda$, indicates a fluid element of age $\lambda$. |
+| $C_i$ | Concentration of reagent $i$; an overbar indicates the average value, and a subscripted, $\lambda$, indicates a fluid element of age $\lambda$. |
+| $F$ | Cumulative age distribution function. |
+| $T$ | Temperature; an overbar indicates the average value, and a subscripted, $\lambda$, indicates a fluid element of age $\lambda$. |
+| $\lambda$ | Age or residence time of a fluid element. |
+
+: {tbl-colwidths="[20,80]"}
