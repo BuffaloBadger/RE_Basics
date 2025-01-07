@@ -1,6 +1,6 @@
 
 Primary Tasks
-- First drafts: chapters 23 and 25 and appendices I and N
+- First drafts: chapters 23 and 25 and appendix N
 - Re-order chapters and appendices per REB 2.0 MindNode outline
 - Final drafts: appendices D, E, F, G, H, I, J, K, L, M, and N
 - Chapter by chapter final drafts
