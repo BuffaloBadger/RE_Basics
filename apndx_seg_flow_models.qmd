@@ -158,6 +158,22 @@ There are only four dependent variables in the late-mixing segregated flow react
 
 As for the early-mixing model, the molar flow rates in the design equations, $\dot{n}_{i,\tau}$, are given by @eq-seg_flow_inst_molar_flow, and the volumetric flow rate, molar flow rates and temperature of the non-ideal reactor product stream using Equations [-@eq-early_mix_prod_molar_flow], [-@eq-early_mix_prod_temp], and [-@eq-early_mix_prod_vol_flow].
 
+## Numerical Cumulative Age Distribution Function
+
+The cumulative age distribution function, $F\left(\lambda\right)$, and its derivative, $\frac{dF}{d\lambda}$, appear in the design equations for the segregated flow reactor models. Those design equations are IVODEs, and they typically must be solved numerically. To do so, a derivatives function must be written. It must accept a value of the independent variable and corresponding values of the dependent variables and return the values of the derivatives that appear in the design equations.
+
+Typically, if the cumulative age distribution function was measured using stimulus-response experiments (see @sec-7_age_function), $F\left(\lambda\right)$ will be available as a table of corresponding values of $F$ and $\lambda$, and not as an analytical function. When the IVODE solver calls the derivatives function, it may pass any value of the independent variable (and corresponding values of the dependent variables). More importantly, it may pass a value for the time (i. e. $\lambda$) that is not in the table of $F$ *vs.* $\lambda$ values. Consequently, when $F\left(\lambda\right)$ and $\frac{dF}{d\lambda}$ are needed to evaluate the derivatives, their values will need to be estimated numerically using the tabular $F$ *vs.* $\lambda$ data.
+
+The value of $F$ at the largest values of $\lambda$ should be equal to 1, within experimental error. If this is not the case, a row can be added to the end of the tabular data with $\lambda$ greater than all of the values in the table and $F$ equal to one. The easiest way to estimate $F$ and $\frac{dF}{d\lambda}$ is using backward differences. The numerical estimates for $F$ and $\frac{dF}{d\lambda}$ should equal zero for values of $\lambda$ less than or equal to zero. For values of $\lambda$ greater than the largest value in the table, the estimate for $F$ should equal 1.0 and that for $\frac{dF}{d\lambda}$ should equal zero. Any other value of $\lambda$ will fall between two table entries, one, $\lambda_{i-1}$, less than $\lambda$ and the other, $\lambda_{i}$, greater than $\lambda$. The value of $F$ can be calculated using @eq-F_estimate, and the value of $\frac{dF}{d\lambda}$ can be estimated using @eq-dFdlambda_estimate.
+
+$$
+F\left(\lambda\right) = F\left(\lambda_{i-1}\right) + \frac{F\left(\lambda_{i}\right) - F\left(\lambda_{i-1}\right)}{\lambda_{i} - \lambda_{i-1}} \left( \lambda - \lambda_{i-1} \right)
+$${#eq-F_estimate}
+
+$$
+\frac{dF}{d\lambda}\Bigg\vert_{\lambda} = \frac{F\left(\lambda_{i}\right) - F\left(\lambda_{i-1}\right)}{\lambda_{i} - \lambda_{i-1}}
+$${#eq-dFdlambda_estimate}
+
 ## Accounting for Pressure Drop and Heat Exchange
 
 The early-mixing and late-mixing segregated flow reactor models above were developed with the assumption that the pressure is constant and if the reacting fluid is a gas, it expands or contracts. This is a common situation for flow reactors. Stirred tanks normally operate at constant pressure, and often for tubular reactors the pressure drop along the length of the reactor is negligible. If the pressure in the steady-state, non-ideal reactor varies with position, an equation for the variation of the pressure with reaction time could be added to the segregated flow reactor models above. For example, if the non-ideal reactor is tubular and the pressure drops along its length, the pressure *vs.* length relationship could be introduced to the segregated flow models as pressure *vs. reaction time.
