@@ -5,3 +5,14 @@ This repository and website are licensed under the [Creative Commons Attribution
 So, for example, if you are teaching a course on reaction engineering you can clone this repository and use it to make a copy of the book on your own web site, as long as you follow the license above. 
 
 The problem statements for examples and the results generated when solving example problems are not included in this repository. There is a separate public repository, RE_Basics_Examples, for the example problem statements and their solutions. That repository contains the problem statements, matlab and python codes that perform the calculations, and the results from performing the calculations as .csv and .png files. For each example there is a Snakefile that updates the results if the code has been changed and copies the problem statements and the results, if they have changed, to the appropriate folders in this project.
+
+**Distinguishing Features**
+- immediately begins with the analysis of non-isothermal, multiple reaction systems (with pressure drop for PFRs). It does not begin with isothermal, single-reaction systems and then add multiple reactions, non-isothermal operation, pressure drop, etc. in subsequent chapters.
+- presents the design equations in terms of molar amounts (or flow rates), temperature, pressure, and temperature of the heat-exchange fluid (if there is one). It uses conversion, but not as the dependent variable in the design equations avoiding the need to adding terms to account for volumetric expansion and multiple reactions.
+- attempts to expose expert thinking in examples through drop-down callouts that describe how an expert knows what to do instead of jumping immediately to showing what to do
+- assumes equations will be solved numerically not analytically by formulating reactor models in terms of functions and the equations that make up their algorithm and not as simple sets of equations. For example a single initial-value ODE can be solved analytically even if the initial value or a constant in the equation is not known, and then the resulting algebraic equation can be solved to find the unknown initial value or constant. This cannot be done when the equation is solved numerically. REB still presents the equations as part of the description of a function that could be used to solve them.
+- does not assume any one software package will be used, but instead describes functions that would be required by most numerical methods software for solving that type of problem.
+
+**Shortcomings**
+- Most examples use hypothetical reactants and products (A + B -> Y + Z) and not real chemistry.
+- While it strives not to, it may place too much emphasis on numerical aspects of examples.
