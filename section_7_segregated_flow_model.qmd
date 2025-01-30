@@ -1,101 +1,533 @@
 # Segregated Flow Reactor Models {#sec-7_seg_flow_models}
 
-@sec-7_age_function introduced the cumulative and differential age distribution functions. It showed how to measure the cumulative age distribution function, $F$, and how it is related to the differential age distribution function, $dF$. It also mentioned that $dF$ can be used to construct models for non-ideal reactors. This chapter presents two such models and illustrates their use.
+@sec-7_age_function introduced the cumulative and differential age distribution functions. It showed how to measure the cumulative age distribution function, $F$, and how it is related to the differential age distribution function, $dF$. It also mentioned that the age distribution functions can be used to construct models for non-ideal reactors. Segregated flow reactor models (SFR models) are used to simulate the performance of non-ideal, steady-state flow reactors. A key assumption in SFR models is that fluid entering the non-ideal flow reactor at some instant will not all have the same residence time, $\tau$. Instead, the cumulative age distribution function for the non-ideal flow reactor, $F\left(\lambda\right)$ with $\tau=\lambda$, is used to represent the distribution of residence times of the fluid leaving the non-ideal flow reactor. Hypothetical batch processes with variable reaction times, $t_r$, are used to simulate the non-ideal flow reactor with variable residence times, $\tau$.
 
-## The Differential Age Distribution Function
+*Reaction Engineering Basics* only considers using SFR models to model steady-state non-ideal reactors that operate adiabatically at constant pressure. Many non-ideal reactors satisfy these assumptions. Typically stirred tanks operate at constant pressure, and some tubular reactors operate with negligible pressure drop. Modification of the SFR models to include heat exchange and/or pressure change is considered briefly, later in the chapter.
 
-Recall that $dF\left(\lambda\right)$ is equal to the fraction of the fluid leaving a reactor that has been in the reactor for a period of time between $\lambda$ and $\lambda + d\lambda$. It can be used to find the average value, over all of the fluid elements leaving the reactor, of anything that depends upon $\lambda$. Each fluid element is effectively a very small batch reactor. It is perfectly mixed, and it doesn't mix with any other fluid elements. The conversion, concentrations of reagents, etc. in a batch reactor, and hence in a fluid element, depend upon its residence time in the reactor.
+## Representing the Non-Ideal Flow Reactor Using Hypothetical Batch Processes
 
-Consider all of the fluid elements leaving a reactor at any instant in time. Then suppose they must be sorted by age into "bins". Each bin is used for fluid elements with ages in a narrow range, and there is a bin for every age between zero and infinity. $dF\left(\lambda\right)$ is equal to the fraction of the fluid elements that are sorted into the bin for fluid elements with an age between $\lambda$ and $\lambda + d\lambda$.
+@fig-seg_flow_as_batch illustrates how the non-ideal flow reactor is represented by a hypothetical batch process. The top of the figure depicts the non-ideal flow reactor operating adiabatically at constant pressure and steady-state. An arbitrary interval of time, $\Delta t_B$, is used as a basis for representing the flow reactor using batch processing.
 
-Now suppose, for example, that the average concentration of reagent $i$ over all of the bins needs to be calculated. The average concentration is equal to the fraction of the fluid elements in the first bin times the concentration of reagent $i$ in the first bin plus the fraction of the fluid elements in the second bin times the concentration of reagent $i$ in the second bin, and so on for all of the bins. In the limit that the bins become differentially small, the summation becomes and integral, @eq-avg_conc_from_diff_age_dist. The integral must include all of the fluid elements, and since the concentration is being integrated over fractions of the fluid, the lower and upper limits span the range from $F=0$ to $F=1$.
+![Hypothetical batch process used to simulate the non-ideal flow reactor](Graphics/segregated_flow_model.png){#fig-seg_flow_as_batch width="80%"}
 
-$$
-\overline{C}_i = \int_0^1 C_{i,\lambda}dF\left(\lambda \right)
-$${#eq-avg_conc_from_diff_age_dist}
-
-The average value of any other property that depends upon the fluid age can be calculated the same way by simply replacing $C_i$ in @eq-avg_conc_from_diff_age_dist with the property of interest. Using the differential age distribution function in this way forms the basis for modeling non-ideal reactors. To use it, the differential age distribution function for the non-ideal reactor is needed. Generally, the differential age distribution function is not available, though.
-
-Stimulus-response experiments like those described in @sec-7_age_function can be used to generate the cumulative age distribution function for the non-ideal reactor to be modeled. Then, @eq-diff_age_dist_fcn can be used to replace $dF\left(\lambda\right)$, resulting in an expression in terms of the derivative of the cumulative age distribution function. For example, the average concentration of reagent $i$ can be found using @eq-avg_conc_from_cum_age_dist. The change in the integrand from $dF$ to $d\lambda$ requires a change in the limits of integration from 0 to 1 to from 0 to infinity.
+Everything that flows into the non-ideal reactor during that interval of time is taken as a sample. The molar amounts of the reagents are calculated using @eq-early_mix_mol_sample, and the temperature of the sample equals that of the feed, @eq-early_mix_T_sample. If the reacting fluid is a liquid, the volume of the sample can be calculated using @eq-early_mix_vol_sample. If it is a gas, the volume of the sample can be calculated using the ideal gas law. The concentrations of the reagents are then given by @eq-early_mix_C_sample.
 
 $$
-\overline{C}_i = \int_0^\infty C_{i,\lambda}\frac{dF}{d\lambda}\Bigg\vert_\lambda d\lambda
-$${#eq-avg_conc_from_cum_age_dist}
-
-It should be noted that measuring $F\left(\lambda\right)$ experimentally will yield a table of values of $F$ *vs*. $\lambda$, not an analytical function. As a consequence, the derivative in @eq-avg_conc_from_cum_age_dist will need to be computed numerically, after which the integration will also need to be performed numerically.
-
-## Segregated Flow Models
-
-Two levels of mixing are important for the development of segregated flow models for non-ideal reactors. The first kind of mixing is called micro-mixing. Micro-mixing occurs within fluid elements, and in the segregated flow models, micro-mixing is assumed to be perfect, just as in ideal BSTRs, SBSTRs, and CSTRs.
-
-Macro-mixing occurs whenever fluid enters the reactor. It can be considered to occur instantaneously, but is easier to describe as if it involves three stages. Specifically, when any fluid enters the fluid elements already present in the reactor cease to exist, the added fluid then mixes completely with the fluid in the reactor, after which new fluid elements form. Again, all of this occurs instantaneously. 
-
-Two general kinds of segregated flow reactor models can be defined based on when macro-mixing occurs. Their most basic versions are described next. Following that, some other variants of segregated flow models are mentioned.
-
-### The Early-Mixing Segregated Flow Model
-
-In the most basic version of the early-mixing segregated flow model, all of the feed enters the reactor at the same time and undergoes macro-mixing. The fluid elements spend varying amounts of time within the reactor according to the age distribution function. The average concentration of reagent $i$ is then calculated using @eq-avg_conc_from_cum_age_dist, and the concentration leaving the non-ideal reactor is taken to equal that average concentration. Similarly, the conversion of reagent $i$ would be calculated using @eq-conv_from_cum_age_dist, the outlet temperature would be calculated using @eq-temp_from_cum_age_dist, etc.
+n_{i,0} = \dot{n}_{i,feed} \Delta t_B
+$${#eq-early_mix_mol_sample}
 
 $$
-\overline{f}_i = \int_0^\infty f_{i,\lambda}\frac{dF}{d\lambda}\Bigg\vert_\lambda d\lambda
-$${#eq-conv_from_cum_age_dist}
+T_0 = T_{feed}
+$${#eq-early_mix_T_sample}
 
 $$
-\overline{T} = \int_0^\infty T_{\lambda}\frac{dF}{d\lambda}\Bigg\vert_\lambda d\lambda
-$${#eq-temp_from_cum_age_dist}
-
-In Equations [-@eq-avg_conc_from_cum_age_dist], [-@eq-conv_from_cum_age_dist], and [-@eq-temp_from_cum_age_dist], $C_{i,\lambda}$, $f_{i,\lambda}$, and $T_{\lambda}$, are the concentration, conversion, and temperature predicted by an ideal BSTR model for a reaction time of $\lambda$. That raises two points related to formulating and solving the ideal BSTR design equations for a fluid element.
-
-The first point concerns heat exchange. If the non-ideal reactor being modeled is isothermal, only the BSTR mole balances need to be used to model a fluid element, and if the non-ideal reactor is adiabatic, the BSTR mole balances and reacting fluid energy balance can be used to model a fluid element.
-
-If the non-ideal reactor being modeled uses a heat-exchange fluid, it isn't as clear how to formulate the BSTR design equations for a fluid element. That is because the volume of a fluid element is not known, nor is its heat transfer area. For this reason, the use of segregated flow reactor models for reactors with a heat exchange fluid will not be considered in *Reaction Engineering Basics*, but will be left for consideration in an intermediate level reaction engineering text.
-
-The second point related to modeling the fluid elements as ideal BSTRs is whether to assume constant volume or constant pressure. If the pressure drop in the non-ideal reactor being modeled is negligible, then the BSTR design equations for the fluid element should be solved assuming constant pressure. If the reacting fluid is a gas, this means that the fluid element volume may change due to expansion or contraction. If both the pressure and the volumetric flow rate change in the non-ideal reactor, as for a tubular reactor with significant pressure drop, a different variant of the segregated flow model, described below, should probably be used.
-
-Finally, in order to solve the BSTR design equations representing a fluid element, it is necessary to assume an initial fluid element volume, $V_{fe,0}$ and use it as the basis for the calculations. Because a basis must be assumed, the age distribution function can only be used to calculate the average value of intensive quantities. The intensive quantities of interest in the early-mixing segregated flow model are the concentrations of each of the reagents, the temperature, and, for gases, the fluid element volume ratio, $\kappa$, @eq-rel_fluid_elem_vol. The limitation of only being able to calculate the average values of intensive quantities can be incorporated easily in an early-mixing segregated flow model for a non-ideal reactor.
+V_0 = \dot{V}_{feed} \Delta t_B
+$${#eq-early_mix_vol_sample}
 
 $$
-\kappa = \frac{V_{fe}}{V_{fe,0}}
-$${#eq-rel_fluid_elem_vol}
+C_{i,0} = \frac{n_{i,0}}{V_0}
+$${#eq-early_mix_C_sample} 
 
-To summarize, a non-ideal, isothermal or adiabatic reactor with negligible pressure drop can be modeled using the early-mixing segregated flow model. The inputs to the model are the cumulative age distribution function, $F\left(\lambda\right)$, the inlet molar flow rate of every reagent, the inlet temperature, and either the pressure (for gases) or the inlet volumetric flow rate (for liquids or gases). The necessary calculations can be summarized as follows:
+As @fig-seg_flow_as_batch indicates, the sample is then subjected to batch processing. Two SFR models can be formulated depending on the specifics of the batch processing methodology. At the end of the batch processing, the final molar amounts and temperature of the sample will be known. If the sample is an incompressible liquid, its volume will equal its initial volume, and if it is a gas, its volume can be calculated using the ideal gas law. The outlet, product molar flow rates for the non-ideal flow reactor are then found by assuming that the final sample leaves the flow reactor over the same interval of time as that used to generate it, @eq-early_mix_prod_molar_flow. The temperature of the flowing product is taken to equal the final temperature of the sample, @eq-early_mix_prod_temp
 
-1. Calculate the inlet concentration of every reagent.
-2. Formulate BSTR design equations to represent a fluid element by
-    a. Choosing an initial fluid element volume, $V_{fe,0}$, as a basis.
-    b. Solving the design equations assuming constant pressure to get the molar amounts of the reagents, the temperature, and, for gases, the fluid element volume, $V_{fe}$, as a function of reaction time.
-    c. Using those results to calculate the concentrations of the reagents, the temperature, and $\kappa$ as a function of reaction time.
-3. Use the derivative of the cumulative age distribution function and the BSTR model to calculate each average concentration, $\overline{C}_i$, the average temperature, $\overline{T}$, and, for gases, the average fluid element volume ratio, $\overline{\kappa}$.
-4. For gases, calculate the outlet volumetric flow rate, $\dot{V}_{out} =  \dot{V}_{in} \overline{\kappa}$.
-5. Calculate the outlet molar flow rates, $\dot{n}_{i,out} = \dot{V}_{out} \overline{C}_i$, and temperature, $T_{out} = \overline{T}$.
+$$
+\dot{n}_{i,product} = \frac{n_{i,f}}{\Delta t_B}
+$${#eq-early_mix_prod_molar_flow}
 
-### The Late-Mixing Segregated Flow Model
+$$
+T_{product} = T_f
+$${#eq-early_mix_prod_temp}
 
-So, in the early-mixing segregated flow models, all of the fluid enters the reactor at once, and fluid elements leave at varying times determined by the age distribution function. In the late mixing model, all of the fluid elements leave the reactor at the same time, but they enter at varying times determined by the age distribution function.
+## The Early-Mixing Segregated Flow Reactor Model
 
-don't need fluid elements, model reactor outlet composition, temperature, and volumetric flow rate in terms of the final composition, temperature and volume of an SBSTR where feed flow rate varies with time according to the age dist fcn.
+In the early mixing SFR model, the sample described above is assumed to be perfectly mixed and instantaneously added to an adiabatic, constant pressure BSTR. As it reacts the concentrations of the reagents, $C_i$, temperature, $T$, and relative volume, $\gamma = \frac{V}{V_0}$ change as functions of reaction time, $t_r$. If the reacting fluid is a liquid and can be assumed to have constant density, then $\gamma = 1.0$ for all reaction times. If the reacting fluid is a gas, its volume can change over time in a constant pressure BSTR due to changes in the total number of moles and the temperature.
 
-### Other Variants of Segregated Flow Models
+The early mixing SFR model assumes that as the reaction time increases, fluid is steadily removed from the reactor. The cumulative fraction of the initial fluid that has been removed at some reaction time, $\tau$, is equal to $F\left(\lambda\right)\big\vert_{\lambda = \tau}$. The early mixing SFR model can be developed by considering only the fraction of the initial fluid, $dF\big\vert_{t_r}$, that remains in the BSTR for a reaction time between $t_r$ and $t_r + dt_r$. The volume of that fraction of the fluid, $dV\big\vert_{t_r}$, can be calculated using @eq-early_mix_frac_of_init_vol, which accounts for expansion/contraction due to reaction.
 
-one of biggest drawbacks is treating fluid elements as isolated reactors. Doing so causes issues related to heat transfer. already noted issue if there is an exchange fluid, but in an adiabatic reactor there is no heat transfer between fluid elements. Another drawback comes from the use of the BSTR design eqns. If the non-ideal reactor operates at constant pressure or constant temperature that can be accomodated. Consider a PFR with pressure drop where neither P nor V are constant; not obvious how to handle that. plug flow equivalents of early-mixing and late-mixing SFMs.
+$$
+dV\big\vert_{t_r} = V_0 \gamma\big\vert_{t_r} dF\big\vert_{t_r} = V_0 \gamma\big\vert_{t_r} \frac{dF}{d\lambda}\bigg\vert_{\lambda = t_r}dt_r
+$${#eq-early_mix_frac_of_init_vol}
+
+The moles of reagent $i$ in that fraction of the fluid, $dn_{i,f}$, can be calculated by multiplying the volume by the concentration of $i$, @eq-early_mix_moles_in_frac. The temperature of the fluid at that time is simply equal to $T\big\vert_{t_r}$.
+
+$$
+dn_{i,f} = V_0 \gamma\big\vert_{t_r} C_i\big\vert_{t_r} \frac{dF}{d\lambda}\bigg\vert_{\lambda = {t_r}}dt_r
+$${#eq-early_mix_moles_in_frac}
+
+As moles of $i$ are removed, they are added to the final sample, @fig-seg_flow_as_batch. The total moles of $i$ that are removed from the BSTR is simply the sum of the amounts corresponding to reaction times between $t_r = 0$ and $t_r = \lambda_f$ (i. e. the age where $F$ becomes equal to 1 and all of the fluid has been removed). Because the reaction time intervals are differential, the sum takes the form of an integral. Thus, the final moles of reagent $i$ in the sample after batch processing is found using @eq-early_mix_total_moles.
+
+$$
+n_{i,f} = V_0 \int_0^{\lambda_f} \gamma\big\vert_{t_r} C_i\big\vert_{t_r} \frac{dF}{d\lambda}\bigg\vert_{\lambda = t_r}dt_r
+$${#eq-early_mix_total_moles}
+
+Each fraction of the fluid may be at a different temperature when it is removed. The final temperature, $T_f$ that results when all of the fluid fractions are recombined can be calculated by assuming the fluid fractions mix adiabatically. In terms of molar heat capacities, this leads to the implicit equation for $T_f$ shown in @eq-early_mix_final_T_molar. In terms of the volumetric heat capacity of the fluid, it leads to the implicit equation for $T_f$ shown in @eq-early_mix_final_T_vol.
+
+$$
+\sum_i \left( dn_i\big\vert_{t_r} \int_{T\big\vert_{t_r}}^{T_{s,f}} \hat{C}_{p,i} dT\right) = V_0 \int_0^{\lambda_f} \gamma\big\vert_{t_r} \frac{dF}{d\lambda}\bigg\vert_{\lambda = t_r} \left( \sum_i  C_i\big\vert_{t_r} \int_{T\big\vert_{t_r}}^{T_{s,f}} \hat{C}_{p,i} dT \right)dt_r = 0
+$$
+
+$$
+T_f : \, V_0 \int_0^{\lambda_f} \gamma\big\vert_{t_r} \frac{dF}{d\lambda}\bigg\vert_{\lambda = t_r} \left( \sum_i  C_i\big\vert_{t_r} \int_{T\big\vert_{t_r}}^{T_{s,f}} \hat{C}_{p,i} dT \right)dt_r = 0
+$${#eq-early_mix_final_T_molar}
+
+$$
+T_f : \, V_0 \int_0^{\lambda_f} \gamma\big\vert_{t_r} \frac{dF}{d\lambda}\bigg\vert_{\lambda = t_r} \left(\int_{T\big\vert_{t_r}}^{T_{s,f}} \breve{C}_pdT \right)dt_r = 0
+$${#eq-early_mix_final_T_vol}
+
+Equations [-@eq-early_mix_prod_molar_flow] and [-@eq-early_mix_prod_temp] can then be used to calculated the molar flow rates and temperature of the product stream leaving the non-ideal flow reactor.
+
+## The Late-Mixing Segregated Flow Reactor Model
+
+In the late-mixing SFR model the hypothetical batch processing takes place in an adiabatic, constant pressure SBSTR. The initial sample is added to that SBSTR over time. Defining $t=0$ to be the instant that addition of the sample to the SBSTR begins, the SBSTR continues to operate until the very last bit of sample has been added, at which time operation of the SBSTR ceases. In other words, SBSTR operation begins at $t=0$ and ends at $t=\lambda_f$.
+
+The fraction of the initial sample that enters the SBSTR at $t=0$ will have an age of $\lambda_f$ at the end of the semi-batch processing. As the time at which fluid enters the SBSTR increases, its age at the end of the process becomes smaller. Put differently, fluid already in the SBSTR will have a greater age at the end of the process than fluid that has not yet entered the SBSTR.
+
+By definition, at any time, $t$, the fraction of the sample that has not yet entered the SBSTR is equal to $F\left(\lambda\right) \big\vert_{\lambda_f - t}$ because at the end of semi-batch processing it will have an age less than $\lambda_f - t$. Consequently, the moles of reagent $i$ in the initial sample that have not yet entered the SBSTR is given by @eq-late_mix_not_entered. The rate at which the reagent i enters the SBSTR is then simply the time derivative of $n_i$, @eq-late_mix_molar_flow_in.
+
+$$
+n_i = n_{i,0} F\left(\lambda\right) \big\vert_{\lambda_f - t}
+$${#eq-late_mix_not_entered}
+
+$$
+\dot{n}_i = n_{i,0} \frac{dF}{d\lambda} \biggr\vert_{\lambda_f - t}
+$${#eq-late_mix_molar_flow_in}
+
+By the same reasoning, for an incompressible liquid, the volume of fluid that has not entered the reactor is $V_0F\left(\lambda\right) \big\vert_{\lambda_f - t}$, and the rate of change of the fluid volume in the reactor is given by @eq-late_mix_vol_derivative.
+
+$$
+\frac{dV}{dt} = V_0 \frac{dF}{d\lambda} \biggr\vert_{\lambda_f - t}
+$${#eq-late_mix_vol_derivative}
+
+The temperature of the fluid entering the SBSTR is equal to the temperature of the feed to the non-ideal reactor being modeled, $T_0$. The SBSTR design equations can be solved to find the molar amounts of the reagents in the SBSTR and the temperature at the end of the process (when $t=\lambda_f$). These are the final molar amounts and temperature of the sample, $n_{i,f}$ and $T_f$.
+
+## The Numerical Cumulative Age Distribution Function and its Derivative
+
+The SFR models are based upon the cumulative age distribution function for the non-ideal reactor being modeled. When the cumulative age distribution function is available as an analytical function, evaluating $F$ and $\frac{dF}{d \lambda}$ is straightforward, but that isn't usually the case. Most often the cumulative age distribution function is measured using stimulus-response experiments (see @sec-7_age_function). That is, the cumulative age distribution function is typically available as a table with columns containing corresponding values of $\lambda$ and $F$, not as an analytical function.
+
+### The Tabular Form of the Cumulative Age Distribution Function
+
+By definition, $F\left(0\right) = 0$, so the first row in the tabular form of the cumulative age distribution always should be $\lambda$ = 0 and $F$ = 0. Eventually all of the fluid should leave the reactor, so $F$ should always equal 1 in the last row of the tabular form of the cumulative age distribution. In principle, the age of the very last bit of fluid to leave could equal infinity, but since it is determined experimentally, the age of the last bit to leave the reactor will be finite, $\lambda_f$.
+
+That is, the stimulus-response experiments used to generate the tabular form of the age distribution function will result in a finite value of $\lambda_f$. Two situations are possible. In one situation, the value of $F$ will be equal to 1 (within experimental error) before the end of the table. Beyond that point, as $\lambda$ increases, $F$ will remain equal to 1 (within experimental error).
+
+However, if the stimulus-response experiments were not continued for a sufficient length of time, the final value of $F$ in the tabular form of the cumulative age distribution function will be less than 1. In order to use the SFR models, the cumulative age distribution function must range from $F=0$ to $F=1$. If the final value of $F$ is less than one, a row should be added to the table. In the added row, $F$ should equal 1, but the proper corresponding value of $\lambda$ is unknown. One way to choose the value of $\lambda_f$ is to linearly extrapolate using the last two entries in the experimental cumulative age distribution table to find the value of $\lambda$ where $F$ equals 1, @eq-age_fcn_added_lambda.
+
+$$
+\lambda_f = \left(1 - F\big\vert_{\lambda_{f-2}}\right)\frac{\lambda_{f-1} - \lambda_{f-2}}{F\big\vert_{\lambda_{f-1}} - F\big\vert_{\lambda_{f-2}}} + \lambda_{f-2}
+$${#eq-age_fcn_added_lambda} 
+
+To summarize, the cumulative age distribution function will be a table with two columns. The first column should contain values of $\lambda$, and the value in the first row of that column should be zero. The second column should contain corresponding values of $F$. The value in the first row of the $F$ column should be zero, and the value in the last row of the $F$ column should equal 1 to within experimental uncertainty.
+
+### The Tabular Form of the Differential Age Distribution Function
+
+The derivative of the age function, $\frac{dF}{d\lambda}$, is needed when using the SFR models. A column representing $\frac{dF}{d\lambda}$ can be added to the tabular form of the cumulative age distribution function quite easily. For example if forward differences are used to approximate the derivative, @eq-d_F_d_lambda_forward is used to calculate $\frac{dF}{d\lambda}$ for all but the last row of the table. Since the age function has reached $F=1$ in the last row and will remain constant at that value, the derivative in the last row is equal to zero, @eq-d_age_fcn_at_lambda_f
+
+$$
+\frac{dF}{d\lambda}\bigg\vert_{\lambda_k} = \frac{F_{k+1} - F_k}{\lambda_{k+1} - \lambda_k}
+$${#eq-d_F_d_lambda_forward}
+
+$$
+\frac{dF}{d\lambda}\bigg\vert_{\lambda_f} = 0.0
+$${#eq-d_age_fcn_at_lambda_f}
+
+## Numerical Implementation of the Segregated Flow Reactor Models
+
+The equations needed to simulate a non-ideal reactor using the segregated flow reactor models were presented above. This section of the chapter considers the numerical solution of those equations. It is assumed that the cumulative age distribution function for the non-ideal reactor is available either in analytical or numerical form.
+
+### Early-Mixing Segregated Flow Reactor Calculations
+
+After a basis has been chosen and used to define a sample for hypothetical batch processing, three primary tasks remain. @eq-early_mix_total_moles and either @eq-early_mix_final_T_molar or @eq-early_mix_final_T_vol will be used to calculate the final molar amounts in and temperature of the sample. Before those equations can be used, the unknown quantities appearing in them must be calculated. The three tasks, then, are to use the cumulative age distribution function to calculate $\frac{dF}{d\lambda}$ *vs.* $\lambda$, to use the adiabatic, constant pressure BSTR design equations to calculate the sample reagent concentrations, temperature and relative volume *vs.* reaction time, and to use @eq-early_mix_total_moles and either @eq-early_mix_final_T_molar or @eq-early_mix_final_T_vol to calculate the final molar amounts in and temperature of the sample.
+
+The code for performing those tasks could be structured a number of ways. The code structure suggested here involves two primary computer functions, each of which requires a supporting function. One primary function is an early mixing SFR model function. Within it, the final temperature will be calculated using an ATE solver, so it requires a supporting residuals function.
+
+The other primary function is simply an adiabatic, constant pressure BSTR model function. These functions were introduced in @sec-4_bstr_analysis and were used both for the simulation of BSTRs and for the analysis of kinetics data obtained using a BSTR. The BSTR design equations are IVODEs, so the BSTR model function requires a supporting derivatives function.
+
+#### Early-Mixing SFR Model Function
+
+Typically the early-mixing SFR model function will receive the feed molar flow rates, feed temperature, and for liquids, the feed volumetric flow rate of the non-ideal model as input. Using a basis, $\Delta t_B$, it will calculate the initial molar amounts, temperature and volume of the hypothetical sample using Equations [-@eq-early_mix_mol_sample] through [-@eq-early_mix_vol_sample].
+
+Next $\frac{dF}{d\lambda}$ *vs.* $\lambda$ must be calculated. If the cumulative age distribution is available as an analytical function, $F\left(\lambda\right)$, taking its derivative with respect to $\lambda$ will yield the necessary expression. If the cumulative age distribution is available in tabular form, a column with the value of $\frac{dF}{d\lambda}$ can be added using Equations [-@eq-d_F_d_lambda_forward] and [-@eq-d_age_fcn_at_lambda_f].
+
+The initial sample molar amounts, temperature, and volume along with a reaction time, $t_r$, can be passed to the BSTR model function. It will returen the molar amounts, temperature, and volume of the sample at the specified reaction time. The reagent concentrations at that time then can be calculated using @eq-early_mix_C_vs_t and @eq-early_mix_gamma_vs_t.
+
+$$
+C_i = \frac{n_i}{V}
+$${#eq-early_mix_C_vs_t}
+
+$$
+\gamma = \frac{V}{V_0}
+$${#eq-early_mix_gamma_vs_t}
+
+:::{.callout-note collapse="false"}
+## Note
+
+The basis of the early-mixing SFR model is that reacting fluid is continually removed from the initial sample as it reacts. One might wonder why the molar concentrations, temperature, and relative volume at any reaction time are being calculated using the entire initial sample. Those are intensive quantities, so their values as functions or reaction time will be the same no matter the size of the sample being considered. It is easier to calculate them always using the initial sample volume, molar amounts and temperature than to adjust the initial amounts to account for the removed fluid at each reaction time.
+
+:::
+
+At this point @eq-early_mix_total_moles and either @eq-early_mix_final_T_molar or @eq-early_mix_final_T_vol can be used to calculate the final molar amounts in and temperature of the sample. Even if the cumulative age distribution function is available in analytical form, the integrations in those equations will likely be performed numerically because analytical expressions for the reagent concentrations, temperature, and relative volumes will not be available.
+
+Using the trapezoid rule, the final molar amounts in the sample can be calculated directly using @eq-early_final_moles_trapz. The expression for calculating the final sample temperature is an implicit equation, so it must be solved numerically using an ATE solver (see @sec-apndx_solve_ates). As such, @eq-early_mix_final_T_molar or @eq-early_mix_final_T_vol must be written as a residual expression. Using the trapezoid rule results in @eq-early_seg_final_T_molar_trapz or @eq-early_seg_final_T_vol_trapz.
+
+$$
+n_{i,f} = 0.5 V_0 \sum_{k=2}^{N_\lambda} \left( \begin{matrix} \left(\left(\gamma C_i \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k-1}} + \left(\gamma C_i \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k}}\right) \\ \times \left( \lambda_k - \lambda_{k-1} \right)  \end{matrix} \right)
+$${#eq-early_final_moles_trapz}
+
+$$
+\epsilon = 0.5 V_0 \sum_{k=2}^{N_\lambda} \left( \begin{matrix} \left(\begin{matrix}\left(\gamma \sum_i \left(C_i \int_T^{T_f}\hat{C}_{p,i}dT\right) \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k-1}} \\+ \left(\gamma \sum_i \left(C_i \int_T^{T_f}\hat{C}_{p,i}dT\right) \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k}}\end{matrix}\right) \\ \times \left( \lambda_k - \lambda_{k-1} \right) \end{matrix}\right) = 0
+$${#eq-early_seg_final_T_molar_trapz}
+
+$$
+\epsilon = 0.5 V_0 \sum_{k=2}^{N_\lambda} \left( \begin{matrix} \left(\begin{matrix}\left(\gamma \left(\int_T^{T_f}\breve{C}_pdT\right) \frac{dF}{d\lambda}\right)\big\vert_{\lambda_{k-1}} \\+ \left(\gamma \left(\int_T^{T_f}\breve{C}_pdT\right) \frac{dF}{d\lambda}\right)\big\vert_{\lambda_{k}}\end{matrix}\right) \\ \times \left( \lambda_k - \lambda_{k-1} \right) \end{matrix} \right) =0
+$${#eq-early_seg_final_T_vol_trapz}
+
+Typically the early-mixing SFR model function will return the product molar flow rates, temperature, and volumetric flow rate of the non-ideal reactor. The molar flow rates and temperature can be calculated using Equations [-@eq-early_mix_prod_molar_flow] and [-@eq-early_mix_prod_temp]. If the reacting fluid is an incompressible liquid, the product volumetric flow rate will equal the feed volumetric flow rate. It the reacting fluid is an ideal gas, the product volumetric flow rate can be calculated using the ideal gas law.
+
+#### Early-Mixing BSTR Model Function
+
+The early-mixing BSTR model function is the same as those written in @sec-4_bstr_analysis. The initial values are the initial sample molar amounts, temperature, and, if necessary, volume. The stopping criterion should be the reaction time, which will be passed to the BSTR reactor function as an argument.
+
+The BSTR design equations are IVODEs, and they can be solved using an IVODE solver (see @sec-apndx_solve_ivodes). In addition to the initial values and stopping criterion, a derivatives function must be provided to the IVODE solver. It will then return sets of corresponding values of $t$, $n_i$, $T$, and $V$ spanning the range from $t=0$ to $t=t_r$. The early mixing BSTR model function should return the values at $t=t_r$
+
+### Late-Mixing Segregated Flow Reactor Calculations
+
+The late-mixing SFR model is essentially a constant pressure, adiabatic SBSTR model. In contrast to the early-mixing SFR model, the hypothetical sample taken from the non-ideal reactor feed is fed into the SBSTR according to  @eq-late_mix_molar_flow_in.
+
+#### Late-Mixing SFR Model Function
+ 
+The late-mixing SFR model function is written in the same way that adiabatic, constant pressure SBSTR functions were written in @sec-4_sbstr_analysis. Just like the early-mixing SFR model function, it will typically receive the feed molar flow rates, feed temperature, and for liquids, the feed volumetric flow rate of the non-ideal reactor as input. Using a basis, $\Delta t_B$, it will calculate the molar amounts, temperature and volume of a hypothetical sample using Equations [-@eq-early_mix_mol_sample] through [-@eq-early_mix_vol_sample].
+
+The adiabatic, constant pressure SBSTR design equations, reproduced below, are IVODEs. Initially, none of the hypothetical sample is in the SBSTR initially, so the molar amounts and volume are zero. The initial value of the temperature can be taken to equal the initial sample temperature, $T_{feed}$. The stopping criterion is $t=\lambda_f$ which is the instant when the last bit of the hypothetical sample enters the SBSTR.
+
+$$
+\frac{dn_i}{dt} = \dot{n}_{i,in} + V \sum_j \nu_{i,j}r_j
+$$
+
+$$
+\sum_i \left( n_i \hat{C}_{p,i}\right) \frac{dT}{dt} - P\frac{dV}{dt} = - \sum_i \dot{n}_{i,in} \int_{T_{in}}^T \hat{C}_{p,i}dT  - V\sum_j r_j \Delta H_j 
+$$
+
+The design equations contain one more dependent variable than the number of equations, so an additional IVODE is needed before they can be solved. If the reacting fluid is a gas, the differential form of the ideal gas law can be added to the design equations, recognizing that the pressure is constant.
+
+$$
+P \frac{dV}{dt} - R \left( T \sum_i \frac{dn_i}{dt} + \left( \sum_i n_i \right) \frac{dT}{dt} \right) = 0
+$$
+
+If the reacting fluid is an incompressible liquid, $\frac{dV}{dt}$ can be calculated at any time, $t$, using @eq-late_mix_vol_derivative. For either gases or liquids, $\dot{n}_{i,in}$ can be calculated using @eq-late_mix_molar_flow_in. To do so, $\frac{dF}{d\lambda}$ must be known. As for the early mixing SFR model function, If the cumulative age distribution is available as an analytical function, $F\left(\lambda\right)$, taking its derivative with respect to $\lambda$ will yield the necessary expression.
+
+If the cumulative age distribution is available in tabular form, a column with the value of $\frac{dF}{d\lambda}$ can be added using Equations [-@eq-d_F_d_lambda_forward] and [-@eq-d_age_fcn_at_lambda_f]. As already noted, the stopping criterion is that $t=\lambda_f$. The derivative of $F$ with respect to $\lambda$ between any two points in the cumulative age distrubution, $\lambda_k$ and $\lambda_{k-1}$, can be taken to equal the linear slope between those points, @eq-late_seg_flow_dF_estimate.
+
+$$
+\frac{dF}{d\lambda} \bigg \vert_{\lambda_{k-1}\le \lambda <\lambda_k} = \frac{F\vert_{\lambda_k} - F\vert_{\lambda_{k-1}}}{\lambda_k - \lambda_{k-1}}
+$${#eq-late_seg_flow_dF_estimate}
+
+With that information, a derivatives function can be written, and an IVODE solver can be used to solve the design equations (again, see @sec-apndx_solve_ivodes). Doing so will yield corresponding sets of values of $t$, $n_i$, $T$ and for gases, $V$, spanning the range from $t=0$ to $t=\lambda_f$. The values at $t=\lambda_f$ are the final values for the hypothetical sample. They can be used to calculate the product molar flows and temperature for the non-ideal reactor as is done in the early-mixing SFR model function.
+
+By analogy, one could structure the computer code as two functions, one representing the late-mixing SFR model and the other being an SBSTR model. However, unlike the early-mixing SFR model, the only calculations that would be performed in the late-mixing SFR model function would be to use the basis to create the initial hypothetical sample and to calculate the non-ideal product flows and temperature from the final sample. Everything else would be done by calling the SBSTR model function. As such, it is just as easy to write a single late-mixing SFR model function that performs all of the calculations. Of course a derivatives function will still be needed for solving the SBSTR design equations.
+
+## Advantages and Disadvantages of the SFR Models
+
+A significant advantage of the SFR models is that they are based on the cumulative age distribution function for the non-ideal reactor. As seen in this chapter, when the non-ideal reactor operates adiabatically at constant pressure, this results in a model that does not have any adjustable parameters that need to be estimated. The assumptions of adiabatic and constant pressure operation are apply to many real, non-ideal reactors. Stirred tanks normally operate at constant pressure, and often for tubular reactors the pressure drop along the length of the reactor is negligible.
+
+Significant disadvantages of the SFR models is that using them to model non-ideal reactors where the pressure drops or heat is exchanged is not straightforward. If the pressure in the steady-state, non-ideal reactor varies with position, an equation for the variation of the pressure with reaction time could be added to the segregated flow reactor models above. For example, if the non-ideal reactor is tubular and the pressure drops along its length, the pressure *vs.* length relationship could be introduced to the segregated flow models as pressure *vs.* reaction time in the hypothetical batch process.
+
+Adapting the segregated flow reactor models to include heat exchange is not as obvious. One option would be to assume that the hypothetical BSTR or SBSTR in the SFR model has the same heat transfer area to reactor volume as the non-ideal reactor being modeled. This may not be accurate, however, because the volume of fluid in the hypothetical batch reactor is changing over time. In *Reaction Engineering Basics* the segregated flow models are only used to model isothermal or adiabatic reactors with constant pressure.
 
 ## Examples
 
-### An Early-Mixing Model of a Non-Ideal Reactor
+The following two examples illustrate the use of the early-mixing SFR model, Example [-@sec-example_23_7_1], and the late-mixing SFR model, Example [-@sec-example_23_7_2], to simulate non-ideal reactors. In Example [-@sec-example_23_7_1] the reacting fluid is an incompressible liquid and in Example [-@sec-example_23_7_2] it is an ideal gas. In both examples the cumulative age distribution is available in tabular form.
 
-### A Late-Mixing Model of a Non-Ideal Reactor
+### An Early-Mixing Model of a Non-Ideal Reactor {#sec-example_23_7_1}
 
-### An Early-Mixing Model of an Ideal CSTR
+{{< include examples/reb_23_7_1/narrative.qmd >}}
+
+{{< include examples/reb_23_7_1/equations.qmd >}}
+
+The cumulative age distribution function from Example [-@sec-example_22_5_1] is available in the file, [cum_age_dist_fcn.csv](examples/reb_23_7_1/cum_age_dist_fcn.csv).
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+[add thinking here]
+
+:::
+
+#### Assignment Summary
+
+**Reaction**: $A \rightarrow Z$
+
+**Rate Expression**:
+
+$$
+r = kC_A^2 \tag{2}
+$$
+
+**Reactor System**: Steady-state, adiabatic, constant pressure, early-mixing SFR.
+
+**Reactor Schematic**: 
+
+![Schematic Representation of the Segregated Flow Reactor Models.](Graphics/segregated_flow_model.png){width="80%"}
+
+**Quantities of Interest**: $f_{A,prod}$ and $T_{prod}$.
+
+**Given and Known Constants**: $V_{non-ideal}$ = 10 L, $\dot{V}_{feed}$ = 3 L min^-1^, $T_{feed}$ = 300 K, $C_{A,feed}$ = 0.5 mol L^-1^, $C_{Z,feed}$ = 0.0, $P$ = 1 atm, $k_0$ = 5.29 x 10^9^ L mol^-1^ min^-1^, $E$ = 12,100 cal mol^-1^, $\Delta H$ = -24,400 cal mol^-1^, $\breve{C}_p$ = 1.0 cal ml^-1^, K^-1^, $\rho$ = 1.0 g ml^-1^, and $\overline{F}$ *vs.* $\overline{\lambda}$.
+
+**Basis**: $\Delta t_B$ = 1.0 min.
+
+#### Mathematical Formulation of the Analysis
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+[add thinking here]
+
+:::
+
+<center>**Early-Mixing Segregated Flow Reactor Model**</center>
+
+**Design Equations**:
+
+$$
+n_{A,0} = \dot{V}_{feed} C_{A,feed} \Delta t_B \tag{3}
+$$
+
+$$
+n_{Z,0} = \dot{V}_{feed} \cancelto{0}{C_{Z,feed}} \Delta t_B = 0 \tag{4}
+$$
+
+$$
+T_0 = T_{feed} \tag{5}
+$$
+
+$$
+V_0 = \dot{V}_{feed} \Delta t_B \tag{6}
+$$
+
+$$
+\dot{n}_{A,prod} = \frac{n_{A,f}}{\Delta t_B} =  0.5 \frac{V_0}{\Delta t_B} \sum_{k=2}^{N_\lambda} \left( \begin{matrix} \left(\left(C_i \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k-1}} + \left(C_i \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k}}\right) \\ \times \left( \lambda_k - \lambda_{k-1} \right)  \end{matrix} \right) \tag{7}
+$$
+
+$$
+\dot{n}_{Z,prod} = \frac{n_{Z,f}}{\Delta t_B} =  0.5 \frac{V_0}{\Delta t_B} \sum_{k=2}^{N_\lambda} \left( \begin{matrix} \left(\left(C_i \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k-1}} + \left(C_i \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k}}\right) \\ \times \left( \lambda_k - \lambda_{k-1} \right)  \end{matrix} \right) \tag{8}
+$$
+
+$$
+\epsilon = 0.5 V_0 \breve{C}_p \sum_{k=2}^{N_\lambda} \left( \begin{matrix} \left(\left( \left(T_{prod} - T\right) \frac{dF}{d\lambda}\right)\big\vert_{\lambda_{k-1}} + \left( \left(T_{prod} - T\right) \frac{dF}{d\lambda}\right)\big\vert_{\lambda_{k}}\right) \\ \times \left( \lambda_k - \lambda_{k-1} \right) \end{matrix} \right) =0 \tag{9}
+$$
+
+**Initial Guess for $T_{prod}$**: 
+
+$$
+T_{guess} = T_{feed} + 10 \text{ K} \tag{10}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+[add thinking here]
+
+:::
+
+**Residuals Function**: 
+
+[Argument]{.underline}: $T_{prod}$.
+
+[Must be Available]{.underline}: $V_0$, $\overline{T}$, $\overline{\lambda}$, and $\overline{\frac{dF}{d\lambda}}$.
+
+[Returns]{.underline}: $\epsilon$.
+
+[Algorithm]{.underline}:
+
+$$
+\epsilon = 0.5 V_0 \breve{C}_p \sum_{k=2}^{N_\lambda} \left( \begin{matrix} \left(\left( \left(T_{prod} - T\right) \frac{dF}{d\lambda}\right)\big\vert_{\lambda_{k-1}} + \left( \left(T_{prod} - T\right) \frac{dF}{d\lambda}\right)\big\vert_{\lambda_{k}}\right) \\ \times \left( \lambda_k - \lambda_{k-1} \right) \end{matrix} \right) =0 \tag{9}
+$$
+
+**Early-Mixing SFR model Function**:
+
+[Arguments]{.underline}: none.
+
+[Must be Available]{.underline}: Early Mixing BSTR Model Function.
+
+[Returns]{.underline}: $\dot{n}_{A,prod}$, $\dot{n}_{Z,prod}$, and $T_{prod}$.
+
+[Algorithm]{.underline}:
+
+$$
+n_{A,0} = \dot{V}_{feed} C_{A,feed} \Delta t_B \tag{3}
+$$
+
+$$
+n_{Z,0} = \dot{V}_{feed} \cancelto{0}{C_{Z,feed}} \Delta t_B = 0 \tag{4}
+$$
+
+$$
+T_0 = T_{feed} \tag{5}
+$$
+
+$$
+V_0 = \dot{V}_{feed} \Delta t_B \tag{6}
+$$
+
+For each $\lambda_k$ in $\overline{\lambda}$:
+
+call BSTR to get nA, nZ, and T at each lambda_k
+
+calculate CA and CZ at each lambda_k
+
+calculate dFdlambda at each lambda_k
+
+$$
+\dot{n}_{A,prod} = \frac{n_{A,f}}{\Delta t_B} =  0.5 \frac{V_0}{\Delta t_B} \sum_{k=2}^{N_\lambda} \left( \begin{matrix} \left(\left(C_i \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k-1}} + \left(C_i \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k}}\right) \\ \times \left( \lambda_k - \lambda_{k-1} \right)  \end{matrix} \right) \tag{7}
+$$
+
+$$
+\dot{n}_{Z,prod} = \frac{n_{Z,f}}{\Delta t_B} =  0.5 \frac{V_0}{\Delta t_B} \sum_{k=2}^{N_\lambda} \left( \begin{matrix} \left(\left(C_i \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k-1}} + \left(C_i \frac{dF}{d\lambda}\right)\big\vert_{t_r=\lambda_{k}}\right) \\ \times \left( \lambda_k - \lambda_{k-1} \right)  \end{matrix} \right) \tag{8}
+$$
+
+make V0, Tbar, lambda-bar, and dfdlambda-bar available to the residuals function
+
+call ATE solver with guess and residuals function to get Tprod
+
+<center>**Early-Mixing BSTR Model**</center>
+
+**Design Equations**:
+
+$$
+\frac{dn_A}{dt} = -V_0r \tag{11}
+$$
+
+$$
+\frac{dn_Z}{dt} = V_0 r \tag{12}
+$$
+
+$$
+\frac{dT}{dt} = - \frac{r \Delta H}{\breve{C}_{p}} \tag{13}
+$$
+
+**Initial Values and Stopping Criterion**:
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $t$ | $0$ | $t_r$ |
+| $n_A$ | $V_0 C_{A,feed}$ |  |
+| $n_Z$ | $0$ |  |
+| $T$ | $T_{feed}$ |  |
+  
+: Initial values and stopping criterion for solving the BSTR design equations, (11) through (13). {#tbl-example_23_6_1_initial_values}
+
+**Derivatives Function**:
+
+[Arguments]{.underline}: $t$, $n_A$, $n_Z$, and $T$
+
+[Must be Available]{.underline}: $V_0$
+
+[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_B}{dt}$, and $\frac{dT}{dt}$
+
+[Algorithm]{.underline}:
+
+$$
+C_A = \frac{n_A}{V_0} \tag{14}
+$$
+
+$$
+k = k_0 \exp{\left(\frac{-E}{RT}\right)} \tag{15}
+$$
+
+$$
+r = kC_A^2 \tag{2}
+$$
+
+$$
+\frac{dn_A}{dt} = -Vr \tag{11}
+$$
+
+$$
+\frac{dn_Z}{dt} = Vr \tag{12}
+$$
+
+$$
+\frac{dT}{dt} = - \frac{r \Delta H}{\breve{C}_{p}} \tag{13}
+$$
+
+**BSTR Function**:
+
+[Arguments]{.underline}: $V_0$ and $t_r$
+
+[Returns]{.underline}: $\overline{t}$, $\overline{n}_A$, $\overline{n}_Z$, and $\overline{T}$
+
+[Algorithm]{.underline}:
+
+$$
+V_0 \, \Rightarrow \, \text{available to derivatives function} \tag{16}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\text{initial values, stopping criterion, derivatives function} \\
+\Downarrow \\
+\text{IVODE solver} \\
+\Downarrow \\
+\overline{t}, \overline{n}_A, \overline{n}_Z, \overline{T}
+\end{matrix} \tag{17}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+[add thinking here]
+
+:::
+
+<center>**Quantities of Interest**</center>
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+[add thinking here]
+
+:::
+
+[Algorithm]{.underline}:
+
+call early-mixing SFR model function to get nAprod, nZprod and Tprod
+
+$$
+f_{A,product} = \frac{\dot{n}_{A,feed} - \dot{n}_{A,priduct}}{\dot{n}_{A,feed}} \tag{24}
+$$
+
+#### Results, Analysis and Discussion
+
+add discussion
+
+### A Late-Mixing Model of a Non-Ideal Reactor {#sec-example_23_7_2}
+
+
 
 ## Symbols Used in @sec-7_seg_flow_models
 
 | Symbol | Meaning |
 |:-------|:--------|
 | $dF$ | Differential age distribution function. |
-| $f_i$ | Fractional conversion of reagent $i$; an overbar indicates the average value, and a subscripted, $\lambda$, indicates a fluid element of age $\lambda$. |
-| $C_i$ | Concentration of reagent $i$; an overbar indicates the average value, and a subscripted, $\lambda$, indicates a fluid element of age $\lambda$. |
-| $F$ | Cumulative age distribution function. |
-| $T$ | Temperature; an overbar indicates the average value, and a subscripted, $\lambda$, indicates a fluid element of age $\lambda$. |
-| $\lambda$ | Age or residence time of a fluid element. |
+| $n_i$ | Molar amount of reagent $i$; a subscripted "s,0" denotes the initial sample and "s,f" denotes the sample after batch processing. |
+| $\dot{n}_i$ | Molar flow rate; subscripted "feed" and "product" denote the flow stream, a subscripted "$\tau$" denotes a reaction time of $\tau$. |
+| $r_j$ | Rate of reaction $j$. |
+| $t$ | Time, a subscripted "r" denotes reaction time. |
+| $C_i$ | Concentration of reagent $i$. |
+| $\hat{C}_{p,i}$ | Molar heat capacity of reagent $i$. |
+| $\breve{C}_p$ | Volumetric heat capacity. |
+| $F\left(\lambda\right)$ | Cumulative age distribution function. |
+| $P$ | Pressure. |
+| $R$ | Ideal gas constant. |
+| $T$ | Temperature; subscripted "feed" and "product" denote the flow stream, a subscripted "$\tau$" denotes a reaction time of $\tau$. |
+| $V$ | Reacting fluid volume; a subscripted "s,0" denotes the initial sample and "s,f" denotes the sample after batch processing. |
+| $\dot{V}$ | Volumetric flow rate; subscripted "feed" and "product" denote the flow stream, a subscripted "$\tau$" denotes a reaction time of $\tau$. |
+| $\gamma$ | Reduced fluid volume (current volume divided by initial volume). |
+| $\lambda$ | Fluid age. |
+| $\tau$ | Reaction time. |
+| $\Delta t_B$ | Sampling time used as a basis for calculations. |
 
 : {tbl-colwidths="[20,80]"}
