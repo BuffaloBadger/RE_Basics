@@ -5,6 +5,7 @@ Primary Tasks
 - Final drafts: appendices D, E, F, G, H, I, J, K, L, M, and N
 - Chapter by chapter final drafts
   - update appendices A, B, and C as needed
+  - move RE_Basics_Examples into RE_Basics
   - integrate with SCoRE
   - use final versions of SCoRE utility functions to solve examples
   - grammatical consistency (hyphenation, etc.)
