@@ -9,7 +9,7 @@ function example_23_7_1
     dH = -24400; % cal/mol
     Cp = 1000.0; % cal/L/K
     % basis
-    delta_tB = 1.0; % min
+    Vfe = 1.0; % L
     % universal constants
     Ren = 1.987; % cal/mol/K
     
@@ -20,35 +20,90 @@ function example_23_7_1
     lambda = table2array(data_table(:,1)); % min
     F = table2array(data_table(:,2));
 
-    % global variables to be made available to all functions
-    N_lambda = length(lambda);
-    gV0 = nan;
-    gT = nan(N_lambda,1);
-    gdF = nan(N_lambda,1);
+    % global variables
+    gT = nan;
+    gdF = nan;
+
+    % derivatives function
+    function ddt = derivatives(~, dep)
+        % extract the necessary dependent variables
+        nA = dep(1);
+        T = dep(3);
+
+        % calculate the rate
+        CA = nA/Vfe;
+        k = k0*exp(-E/Ren/T);
+        r = k*CA^2;
+
+        % evaluate the derivatives
+        dnAdt = -Vfe*r;
+        dnZdt = Vfe*r;
+        dTdt = -r*dH/Cp;
+
+        % combine the derivatives in a vector and return
+        ddt = [dnAdt; dnZdt; dTdt];
+    end
     
+    % fluid element function
+    function [CA, CZ, T] = profiles()
+        % get the number of integrand evaluation points
+        N_lambda = length(F);
 
-    % early mixing segregated flow reactor function
+        % set the initial values
+        ind_0 = 0.0;
+        dep_0 = [Vfe*CA_feed; 0.0; T_feed];
+
+        % define the stopping variable
+        f_var = 0;
+        
+        % set the ODE type
+        odes_are_stiff = false;
+
+        % allocate storage for the return values
+        CA = nan(N_lambda,1);
+        CZ = nan(N_lambda,1);
+        T = nan(N_lambda,1);
+
+        % set the initial values
+        CA(1) = CA_feed;
+        CZ(1) = 0.0;
+        T(1) = T_feed;
+
+        % loop through the integrand evaluation points
+        for i = 2:N_lambda
+            % set the stopping criterion
+            f_val = lambda(i);
+            
+            % solve the design equations
+            [~, dep, flag] = solve_ivodes(ind_0, dep_0, f_var, f_val...
+                , @derivatives, odes_are_stiff);
+    
+            % check that the solution was found
+            if flag <= 0
+                disp(' ')
+                disp('WARNING: The ODE solution may not be accurate!')
+            end
+
+            % Add to the return value vectors
+            CA(i) = dep(end,1)/Vfe;
+            CZ(i) = dep(end,2)/Vfe;
+            T(i) = dep(end,3);
+        end
+    end
+
+    % residual function
+    function epsilon = residual(unknown)
+        integrand = (unknown - gT).*gdF;
+        epsilon = 0.5*Vfe*Cp*trapz(lambda,integrand);
+    end
+
+    % segregated flow reactor function
     function [nA_prod, nZ_prod, T_prod] = products()
-        % define the hypothetical sample
-        V0 = VFR_feed*delta_tB;
-
-        % make V0 available to the derivatives and residuals functions
-        gV0 = V0;
+        % get the number of integrand evaluation points
+        N_lambda = length(F);
 
         % calculate CA, CZ, and T for each age
-        CA = nan(N_lambda,1);
-        CA(1) = CA_feed;
-        CZ = nan(N_lambda,1);
-        CZ(1) = 0;
-        T = nan(N_lambda,1);
-        T(1) = T_feed;
-        for i = 2:N_lambda
-            % solve the BSTR design equations
-            [~, nA, nZ, Temp] = profiles(lambda(i));
-            CA(i) = nA(end)/V0;
-            CZ(i) = nZ(end)/V0;
-            T(i) = Temp(end);
-        end
+        [CA, CZ, T] = profiles();
         
         % calculate dF/d_lambda for each age
         dF = nan(N_lambda,1);
@@ -58,14 +113,10 @@ function example_23_7_1
         dF(N_lambda) = 0.0;
 
         % calculate the product molar flow rates
-        integrandA = nan(N_lambda,1);
-        integrandZ = nan(N_lambda,1);
-        for i=1:N_lambda
-            integrandA(i) = CA(i)*dF(i);
-            integrandZ(i) = CZ(i)*dF(i);
-        end
-        nA_prod = 0.5*V0/delta_tB*trapz(lambda, integrandA);
-        nZ_prod = 0.5*V0/delta_tB*trapz(lambda, integrandZ);
+        integrandA = CA.*dF;
+        integrandZ = CZ.*dF;
+        nA_prod = 0.5*VFR_feed*trapz(lambda, integrandA);
+        nZ_prod = 0.5*VFR_feed*trapz(lambda, integrandZ);
 
         % make T, and dF available to the residuals function
         gT = T;
@@ -73,67 +124,13 @@ function example_23_7_1
 
         % solve the implicit equation for T_prod
         init_guess = T_feed + 10.0;
-        [T_prod, flag, message] = solve_ates(@residuals, init_guess);
+        [T_prod, flag, message] = solve_ates(@residual, init_guess);
     
         % check that the solution was found
         if flag <= 0
             disp(' ')
             disp(['WARNING: The ATE solver did not converge: ',message])
         end
-
-    end
-
-    % residuals function
-    function epsilon = residuals(unknown)
-        integrand = (unknown - gT).*gdF;
-        epsilon = 0.5*gV0*Cp*trapz(lambda,integrand);
-    end
-
-    % BSTR function
-    function [t, nA, nZ, T] = profiles(tr)
-        % set the initial values
-        ind_0 = 0.0;
-        dep_0 = [VFR_feed*CA_feed*delta_tB; 0; T_feed];
-
-        % define the stopping criterion
-        f_var = 0;
-        f_val = tr;
-        
-        % solve the IVODEs
-        odes_are_stiff = false;
-        [t, dep, flag] = solve_ivodes(ind_0, dep_0, f_var, f_val...
-            , @derivatives, odes_are_stiff);
-    
-        % check that the solution was found
-        if flag <= 0
-            disp(' ')
-            disp('WARNING: The ODE solution may not be accurate!')
-        end
-
-        % extract the dependent variable profiles
-        nA = dep(:,1);
-        nZ = dep(:,2);
-        T = dep(:,3);
-    end
-
-    % derivatives function
-    function ddt = derivatives(~, dep)
-        % extract the necessary dependent variables
-        nA = dep(1);
-        T = dep(3);
-
-        % calculate the rate
-        CA = nA/gV0;
-        k = k0*exp(-E/Ren/T);
-        r = k*CA^2;
-
-        % evaluate the derivatives
-        dnAdt = -gV0*r;
-        dnZdt = gV0*r;
-        dTdt = -r*dH/Cp;
-
-        % combine the derivatives in a vector and return
-        ddt = [dnAdt; dnZdt; dTdt];
     end
 
     % quantities of interest function
@@ -143,7 +140,7 @@ function example_23_7_1
         
         item = ["Conversion"; "Temperature"];
         value = [fA; T_prod];
-        units = ["%"; " K"];
+        units = ["%"; "K"];
 
         results_table = table(item, value, units);
         disp(' ')
