@@ -1,3 +1,455 @@
 # Zoned Reactor Models {#sec-7_zoned_reactor_models}
 
-This chapter will be added as soon as I finish writing it.
+The last steady-state non-ideal reactor model type considered in *Reaction Engineering Basics* is the zoned reactor model, sometimes also called a compartment model. In effect, zoned reactor models are multiple reactor networks that are being used to model a single physical reactor. As such, the analysis of zoned reactors is essentially the same as the analysis of a reactor network as described in @sec-5_reactor_networks. Typically zoned reactor models include several unknown parameters that need to be estimated.
+
+## Using a Reactor Network to Model a Non-Ideal Reactor
+
+Sometimes a reactor that is expected to obey the assumptions of an ideal reactor fails to do so. A reaction engineer may suspect that there is a physical issue that causes the flow to be different from that in an ideal reactor. In this situation, the engineer has two options. One is to try to correct the physical issue so that the reactor does obey the ideal reactor model. This will likely require shutting the reactor down while the issue is being addressed. Shutting the reactor down, in turn, will affect the company's profits.
+
+If the performance of the reactor is acceptable, but not equal to the predictions from an ideal reactor model, it may be beneficial, instead, to determine whether a zoned reactor model can accurately describe the non-ideal reactor. The zoned reactor model will include unknown parameters that need to be estimated. As discussed later, it may be possible to estimate the parameters without interrupting the operation of the reactor.
+
+The zoned reactor model usually includes the inaccurate ideal reactor model, but adds a second reactor to it. The resulting two-reactor network is then used as a model for the single non-ideal reactor. The individual reactors in the network are called zones or compartments. There can be any number of zones, but generally the number of zones is small because each added zone introduces several unknown parameters that must be estimated.
+
+There are no hard and fast rules regarding the zones. For example, the inaccurate ideal reactor model does not have to be used as a zone. As indicated in the discussion below, a zoned model is used, and the zones are selected, because the engineer suspects a physical issue that is causing the flow or mixing to deviate from ideal, and the zone or zones are added to try to account for that physical issue.
+
+### Reactor Zone Types
+
+Each zone in a zoned reactor model is either an ideal CSTR or an ideal PFR. Individually they are modeled using the ideal reactor design equations (see Chapters [-@sec-4_cstr_analysis] and [-@sec-4_pfr_analysis]). What varies from one zoned reactor model to the next are the specific ideal reactors and how they are connected. Three basic types of connection will cover a majority of situations.
+
+The first two types connections between zones are parallel and series. These have already been considered in @sec-5_reactor_networks. The third type of connection creates a “well mixed stagnant” zone by use of a CSTR zone. The inlet to a well mixed stagnant zone and the outlet from it both connect to another reactor zone at the same location. In effect, the well mixed stagnant CSTR zone draws some amount of fluid out of the reactor zone it is connected to while simultaneously replacing that withdrawn fluid with an equal amount taken from the well-mixed stagnant CSTR zone.
+
+@fig-zoned_cstr_with_stagnant (a) shows a zoned reactor model where a well-mixed stagnant CSTR zone has been added to an ideal CSTR zone. Note the inlet to the stagnant zone is drawn from the regular CSTR’s contents and the outlet from the stagnant zone feeds back into the regular CSTR’s contents. Noting that the contents of the regular CSTR zone are perfectly mixed, the feed into the stagnant zone could equally well be drawn from the outlet of the regular CSTR zone and the outlet from the stagnant zone could equally well be added to the feed to the regular CSTR zone as shown in (b). The two representations are equivalent, but the latter is more convenient for writing design equations for the zoned reactor. With that schematic, the design equations consist of the CSTR design equations for the reactor, the CSTR design equations for the stagnant zone, mole and energy balances on the stream splitting point and mole and energy balances on the stream mixing point.
+
+![A zoned reactor model (gray) with a well-mixed stagnant zone (green) within an ideal CSTR (blue). The actual configuration (a) may be easier to analyze using the equivalent representation (b) with a stream splitting point and a stream mixing point.](Graphics/zoned_cstr_with_stagnant_zone.png){#fig-zoned_cstr_with_stagnant}
+
+Similarly, @fig-zoned_pfr_with_stagnant (a) shows a zoned reactor model where a well-mixed stagnant CSTR zone has been added to an ideal PFR zone. To facilitate analysis (b), the single PFR zone can be split into two PFR zones connected in series. Here the design equations for the zoned reactor model include the PFR design equations for the reactor, the CSTR design equations for the stagnant zone, mole and energy balances on the stream splitting point and mole and energy balances on the stream mixing point.
+
+![A zoned reactor model (gray) with a well-mixed stagnant zone (green) within an ideal PFR (blue). The actual configuration (a) may be easier to analyze using the equivalent representation (b) with a stream splitting point and a stream mixing point.](Graphics/zoned_pfr_with_stagnant_zone.png){#fig-zoned_pfr_with_stagnant}
+
+Well-mixed stagnant zones have been emphasized here because they are not encountered anywhere else in this book. However, zoned reactor models are not required to include a well-mixed stagnant zone. As seen below, they may include two or more ideal flow reactors.
+
+### Selecting and Connecting Reactor Zones
+
+Developing a zoned reactor model requires some insight into the reason why the reactor being modeled does not obey the ideal reactor assumptions. A few examples are considered in this section.
+
+Suppose the catalyst in a packed bed reactor had to be replaced. Before the replacement the reactor performance was accurately described by the ideal PFR model, but after the change, the ideal PFR model is no longer sufficiently accurate. This might lead an engineer to suspect that the new catalyst packing is not properly distributed in the reactor and as a consequence, a fraction of the flow is bypassing part of the packed bed. This might be modeled as a two zone reactor consisting of two PFRs in parallel, as indicated schematically in @fig-zoned_pfr_with_bypassing. Most of the flow in the model would pass through a PFR zone that represents the packed bed, while an appropriate fraction of the flow would pass through the other PFR zone that represents the bypassing flow.
+
+![A zoned reactor model (gray) where an ideal PFR (blue) is used to represent a packed bed and a second ideal PFR (green) is used to represent a portion of the reactor where the packing is less dense leading to bypassing of the main bed by some fluid](Graphics/zoned_pfr_with_channelling.png){#fig-zoned_pfr_with_bypassing}
+
+Alternatively, the engineer might suspect that maldistribution of the packing has created a well-mixed stagnant zone within the packed bed. In that case @fig-zoned_pfr_with_stagnant might be used to model the non-ideal reactor.
+
+A third possibility might be that measurement of the cumulative age distribution function indicates some mixing in the axial direction. One option then would be to model the reactor using an axial dispersion model (see @sec-7_axial_dispersion). Alternatively, recalling (@sec-5_reactor_networks) that an infinite number of CSTRs connected in series is equivalent to a PFR, the non-ideal reactor might be to use a zoned reactor model where some number of equally-sized CSTR zones are connected in series. Depending on the number of CSTRs in series, this zoned reactor model can predict a range of behaviors from that of a single CSTR to that of an ideal PFR.
+
+Zoned reactor models are not limited to non-ideal tubular reactors, they can be used to model non-ideal stirred tank reactors, too. For example, if the agitation in a stirred tank is not functioning properly there might be pockets” of fluid that are not perfectly mixed with the rest of the fluid in the reactor. This reactor might be modeled as a CSTR in combination with a well-mixed stagnant zone.
+
+## Zoned Reactor Model Parameters
+
+Each time a reactor zone is added to a zoned reactor model, unknown parameters are added to the model. Consider @fig-zoned_cstr_with_stagnant as an example. Adding the well-mixed stagnant zone to the model introduces at least two parameters. One new parameter is the fraction of the fluid leaving the CSTR that is directed to the well-mixed stagnant CSTR zone. A second new parameter is the space time (or volume) of the well-mixed stagnant CSTR zone. If the non-ideal reactor exchanges heat with an external heating or cooling fluid, the relative heat transfer areas associated with the ideal CSTR and the stagnant zone CSTR becomes another parameter. Additionally, it isn't required that the combined volumes or heat transfer areas of the zones must equal those of the non-ideal reactor. In the case that they do not equal the non-ideal reactor, two more unknown parameters are added.
+
+When a zone is added to a model containing an ideal PFR zone, the same set of parameters is introduced along with one additional parameter. Referring to @fig-zoned_pfr_with_stagnant, the additional parameter is the axial distance from the inlet of the ideal PFR zone where the well-mixed stagnant zone connects. Similarly, @fig-zoned_pfr_with_bypassing shows the feed splitting between the packed bed zone and the bypassing zone at the inlet and recombining at the outlet. In fact, the bypassing zone might start some distance into the packed bed zone and/or end some distance before the end of the packed bed zone.
+
+The important points are that zoned reactor models typically contain several unknown parameters and each of those parameters must be estimated before the model can be used. This is a good reason for using the smallest possible number of zones, ideally just two. If the model contains too many parameters, it is difficult to estimate values for all of them, and the model can lose its predictive accuracy at conditions different from those used to estimate the parameters.
+
+An engineer can reduce the number of estimated parameters by choosing fixed values for some of them. For example, an engineer could simply decide that the split into a packed bed zone and a bypass zone occurs at the reactor inlet and they merge at the reactor outlet in @fig-zoned_pfr_with_bypassing. Similarly an engineer could simply decide that 10% of the fluid leaving a perfect CSTR is fed to a well-mixed stagnant zone or the engineer could set the volumes of the ideal CSTR and well-mixed stagnant zones.
+
+Simply choosing some parameter values and estimating the rest is acceptable as long as the resulting zoned reactor model accurately describes the performance of the non-ideal reactor. Zoned reactor models are empirical. The parameter values have no theoretical basis, so as long as the model is accurate, it is acceptable.
+
+That leaves the question of how to estimate the remaining parameters. If the non-ideal reactor can be shut down and then used for experiments, the zoned reactor model parameters could be estimated in the same way that rate expression parameters are estimated. A number of experiments could be performed, varying inputs to the reactor with a response being measured for each experiment. The non-ideal reactor model then could be used to create a predicted responses model (see Chapters [-@sec-6_kin_data_gen] through [-@sec-6_pfr_data_analysis]) which could be fit to the data.
+
+Very often, however, the reactor cannot be shut down and used for experiments. One option in that situation is to measure the cumulative age distribution function. A transient version of the zoned reactor model then could be fit to the age function data to estimate the parameters. This approach will not be illustrated in this chapter because *Reaction Engineering Basics* does not consider the analysis of transient reactor networks. The estimation of zoned reactor model parameters is left for an intermediate book on reaction engineering.
+
+## Examples
+
+Two simple examples of zoned reactor models are presented in this section. The first is a zoned reactor model for a packed bed where bypassing is suspected. The other is a zoned reactor model for a stirred tank with a well-mixed stagnant zone.
+
+### A Zoned Reactor Model for Bypassing in a Packed Bed {#sec-example_25_3_1}
+
+A tube that is 6 m long with an inside diameter of 7 cm is packed with pellets of solid catalyst. Reaction (1) takes place within this reactor at a constant temperature of 450 ºC and a constant pressure of 5 atm. The tube will be fed 200 ft^3^ h^-1^ of a gas containing 15% A, 15% B and 70% I (an inert gas). Reaction (1) is one-half order in A and first order in B as indicated in equation (2). Suppose that the packing in the tube is not uniform, and as a consequence 5% of the bed has a lower density (leading to a rate coefficient of 1785 mol h^-1^ atm^-0.5^ m^-3^), while the remainder has a higher density (with a rate coefficient of 2160 mol h^-1^ atm^-0.5^ m^-3^). Using a zoned reactor model with two parallel PFR zones, show how the conversion will vary as the fraction of the feed gas flowing into the less dense part of the bed varies between 0 and 25%. Discuss the parameters in this zoned reactor model and how they might be estimated.
+
+$$
+2A + B \rightarrow 2 Z \tag{1}
+$$
+
+$$
+r = k P_B \sqrt{P_A} \tag{2}
+$$
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In this assignment I'm asked to examine the effect of varying a parameter in a zoned reactor model on the conversion predicted by the model. I'll begin by summarizing the assignment. There are two zones in the model, I'll designate the one with a higher packing density as "R1", and the other as R2.  I'll use $f_{f,R2}$ to designate the fraction of the feed that goes to the low density zone and $f_{V,R2} to designate the fraction of the bed volume corresponding to the low density zone. Finally, I'll use an overbar to designate sets of values of a quantity.
+
+:::
+
+#### Assignment Summary
+
+**Reaction**: 
+
+$$
+2A + B \rightarrow 2 Z \tag{1}
+$$
+
+**Rate Expression**: 
+
+$$
+r = k P_B \sqrt{P_A} \tag{2}
+$$
+
+**Reactor System**: Zoned Reactor with Two Ideal PFR Zones
+
+**Reactor Schematic**: 
+
+![Schematic representation of the zoned reactor model in Example 25.3.1.](Calculations/example_25_3_1/example_25_3_1_schematic.png){#fig-example_25_3_1_schematic}
+
+**Quantities of Interest**: $\overline{f}_A$ *vs.* $\overline{f}_{f,R2}$
+
+**Given and Known Constants**: $L_{NI}$ = 6 m, $D_{NI}$ = 7 cm, $T$ = 450 ºC, $P$ =  5 atm, $\dot{V}_0$ = 200 ft^3^ h^-1^, $y_{A,0}$ = 0.15, $y_{B,0}$ = 0.15, $y_{I,0}$ = 0.70,  $f_{V,R2}$ = 0.05, $k_{R2}$ = 1785 mol h^-1^ atm^-0.5^ m^-3^, $k_{R1}$ = 2160 mol h^-1^ atm^-0.5^ m^-3^.
+
+#### Mathematical Formulation of the Analysis
+
+The formulation that follows assumes that the given and known constants identified in the assignment summary are available at any point in the analysis.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+In the model, the reaction actually takes place in two ideal PFR zones. I'll start by generating a PFR zone model that can be used to simulate either of the two zones. The zones are isothermal at a known temperature, so all I need to model them are mole balances. Since the feed to the zones and the volumes of the zones are different, these will be passed to the function at the time the zone is simulated.
+
+The general form of the steady-state PFR mole balance is given in @eq-pfr_mol_balance. Here the PFR zones operate at steady-state, so all of the time derivatives equal zero, and the spatial derivative is an ordinary derivative. I don't know the diameters of the separate zones, so I'll re-write the mole balance in terms of the cumulative zone volume. Additionally, there is only one reaction, so the summation reduces to a single term and it isn't necessary to index the reaction.
+
+$$
+\cancelto{\frac{d\dot{n}_i}{dz}}{\frac{\partial \dot{n}_i}{\partial z}} + \frac{\pi D^2}{4\dot{V}} \cancelto{0}{\frac{\partial\dot{n}_i}{\partial t}} - \frac{\pi D^2\dot{n}_i}{4\dot{V}^2} \cancelto{0}{\frac{\partial \dot{V}}{\partial t}}  =\frac{\pi D^2}{4}\cancelto{\nu_t r}{\sum_j \nu_{i,j}r_j}
+$$
+
+$$
+\frac{d\dot{n}_i}{dz} = \frac{\pi D^2}{4}\nu_ir \qquad \Rightarrow \qquad \frac{d\dot{n}_i}{\frac{\pi D^2}{4}dz} = \nu_ir \qquad \Rightarrow \qquad \frac{d\dot{n}_i}{dV} = \nu_ir
+$$
+
+The design equations will be solved numerically using an IVODE solver. I'll need to provide initial values, a stopping criterion, and a derivatives function to the solver.
+
+I can define $V=0$ to be the inlet to the zone in which case the initial values simply equal the inlet molar flow rates to the zone. Since I'll be using the same reactor model for both zones, these will be provided as arguments. Similarly, the stopping criterion then is that the final value of the volume is the volume of the zone. Again, this will need to be provided as an argument.
+
+:::
+
+<center>**PFR Zone Model**</center>
+
+**Design Equations**
+
+$$
+\frac{d\dot{n}_A}{dV} = -2r \tag{3}
+$$
+
+$$
+\frac{d\dot{n}_B}{dV} = -r \tag{4}
+$$
+
+$$
+\frac{d\dot{n}_Z}{dV} = 2r \tag{5}
+$$
+
+$$
+\frac{d\dot{n}_I}{dV} = 0 \tag{6}
+$$
+
+**Initial Values and Stopping Criterion:**
+
+| Variable | Initial Value | Stopping Criterion |
+|:------:|:-------:|:-------:|
+| $V$ | $0$ | $V_f$ |
+| $\dot{n}_A$ | $\dot{n}_{A,in}$ |  |
+| $\dot{n}_B$ | $\dot{n}_{B,in}$ |  |
+| $\dot{n}_Z$ | $0.0$ |  |
+| $\dot{n}_I$ | $\dot{n}_{I,in}$ |  |
+  
+: Initial values and stopping criterion for solving the design equations, (3) through (6). {#tbl-example_25_3_1_initial_values}
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I also must write a derivatives function that I can provide to the IVODE solver. When the solver calls the derivatives function, the only arguments it will pass are the values of the independent and dependent and dependent variables at the start of an integration step, and the only return values it will expect to receive are the derivatives of the dependent variables with respect to the independent variable. Looking at the design equations, I see that I will need to calculate the rate. I can use the rate expression to do that. The partial pressures of A and B in the rate expression can be calculated as their mole fractions times the total pressure.
+
+I will also need the rate coefficient, but the correct value will depend upon which reactor is being modeled. I can't pass the correct rate coefficient to the derivatives function as an argument, so I'll need to make sure to make it available by some other means.
+
+:::
+
+**Derivatives Function:**
+
+[Arguments:]{.underline} $V$, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, $\dot{n}_I$
+
+[Must be Available:]{.underline} $k$
+
+[Returns:]{.underline} $\frac{d\dot{n}_A}{dV}$, $\frac{d\dot{n}_B}{dV}$, $\frac{d\dot{n}_Z}{dV}$, $\frac{d\dot{n}_I}{dV}$
+
+[Algorithm:]{.underline}
+
+$$
+P_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_Z + \dot{n}_I}P \tag{7}
+$$
+
+$$
+P_B = \frac{\dot{n}_B}{\dot{n}_A + \dot{n}_B + \dot{n}_Z + \dot{n}_I}P \tag{8}
+$$
+
+$$
+r = k P_B \sqrt{P_A} \tag{2}
+$$
+
+$$
+\frac{d\dot{n}_A}{dV} = -2r \tag{3}
+$$
+
+$$
+\frac{d\dot{n}_B}{dV} = -r \tag{4}
+$$
+
+$$
+\frac{d\dot{n}_Z}{dV} = 2r \tag{5}
+$$
+
+$$
+\frac{d\dot{n}_I}{dV} = 0 \tag{6}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Now I can generate a PFR zone function. It will receive the inlet molar flow rates of the reagents and the volume of whichever PFR zone is being modeled. I have a choice regarding the rate coefficient. I can either pass the correct rate coefficient to this function as an argument, and then make it available to the derivatives function within this function, or I can make it available to the derivatives function before I call this function. I prefer passing it to this function as an argument, so that's how I'll structure the PFR Zone Function.
+
+Solving the PFR design equations will yield corresponding sets of values of $V$, $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $\dot{n}_I$, that span the range from $V=0$ to $V=V_f$. In keeping with the practice used when modeling PFR elsewhere in the book, I'll have this function return those profiles.
+
+:::
+
+**PFR Zone Function:**
+
+[Arguments:]{.underline} $\dot{n}_{A,in}$, $\dot{n}_{B,in}$, $\dot{n}_{Z,in}$, $\dot{n}_{I,in}$, $V_f$, and $k$.
+
+[Returns:]{.underline} $\overline{V}$, $\dot{n}_{A}$, $\dot{n}_{B}$, $\dot{n}_{Z}$, $\dot{n}_{I}$
+
+[Algorithm:]{.underline}
+
+$$
+k \, \Rightarrow \, \text{available to Derivatives Function} \tag{9}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\text{Initial Values, Stopping Criterion, Derivatives Function} \\
+\Downarrow \\
+\text{IVODE Solver} \\
+\Downarrow \\
+\overline{V}, \overline{\dot{n}}_A, \overline{\dot{n}}_B, \overline{\dot{n}}_Z, \overline{\dot{n}}_I
+\end{matrix} \tag{10}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+There are several ways I could structure the remaining calculations. I'm going to write a zoned reactor function that calculates the outlet molar flow rates of the reagents. I'll pass the fraction of the feed flowing to the low density zone as an argument.
+
+Knowing the feed to the non-ideal reactor, the feeds to the two zones can be calculated directly.
+
+$$
+\dot{n}_{i,1} = \left(1 - f_{f,R2}\right)\dot{n}_{i,0}
+$$
+
+$$
+\dot{n}_{i,2} = f_{f,R2}\dot{n}_{i,0}
+$$
+
+Those values, along with the appropriate reactor volume and rate coefficient can then be passed to the PFR Zone Function to get the molar flow rate profiles for each of the zones. After extracting the outlet molar flow rates from the profiles, they can be combined to find the outlet molar flow rates from the zoned reactor.
+
+:::
+
+<center>**Zoned Reactor Function**</center>
+
+[Argument:]{.underline} $f_{f,R2}$
+
+[Returns:]{.underline} $\dot{n}_{A,5}$, $\dot{n}_{B,5}$, $\dot{n}_{Z,5}$, $\dot{n}_{I,5}$
+
+[Algorithm:]{.underline}
+
+$$
+\dot{n}_{i,0} = y_{i,0}\frac{P\dot{V}_0}{RT}  \,; i = A, B, Z, \text{ and } I \tag{11}
+$$
+
+$$
+\dot{n}_{i,1} = \left(1 - f_{f,R2}\right)\dot{n}_{i,0} \,; i = A, B, Z, \text{ and } I \tag{12}
+$$
+
+$$
+V_{NI} = \frac{\pi D_{NI}^2 L_{NI}}{4} \tag{13}
+$$
+
+$$
+V_f = \left(1 - f_{V,R2}\right) V_{NI} \tag{14}
+$$
+
+$$
+k = k_{R1} \tag{15}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{Z,1}, \dot{n}_{I,1}, V_f, k \\
+\Downarrow \\
+\text{PFR Zone Function} \\
+\Downarrow \\
+\overline{V}, \overline{\dot{n}}_A, \overline{\dot{n}}_B, \overline{\dot{n}}_Z, \overline{\dot{n}}_I
+\end{matrix} \tag{16}
+$$
+
+&nbsp;
+
+$$
+\dot{n}_{i,3} = \overline{\dot{n}}_i \bigg\vert_{V=V_f}  \,; i = A, B, Z, \text{ and } I \tag{17}
+$$
+
+$$
+\dot{n}_{i,2} = f_{f,R2}\dot{n}_{i,0} \,; i = A, B, Z, \text{ and } I \tag{18}
+$$
+
+$$
+V_f = f_{V,R2} V_{NI} \tag{19}
+$$
+
+$$
+k = k_{R2} \tag{20}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\dot{n}_{A,3}, \dot{n}_{B,3}, \dot{n}_{Z,3}, \dot{n}_{I,3}, V_f, k \\
+\Downarrow \\
+\text{PFR Zone Function} \\
+\Downarrow \\
+\overline{V}, \overline{\dot{n}}_A, \overline{\dot{n}}_B, \overline{\dot{n}}_Z, \overline{\dot{n}}_I
+\end{matrix} \tag{21}
+$$
+
+&nbsp;
+
+$$
+\dot{n}_{i,4} = \overline{\dot{n}}_i \bigg\vert_{V=V_f}  \,; i = A, B, Z, \text{ and } I \tag{22}
+$$
+
+$$
+\dot{n}_{i,5} = \dot{n}_{i,3} + \dot{n}_{i,4} \,; i = A, B, Z, \text{ and } I \tag{23}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+All that remains now is to choose a range of values for $\f_{f,R2}$ between 0 and 25%, solve the zoned reactor model for each value, and use the resulting outlet molar flow rate of A to calculate the conversion.
+
+:::
+
+<center>**Quantities of Interest**</center>
+
+[Algorithm:]{.underline}
+
+$$
+\text{Choose } \overline{f}_{f,R2}  \text{ with } 0 \le f_{f,R2,k} \le 0.25  \tag{24}
+$$
+
+$$
+\dot{n}_{i,0} = y_{i,0}\frac{P\dot{V}_0}{RT}  \,; i = A, B, Z, \text{ and } I \tag{11}
+$$
+
+Repeat (25) and (26) for each $f_{f,R2,k}$ in $\overline{f}_{f,R2}$.
+
+$$
+\begin{matrix}
+f_{f,R2,k} \\
+\Downarrow \\
+\text{Zoned Reactor Function} \\
+\Downarrow \\
+\dot{n}_{A,5}, \dot{n}_{B,5}, \dot{n}_{Z,5}, \dot{n}_{I,5}
+\end{matrix} \tag{25}
+$$
+
+&nbsp;
+
+$$
+f_{A,k} \text{ in } \overline{f}_A = \frac{\dot{n}_{A,0} - \dot{n}_{A,5}}{\dot{n}_{A,0}}
+\tag{26}
+$$
+
+#### Results, Analysis and Discussion
+
+The calculations were performed as described above. Specifically the derivatives function, PFR zone function, and zoned reactor functions were written using a mathematics software package. A vector containing 100 values of $f_{f,R2}$ between 0 and 25% was created. Each value was passed to the zoned reactor function to get the corresponding molar flow rate of reagent A in stream 5, and the overall conversion of A was calculated using equation (26). The results are plotted in @fig-example_25_3_1_results.
+
+![Variation in the conversion of reagent A as the fraction of the feed bypassing the dense bed increases.](Calculations/example_25_3_1/example_25_3_1_results.png){#fig-example_25_3_1_results width="70%"}
+
+### A Zoned Reactor Model for a CSTR with a Stagnant Zone {#sec-example_25_3-2}
+
+Reactants A and B can react irreversibly to produce either a desired product, D, or an undesired product, U, as shown in equations (1) and (2). The corresponding rate expressions are given in equations (3) and (4). The pre-exponential factors for $k_1$ and $k_2$ are 10.2 gal mol^-1^ min^-1^ and 17.0 gal mol^-1^ min^-1^, respectively, and the activation energies are 15.3 kJ mol^-1^ and 23.7 kJ mol^-1^, respectively. A liquid mixture containing 10 mol A gal^-1^ and 12 mol B gal^-1^ at 350 K is fed to an adiabatic 25 gal CSTR at a rate of 12.5 gal min^-1^. If the standard heats at 298 K of reactions (1) and (2) are -12.0 and -21.3 kJ mol^-1^, respectively, and if the reagents form an ideal liquid mixture with the temperature-independent heat capacities of A, B, D and U equal to 85, 125, 200 and 170 J mol^-1^ K^-1^, what are the conversion of the limiting reagent, the outlet selectivity (in mol D per mol U) and the outlet temperature?
+
+$$
+A + B \rightarrow D \tag{1}
+$$
+
+$$
+A + B \rightarrow U \tag{2}
+$$
+
+$$
+r_1 = k_1 C_AC_B \tag{3}
+$$
+
+$$
+r_2 = k_2 C_AC_B \tag{4}
+$$
+
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+[add thinking here]
+
+:::
+
+#### Assignment Summary
+
+**Reaction**: 
+
+**Rate Expression**: 
+
+**Reactor System**: 
+
+**Reactor Schematic**: 
+
+**Quantities of Interest**: 
+
+**Given and Known Constants**: 
+
+#### Mathematical Formulation of the Analysis
+
+The formulation that follows assumes that the given and known constants identified in the assignment summary are available at any point in the analysis.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+[add thinking here]
+
+:::
+
+#### Results, Analysis and Discussion
+
+
+
+## Symbols Used in @sec-7_zoned_reactor_models
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $k$ | Rate coefficient. |
+| $k_0$ | Arrhenius pre-exponential factor. |
+
+: {tbl-colwidths="[20,80]"}
