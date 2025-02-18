@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -476,8 +505,25 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#using-a-reactor-network-to-model-a-non-ideal-reactor" id="toc-using-a-reactor-network-to-model-a-non-ideal-reactor" class="nav-link active" data-scroll-target="#using-a-reactor-network-to-model-a-non-ideal-reactor"><span class="header-section-number">25.1</span> Using a Reactor Network to Model a Non-Ideal Reactor</a>
+  <ul class="collapse">
+  <li><a href="#reactor-zone-types" id="toc-reactor-zone-types" class="nav-link" data-scroll-target="#reactor-zone-types"><span class="header-section-number">25.1.1</span> Reactor Zone Types</a></li>
+  <li><a href="#selecting-and-connecting-reactor-zones" id="toc-selecting-and-connecting-reactor-zones" class="nav-link" data-scroll-target="#selecting-and-connecting-reactor-zones"><span class="header-section-number">25.1.2</span> Selecting and Connecting Reactor Zones</a></li>
+  </ul></li>
+  <li><a href="#zoned-reactor-model-parameters" id="toc-zoned-reactor-model-parameters" class="nav-link" data-scroll-target="#zoned-reactor-model-parameters"><span class="header-section-number">25.2</span> Zoned Reactor Model Parameters</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples"><span class="header-section-number">25.3</span> Examples</a>
+  <ul class="collapse">
+  <li><a href="#sec-example_25_3_1" id="toc-sec-example_25_3_1" class="nav-link" data-scroll-target="#sec-example_25_3_1"><span class="header-section-number">25.3.1</span> A Zoned Reactor Model for Bypassing in a Packed Bed</a></li>
+  <li><a href="#sec-example_25_3-2" id="toc-sec-example_25_3-2" class="nav-link" data-scroll-target="#sec-example_25_3-2"><span class="header-section-number">25.3.2</span> A Zoned Reactor Model for a CSTR with a Stagnant Zone</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-sec-7_zoned_reactor_models" id="toc-symbols-used-in-sec-7_zoned_reactor_models" class="nav-link" data-scroll-target="#symbols-used-in-sec-7_zoned_reactor_models"><span class="header-section-number">25.4</span> Symbols Used in <span>Chapter 25</span></a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -501,9 +547,1092 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This chapter will be added as soon as I finish writing it.</p>
+<p>The last steady-state non-ideal reactor model type considered in <em>Reaction Engineering Basics</em> is the zoned reactor model, sometimes also called a compartment model. In effect, zoned reactor models are multiple reactor networks that are being used to model a single physical reactor. As such, the analysis of zoned reactors is essentially the same as the analysis of a reactor network as described in <a href="section_5_reactor_networks.html" class="quarto-xref"><span>Chapter 15</span></a>. Typically zoned reactor models include several unknown parameters that need to be estimated.</p>
+<section id="using-a-reactor-network-to-model-a-non-ideal-reactor" class="level2" data-number="25.1">
+<h2 data-number="25.1" class="anchored" data-anchor-id="using-a-reactor-network-to-model-a-non-ideal-reactor"><span class="header-section-number">25.1</span> Using a Reactor Network to Model a Non-Ideal Reactor</h2>
+<p>Sometimes a reactor that is expected to obey the assumptions of an ideal reactor fails to do so. A reaction engineer may suspect that there is a physical issue that causes the flow to be different from that in an ideal reactor. In this situation, the engineer has two options. One is to try to correct the physical issue so that the reactor does obey the ideal reactor model. This will likely require shutting the reactor down while the issue is being addressed. Shutting the reactor down, in turn, will affect the company’s profits.</p>
+<p>If the performance of the reactor is acceptable, but not equal to the predictions from an ideal reactor model, it may be beneficial, instead, to determine whether a zoned reactor model can accurately describe the non-ideal reactor. The zoned reactor model will include unknown parameters that need to be estimated. As discussed later, it may be possible to estimate the parameters without interrupting the operation of the reactor.</p>
+<p>The zoned reactor model usually includes the inaccurate ideal reactor model, but adds a second reactor to it. The resulting two-reactor network is then used as a model for the single non-ideal reactor. The individual reactors in the network are called zones or compartments. There can be any number of zones, but generally the number of zones is small because each added zone introduces several unknown parameters that must be estimated.</p>
+<p>There are no hard and fast rules regarding the zones. For example, the inaccurate ideal reactor model does not have to be used as a zone. As indicated in the discussion below, a zoned model is used, and the zones are selected, because the engineer suspects a physical issue that is causing the flow or mixing to deviate from ideal, and the zone or zones are added to try to account for that physical issue.</p>
+<section id="reactor-zone-types" class="level3" data-number="25.1.1">
+<h3 data-number="25.1.1" class="anchored" data-anchor-id="reactor-zone-types"><span class="header-section-number">25.1.1</span> Reactor Zone Types</h3>
+<p>Each zone in a zoned reactor model is either an ideal CSTR or an ideal PFR. Individually they are modeled using the ideal reactor design equations (see Chapters <a href="section_4_cstr_analysis.html" class="quarto-xref"><span>12</span></a> and <a href="section_4_pfr_analysis.html" class="quarto-xref"><span>13</span></a>). What varies from one zoned reactor model to the next are the specific ideal reactors and how they are connected. Three basic types of connection will cover a majority of situations.</p>
+<p>The first two types connections between zones are parallel and series. These have already been considered in <a href="section_5_reactor_networks.html" class="quarto-xref"><span>Chapter 15</span></a>. The third type of connection creates a “well mixed stagnant” zone by use of a CSTR zone. The inlet to a well mixed stagnant zone and the outlet from it both connect to another reactor zone at the same location. In effect, the well mixed stagnant CSTR zone draws some amount of fluid out of the reactor zone it is connected to while simultaneously replacing that withdrawn fluid with an equal amount taken from the well-mixed stagnant CSTR zone.</p>
+<p><a href="#fig-zoned_cstr_with_stagnant" class="quarto-xref">Figure&nbsp;<span>25.1</span></a> (a) shows a zoned reactor model where a well-mixed stagnant CSTR zone has been added to an ideal CSTR zone. Note the inlet to the stagnant zone is drawn from the regular CSTR’s contents and the outlet from the stagnant zone feeds back into the regular CSTR’s contents. Noting that the contents of the regular CSTR zone are perfectly mixed, the feed into the stagnant zone could equally well be drawn from the outlet of the regular CSTR zone and the outlet from the stagnant zone could equally well be added to the feed to the regular CSTR zone as shown in (b). The two representations are equivalent, but the latter is more convenient for writing design equations for the zoned reactor. With that schematic, the design equations consist of the CSTR design equations for the reactor, the CSTR design equations for the stagnant zone, mole and energy balances on the stream splitting point and mole and energy balances on the stream mixing point.</p>
+<div id="fig-zoned_cstr_with_stagnant" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-zoned_cstr_with_stagnant-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/zoned_cstr_with_stagnant_zone.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-zoned_cstr_with_stagnant-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;25.1: A zoned reactor model (gray) with a well-mixed stagnant zone (green) within an ideal CSTR (blue). The actual configuration (a) may be easier to analyze using the equivalent representation (b) with a stream splitting point and a stream mixing point.
+</figcaption>
+</figure>
+</div>
+<p>Similarly, <a href="#fig-zoned_pfr_with_stagnant" class="quarto-xref">Figure&nbsp;<span>25.2</span></a> (a) shows a zoned reactor model where a well-mixed stagnant CSTR zone has been added to an ideal PFR zone. To facilitate analysis (b), the single PFR zone can be split into two PFR zones connected in series. Here the design equations for the zoned reactor model include the PFR design equations for the reactor, the CSTR design equations for the stagnant zone, mole and energy balances on the stream splitting point and mole and energy balances on the stream mixing point.</p>
+<div id="fig-zoned_pfr_with_stagnant" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-zoned_pfr_with_stagnant-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/zoned_pfr_with_stagnant_zone.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-zoned_pfr_with_stagnant-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;25.2: A zoned reactor model (gray) with a well-mixed stagnant zone (green) within an ideal PFR (blue). The actual configuration (a) may be easier to analyze using the equivalent representation (b) with a stream splitting point and a stream mixing point.
+</figcaption>
+</figure>
+</div>
+<p>Well-mixed stagnant zones have been emphasized here because they are not encountered anywhere else in this book. However, zoned reactor models are not required to include a well-mixed stagnant zone. As seen below, they may include two or more ideal flow reactors.</p>
+</section>
+<section id="selecting-and-connecting-reactor-zones" class="level3" data-number="25.1.2">
+<h3 data-number="25.1.2" class="anchored" data-anchor-id="selecting-and-connecting-reactor-zones"><span class="header-section-number">25.1.2</span> Selecting and Connecting Reactor Zones</h3>
+<p>Developing a zoned reactor model requires some insight into the reason why the reactor being modeled does not obey the ideal reactor assumptions. A few examples are considered in this section.</p>
+<p>Suppose the catalyst in a packed bed reactor had to be replaced. Before the replacement the reactor performance was accurately described by the ideal PFR model, but after the change, the ideal PFR model is no longer sufficiently accurate. This might lead an engineer to suspect that the new catalyst packing is not properly distributed in the reactor and as a consequence, a fraction of the flow is bypassing part of the packed bed. This might be modeled as a two zone reactor consisting of two PFRs in parallel, as indicated schematically in <a href="#fig-zoned_pfr_with_bypassing" class="quarto-xref">Figure&nbsp;<span>25.3</span></a>. Most of the flow in the model would pass through a PFR zone that represents the packed bed, while an appropriate fraction of the flow would pass through the other PFR zone that represents the bypassing flow.</p>
+<div id="fig-zoned_pfr_with_bypassing" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-zoned_pfr_with_bypassing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Graphics/zoned_pfr_with_channelling.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-zoned_pfr_with_bypassing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;25.3: A zoned reactor model (gray) where an ideal PFR (blue) is used to represent a packed bed and a second ideal PFR (green) is used to represent a portion of the reactor where the packing is less dense leading to bypassing of the main bed by some fluid
+</figcaption>
+</figure>
+</div>
+<p>Alternatively, the engineer might suspect that maldistribution of the packing has created a well-mixed stagnant zone within the packed bed. In that case <a href="#fig-zoned_pfr_with_stagnant" class="quarto-xref">Figure&nbsp;<span>25.2</span></a> might be used to model the non-ideal reactor.</p>
+<p>A third possibility might be that measurement of the cumulative age distribution function indicates some mixing in the axial direction. One option then would be to model the reactor using an axial dispersion model (see <a href="section_7_axial_dispersion_model.html" class="quarto-xref"><span>Chapter 24</span></a>). Alternatively, recalling (<a href="section_5_reactor_networks.html" class="quarto-xref"><span>Chapter 15</span></a>) that an infinite number of CSTRs connected in series is equivalent to a PFR, the non-ideal reactor might be to use a zoned reactor model where some number of equally-sized CSTR zones are connected in series. Depending on the number of CSTRs in series, this zoned reactor model can predict a range of behaviors from that of a single CSTR to that of an ideal PFR.</p>
+<p>Zoned reactor models are not limited to non-ideal tubular reactors, they can be used to model non-ideal stirred tank reactors, too. For example, if the agitation in a stirred tank is not functioning properly there might be pockets” of fluid that are not perfectly mixed with the rest of the fluid in the reactor. This reactor might be modeled as a CSTR in combination with a well-mixed stagnant zone.</p>
+</section>
+</section>
+<section id="zoned-reactor-model-parameters" class="level2" data-number="25.2">
+<h2 data-number="25.2" class="anchored" data-anchor-id="zoned-reactor-model-parameters"><span class="header-section-number">25.2</span> Zoned Reactor Model Parameters</h2>
+<p>Each time a reactor zone is added to a zoned reactor model, unknown parameters are added to the model. Consider <a href="#fig-zoned_cstr_with_stagnant" class="quarto-xref">Figure&nbsp;<span>25.1</span></a> as an example. Adding the well-mixed stagnant zone to the model introduces at least two parameters. One new parameter is the fraction of the fluid leaving the CSTR that is directed to the well-mixed stagnant CSTR zone. A second new parameter is the space time (or volume) of the well-mixed stagnant CSTR zone. If the non-ideal reactor exchanges heat with an external heating or cooling fluid, the relative heat transfer areas associated with the ideal CSTR and the stagnant zone CSTR becomes another parameter. Additionally, it isn’t required that the combined volumes or heat transfer areas of the zones must equal those of the non-ideal reactor. In the case that they do not equal the non-ideal reactor, two more unknown parameters are added.</p>
+<p>When a zone is added to a model containing an ideal PFR zone, the same set of parameters is introduced along with one additional parameter. Referring to <a href="#fig-zoned_pfr_with_stagnant" class="quarto-xref">Figure&nbsp;<span>25.2</span></a>, the additional parameter is the axial distance from the inlet of the ideal PFR zone where the well-mixed stagnant zone connects. Similarly, <a href="#fig-zoned_pfr_with_bypassing" class="quarto-xref">Figure&nbsp;<span>25.3</span></a> shows the feed splitting between the packed bed zone and the bypassing zone at the inlet and recombining at the outlet. In fact, the bypassing zone might start some distance into the packed bed zone and/or end some distance before the end of the packed bed zone.</p>
+<p>The important points are that zoned reactor models typically contain several unknown parameters and each of those parameters must be estimated before the model can be used. This is a good reason for using the smallest possible number of zones, ideally just two. If the model contains too many parameters, it is difficult to estimate values for all of them, and the model can lose its predictive accuracy at conditions different from those used to estimate the parameters.</p>
+<p>An engineer can reduce the number of estimated parameters by choosing fixed values for some of them. For example, an engineer could simply decide that the split into a packed bed zone and a bypass zone occurs at the reactor inlet and they merge at the reactor outlet in <a href="#fig-zoned_pfr_with_bypassing" class="quarto-xref">Figure&nbsp;<span>25.3</span></a>. Similarly an engineer could simply decide that 10% of the fluid leaving a perfect CSTR is fed to a well-mixed stagnant zone or the engineer could set the volumes of the ideal CSTR and well-mixed stagnant zones.</p>
+<p>Simply choosing some parameter values and estimating the rest is acceptable as long as the resulting zoned reactor model accurately describes the performance of the non-ideal reactor. Zoned reactor models are empirical. The parameter values have no theoretical basis, so as long as the model is accurate, it is acceptable.</p>
+<p>That leaves the question of how to estimate the remaining parameters. If the non-ideal reactor can be shut down and then used for experiments, the zoned reactor model parameters could be estimated in the same way that rate expression parameters are estimated. A number of experiments could be performed, varying inputs to the reactor with a response being measured for each experiment. The non-ideal reactor model then could be used to create a predicted responses model (see Chapters <a href="section_6_data_generation.html" class="quarto-xref"><span>18</span></a> through <a href="section_6_pfr_data_analysis.html" class="quarto-xref"><span>21</span></a>) which could be fit to the data.</p>
+<p>Very often, however, the reactor cannot be shut down and used for experiments. One option in that situation is to measure the cumulative age distribution function. A transient version of the zoned reactor model then could be fit to the age function data to estimate the parameters. This approach will not be illustrated in this chapter because <em>Reaction Engineering Basics</em> does not consider the analysis of transient reactor networks. The estimation of zoned reactor model parameters is left for an intermediate book on reaction engineering.</p>
+</section>
+<section id="examples" class="level2" data-number="25.3">
+<h2 data-number="25.3" class="anchored" data-anchor-id="examples"><span class="header-section-number">25.3</span> Examples</h2>
+<p>Two simple examples of zoned reactor models are presented in this section. The first is a zoned reactor model for a packed bed where bypassing is suspected. The other is a zoned reactor model for a stirred tank with a well-mixed stagnant zone.</p>
+<section id="sec-example_25_3_1" class="level3" data-number="25.3.1">
+<h3 data-number="25.3.1" class="anchored" data-anchor-id="sec-example_25_3_1"><span class="header-section-number">25.3.1</span> A Zoned Reactor Model for Bypassing in a Packed Bed</h3>
+<p>A tube that is 6 m long with an inside diameter of 7 cm is packed with pellets of solid catalyst. Reaction (1) takes place within this reactor at a constant temperature of 450 ºC and a constant pressure of 5 atm. The tube will be fed 200 ft<sup>3</sup> h<sup>-1</sup> of a gas containing 15% A, 15% B and 70% I (an inert gas). Reaction (1) is one-half order in A and first order in B as indicated in equation (2). Suppose that the packing in the tube is not uniform, and as a consequence 5% of the bed has a lower density (leading to a rate coefficient of 1785 mol h<sup>-1</sup> atm<sup>-0.5</sup> m<sup>-3</sup>), while the remainder has a higher density (with a rate coefficient of 2160 mol h<sup>-1</sup> atm<sup>-0.5</sup> m<sup>-3</sup>). Using a zoned reactor model with two parallel PFR zones, show how the conversion will vary as the fraction of the feed gas flowing into the less dense part of the bed varies between 0 and 25%. Discuss the parameters in this zoned reactor model and how they might be estimated.</p>
+<p><span class="math display">\[
+2A + B \rightarrow 2 Z \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+r = k P_B \sqrt{P_A} \tag{2}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In this assignment I’m asked to examine the effect of varying a parameter in a zoned reactor model on the conversion predicted by the model. I’ll begin by summarizing the assignment. There are two zones in the model, I’ll designate the one with a higher packing density as “R1”, and the other as R2. I’ll use <span class="math inline">\(f_{f,R2}\)</span> to designate the fraction of the feed that goes to the low density zone and $f_{V,R2} to designate the fraction of the bed volume corresponding to the low density zone. Finally, I’ll use an overbar to designate sets of values of a quantity.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary" class="level4" data-number="25.3.1.1">
+<h4 data-number="25.3.1.1" class="anchored" data-anchor-id="assignment-summary"><span class="header-section-number">25.3.1.1</span> Assignment Summary</h4>
+<p><strong>Reaction</strong>:</p>
+<p><span class="math display">\[
+2A + B \rightarrow 2 Z \tag{1}
+\]</span></p>
+<p><strong>Rate Expression</strong>:</p>
+<p><span class="math display">\[
+r = k P_B \sqrt{P_A} \tag{2}
+\]</span></p>
+<p><strong>Reactor System</strong>: Zoned Reactor with Two Ideal PFR Zones</p>
+<p><strong>Reactor Schematic</strong>:</p>
+<div id="fig-example_25_3_1_schematic" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_25_3_1_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Calculations/example_25_3_1/example_25_3_1_schematic.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_25_3_1_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;25.4: Schematic representation of the zoned reactor model in Example 25.3.1.
+</figcaption>
+</figure>
+</div>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(\overline{f}_A\)</span> <em>vs.</em> <span class="math inline">\(\overline{f}_{f,R2}\)</span></p>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(L_{NI}\)</span> = 6 m, <span class="math inline">\(D_{NI}\)</span> = 7 cm, <span class="math inline">\(T\)</span> = 450 ºC, <span class="math inline">\(P\)</span> = 5 atm, <span class="math inline">\(\dot{V}_0\)</span> = 200 ft<sup>3</sup> h<sup>-1</sup>, <span class="math inline">\(y_{A,0}\)</span> = 0.15, <span class="math inline">\(y_{B,0}\)</span> = 0.15, <span class="math inline">\(y_{I,0}\)</span> = 0.70, <span class="math inline">\(f_{V,R2}\)</span> = 0.05, <span class="math inline">\(k_{R2}\)</span> = 1785 mol h<sup>-1</sup> atm<sup>-0.5</sup> m<sup>-3</sup>, <span class="math inline">\(k_{R1}\)</span> = 2160 mol h<sup>-1</sup> atm<sup>-0.5</sup> m<sup>-3</sup>.</p>
+</section>
+<section id="mathematical-formulation-of-the-analysis" class="level4" data-number="25.3.1.2">
+<h4 data-number="25.3.1.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-analysis"><span class="header-section-number">25.3.1.2</span> Mathematical Formulation of the Analysis</h4>
+<p>The formulation that follows assumes that the given and known constants identified in the assignment summary are available at any point in the analysis.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In the model, the reaction actually takes place in two ideal PFR zones. I’ll start by generating a PFR zone model that can be used to simulate either of the two zones. The zones are isothermal at a known temperature, so all I need to model them are mole balances. Since the feed to the zones and the volumes of the zones are different, these will be passed to the function at the time the zone is simulated.</p>
+<p>The general form of the steady-state PFR mole balance is given in <a href="section_3_design_equations.html#eq-pfr_mol_balance" class="quarto-xref">Equation&nbsp;<span>6.33</span></a>. Here the PFR zones operate at steady-state, so all of the time derivatives equal zero, and the spatial derivative is an ordinary derivative. I don’t know the diameters of the separate zones, so I’ll re-write the mole balance in terms of the cumulative zone volume. Additionally, there is only one reaction, so the summation reduces to a single term and it isn’t necessary to index the reaction.</p>
+<p><span class="math display">\[
+\cancelto{\frac{d\dot{n}_i}{dz}}{\frac{\partial \dot{n}_i}{\partial z}} + \frac{\pi D^2}{4\dot{V}} \cancelto{0}{\frac{\partial\dot{n}_i}{\partial t}} - \frac{\pi D^2\dot{n}_i}{4\dot{V}^2} \cancelto{0}{\frac{\partial \dot{V}}{\partial t}}  =\frac{\pi D^2}{4}\cancelto{\nu_t r}{\sum_j \nu_{i,j}r_j}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_i}{dz} = \frac{\pi D^2}{4}\nu_ir \qquad \Rightarrow \qquad \frac{d\dot{n}_i}{\frac{\pi D^2}{4}dz} = \nu_ir \qquad \Rightarrow \qquad \frac{d\dot{n}_i}{dV} = \nu_ir
+\]</span></p>
+<p>The design equations will be solved numerically using an IVODE solver. I’ll need to provide initial values, a stopping criterion, and a derivatives function to the solver.</p>
+<p>I can define <span class="math inline">\(V=0\)</span> to be the inlet to the zone in which case the initial values simply equal the inlet molar flow rates to the zone. Since I’ll be using the same reactor model for both zones, these will be provided as arguments. Similarly, the stopping criterion then is that the final value of the volume is the volume of the zone. Again, this will need to be provided as an argument.</p>
+</div>
+</div>
+</div>
+<center>
+<strong>PFR Zone Model</strong>
+</center>
+<p><strong>Design Equations</strong></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_A}{dV} = -2r \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_B}{dV} = -r \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Z}{dV} = 2r \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_I}{dV} = 0 \tag{6}
+\]</span></p>
+<p><strong>Initial Values and Stopping Criterion:</strong></p>
+<div id="tbl-example_25_3_1_initial_values" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_25_3_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;25.1: Initial values and stopping criterion for solving the design equations, (3) through (6).
+</figcaption>
+<div aria-describedby="tbl-example_25_3_1_initial_values-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variable</th>
+<th style="text-align: center;">Initial Value</th>
+<th style="text-align: center;">Stopping Criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(V_f\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_A\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{A,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_B\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{B,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_Z\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(0.0\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_I\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\dot{n}_{I,in}\)</span></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I also must write a derivatives function that I can provide to the IVODE solver. When the solver calls the derivatives function, the only arguments it will pass are the values of the independent and dependent and dependent variables at the start of an integration step, and the only return values it will expect to receive are the derivatives of the dependent variables with respect to the independent variable. Looking at the design equations, I see that I will need to calculate the rate. I can use the rate expression to do that. The partial pressures of A and B in the rate expression can be calculated as their mole fractions times the total pressure.</p>
+<p>I will also need the rate coefficient, but the correct value will depend upon which reactor is being modeled. I can’t pass the correct rate coefficient to the derivatives function as an argument, so I’ll need to make sure to make it available by some other means.</p>
+</div>
+</div>
+</div>
+<p><strong>Derivatives Function:</strong></p>
+<p><u>Arguments:</u> <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, <span class="math inline">\(\dot{n}_I\)</span></p>
+<p><u>Must be Available:</u> <span class="math inline">\(k\)</span></p>
+<p><u>Returns:</u> <span class="math inline">\(\frac{d\dot{n}_A}{dV}\)</span>, <span class="math inline">\(\frac{d\dot{n}_B}{dV}\)</span>, <span class="math inline">\(\frac{d\dot{n}_Z}{dV}\)</span>, <span class="math inline">\(\frac{d\dot{n}_I}{dV}\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+P_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_Z + \dot{n}_I}P \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+P_B = \frac{\dot{n}_B}{\dot{n}_A + \dot{n}_B + \dot{n}_Z + \dot{n}_I}P \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+r = k P_B \sqrt{P_A} \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_A}{dV} = -2r \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_B}{dV} = -r \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_Z}{dV} = 2r \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\frac{d\dot{n}_I}{dV} = 0 \tag{6}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Now I can generate a PFR zone function. It will receive the inlet molar flow rates of the reagents and the volume of whichever PFR zone is being modeled. I have a choice regarding the rate coefficient. I can either pass the correct rate coefficient to this function as an argument, and then make it available to the derivatives function within this function, or I can make it available to the derivatives function before I call this function. I prefer passing it to this function as an argument, so that’s how I’ll structure the PFR Zone Function.</p>
+<p>Solving the PFR design equations will yield corresponding sets of values of <span class="math inline">\(V\)</span>, <span class="math inline">\(\dot{n}_A\)</span>, <span class="math inline">\(\dot{n}_B\)</span>, <span class="math inline">\(\dot{n}_Z\)</span>, and <span class="math inline">\(\dot{n}_I\)</span>, that span the range from <span class="math inline">\(V=0\)</span> to <span class="math inline">\(V=V_f\)</span>. In keeping with the practice used when modeling PFR elsewhere in the book, I’ll have this function return those profiles.</p>
+</div>
+</div>
+</div>
+<p><strong>PFR Zone Function:</strong></p>
+<p><u>Arguments:</u> <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, <span class="math inline">\(\dot{n}_{Z,in}\)</span>, <span class="math inline">\(\dot{n}_{I,in}\)</span>, <span class="math inline">\(V_f\)</span>, and <span class="math inline">\(k\)</span>.</p>
+<p><u>Returns:</u> <span class="math inline">\(\overline{V}\)</span>, <span class="math inline">\(\dot{n}_{A}\)</span>, <span class="math inline">\(\dot{n}_{B}\)</span>, <span class="math inline">\(\dot{n}_{Z}\)</span>, <span class="math inline">\(\dot{n}_{I}\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+k \, \Rightarrow \, \text{available to Derivatives Function} \tag{9}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\begin{matrix}
+\text{Initial Values, Stopping Criterion, Derivatives Function} \\
+\Downarrow \\
+\text{IVODE Solver} \\
+\Downarrow \\
+\overline{V}, \overline{\dot{n}}_A, \overline{\dot{n}}_B, \overline{\dot{n}}_Z, \overline{\dot{n}}_I
+\end{matrix} \tag{10}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>There are several ways I could structure the remaining calculations. I’m going to write a zoned reactor function that calculates the outlet molar flow rates of the reagents. I’ll pass the fraction of the feed flowing to the low density zone as an argument.</p>
+<p>Knowing the feed to the non-ideal reactor, the feeds to the two zones can be calculated directly.</p>
+<p><span class="math display">\[
+\dot{n}_{i,1} = \left(1 - f_{f,R2}\right)\dot{n}_{i,0}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{i,2} = f_{f,R2}\dot{n}_{i,0}
+\]</span></p>
+<p>Those values, along with the appropriate reactor volume and rate coefficient can then be passed to the PFR Zone Function to get the molar flow rate profiles for each of the zones. After extracting the outlet molar flow rates from the profiles, they can be combined to find the outlet molar flow rates from the zoned reactor.</p>
+</div>
+</div>
+</div>
+<center>
+<strong>Zoned Reactor Function</strong>
+</center>
+<p><u>Argument:</u> <span class="math inline">\(f_{f,R2}\)</span></p>
+<p><u>Returns:</u> <span class="math inline">\(\dot{n}_{A,5}\)</span>, <span class="math inline">\(\dot{n}_{B,5}\)</span>, <span class="math inline">\(\dot{n}_{Z,5}\)</span>, <span class="math inline">\(\dot{n}_{I,5}\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+\dot{n}_{i,0} = y_{i,0}\frac{P\dot{V}_0}{RT}  \,; i = A, B, Z, \text{ and } I \tag{11}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{i,1} = \left(1 - f_{f,R2}\right)\dot{n}_{i,0} \,; i = A, B, Z, \text{ and } I \tag{12}
+\]</span></p>
+<p><span class="math display">\[
+V_{NI} = \frac{\pi D_{NI}^2 L_{NI}}{4} \tag{13}
+\]</span></p>
+<p><span class="math display">\[
+V_f = \left(1 - f_{V,R2}\right) V_{NI} \tag{14}
+\]</span></p>
+<p><span class="math display">\[
+k = k_{R1} \tag{15}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\begin{matrix}
+\dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{Z,1}, \dot{n}_{I,1}, V_f, k \\
+\Downarrow \\
+\text{PFR Zone Function} \\
+\Downarrow \\
+\overline{V}, \overline{\dot{n}}_A, \overline{\dot{n}}_B, \overline{\dot{n}}_Z, \overline{\dot{n}}_I
+\end{matrix} \tag{16}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\dot{n}_{i,3} = \overline{\dot{n}}_i \bigg\vert_{V=V_f}  \,; i = A, B, Z, \text{ and } I \tag{17}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{i,2} = f_{f,R2}\dot{n}_{i,0} \,; i = A, B, Z, \text{ and } I \tag{18}
+\]</span></p>
+<p><span class="math display">\[
+V_f = f_{V,R2} V_{NI} \tag{19}
+\]</span></p>
+<p><span class="math display">\[
+k = k_{R2} \tag{20}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\begin{matrix}
+\dot{n}_{A,3}, \dot{n}_{B,3}, \dot{n}_{Z,3}, \dot{n}_{I,3}, V_f, k \\
+\Downarrow \\
+\text{PFR Zone Function} \\
+\Downarrow \\
+\overline{V}, \overline{\dot{n}}_A, \overline{\dot{n}}_B, \overline{\dot{n}}_Z, \overline{\dot{n}}_I
+\end{matrix} \tag{21}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\dot{n}_{i,4} = \overline{\dot{n}}_i \bigg\vert_{V=V_f}  \,; i = A, B, Z, \text{ and } I \tag{22}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{i,5} = \dot{n}_{i,3} + \dot{n}_{i,4} \,; i = A, B, Z, \text{ and } I \tag{23}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>All that remains now is to choose a range of values for <span class="math inline">\(\f_{f,R2}\)</span> between 0 and 25%, solve the zoned reactor model for each value, and use the resulting outlet molar flow rate of A to calculate the conversion.</p>
+</div>
+</div>
+</div>
+<center>
+<strong>Quantities of Interest</strong>
+</center>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+\text{Choose } \overline{f}_{f,R2}  \text{ with } 0 \le f_{f,R2,k} \le 0.25  \tag{24}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{i,0} = y_{i,0}\frac{P\dot{V}_0}{RT}  \,; i = A, B, Z, \text{ and } I \tag{11}
+\]</span></p>
+<p>Repeat (25) and (26) for each <span class="math inline">\(f_{f,R2,k}\)</span> in <span class="math inline">\(\overline{f}_{f,R2}\)</span>.</p>
+<p><span class="math display">\[
+\begin{matrix}
+f_{f,R2,k} \\
+\Downarrow \\
+\text{Zoned Reactor Function} \\
+\Downarrow \\
+\dot{n}_{A,5}, \dot{n}_{B,5}, \dot{n}_{Z,5}, \dot{n}_{I,5}
+\end{matrix} \tag{25}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+f_{A,k} \text{ in } \overline{f}_A = \frac{\dot{n}_{A,0} - \dot{n}_{A,5}}{\dot{n}_{A,0}}
+\tag{26}
+\]</span></p>
+</section>
+<section id="results-analysis-and-discussion" class="level4" data-number="25.3.1.3">
+<h4 data-number="25.3.1.3" class="anchored" data-anchor-id="results-analysis-and-discussion"><span class="header-section-number">25.3.1.3</span> Results, Analysis and Discussion</h4>
+<p>The calculations were performed as described above. Specifically the derivatives function, PFR zone function, and zoned reactor functions were written using a mathematics software package. A vector containing 100 values of <span class="math inline">\(f_{f,R2}\)</span> between 0 and 25% was created. Each value was passed to the zoned reactor function to get the corresponding molar flow rate of reagent A in stream 5, and the overall conversion of A was calculated using equation (26). The results are plotted in <a href="#fig-example_25_3_1_results" class="quarto-xref">Figure&nbsp;<span>25.5</span></a>.</p>
+<div id="fig-example_25_3_1_results" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_25_3_1_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Calculations/example_25_3_1/example_25_3_1_results.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_25_3_1_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;25.5: Variation in the conversion of reagent A as the fraction of the feed bypassing the dense bed increases.
+</figcaption>
+</figure>
+</div>
+<p>Intuitively one might expect the conversion to drop steadily as more and more of the flow bypasses the dense bed, but <a href="#fig-example_25_3_1_results" class="quarto-xref">Figure&nbsp;<span>25.5</span></a> show that initially the conversion increases and then passes through a maximum before it starts to decrease steadily. Looking at the figure it can be seen that when all of the flow passes through the dense bed (<span class="math inline">\(\f_{f,R2}=0\)</span>), the conversion is around 60.4%. When a small fraction of the feed flows to the less dense part of the bed, its space time in that bed will be very large because the flow is small. As a consequence, the part of the flow passing through the less dense bed may have a conversion approaching 100%.</p>
+<p>At the same time, this decreases the space time of the fluid in the dense bed, causing its conversion to increase, too. Thus, when the two flows are combined, the conversion greater than it would have been had all of the flow passed through the dense bed. Eventually, as more an more of the flow passes into the less dense bed the conversions in the two beds becomes equal. This corresponds to the maximum in <a href="#fig-example_25_3_1_results" class="quarto-xref">Figure&nbsp;<span>25.5</span></a>. A further increase in <span class="math inline">\(\f_{f,R2}\)</span> increases the space time such that the final conversion is less than that in the less dense bed, so when the streams are combined, the conversion decreases.</p>
+</section>
+</section>
+<section id="sec-example_25_3-2" class="level3" data-number="25.3.2">
+<h3 data-number="25.3.2" class="anchored" data-anchor-id="sec-example_25_3-2"><span class="header-section-number">25.3.2</span> A Zoned Reactor Model for a CSTR with a Stagnant Zone</h3>
+<p>Reactants A and B can react irreversibly to produce either a desired product, D, or an undesired product, U, as shown in equations (1) and (2). The corresponding rate expressions are given in equations (3) and (4). The pre-exponential factors for <span class="math inline">\(k_1\)</span> and <span class="math inline">\(k_2\)</span> are 10.2 gal mol<sup>-1</sup> min<sup>-1</sup> and 17.0 gal mol<sup>-1</sup> min<sup>-1</sup>, respectively, and the activation energies are 15.3 kJ mol<sup>-1</sup> and 23.7 kJ mol<sup>-1</sup>, respectively. A liquid mixture containing 10 mol A gal<sup>-1</sup> and 12 mol B gal<sup>-1</sup> at 350 K is fed to an adiabatic 25 gal CSTR at a rate of 12.5 gal min<sup>-1</sup>. Example <a href="section_4_cstr_analysis.html#sec-example_12_7_1" class="quarto-xref"><span>12.7.1</span></a> showed that if the standard heats at 298 K of reactions (1) and (2) are -12.0 and -21.3 kJ mol<sup>-1</sup>, respectively, and if the reagents form an ideal liquid mixture with the temperature-independent heat capacities of A, B, D and U equal to 85, 125, 200 and 170 J mol<sup>-1</sup> K<sup>-1</sup>, then the conversion of A is 54.9%, the selectivity is 8.39 mol D per mol U, and the outlet temperature is 383 K. How will these results change if 5% of the CSTR volume is a well-mixed stagnant zone that exchanges fluid with the remainder of the reactor at a rate of 0.5 gal min<sup>-1</sup>?</p>
+<p><span class="math display">\[
+A + B \rightarrow D \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+A + B \rightarrow U \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+r_1 = k_1 C_AC_B \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+r_2 = k_2 C_AC_B \tag{4}
+\]</span></p>
+<hr>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This assignment involves a CSTR with a well-mixed stagnant zone, so I’ll be using a zoned reactor model. I’ll begin by summarizing the assignment. For the schematic I’ll use <a href="#fig-zoned_cstr_with_stagnant" class="quarto-xref">Figure&nbsp;<span>25.1</span></a> (b) since it shows a vlow mixing point and a flow splitting point. I’ll use “ZR” to designate the non-ideal stirred tank that is being modeled using a zoned reactor model, “R1” to designate the CSTR zone, and “R2” to designate the well-mixed stagnant zone. The reactor operates at steady-state and the fluid is an incompressible liquid, so the fluid exchange rate given in the narrative is equal to the flow into and out of the stagnant zone.</p>
+</div>
+</div>
+</div>
+<section id="assignment-summary-1" class="level4" data-number="25.3.2.1">
+<h4 data-number="25.3.2.1" class="anchored" data-anchor-id="assignment-summary-1"><span class="header-section-number">25.3.2.1</span> Assignment Summary</h4>
+<p><strong>Reactions</strong>:</p>
+<p><span class="math display">\[
+A + B \rightarrow D \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+A + B \rightarrow U \tag{2}
+\]</span></p>
+<p><strong>Rate Expressions</strong>:</p>
+<p><span class="math display">\[
+r_1 = k_1 C_AC_B \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+r_2 = k_2 C_AC_B \tag{4}
+\]</span></p>
+<p><strong>Reactor System</strong>: Zoned reactor with a CSTR zone and a well-mixed stagnant zone.</p>
+<p><strong>Reactor Schematic</strong>:</p>
+<div id="fig-example_25_3_2_schematic" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_25_3_2_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Calculations/example_25_3_2/example_25_3_2_schematic.png" class="img-fluid figure-img" style="width:30.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_25_3_2_schematic-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;25.6: Schematic representation of the stirred tank as a zoned reactor (gray) with a CSTR zone (blue) and a well-mixed stagnant zone (green).
+</figcaption>
+</figure>
+</div>
+<p><strong>Quantities of Interest</strong>: <span class="math inline">\(f_A\)</span>, <span class="math inline">\(S_{D/U}\)</span>, and <span class="math inline">\(T_5\)</span></p>
+<p><strong>Given and Known Constants</strong>: <span class="math inline">\(k_{0,1}\)</span> = 10.2 gal mol<sup>-1</sup> min<sup>-1</sup>, <span class="math inline">\(k_{0,2}\)</span> = 17.0 gal mol<sup>-1</sup> min<sup>-1</sup>, <span class="math inline">\(E_1\)</span> = 15.3 kJ mol<sup>-1</sup>, <span class="math inline">\(E_2\)</span> = 23.7 kJ mol<sup>-1</sup>, <span class="math inline">\(C_{A,0}\)</span> 10 mol A gal<sup>-1</sup>, <span class="math inline">\(C_{B,0}\)</span> = 12 mol B gal<sup>-1</sup>, <span class="math inline">\(T_0\)</span> = 350 K, <span class="math inline">\(V_{ZR}\)</span> = 25 gal, <span class="math inline">\(\dot{V}_0\)</span> = 12.5 gal min<sup>-1</sup>, <span class="math inline">\(\Delta H_1\)</span> = -12.0, <span class="math inline">\(\Delta H_2\)</span> = -21.3 kJ mol<sup>-1</sup>, <span class="math inline">\(\hat{C}_{p,A}\)</span> = 85, <span class="math inline">\(\hat{C}_{p,B}\)</span> = 125, <span class="math inline">\(\hat{C}_{p,D}\)</span> = 200, <span class="math inline">\(\hat{C}_{p,U}\)</span> = 170 J mol<sup>-1</sup> K<sup>-1</sup>, <span class="math inline">\(f_{R2}\)</span> = 0.05, and <span class="math inline">\(\dot{V}_{3}\)</span> = <span class="math inline">\(\dot{V}_{4}\)</span> = 0.5 gal min<sup>-1</sup>.</p>
+</section>
+<section id="mathematical-formulation-of-the-analysis-1" class="level4" data-number="25.3.2.2">
+<h4 data-number="25.3.2.2" class="anchored" data-anchor-id="mathematical-formulation-of-the-analysis-1"><span class="header-section-number">25.3.2.2</span> Mathematical Formulation of the Analysis</h4>
+<p>The formulation that follows assumes that the given and known constants identified in the assignment summary are available at any point in the analysis.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The reaction actually takes place within the CSTR zone and the well-mixed stagnant zone. Both of those zones are modeled using the ideal CSTR design equations. Before I can write design equations, I need to make an assumption about heat transfer between the two zones. Overall the stirred tank is adiabatic, but the two zones must be in contact within the reactor. To avoid having to guess both the contact area and the heat transfer coefficient between the two zones, I’m simply going to assume them both to be adiabatic.</p>
+<p>Since both zones are being modeled as ideal CSTRs, I’m going to use the same CSTR zone model for each of them. That means that the volume, inlet volumetric flow rate, inlet temperature, and inlet composition will need to be provided to the model. Since I’ve assumed the two zones to each be adiabatic, I’ll need mole balances on each of the reagents and an energy balance on the reacting fluid as reactor design equations.</p>
+<p>The general form of a steady-state CSTR mole balance is given in <a href="section_3_design_equations.html#eq-cstr_ss_mole_balance" class="quarto-xref">Equation&nbsp;<span>6.31</span></a>. Two reactions taking place, so the summation expands to two terms.</p>
+<p><span class="math display">\[
+0 = \dot{n}_{i,in} - \dot{n}_{i,out} + V \sum_j \nu_{i,j}r_j = \dot{n}_{i,in} - \dot{n}_{i,out} + V \left( \nu_{i,1}r_1 + \nu_{i,2}r_2 \right)
+\]</span></p>
+<p>The general form of a steady-state CSTR energy balance is given in <a href="section_3_design_equations.html#eq-cstr_ss_energy_balance" class="quarto-xref">Equation&nbsp;<span>6.32</span></a>. Assuming the zone to be adiabatic means the heat exchange term is equal to zero, and assuming the power required to agitate the fluid to be neglible means the work term is zero. The heat capacities are constants, so they can be factored out of the integrals and the integrals can be evaluated analytically. Finally, as above, there are two reactions, so the final sum expands to two terms.</p>
+<p><span class="math display">\[
+0 = \cancelto{0}{\dot{Q}} - \cancelto{0}{\dot{W}} - \sum_i\dot{n}_{i,in} \cancelto{\hat{C}_{p,i}\left(T-T_{in}\right)}{\int_{T_{in}}^T \hat{C}_{p,i}dT} - V\cancelto{r_1 \Delta H_1 + r_2 \Delta H_2}{\sum_j r_j \Delta H_j}
+\]</span></p>
+<p><span class="math display">\[
+0 = -\left(\begin{matrix}\dot{n}_{A,in} \hat{C}_{p,A} + \dot{n}_{B,in} \hat{C}_{p,B} \\ \dot{n}_{D,in} \hat{C}_{p,D} + \dot{n}_{U,in} \hat{C}_{p,U} \end{matrix}\right) \left(T-T_{in}\right) - V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right)
+\]</span></p>
+<p>The mole and energy balance design equations are ATEs, and they will be solved numerically using an ATE solver to find the outlet molar flow rates and the outlet temperature. To do that, I’ll need to provide a guess for the solution and a residuals function to the solver. In anticipation of writing the residuals function, the design equations are written as residual expressions.</p>
+</div>
+</div>
+</div>
+<center>
+<strong>CSTR Zone Model</strong>
+</center>
+<p><strong>Design Equations</strong></p>
+<p><span class="math display">\[
+0 = \epsilon_A = \dot{n}_{A,in} - \dot{n}_{A,out} + V \left( -r_1 -r_2 \right) \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_B = \dot{n}_{B,in} - \dot{n}_{B,out} + V \left( -r_1 -r_2 \right) \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_D = \dot{n}_{D,in} - \dot{n}_{D,out} + V r_1 \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_U = \dot{n}_{U,in} - \dot{n}_{U,out} + V r_2 \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_T = \left(\begin{matrix}\dot{n}_{A,in} \hat{C}_{p,A} + \dot{n}_{B,in} \hat{C}_{p,B} \\ \dot{n}_{D,in} \hat{C}_{p,D} + \dot{n}_{U,in} \hat{C}_{p,U} \end{matrix}\right) \left(T-T_{in}\right) + V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right) \tag{9}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I need to guess the outlet molar flow rates and the outlet temperature and provide the guess to the ATE solver. I’ll simply guess that A and B decrease by 10% producing equal amounts of D and U. The reaction is exothermic, so I’ll guess that the temperature increases by 10 K. If the solver doesn’t converge, I may need to adjust these guesses, or I may need to provide different guesses, depending upon which zone is being modeled.</p>
+</div>
+</div>
+</div>
+<p><strong>Initial Guesses for <span class="math inline">\(\dot{n}_{A,out}\)</span>, <span class="math inline">\(\dot{n}_{B,out}\)</span>, <span class="math inline">\(\dot{n}_{D,out}\)</span>, <span class="math inline">\(\dot{n}_{U,out}\)</span>, and <span class="math inline">\(T_{out}\)</span>:</strong></p>
+<p><span class="math display">\[
+\dot{n}_{A,out,guess} = 0.9\dot{n}_{A,in} \tag{10}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{B,out,guess} = 0.9\dot{n}_{B,in} \tag{11}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{D,out,guess} = 0.05\dot{n}_{A,in} \tag{12}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{U,out,guess} = 0.05\dot{n}_{A,in} \tag{13}
+\]</span></p>
+<p><span class="math display">\[
+T_{out,guess} = T_{in} + 10 \text{ K } \tag{14}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The other thing I need to provide to the ATE solver is a residuals function. The solver will call the residuals function passing guesses for the unknowns (and nothing else) as arguments, and it will expect the residuals function to return the corresponding values of the residuals (and nothing else).</p>
+<p>Before the values of the residuals can be calculated, any other unknowns appearing in the design equations must first be calculated. Looking at the design equations, I see that <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, <span class="math inline">\(\dot{n}_{D,in}\)</span>, <span class="math inline">\(\dot{n}_{U,in}\)</span>, <span class="math inline">\(V\)</span>, <span class="math inline">\(r_1\)</span>, and <span class="math inline">\(r_2\)</span> are all unknown.</p>
+<p>I can’t write equations to calculate the inlet molar flow rates and the reactor volume because when the residuals function is called, it could be evaluating the residuals for either the CSTR zone or the well-mixed stagnant zone. I can’t pass <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, <span class="math inline">\(\dot{n}_{D,in}\)</span>, <span class="math inline">\(\dot{n}_{U,in}\)</span>, and <span class="math inline">\(V\)</span> as arguments, so I’ll need to make them available in some other way.</p>
+<p>I can use the rate expressions to calculate the rate expressions, but first I’ll need to calculate the concentrations of A and B. That can be done using the definition of concentration in an open system, <a href="section_1_intro_and_defs.html#eq-concentration_open" class="quarto-xref">Equation&nbsp;<span>1.15</span></a>. To use that equation, however, I need the volumetric flow rate. I can’t calculate the volumetric flow rate because, again, it depends whether the the CSTR zone or the well-mixed stagnant zone is being analyzed. Therefore, <span class="math inline">\(\dot{V}\)</span> will also need to be provided by some other means. The rate coefficients can be calculated using the Arrhenius expression, <a href="section_2_rates_and_expressions.html#eq-arrhenius" class="quarto-xref">Equation&nbsp;<span>4.8</span></a>.</p>
+</div>
+</div>
+</div>
+<p><strong>CSTR Residuals Function:</strong></p>
+<p><u>Arguments:</u> <span class="math inline">\(\dot{n}_{A,out}\)</span>, <span class="math inline">\(\dot{n}_{B,out}\)</span>, <span class="math inline">\(\dot{n}_{D,out}\)</span>, <span class="math inline">\(\dot{n}_{U,out}\)</span>, and <span class="math inline">\(T_{out}\)</span></p>
+<p><u>Must be Available:</u> <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, <span class="math inline">\(\dot{n}_{D,in}\)</span>, <span class="math inline">\(\dot{n}_{U,in}\)</span>, <span class="math inline">\(V\)</span>, and <span class="math inline">\(\dot{V}\)</span></p>
+<p><u>Returns:</u> <span class="math inline">\(\epsilon_A\)</span>, <span class="math inline">\(\epsilon_B\)</span>, <span class="math inline">\(\epsilon_D\)</span>, <span class="math inline">\(\epsilon_U\)</span>, and <span class="math inline">\(\epsilon_T\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+C_A = \frac{\dot{n}_{A,out}}{\dot{V}} \tag{15}
+\]</span></p>
+<p><span class="math display">\[
+C_B = \frac{\dot{n}_{B,out}}{\dot{V}} \tag{16}
+\]</span></p>
+<p><span class="math display">\[
+k_1 = k_{0,1}\exp{\left(\frac{-E_1}{RT_{out}}\right)} \tag{17}
+\]</span></p>
+<p><span class="math display">\[
+k_2 = k_{0,2}\exp{\left(\frac{-E_2}{RT_{out}}\right)} \tag{18}
+\]</span></p>
+<p><span class="math display">\[
+r_1 = k_1 C_AC_B \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+r_2 = k_2 C_AC_B \tag{4}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_A = \dot{n}_{A,in} - \dot{n}_{A,out} + V \left( -r_1 -r_2 \right) \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_B = \dot{n}_{B,in} - \dot{n}_{B,out} + V \left( -r_1 -r_2 \right) \tag{6}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_D = \dot{n}_{D,in} - \dot{n}_{D,out} + V r_1 \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_U = \dot{n}_{U,in} - \dot{n}_{U,out} + V r_2 \tag{8}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_T = \left(\begin{matrix}\dot{n}_{A,in} \hat{C}_{p,A} + \dot{n}_{B,in} \hat{C}_{p,B} \\ \dot{n}_{D,in} \hat{C}_{p,D} + \dot{n}_{U,in} \hat{C}_{p,U} \end{matrix}\right) \left(T-T_{in}\right) - V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right) \tag{9}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Now that I have a guess for the solution and a residuals function, I can write the CSTR zone function to solve the design equations. I have two options regarding making <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, <span class="math inline">\(\dot{n}_{D,in}\)</span>, <span class="math inline">\(\dot{n}_{U,in}\)</span>, <span class="math inline">\(V\)</span>, and <span class="math inline">\(\dot{V}\)</span> available to the residuals function. I can either make them available before I call the CSTR zone function or I can pass them to the CSTR zone function as arguments, and then make them available before I call the solver. I prefer the latter, so that’s how I’ll proceede.</p>
+</div>
+</div>
+</div>
+<p><strong>CSTR Zone Function:</strong></p>
+<p><u>Arguments:</u> <span class="math inline">\(\dot{n}_{A,in}\)</span>, <span class="math inline">\(\dot{n}_{B,in}\)</span>, <span class="math inline">\(\dot{n}_{D,in}\)</span>, <span class="math inline">\(\dot{n}_{U,in}\)</span>, <span class="math inline">\(V\)</span>, and <span class="math inline">\(\dot{V}\)</span></p>
+<p><u>Returns:</u> <span class="math inline">\(\dot{n}_{A,out}\)</span>, <span class="math inline">\(\dot{n}_{B,out}\)</span>, <span class="math inline">\(\dot{n}_{D,out}\)</span>, <span class="math inline">\(\dot{n}_{U,out}\)</span>, and <span class="math inline">\(T_{out}\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+\dot{n}_{A,in}, \dot{n}_{B,in}, \dot{n}_{D,in}, \dot{n}_{U,in}, V, \text{ and } \dot{V} \, \Rightarrow \, \text{available to Residuals Function} \tag{19}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\begin{matrix}
+\begin{matrix}
+\dot{n}_{A,out,guess}, \dot{n}_{B,out,guess}, \dot{n}_{D,out,guess}, \\ \dot{n}_{U,out,guess}, T_{out,guess},\text{ Residuals Function} \end{matrix} \\
+\Downarrow \\
+\text{ATE Solver} \\
+\Downarrow \\
+\dot{n}_{A,out}, \dot{n}_{B,out}, \dot{n}_{D,out}, \dot{n}_{U,out}, \text{ and } T_{out}
+\end{matrix} \tag{20}
+\]</span></p>
+<p>&nbsp;</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The zoned reactor for this assignment includes a stream merge, an ideal CSTR zone, a stream split, and a well-mixed stagnant zone. Looking at <a href="#fig-example_25_3_2_schematic" class="quarto-xref">Figure&nbsp;<span>25.6</span></a>, it appears that the mole and energy balances for the stream split, CSTR zone, stream merge, and well-mixed stagnant zone are coupled. That is, I can’t solve the mole and energy balances for any one of them independently of the others.</p>
+<p>Upon closer inspection, however, I can see that if I knew the composition and temperature of stream 4, I could solve the mole and energy balances for the stream merge for the composition and temperature of stream 1. Then I could solve the design equations for the CSTR zone to get the composition and temperature of stream 2. Then, knowing the fraction of the total flow that exchanges with the stagnant zone, I could calculate the compositions and temperatures of streams 3 and 5. Finally, knowing the composition and temperature of stream 3, I could solve the well-mixed stagnant zone design equations for the composition and temperature of stream 4.</p>
+<p>This situation is analogous to a set of CVODEs except that all of the equations are ATEs. As such, I can solve the equations in a manner analogous to the solution of a set of CVODEs. Briefly, I’ll write the mole and energy balances for the stream merge, and I’ll solve them numerically for the molar flow rates and temperature of stream 1. The molar flow rates and temperature of stream 4 will also appear in the equations and will be unknown. However when I write a residuals function for solving the stream merge equations, it will be given a guess for stream 1. I can use that guess to solve the CSTR design equations, use that result together with the known fraction of the total flow that exchanges with the stagnant zone to calculate the composition and temperature of stream 3, use that to solve the well-mixed stagnant zone design equations for the composition and temperature of stream 4, and use that to evaluate the residuals. That all may sound confusing at first, but again, it is analogous to solving a set of CVODEs.</p>
+<p>So I’ll start by generating a model for the stream merge. The mole balances for the stream merge simply require the outlet molar flow rate to equal the sum of the two inlet molar flow rates. Assuming that these equations will be solved numerically, I’ll write them as residual expressions.</p>
+<p><span class="math display">\[
+\dot{n}_{i,0} + \dot{n}_{i,4} = \dot{n}_{i,1} \qquad \Rightarrow \qquad 0 = \dot{n}_{i,0} + \dot{n}_{i,4} - \dot{n}_{i,1}
+\]</span></p>
+<p>Assuming the stream merge to be adiabatic (and that all of the streams are liquids), the energy balance simply requires that the sum of the heat changes of the two inlet streams must equal zero. That is, the energy lost by one stream equals the energy gained by the other.</p>
+<p><span class="math display">\[
+0 = \sum_i \dot{n}_{i,0} \int_{T_0}^{T_1} \hat{C}_{p,i}dT + \sum_i \dot{n}_{i,4} \int_{T_4}^{T_1} \hat{C}_{p,i}dT
+\]</span></p>
+<p>Here the heat capacities are constant, so they can be factored out of the integrals and the integrals can be evaluated analytically.</p>
+<p><span class="math display">\[
+0 = \sum_i \dot{n}_{i,0}\hat{C}_{p,i} \left(T_1 - T_0\right) + \sum_i \dot{n}_{i,4}\hat{C}_{p,i} \left(T_1 - T_4\right)
+\]</span></p>
+</div>
+</div>
+</div>
+<center>
+<strong>Stream Merge Model</strong>
+</center>
+<p><strong>Design Equations</strong></p>
+<p><span class="math display">\[
+0 = \epsilon_{21} = \dot{n}_{A,0} + \dot{n}_{A,4} - \dot{n}_{A,1} \tag{21}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_{22} = \dot{n}_{B,0} + \dot{n}_{B,4} - \dot{n}_{B,1} \tag{22}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_{23} = \dot{n}_{D,4} - \dot{n}_{D,1} \tag{23}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_{24} = \dot{n}_{U,4} - \dot{n}_{U,1} \tag{24}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_{25} = \left(\begin{matrix} \dot{n}_{A,0}\hat{C}_{p,A} +\\ \dot{n}_{B,0}\hat{C}_{p,B} +\\ \dot{n}_{D,0}\hat{C}_{p,D} +\\ \dot{n}_{U,0}\hat{C}_{p,U} \end{matrix} \right)  \left(T_1 - T_0\right) + \left( \begin{matrix}  \dot{n}_{A,4}\hat{C}_{p,A} +\\ \dot{n}_{B,4}\hat{C}_{p,B} +\\ \dot{n}_{D,4}\hat{C}_{p,D} +\\ \dot{n}_{U,4}\hat{C}_{p,U} \end{matrix} \right) \left(T_1 - T_4\right) \tag{25}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>There are five stream merge design equations (21) through (25), and they contain ten unknown quantities (molar flow rates of all species in stream 1 and 4, and temperatures of streams 1 and 4). The critical aspect of solving them is to choose <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{B,1}\)</span>, <span class="math inline">\(\dot{n}_{D,1}\)</span>, <span class="math inline">\(\dot{n}_{U,1}\)</span>, and <span class="math inline">\(T_1\)</span> as the unknowns to be found by solving these design equations.</p>
+<p>The stream merge design equations will be solved numerically using an ATE solver. I’ll need to provide a guess for each of the unknowns and a residuals function to the ATE solver. For no particular reason, I’m going to guess that the molar flow rates in stream are each equal to the molar flow rate in stream 0 plus some small amount. For the temperature, I’ll guess it is 5 K greater than stream 0. These are just guesses; if the solver fails to converge, I’ll change them.</p>
+</div>
+</div>
+</div>
+<p><strong>Initial Guesses for <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{B,1}\)</span>, <span class="math inline">\(\dot{n}_{D,1}\)</span>, <span class="math inline">\(\dot{n}_{U,1}\)</span>, and <span class="math inline">\(T_1\)</span>:</strong></p>
+<p><span class="math display">\[
+\dot{n}_{A,1,guess} = \dot{V}_0 C_{A,0} + 0.05\dot{V}_0 C_{A,0} \tag{26}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{B,1,guess} = \dot{V}_0 C_{B,0} + 0.05\dot{V}_0 C_{A,0} \tag{27}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{D,1,guess} = 0.05\dot{V}_0 C_{A,0} \tag{28}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{U,1,guess} = 0.05\dot{V}_0 C_{A,0} \tag{29}
+\]</span></p>
+<p><span class="math display">\[
+T_{1,guess} = T_0 + 5 \text{ K} \tag{30}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The other thing I need to do is to write a residuals function for solving the stream merge design equations using an ATE solver. When the ATE solver calls the residuals function it will pass values for the unknowns, <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{B,1}\)</span>, <span class="math inline">\(\dot{n}_{D,1}\)</span>, <span class="math inline">\(\dot{n}_{U,1}\)</span>, and <span class="math inline">\(T_1\)</span>, and nothing else, and it will expect the return values to be the residuals, <span class="math inline">\(\epsilon_{21}\)</span>, <span class="math inline">\(\epsilon_{22}\)</span>, <span class="math inline">\(\epsilon_{23}\)</span>, <span class="math inline">\(\epsilon_{24}\)</span>, and <span class="math inline">\(\epsilon_{25}\)</span>, and nothing else.</p>
+<p>Before I can evaluate and return the residuals, I must calculate any other unknowns that appear in the stream merge design equations. As already noted, <span class="math inline">\(\dot{n}_{A,4}\)</span>, <span class="math inline">\(\dot{n}_{B,4}\)</span>, <span class="math inline">\(\dot{n}_{D,4}\)</span>, <span class="math inline">\(\dot{n}_{U,4}\)</span>, and <span class="math inline">\(T_4\)</span> are unknown and they appear in the design equations. Therefore I need to calculate their values.</p>
+<p>To do so, I’ll first call the CSTR zone function to get the molar flow rates and temperature for stream 2. Since the reacting fluid is an incompressible liquid, the volumetric flow rates of streams 1 and 2 must be equal, and the volumetric flow rate of stream 1 must equal the combined volumetric flow rates of streams 0 and 4.</p>
+<p><span class="math display">\[
+V_2 = V_1 = V_0 + V_4
+\]</span></p>
+<p>The fraction of stream 2 that splits off as stream 3 can be calculated from the volumetric flow rates. Since it is only a stream split that equals the fraction of the molar flow rates in stream 2 that are split off into stream 3, and the temperature of streams 2 and 3 are equal.</p>
+<p><span class="math display">\[
+f_{exch} = \frac{V_3}{V_2}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{i,3} = f_{exch}\dot{n}_{i,2}
+\]</span></p>
+<p><span class="math display">\[
+T_3 = T_2
+\]</span></p>
+<p>Having calculated the molar flow rates and temperature of stream 3, the design equations for the well-mixed stagnant zone can be solved by calling the CSTR zone function. This will yield the molar flow rates and temperature for stream 4.</p>
+<p>Finally, then, the stream merge residuals can be evaluated and their values returned.</p>
+</div>
+</div>
+</div>
+<p><strong>Stream Merge Residuals Function:</strong></p>
+<p><u>Arguments:</u> <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{B,1}\)</span>, <span class="math inline">\(\dot{n}_{D,1}\)</span>, <span class="math inline">\(\dot{n}_{U,1}\)</span>, and <span class="math inline">\(T_1\)</span></p>
+<p><u>Returns:</u> <span class="math inline">\(\epsilon_{21}\)</span>, <span class="math inline">\(\epsilon_{22}\)</span>, <span class="math inline">\(\epsilon_{23}\)</span>, <span class="math inline">\(\epsilon_{24}\)</span>, and <span class="math inline">\(\epsilon_{25}\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+V_{R1} = \left(1-f_{R2}\right)V_{ZR} \tag{32}
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_1 = \dot{V}_0 + \dot{V}_4 \tag{33}
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_2 = \dot{V}_1 \tag{34}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\begin{matrix}
+\dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{D,1}, \dot{n}_{U,1}, T_1, V_{R1}, \dot{V}_1 \\
+\Downarrow \\
+\text{CSTR Zone Function} \\
+\Downarrow \\
+\dot{n}_{A,2}, \dot{n}_{B,2}, \dot{n}_{D,2}, \dot{n}_{U,2}, T_2
+\end{matrix} \tag{35}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+f_{exch} = \frac{\dot{V}_3}{\dot{V}_2} \tag{36}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{i,3} = f_{exch}\dot{n}_{i,2} \,; \, i = A, B, D, \text{ and } U \tag{37}
+\]</span></p>
+<p><span class="math display">\[
+T_3 = T_2 \tag{38}
+\]</span></p>
+<p><span class="math display">\[
+V_{R2} = f_{R2}V_{ZR} \tag{39}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\begin{matrix}
+\dot{n}_{A,3}, \dot{n}_{B,3}, \dot{n}_{D,3}, \dot{n}_{U,3}, T_3, V_{R2}, \dot{V}_3 \\
+\Downarrow \\
+\text{CSTR Zone Function} \\
+\Downarrow \\
+\dot{n}_{A,4}, \dot{n}_{B,4}, \dot{n}_{D,4}, \dot{n}_{U,4}, T_4
+\end{matrix} \tag{40}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\dot{n}_{A,0} = C_{A,0}\dot{V}_0 \tag{41}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{B,0} = C_{B,0}\dot{V}_0 \tag{42}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_{21} = \dot{n}_{A,0} + \dot{n}_{A,4} - \dot{n}_{A,1} \tag{21}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_{22} = \dot{n}_{B,0} + \dot{n}_{B,4} - \dot{n}_{B,1} \tag{22}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_{23} = \dot{n}_{D,4} - \dot{n}_{D,1} \tag{23}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_{24} = \dot{n}_{U,4} - \dot{n}_{U,1} \tag{24}
+\]</span></p>
+<p><strong>Stream Merge Function:</strong></p>
+<p><u>Arguments:</u> none</p>
+<p><u>Returns:</u> <span class="math inline">\(\dot{n}_{A,1}\)</span>, <span class="math inline">\(\dot{n}_{B,1}\)</span>, <span class="math inline">\(\dot{n}_{D,1}\)</span>, <span class="math inline">\(\dot{n}_{U,1}\)</span>, and <span class="math inline">\(T_1\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+\begin{matrix}
+\begin{matrix}
+\dot{n}_{A,1,guess}, \dot{n}_{B,1,guess}, \dot{n}_{D,1,guess}, \dot{n}_{U,1,guess}, \\ T_{1,guess}, \text{ and Stream Merge Residuals Function} \end{matrix} \\
+\Downarrow \\
+\text{ATE Solver} \\
+\Downarrow \\
+\dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{D,1}, \dot{n}_{U,1}, \text{and } T_1
+\end{matrix}
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Click Here to See What an Expert Might be Thinking at this Point
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>At this point I can write a zoned reactor function to calculate the molar flow rates and temperature of stream 5. The first thing it needs to do is to call the stream merge function to get the molar flow rates and temperature of stream 1. Then it can call the CSTR zone function to get the molar flow rates and temperature of stream 2. Finally it can use the exchange fraction, defined earlier, to calculate the molar flow rates and temperature of stream 5.</p>
+<p>The temperature of stream 5 is one of the quantities of interest. The conversion of A can be calculated using its definition, <a href="section_1_reaction_progress.html#eq-conversion_def_open" class="quarto-xref">Equation&nbsp;<span>3.5</span></a>, and the selectivity for D over U can be calculated from the stream 5 molar flow rates.</p>
+</div>
+</div>
+</div>
+<center>
+<strong><em>Zoned Reactor Function</em></strong>
+</center>
+<p><u>Arguments:</u> none</p>
+<p><u>Returns:</u> <span class="math inline">\(\dot{n}_{A,5}\)</span>, <span class="math inline">\(\dot{n}_{B,5}\)</span>, <span class="math inline">\(\dot{n}_{D,5}\)</span>, <span class="math inline">\(\dot{n}_{U,5}\)</span>, and <span class="math inline">\(T_5\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+\begin{matrix}
+\text{Stream Merge Function} \\
+\Downarrow \\
+\dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{D,1}, \dot{n}_{U,1}, \text{and } T_1
+\end{matrix}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+V_{R1} = \left(1-f_{R2}\right)V_{ZR} \tag{32}
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_1 = \dot{V}_0 + \dot{V}_4 \tag{33}
+\]</span></p>
+<p><span class="math display">\[
+\dot{V}_2 = \dot{V}_1 \tag{34}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\begin{matrix}
+\dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{D,1}, \dot{n}_{U,1}, T_1, V_{R1}, \dot{V}_1 \\
+\Downarrow \\
+\text{CSTR Zone Function} \\
+\Downarrow \\
+\dot{n}_{A,2}, \dot{n}_{B,2}, \dot{n}_{D,2}, \dot{n}_{U,2}, T_2
+\end{matrix} \tag{35}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+f_{exch} = \frac{\dot{V}_3}{\dot{V}_2} \tag{36}
+\]</span></p>
+<p><span class="math display">\[
+\dot{n}_{i,5} = \left(1-f_{exch}\right)\dot{n}_{i,2} \,; \, i = A, B, D, \text{ and } U \tag{43}
+\]</span></p>
+<p><span class="math display">\[
+T_5 = T_2 \tag{44}
+\]</span></p>
+<center>
+<strong><em>Quantities of Interest</em></strong>
+</center>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+\begin{matrix}
+\text{Zoned Reactor Function} \\
+\Downarrow \\
+\dot{n}_{A,5}, \dot{n}_{B,5}, \dot{n}_{D,5}, \dot{n}_{U,5}, \text{and } T_5
+\end{matrix} \tag{45}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+f_A = \frac{\dot{V}_0C_{A,0} - \dot{n}_{A,5}}{\dot{V}_0C_{A,0}} \tag{46}
+\]</span></p>
+<p><span class="math display">\[
+S_{D/U} = \frac{\dot{n}_{D,5}}{\dot{n}_{U,5}} \tag{47}
+\]</span></p>
+</section>
+<section id="results-analysis-and-discussion-1" class="level4" data-number="25.3.2.3">
+<h4 data-number="25.3.2.3" class="anchored" data-anchor-id="results-analysis-and-discussion-1"><span class="header-section-number">25.3.2.3</span> Results, Analysis and Discussion</h4>
+<p>The calculations were performed as described above. Specifically the CSTR REsiduals Function, CSTR Zone Function, Stream Merge Residuals Function, Stream Merge Function, and Zoned Reactor Function were written using a mathematics software package. The Zoned Reactor Function was called to get the molar flow rates and temperature for stream 5, and the conversion and selectivity were calculated using equations (46) and (47). The results for the stirred tank with a well-mixed stagnant zone are compared to the results for an ideal PFR in <a href="#tbl-example_25_3_2_comparison" class="quarto-xref">Table&nbsp;<span>25.2</span></a>.</p>
+<div id="tbl-example_25_3_2_comparison" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-example_25_3_2_comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;25.2: Comparison of ideal CSTR predictions to zoned reactor model with a well-mixed stagnant zone.
+</figcaption>
+<div aria-describedby="tbl-example_25_3_2_comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: center;">Ideal CSTR</th>
+<th style="text-align: center;">Stirred Tank with Stagnant Zone</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Conversion (%)</td>
+<td style="text-align: center;">54.9</td>
+<td style="text-align: center;">54.4</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selectivity (D/U)</td>
+<td style="text-align: center;">8.39</td>
+<td style="text-align: center;">8.35</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Temperature (K)</td>
+<td style="text-align: center;">383</td>
+<td style="text-align: center;">383</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Adding a well-mixed stagnant zone had negligible effect upon the reactor’s performance. If an engineer was modeling a real reactor where there was a significant difference and if the engineer felt that the difference was due to a stagnant zone, the engineer adjust the zoned reactor model. Both the relative volume of the stagnant zone, <span class="math inline">\(f_{R2}\)</span>, and the fluid exchange flows, <span class="math inline">\(\dot{V}_3 = \dot{V}_4\)</span>, could be varied to find a combination of values that approaches the actual reactor performance as closely as possible.</p>
+<p>When the zoned reactor model was formulated, a choice had to be made regarding heat exchange between the two fluid zones. In an actual reactor with a stagnant zone, one would expect some degree of heat exchange because the zones are in physical contact. However adding heat exchange to the model requires the heat transfer area and the heat transfer coefficient. A small stagnant zone is expected to have a small effect upon reactor performance, and on that basis the decision to model the reactors as adiabatic zones can be justified.</p>
+</section>
+</section>
+</section>
+<section id="symbols-used-in-sec-7_zoned_reactor_models" class="level2" data-number="25.4">
+<h2 data-number="25.4" class="anchored" data-anchor-id="symbols-used-in-sec-7_zoned_reactor_models"><span class="header-section-number">25.4</span> Symbols Used in <a href="#sec-7_zoned_reactor_models" class="quarto-xref"><span>Chapter 25</span></a></h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(f_i\)</span></td>
+<td style="text-align: left;">Fractional conversion of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(f_{exch}\)</span></td>
+<td style="text-align: left;">Fraction of the fluid flow directed to and returning from the stagnant zone.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(f_{V,R2}\)</span></td>
+<td style="text-align: left;">Fraction of the non-ideal reactor volume corresponding to zone R2.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(f_{f,R2}\)</span></td>
+<td style="text-align: left;">Fraction of the fluid flow directed to zone R2.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(k\)</span></td>
+<td style="text-align: left;">Rate coefficient.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(k_0\)</span></td>
+<td style="text-align: left;">Arrhenius pre-exponential factor.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{n}\)</span></td>
+<td style="text-align: left;">Molar flow rate; additional subscripts denote the reagent and the fluid stream.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(r\)</span></td>
+<td style="text-align: left;">Reaction rate; a subscript is used to index individual reactions when more than one occur.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(y\)</span></td>
+<td style="text-align: left;">Mole fraction; additional subscripts denote the reagent and the flow stream.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(C\)</span></td>
+<td style="text-align: left;">Concentration; additional subscripts denote the reagent and the flow stream.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\hat{C}_{p,i}\)</span></td>
+<td style="text-align: left;">Molar heat capacity of reagent <span class="math inline">\(i\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(D\)</span></td>
+<td style="text-align: left;">Diameter; a subscript identifies the vessel.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(E\)</span></td>
+<td style="text-align: left;">Arrhenius activation energy; a subscript is used to index individual reactions when more than one occur.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(L\)</span></td>
+<td style="text-align: left;">Length; a subscript identifies the vessel.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(P\)</span></td>
+<td style="text-align: left;">Pressure; a subscripted <span class="math inline">\(i\)</span> indicates the partial pressure of reagent <span class="math inline">\(k\)</span>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(S_{D/U}\)</span></td>
+<td style="text-align: left;">Selectivity for D over U.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: left;">Temperature; a subsript denotes the fluid stream.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: left;">Volume; an additional subscript denotes the reactor or zone.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{V}\)</span></td>
+<td style="text-align: left;">Volumetric flow rate; a subscript denotes the fluid stream.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\epsilon\)</span></td>
+<td style="text-align: left;">Residual; a subscript is used to index the residuals when there are more than one.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\Delta H\)</span></td>
+<td style="text-align: left;">Heat of reaction; a subscript is used to index individual reactions when more than one occur.</td>
+</tr>
+</tbody>
+</table>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
