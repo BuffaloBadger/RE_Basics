@@ -62,6 +62,15 @@ Very often, however, the reactor cannot be shut down and used for experiments. O
 
 Two simple examples of zoned reactor models are presented in this section. The first is a zoned reactor model for a packed bed where bypassing is suspected. The other is a zoned reactor model for a stirred tank with a well-mixed stagnant zone.
 
+```{r}
+#| echo: false
+#| output: false
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+source('Code/fmt_tibble_col.R')
+```
+
 ### A Zoned Reactor Model for Bypassing in a Packed Bed {#sec-example_25_3_1}
 
 A tube that is 6 m long with an inside diameter of 7 cm is packed with pellets of solid catalyst. Reaction (1) takes place within this reactor at a constant temperature of 450 ºC and a constant pressure of 5 atm. The tube will be fed 200 ft^3^ h^-1^ of a gas containing 15% A, 15% B and 70% I (an inert gas). Reaction (1) is one-half order in A and first order in B as indicated in equation (2). Suppose that the packing in the tube is not uniform, and as a consequence 5% of the bed has a lower density (leading to a rate coefficient of 1785 mol h^-1^ atm^-0.5^ m^-3^), while the remainder has a higher density (with a rate coefficient of 2160 mol h^-1^ atm^-0.5^ m^-3^). Using a zoned reactor model with two parallel PFR zones, show how the conversion will vary as the fraction of the feed gas flowing into the less dense part of the bed varies between 0 and 25%. Discuss the parameters in this zoned reactor model and how they might be estimated.
@@ -387,9 +396,20 @@ The calculations were performed as described above. Specifically the derivatives
 
 ![Variation in the conversion of reagent A as the fraction of the feed bypassing the dense bed increases.](Calculations/example_25_3_1/example_25_3_1_results.png){#fig-example_25_3_1_results width="70%"}
 
+Intuitively one might expect the conversion to drop steadily as more and more of the flow bypasses the dense bed, but @fig-example_25_3_1_results show that initially the conversion increases and then passes through a maximum before it starts to decrease steadily. Looking at the figure it can be seen that when all of the flow passes through the dense bed ($\f_{f,R2}=0$), the conversion is around 60.4%. When a small fraction of the feed flows to the less dense part of the bed, its space time in that bed will be very large because the flow is small. As a consequence, the part of the flow passing through the less dense bed may have a conversion approaching 100%. 
+
+At the same time, this decreases the space time of the fluid in the dense bed, causing its conversion to increase, too. Thus, when the two flows are combined, the conversion greater than it would have been had all of the flow passed through the dense bed. Eventually, as more an more of the flow passes into the less dense bed the conversions in the two beds becomes equal. This corresponds to the maximum in @fig-example_25_3_1_results. A further increase in $\f_{f,R2}$ increases the space time such that the final conversion is less than that in the less dense bed, so when the streams are combined, the conversion decreases.
+
 ### A Zoned Reactor Model for a CSTR with a Stagnant Zone {#sec-example_25_3-2}
 
-Reactants A and B can react irreversibly to produce either a desired product, D, or an undesired product, U, as shown in equations (1) and (2). The corresponding rate expressions are given in equations (3) and (4). The pre-exponential factors for $k_1$ and $k_2$ are 10.2 gal mol^-1^ min^-1^ and 17.0 gal mol^-1^ min^-1^, respectively, and the activation energies are 15.3 kJ mol^-1^ and 23.7 kJ mol^-1^, respectively. A liquid mixture containing 10 mol A gal^-1^ and 12 mol B gal^-1^ at 350 K is fed to an adiabatic 25 gal CSTR at a rate of 12.5 gal min^-1^. If the standard heats at 298 K of reactions (1) and (2) are -12.0 and -21.3 kJ mol^-1^, respectively, and if the reagents form an ideal liquid mixture with the temperature-independent heat capacities of A, B, D and U equal to 85, 125, 200 and 170 J mol^-1^ K^-1^, what are the conversion of the limiting reagent, the outlet selectivity (in mol D per mol U) and the outlet temperature?
+```{r}
+#| echo: false
+#| output: false
+df <- read.csv('examples/reb_12_7_1/results.csv')
+df <- fmt_tibble_col(df, 2, 3, 3, 2)
+```
+
+Reactants A and B can react irreversibly to produce either a desired product, D, or an undesired product, U, as shown in equations (1) and (2). The corresponding rate expressions are given in equations (3) and (4). The pre-exponential factors for $k_1$ and $k_2$ are 10.2 gal mol^-1^ min^-1^ and 17.0 gal mol^-1^ min^-1^, respectively, and the activation energies are 15.3 kJ mol^-1^ and 23.7 kJ mol^-1^, respectively. A liquid mixture containing 10 mol A gal^-1^ and 12 mol B gal^-1^ at 350 K is fed to an adiabatic 25 gal CSTR at a rate of 12.5 gal min^-1^. Example [-@sec-example_12_7_1] showed that if the standard heats at 298 K of reactions (1) and (2) are -12.0 and -21.3 kJ mol^-1^, respectively, and if the reagents form an ideal liquid mixture with the temperature-independent heat capacities of A, B, D and U equal to 85, 125, 200 and 170 J mol^-1^ K^-1^, then the conversion of A is `r df$value[1]``r df$units[1]`, the selectivity is `r df$value[2]` `r df$units[2]`, and the outlet temperature is `r df$value[3]` `r df$units[3]`. How will these results change if 5% of the CSTR volume is a well-mixed stagnant zone that exchanges fluid with the remainder of the reactor at a rate of 0.5 gal min^-1^?
 
 $$
 A + B \rightarrow D \tag{1}
@@ -412,23 +432,41 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-[add thinking here]
+This assignment involves a CSTR with a well-mixed stagnant zone, so I'll be using a zoned reactor model. I'll begin by summarizing the assignment. For the schematic I'll use @fig-zoned_cstr_with_stagnant (b) since it shows a vlow mixing point and a flow splitting point. I'll use "ZR" to designate the non-ideal stirred tank that is being modeled using a zoned reactor model, "R1" to designate the CSTR zone, and "R2" to designate the well-mixed stagnant zone. The reactor operates at steady-state and the fluid is an incompressible liquid, so the fluid exchange rate given in the narrative is equal to the flow into and out of the stagnant zone.
 
 :::
 
 #### Assignment Summary
 
-**Reaction**: 
+**Reactions**: 
 
-**Rate Expression**: 
+$$
+A + B \rightarrow D \tag{1}
+$$
 
-**Reactor System**: 
+$$
+A + B \rightarrow U \tag{2}
+$$
+
+**Rate Expressions**: 
+
+$$
+r_1 = k_1 C_AC_B \tag{3}
+$$
+
+$$
+r_2 = k_2 C_AC_B \tag{4}
+$$
+
+**Reactor System**: Zoned reactor with a CSTR zone and a well-mixed stagnant zone.
 
 **Reactor Schematic**: 
 
-**Quantities of Interest**: 
+![Schematic representation of the stirred tank as a zoned reactor (gray) with a CSTR zone (blue) and a well-mixed stagnant zone (green).](Calculations/example_25_3_2/example_25_3_2_schematic.png){#fig-example_25_3_2_schematic width="30%"}
 
-**Given and Known Constants**: 
+**Quantities of Interest**: $f_A$, $S_{D/U}$, and $T_5$
+
+**Given and Known Constants**: $k_{0,1}$ = 10.2 gal mol^-1^ min^-1^, $k_{0,2}$ = 17.0 gal mol^-1^ min^-1^, $E_1$ = 15.3 kJ mol^-1^, $E_2$ = 23.7 kJ mol^-1^, $C_{A,0}$ 10 mol A gal^-1^, $C_{B,0}$ = 12 mol B gal^-1^, $T_0$ = 350 K, $V_{ZR}$ = 25 gal, $\dot{V}_0$ = 12.5 gal min^-1^, $\Delta H_1$ = -12.0, $\Delta H_2$ = -21.3 kJ mol^-1^, $\hat{C}_{p,A}$ = 85, $\hat{C}_{p,B}$ = 125, $\hat{C}_{p,D}$ = 200, $\hat{C}_{p,U}$ = 170 J mol^-1^ K^-1^, $f_{R2}$ = 0.05, and $\dot{V}_{3}$ = $\dot{V}_{4}$ = 0.5 gal min^-1^.
 
 #### Mathematical Formulation of the Analysis
 
@@ -437,19 +475,542 @@ The formulation that follows assumes that the given and known constants identifi
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-[add thinking here]
+The reaction actually takes place within the CSTR zone and the well-mixed stagnant zone. Both of those zones are modeled using the ideal CSTR design equations. Before I can write design equations, I need to make an assumption about heat transfer between the two zones. Overall the stirred tank is adiabatic, but the two zones must be in contact within the reactor. To avoid having to guess both the contact area and the heat transfer coefficient between the two zones, I'm simply going to assume them both to be adiabatic.
+
+Since both zones are being modeled as ideal CSTRs, I'm going to use the same CSTR zone model for each of them. That means that the volume, inlet volumetric flow rate, inlet temperature, and inlet composition will need to be provided to the model. Since I've assumed the two zones to each be adiabatic, I'll need mole balances on each of the reagents and an energy balance on the reacting fluid as reactor design equations.
+
+The general form of a steady-state CSTR mole balance is given in @eq-cstr_ss_mole_balance. Two reactions taking place, so the summation expands to two terms.
+
+$$
+0 = \dot{n}_{i,in} - \dot{n}_{i,out} + V \sum_j \nu_{i,j}r_j = \dot{n}_{i,in} - \dot{n}_{i,out} + V \left( \nu_{i,1}r_1 + \nu_{i,2}r_2 \right)
+$$
+
+The general form of a steady-state CSTR energy balance is given in @eq-cstr_ss_energy_balance. Assuming the zone to be adiabatic means the heat exchange term is equal to zero, and assuming the power required to agitate the fluid to be neglible means the work term is zero. The heat capacities are constants, so they can be factored out of the integrals and the integrals can be evaluated analytically. Finally, as above, there are two reactions, so the final sum expands to two terms.
+
+$$
+0 = \cancelto{0}{\dot{Q}} - \cancelto{0}{\dot{W}} - \sum_i\dot{n}_{i,in} \cancelto{\hat{C}_{p,i}\left(T-T_{in}\right)}{\int_{T_{in}}^T \hat{C}_{p,i}dT} - V\cancelto{r_1 \Delta H_1 + r_2 \Delta H_2}{\sum_j r_j \Delta H_j}
+$$
+
+$$
+0 = -\left(\begin{matrix}\dot{n}_{A,in} \hat{C}_{p,A} + \dot{n}_{B,in} \hat{C}_{p,B} \\ \dot{n}_{D,in} \hat{C}_{p,D} + \dot{n}_{U,in} \hat{C}_{p,U} \end{matrix}\right) \left(T-T_{in}\right) - V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right)
+$$
+
+The mole and energy balance design equations are ATEs, and they will be solved numerically using an ATE solver to find the outlet molar flow rates and the outlet temperature. To do that, I'll need to provide a guess for the solution and a residuals function to the solver. In anticipation of writing the residuals function, the design equations are written as residual expressions.
 
 :::
 
+<center>**CSTR Zone Model**</center>
+
+**Design Equations**
+
+$$
+0 = \epsilon_A = \dot{n}_{A,in} - \dot{n}_{A,out} + V \left( -r_1 -r_2 \right) \tag{5}
+$$
+
+$$
+0 = \epsilon_B = \dot{n}_{B,in} - \dot{n}_{B,out} + V \left( -r_1 -r_2 \right) \tag{6}
+$$
+
+$$
+0 = \epsilon_D = \dot{n}_{D,in} - \dot{n}_{D,out} + V r_1 \tag{7}
+$$
+
+$$
+0 = \epsilon_U = \dot{n}_{U,in} - \dot{n}_{U,out} + V r_2 \tag{8}
+$$
+
+$$
+0 = \epsilon_T = \left(\begin{matrix}\dot{n}_{A,in} \hat{C}_{p,A} + \dot{n}_{B,in} \hat{C}_{p,B} \\ \dot{n}_{D,in} \hat{C}_{p,D} + \dot{n}_{U,in} \hat{C}_{p,U} \end{matrix}\right) \left(T-T_{in}\right) + V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right) \tag{9}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I need to guess the outlet molar flow rates and the outlet temperature and provide the guess to the ATE solver. I'll simply guess that A and B decrease by 10% producing equal amounts of D and U. The reaction is exothermic, so I'll guess that the temperature increases by 10 K. If the solver doesn't converge, I may need to adjust these guesses, or I may need to provide different guesses, depending upon which zone is being modeled.
+
+:::
+
+**Initial Guesses for $\dot{n}_{A,out}$, $\dot{n}_{B,out}$, $\dot{n}_{D,out}$, $\dot{n}_{U,out}$, and $T_{out}$:**
+
+$$
+\dot{n}_{A,out,guess} = 0.9\dot{n}_{A,in} \tag{10}
+$$
+
+$$
+\dot{n}_{B,out,guess} = 0.9\dot{n}_{B,in} \tag{11}
+$$
+
+$$
+\dot{n}_{D,out,guess} = 0.05\dot{n}_{A,in} \tag{12}
+$$
+
+$$
+\dot{n}_{U,out,guess} = 0.05\dot{n}_{A,in} \tag{13}
+$$
+
+$$
+T_{out,guess} = T_{in} + 10 \text{ K } \tag{14}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The other thing I need to provide to the ATE solver is a residuals function. The solver will call the residuals function passing guesses for the unknowns (and nothing else) as arguments, and it will expect the residuals function to return the corresponding values of the residuals (and nothing else).
+
+Before the values of the residuals can be calculated, any other unknowns appearing in the design equations must first be calculated. Looking at the design equations, I see that $\dot{n}_{A,in}$, $\dot{n}_{B,in}$, $\dot{n}_{D,in}$, $\dot{n}_{U,in}$, $V$, $r_1$, and $r_2$ are all unknown.
+
+I can't write equations to calculate the inlet molar flow rates and the reactor volume because when the residuals function is called, it could be evaluating the residuals for either the CSTR zone or the well-mixed stagnant zone. I can't pass $\dot{n}_{A,in}$, $\dot{n}_{B,in}$, $\dot{n}_{D,in}$, $\dot{n}_{U,in}$, and $V$ as arguments, so I'll need to make them available in some other way.
+
+I can use the rate expressions to calculate the rate expressions, but first I'll need to calculate the concentrations of A and B. That can be done using the definition of concentration in an open system, @eq-concentration_open. To use that equation, however, I need the volumetric flow rate. I can't calculate the volumetric flow rate because, again, it depends whether the the CSTR zone or the well-mixed stagnant zone is being analyzed. Therefore, $\dot{V}$ will also need to be provided by some other means. The rate coefficients can be calculated using the Arrhenius expression, @eq-arrhenius.
+
+:::
+
+**CSTR Residuals Function:**
+
+[Arguments:]{.underline} $\dot{n}_{A,out}$, $\dot{n}_{B,out}$, $\dot{n}_{D,out}$, $\dot{n}_{U,out}$, and $T_{out}$
+
+[Must be Available:]{.underline} $\dot{n}_{A,in}$, $\dot{n}_{B,in}$, $\dot{n}_{D,in}$, $\dot{n}_{U,in}$, $V$, and $\dot{V}$
+
+[Returns:]{.underline} $\epsilon_A$, $\epsilon_B$, $\epsilon_D$, $\epsilon_U$, and $\epsilon_T$
+
+[Algorithm:]{.underline}
+
+$$
+C_A = \frac{\dot{n}_{A,out}}{\dot{V}} \tag{15}
+$$
+
+$$
+C_B = \frac{\dot{n}_{B,out}}{\dot{V}} \tag{16}
+$$
+
+$$
+k_1 = k_{0,1}\exp{\left(\frac{-E_1}{RT_{out}}\right)} \tag{17}
+$$
+
+$$
+k_2 = k_{0,2}\exp{\left(\frac{-E_2}{RT_{out}}\right)} \tag{18}
+$$
+
+$$
+r_1 = k_1 C_AC_B \tag{3}
+$$
+
+$$
+r_2 = k_2 C_AC_B \tag{4}
+$$
+
+$$
+0 = \epsilon_A = \dot{n}_{A,in} - \dot{n}_{A,out} + V \left( -r_1 -r_2 \right) \tag{5}
+$$
+
+$$
+0 = \epsilon_B = \dot{n}_{B,in} - \dot{n}_{B,out} + V \left( -r_1 -r_2 \right) \tag{6}
+$$
+
+$$
+0 = \epsilon_D = \dot{n}_{D,in} - \dot{n}_{D,out} + V r_1 \tag{7}
+$$
+
+$$
+0 = \epsilon_U = \dot{n}_{U,in} - \dot{n}_{U,out} + V r_2 \tag{8}
+$$
+
+$$
+0 = \epsilon_T = \left(\begin{matrix}\dot{n}_{A,in} \hat{C}_{p,A} + \dot{n}_{B,in} \hat{C}_{p,B} \\ \dot{n}_{D,in} \hat{C}_{p,D} + \dot{n}_{U,in} \hat{C}_{p,U} \end{matrix}\right) \left(T-T_{in}\right) - V\left(r_1 \Delta H_1 + r_2 \Delta H_2\right) \tag{9}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+Now that I have a guess for the solution and a residuals function, I can write the CSTR zone function to solve the design equations. I have two options regarding making $\dot{n}_{A,in}$, $\dot{n}_{B,in}$, $\dot{n}_{D,in}$, $\dot{n}_{U,in}$, $V$, and $\dot{V}$ available to the residuals function. I can either make them available before I call the CSTR zone function or I can pass them to the CSTR zone function as arguments, and then make them available before I call the solver. I prefer the latter, so that's how I'll proceede.
+
+:::
+
+**CSTR Zone Function:**
+
+[Arguments:]{.underline} $\dot{n}_{A,in}$, $\dot{n}_{B,in}$, $\dot{n}_{D,in}$, $\dot{n}_{U,in}$, $V$, and $\dot{V}$
+
+[Returns:]{.underline} $\dot{n}_{A,out}$, $\dot{n}_{B,out}$, $\dot{n}_{D,out}$, $\dot{n}_{U,out}$, and $T_{out}$
+
+[Algorithm:]{.underline}
+
+$$
+\dot{n}_{A,in}, \dot{n}_{B,in}, \dot{n}_{D,in}, \dot{n}_{U,in}, V, \text{ and } \dot{V} \, \Rightarrow \, \text{available to Residuals Function} \tag{19}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\begin{matrix}
+\dot{n}_{A,out,guess}, \dot{n}_{B,out,guess}, \dot{n}_{D,out,guess}, \\ \dot{n}_{U,out,guess}, T_{out,guess},\text{ Residuals Function} \end{matrix} \\
+\Downarrow \\
+\text{ATE Solver} \\
+\Downarrow \\
+\dot{n}_{A,out}, \dot{n}_{B,out}, \dot{n}_{D,out}, \dot{n}_{U,out}, \text{ and } T_{out}
+\end{matrix} \tag{20}
+$$
+
+&nbsp;
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The zoned reactor for this assignment includes a stream merge, an ideal CSTR zone, a stream split, and a well-mixed stagnant zone. Looking at @fig-example_25_3_2_schematic, it appears that the mole and energy balances for the stream split, CSTR zone, stream merge, and well-mixed stagnant zone are coupled. That is, I can't solve the mole and energy balances for any one of them independently of the others.
+
+Upon closer inspection, however, I can see that if I knew the composition and temperature of stream 4, I could solve the mole and energy balances for the stream merge for the composition and temperature of stream 1. Then I could solve the design equations for the CSTR zone to get the composition and temperature of stream 2. Then, knowing the fraction of the total flow that exchanges with the stagnant zone, I could calculate the compositions and temperatures of streams 3 and 5. Finally, knowing the composition and temperature of stream 3, I could solve the well-mixed stagnant zone design equations for the composition and temperature of stream 4.
+
+This situation is analogous to a set of CVODEs except that all of the equations are ATEs. As such, I can solve the equations in a manner analogous to the solution of a set of CVODEs. Briefly, I'll write the mole and energy balances for the stream merge, and I'll solve them numerically for the molar flow rates and temperature of stream 1. The molar flow rates and temperature of stream 4 will also appear in the equations and will be unknown. However when I write a residuals function for solving the stream merge equations, it will be given a guess for stream 1. I can use that guess to solve the CSTR design equations, use that result together with the known fraction of the total flow that exchanges with the stagnant zone to calculate the composition and temperature of stream 3, use that to solve the well-mixed stagnant zone design equations for the composition and temperature of stream 4, and use that to evaluate the residuals. That all may sound confusing at first, but again, it is analogous to solving a set of CVODEs. 
+
+So I'll start by generating a model for the stream merge. The mole balances for the stream merge simply require the outlet molar flow rate to equal the sum of the two inlet molar flow rates. Assuming that these equations will be solved numerically, I'll write them as residual expressions.
+
+$$
+\dot{n}_{i,0} + \dot{n}_{i,4} = \dot{n}_{i,1} \qquad \Rightarrow \qquad 0 = \dot{n}_{i,0} + \dot{n}_{i,4} - \dot{n}_{i,1}
+$$
+
+ Assuming the stream merge to be adiabatic (and that all of the streams are liquids), the energy balance simply requires that the sum of the heat changes of the two inlet streams must equal zero. That is, the energy lost by one stream equals the energy gained by the other.
+
+$$
+0 = \sum_i \dot{n}_{i,0} \int_{T_0}^{T_1} \hat{C}_{p,i}dT + \sum_i \dot{n}_{i,4} \int_{T_4}^{T_1} \hat{C}_{p,i}dT
+$$
+
+Here the heat capacities are constant, so they can be factored out of the integrals and the integrals can be evaluated analytically.
+
+$$
+0 = \sum_i \dot{n}_{i,0}\hat{C}_{p,i} \left(T_1 - T_0\right) + \sum_i \dot{n}_{i,4}\hat{C}_{p,i} \left(T_1 - T_4\right)
+$$
+
+:::
+
+<center>**Stream Merge Model**</center>
+
+**Design Equations**
+
+$$
+0 = \epsilon_{21} = \dot{n}_{A,0} + \dot{n}_{A,4} - \dot{n}_{A,1} \tag{21}
+$$
+
+$$
+0 = \epsilon_{22} = \dot{n}_{B,0} + \dot{n}_{B,4} - \dot{n}_{B,1} \tag{22}
+$$
+
+$$
+0 = \epsilon_{23} = \dot{n}_{D,4} - \dot{n}_{D,1} \tag{23}
+$$
+
+$$
+0 = \epsilon_{24} = \dot{n}_{U,4} - \dot{n}_{U,1} \tag{24}
+$$
+
+$$
+0 = \epsilon_{25} = \left(\begin{matrix} \dot{n}_{A,0}\hat{C}_{p,A} +\\ \dot{n}_{B,0}\hat{C}_{p,B} +\\ \dot{n}_{D,0}\hat{C}_{p,D} +\\ \dot{n}_{U,0}\hat{C}_{p,U} \end{matrix} \right)  \left(T_1 - T_0\right) + \left( \begin{matrix}  \dot{n}_{A,4}\hat{C}_{p,A} +\\ \dot{n}_{B,4}\hat{C}_{p,B} +\\ \dot{n}_{D,4}\hat{C}_{p,D} +\\ \dot{n}_{U,4}\hat{C}_{p,U} \end{matrix} \right) \left(T_1 - T_4\right) \tag{25}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+There are five stream merge design equations (21) through (25), and they contain ten unknown quantities (molar flow rates of all species in stream 1 and 4, and temperatures of streams 1 and 4). The critical aspect of solving them is to choose $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{D,1}$, $\dot{n}_{U,1}$, and $T_1$ as the unknowns to be found by solving these design equations.
+
+The stream merge design equations will be solved numerically using an ATE solver. I'll need to provide a guess for each of the unknowns and a residuals function to the ATE solver. For no particular reason, I'm going to guess that the molar flow rates in stream are each equal to the molar flow rate in stream 0 plus some small amount. For the temperature, I'll guess it is 5 K greater than stream 0. These are just guesses; if the solver fails to converge, I'll change them.
+
+:::
+
+**Initial Guesses for $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{D,1}$, $\dot{n}_{U,1}$, and $T_1$:**
+
+$$
+\dot{n}_{A,1,guess} = \dot{V}_0 C_{A,0} + 0.05\dot{V}_0 C_{A,0} \tag{26}
+$$
+
+$$
+\dot{n}_{B,1,guess} = \dot{V}_0 C_{B,0} + 0.05\dot{V}_0 C_{A,0} \tag{27}
+$$
+
+$$
+\dot{n}_{D,1,guess} = 0.05\dot{V}_0 C_{A,0} \tag{28}
+$$
+
+$$
+\dot{n}_{U,1,guess} = 0.05\dot{V}_0 C_{A,0} \tag{29}
+$$
+
+$$
+T_{1,guess} = T_0 + 5 \text{ K} \tag{30}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+The other thing I need to do is to write a residuals function for solving the stream merge design equations using an ATE solver. When the ATE solver calls the residuals function it will pass values for the unknowns, $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{D,1}$, $\dot{n}_{U,1}$, and $T_1$, and nothing else, and it will expect the return values to be the residuals, $\epsilon_{21}$, $\epsilon_{22}$, $\epsilon_{23}$, $\epsilon_{24}$, and $\epsilon_{25}$, and nothing else.
+
+Before I can evaluate and return the residuals, I must calculate any other unknowns that appear in the stream merge design equations. As already noted, $\dot{n}_{A,4}$, $\dot{n}_{B,4}$, $\dot{n}_{D,4}$, $\dot{n}_{U,4}$, and $T_4$ are unknown and they appear in the design equations. Therefore I need to calculate their values.
+
+To do so, I'll first call the CSTR zone function to get the molar flow rates and temperature for stream 2. Since the reacting fluid is an incompressible liquid, the volumetric flow rates of streams 1 and 2 must be equal, and the volumetric flow rate of stream 1 must equal the combined volumetric flow rates of streams 0 and 4.
+
+$$
+V_2 = V_1 = V_0 + V_4
+$$
+
+The fraction of stream 2 that splits off as stream 3 can be calculated from the volumetric flow rates. Since it is only a stream split that equals the fraction of the molar flow rates in stream 2 that are split off into stream 3, and the temperature of streams 2 and 3 are equal.
+
+$$
+f_{exch} = \frac{V_3}{V_2}
+$$
+
+$$
+\dot{n}_{i,3} = f_{exch}\dot{n}_{i,2}
+$$
+
+$$
+T_3 = T_2
+$$
+
+Having calculated the molar flow rates and temperature of stream 3, the design equations for the well-mixed stagnant zone can be solved by calling the CSTR zone function. This will yield the molar flow rates and temperature for stream 4.
+
+Finally, then, the stream merge residuals can be evaluated and their values returned.
+
+:::
+
+**Stream Merge Residuals Function:**
+
+[Arguments:]{.underline} $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{D,1}$, $\dot{n}_{U,1}$, and $T_1$
+
+[Returns:]{.underline} $\epsilon_{21}$, $\epsilon_{22}$, $\epsilon_{23}$, $\epsilon_{24}$, and $\epsilon_{25}$
+
+[Algorithm:]{.underline}
+
+$$
+V_{R1} = \left(1-f_{R2}\right)V_{ZR} \tag{32}
+$$
+
+$$
+\dot{V}_1 = \dot{V}_0 + \dot{V}_4 \tag{33}
+$$
+
+$$
+\dot{V}_2 = \dot{V}_1 \tag{34}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{D,1}, \dot{n}_{U,1}, T_1, V_{R1}, \dot{V}_1 \\
+\Downarrow \\
+\text{CSTR Zone Function} \\
+\Downarrow \\
+\dot{n}_{A,2}, \dot{n}_{B,2}, \dot{n}_{D,2}, \dot{n}_{U,2}, T_2
+\end{matrix} \tag{35}
+$$
+
+&nbsp;
+
+$$
+f_{exch} = \frac{\dot{V}_3}{\dot{V}_2} \tag{36}
+$$
+
+$$
+\dot{n}_{i,3} = f_{exch}\dot{n}_{i,2} \,; \, i = A, B, D, \text{ and } U \tag{37}
+$$
+
+$$
+T_3 = T_2 \tag{38}
+$$
+
+$$
+V_{R2} = f_{R2}V_{ZR} \tag{39}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\dot{n}_{A,3}, \dot{n}_{B,3}, \dot{n}_{D,3}, \dot{n}_{U,3}, T_3, V_{R2}, \dot{V}_3 \\
+\Downarrow \\
+\text{CSTR Zone Function} \\
+\Downarrow \\
+\dot{n}_{A,4}, \dot{n}_{B,4}, \dot{n}_{D,4}, \dot{n}_{U,4}, T_4
+\end{matrix} \tag{40}
+$$
+
+&nbsp;
+
+$$
+\dot{n}_{A,0} = C_{A,0}\dot{V}_0 \tag{41}
+$$
+
+$$
+\dot{n}_{B,0} = C_{B,0}\dot{V}_0 \tag{42}
+$$
+
+$$
+0 = \epsilon_{21} = \dot{n}_{A,0} + \dot{n}_{A,4} - \dot{n}_{A,1} \tag{21}
+$$
+
+$$
+0 = \epsilon_{22} = \dot{n}_{B,0} + \dot{n}_{B,4} - \dot{n}_{B,1} \tag{22}
+$$
+
+$$
+0 = \epsilon_{23} = \dot{n}_{D,4} - \dot{n}_{D,1} \tag{23}
+$$
+
+$$
+0 = \epsilon_{24} = \dot{n}_{U,4} - \dot{n}_{U,1} \tag{24}
+$$
+
+**Stream Merge Function:**
+
+[Arguments:]{.underline} none
+
+[Returns:]{.underline} $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{D,1}$, $\dot{n}_{U,1}$, and $T_1$
+
+[Algorithm:]{.underline}
+
+$$
+\begin{matrix}
+\begin{matrix}
+\dot{n}_{A,1,guess}, \dot{n}_{B,1,guess}, \dot{n}_{D,1,guess}, \dot{n}_{U,1,guess}, \\ T_{1,guess}, \text{ and Stream Merge Residuals Function} \end{matrix} \\
+\Downarrow \\
+\text{ATE Solver} \\
+\Downarrow \\
+\dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{D,1}, \dot{n}_{U,1}, \text{and } T_1
+\end{matrix}
+$$
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+At this point I can write a zoned reactor function to calculate the molar flow rates and temperature of stream 5. The first thing it needs to do is to call the stream merge function to get the molar flow rates and temperature of stream 1. Then it can call the CSTR zone function to get the molar flow rates and temperature of stream 2. Finally it can use the exchange fraction, defined earlier, to calculate the molar flow rates and temperature of stream 5.
+
+The temperature of stream 5 is one of the quantities of interest. The conversion of A can be calculated using its definition, @eq-conversion_def_open, and the selectivity for D over U can be calculated from the stream 5 molar flow rates.
+
+:::
+
+<center>***Zoned Reactor Function***</center>
+
+[Arguments:]{.underline} none
+
+[Returns:]{.underline} $\dot{n}_{A,5}$, $\dot{n}_{B,5}$, $\dot{n}_{D,5}$, $\dot{n}_{U,5}$, and $T_5$
+
+[Algorithm:]{.underline}
+
+$$
+\begin{matrix}
+\text{Stream Merge Function} \\
+\Downarrow \\
+\dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{D,1}, \dot{n}_{U,1}, \text{and } T_1
+\end{matrix}
+$$
+
+&nbsp;
+
+$$
+V_{R1} = \left(1-f_{R2}\right)V_{ZR} \tag{32}
+$$
+
+$$
+\dot{V}_1 = \dot{V}_0 + \dot{V}_4 \tag{33}
+$$
+
+$$
+\dot{V}_2 = \dot{V}_1 \tag{34}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{D,1}, \dot{n}_{U,1}, T_1, V_{R1}, \dot{V}_1 \\
+\Downarrow \\
+\text{CSTR Zone Function} \\
+\Downarrow \\
+\dot{n}_{A,2}, \dot{n}_{B,2}, \dot{n}_{D,2}, \dot{n}_{U,2}, T_2
+\end{matrix} \tag{35}
+$$
+
+&nbsp;
+
+$$
+f_{exch} = \frac{\dot{V}_3}{\dot{V}_2} \tag{36}
+$$
+
+$$
+\dot{n}_{i,5} = \left(1-f_{exch}\right)\dot{n}_{i,2} \,; \, i = A, B, D, \text{ and } U \tag{43}
+$$
+
+$$
+T_5 = T_2 \tag{44}
+$$
+
+<center>***Quantities of Interest***</center>
+
+[Algorithm:]{.underline}
+
+$$
+\begin{matrix}
+\text{Zoned Reactor Function} \\
+\Downarrow \\
+\dot{n}_{A,5}, \dot{n}_{B,5}, \dot{n}_{D,5}, \dot{n}_{U,5}, \text{and } T_5
+\end{matrix} \tag{45}
+$$
+
+&nbsp;
+
+$$
+f_A = \frac{\dot{V}_0C_{A,0} - \dot{n}_{A,5}}{\dot{V}_0C_{A,0}} \tag{46}
+$$
+
+$$
+S_{D/U} = \frac{\dot{n}_{D,5}}{\dot{n}_{U,5}} \tag{47}
+$$
+
 #### Results, Analysis and Discussion
 
+```{r}
+#| echo: false
+#| output: false
+df2 <- read.csv('Calculations/example_25_3_2/results.csv')
+df2 <- fmt_tibble_col(df2, 2, 3, 3, 2)
+```
 
+The calculations were performed as described above. Specifically the CSTR REsiduals Function, CSTR Zone Function, Stream Merge Residuals Function, Stream Merge Function, and Zoned Reactor Function were written using a mathematics software package. The Zoned Reactor Function was called to get the molar flow rates and temperature for stream 5, and the conversion and selectivity were calculated using equations (46) and (47). The results for the stirred tank with a well-mixed stagnant zone are compared to the results for an ideal PFR in @tbl-example_25_3_2_comparison. 
+
+|  | Ideal CSTR | Stirred Tank with Stagnant Zone |
+|:--------|:----:|:-----:|
+| Conversion (%) | `r df$value[1]` | `r df2$value[1]` |
+| Selectivity (D/U) | `r df$value[2]` | `r df2$value[2]` |
+| Temperature (K)| `r df$value[3]` | `r df2$value[3]` |
+
+: Comparison of ideal CSTR predictions to zoned reactor model with a well-mixed stagnant zone. {#tbl-example_25_3_2_comparison}
+
+Adding a well-mixed stagnant zone had negligible effect upon the reactor's performance. If an engineer was modeling a real reactor where there was a significant difference and if the engineer felt that the difference was due to a stagnant zone, the engineer adjust the zoned reactor model. Both the relative volume of the stagnant zone, $f_{R2}$, and the fluid exchange flows, $\dot{V}_3 = \dot{V}_4$, could be varied to find a combination of values that approaches the actual reactor performance as closely as possible.
+
+When the zoned reactor model was formulated, a choice had to be made regarding heat exchange between the two fluid zones. In an actual reactor with a stagnant zone, one would expect some degree of heat exchange because the zones are in physical contact. However adding heat exchange to the model requires the heat transfer area and the heat transfer coefficient. A small stagnant zone is expected to have a small effect upon reactor performance, and on that basis the decision to model the reactors as adiabatic zones can be justified. 
 
 ## Symbols Used in @sec-7_zoned_reactor_models
 
 | Symbol | Meaning |
 |:-------|:--------|
+| $f_i$ | Fractional conversion of reagent $i$. |
+| $f_{exch}$ | Fraction of the fluid flow directed to and returning from the stagnant zone. |
+| $f_{V,R2}$ | Fraction of the non-ideal reactor volume corresponding to zone R2. |
+| $f_{f,R2}$ | Fraction of the fluid flow directed to zone R2. |
 | $k$ | Rate coefficient. |
 | $k_0$ | Arrhenius pre-exponential factor. |
+| $\dot{n}$ | Molar flow rate; additional subscripts denote the reagent and the fluid stream. |
+| $r$ | Reaction rate; a subscript is used to index individual reactions when more than one occur. |
+| $y$ | Mole fraction; additional subscripts denote the reagent and the flow stream. |
+| $C$ | Concentration; additional subscripts denote the reagent and the flow stream. |
+| $\hat{C}_{p,i}$ | Molar heat capacity of reagent $i$. |
+| $D$ | Diameter; a subscript identifies the vessel. |
+| $E$ | Arrhenius activation energy; a subscript is used to index individual reactions when more than one occur. |
+| $L$ | Length; a subscript identifies the vessel. |
+| $P$ | Pressure; a subscripted $i$ indicates the partial pressure of reagent $k$. |
+| $S_{D/U}$ | Selectivity for D over U. |
+| $T$ | Temperature; a subsript denotes the fluid stream. |
+| $V$ | Volume; an additional subscript denotes the reactor or zone. |
+| $\dot{V}$ | Volumetric flow rate; a subscript denotes the fluid stream. |
+| $\epsilon$ | Residual; a subscript is used to index the residuals when there are more than one. |
+| $\Delta H$ | Heat of reaction; a subscript is used to index individual reactions when more than one occur. |
 
 : {tbl-colwidths="[20,80]"}
