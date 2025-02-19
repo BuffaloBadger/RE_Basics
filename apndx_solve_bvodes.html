@@ -69,6 +69,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -481,7 +510,19 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#symbols-used-in-sec-apndx_solve_bvodes" id="toc-symbols-used-in-sec-apndx_solve_bvodes" class="nav-link active" data-scroll-target="#symbols-used-in-sec-apndx_solve_bvodes"><span class="header-section-number">M.1</span> Symbols Used in <span>Appendix M</span></a></li>
+  <li><a href="#identifying-bvodes-and-preparing-to-solve-them-numerically" id="toc-identifying-bvodes-and-preparing-to-solve-them-numerically" class="nav-link active" data-scroll-target="#identifying-bvodes-and-preparing-to-solve-them-numerically"><span class="header-section-number">M.1</span> Identifying BVODEs and Preparing to Solve them Numerically</a></li>
+  <li><a href="#bvode-solvers" id="toc-bvode-solvers" class="nav-link" data-scroll-target="#bvode-solvers"><span class="header-section-number">M.2</span> BVODE Solvers</a>
+  <ul class="collapse">
+  <li><a href="#the-initial-mesh-and-guess" id="toc-the-initial-mesh-and-guess" class="nav-link" data-scroll-target="#the-initial-mesh-and-guess"><span class="header-section-number">M.2.1</span> The Initial Mesh and Guess</a></li>
+  <li><a href="#the-derivatives-function" id="toc-the-derivatives-function" class="nav-link" data-scroll-target="#the-derivatives-function"><span class="header-section-number">M.2.2</span> The Derivatives Function</a></li>
+  <li><a href="#the-boundary-conditions-residuals-function" id="toc-the-boundary-conditions-residuals-function" class="nav-link" data-scroll-target="#the-boundary-conditions-residuals-function"><span class="header-section-number">M.2.3</span> The Boundary Conditions Residuals Function</a></li>
+  </ul></li>
+  <li><a href="#mathematical-formulation-of-the-numerical-solution-of-a-set-of-bvodes" id="toc-mathematical-formulation-of-the-numerical-solution-of-a-set-of-bvodes" class="nav-link" data-scroll-target="#mathematical-formulation-of-the-numerical-solution-of-a-set-of-bvodes"><span class="header-section-number">M.3</span> Mathematical Formulation of the Numerical Solution of a Set of BVODEs</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">M.4</span> Example</a>
+  <ul class="collapse">
+  <li><a href="#sec-example_M_4_1" id="toc-sec-example_M_4_1" class="nav-link" data-scroll-target="#sec-example_M_4_1"><span class="header-section-number">M.4.1</span> Solution of a Set of 1<sup>st</sup> Order, Linear BVODEs</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-sec-apndx_solve_bvodes" id="toc-symbols-used-in-sec-apndx_solve_bvodes" class="nav-link" data-scroll-target="#symbols-used-in-sec-apndx_solve_bvodes"><span class="header-section-number">M.5</span> Symbols Used in <span>Appendix M</span></a></li>
   </ul>
 </nav>
     </div>
@@ -507,10 +548,211 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This appendix will be added when I finish writing it.</p>
-<section id="symbols-used-in-sec-apndx_solve_bvodes" class="level2" data-number="M.1">
-<h2 data-number="M.1" class="anchored" data-anchor-id="symbols-used-in-sec-apndx_solve_bvodes"><span class="header-section-number">M.1</span> Symbols Used in <a href="#sec-apndx_solve_bvodes" class="quarto-xref"><span>Appendix M</span></a></h2>
-<table class="caption-top">
+<p>This appendix examines the numerical solution of a set of ODEs where the initial values of some of the dependent variables are known, but the final values of other dependent variables are known. This type of differential equations is called boundary-value ODEs (BVODEs), or alternatively mixed-value ODEs. Here sets of first order BVODEs are examined. Solvers for BVODEs are described, the functions that must be provided to BVODE solvers are discussed, formulation of the solution of a set of BVODEs is outlined, and an example is presented.</p>
+<section id="identifying-bvodes-and-preparing-to-solve-them-numerically" class="level2" data-number="M.1">
+<h2 data-number="M.1" class="anchored" data-anchor-id="identifying-bvodes-and-preparing-to-solve-them-numerically"><span class="header-section-number">M.1</span> Identifying BVODEs and Preparing to Solve them Numerically</h2>
+<p>In <em>Reaction Engineering Basics,</em> the sets of BVODEs that will need to be solved are linear, first-order ordinary differential equations that do not have singularities. Using linear algebra, they can be written in the form of derivative expressions. That is, a set of <span class="math inline">\(N\)</span> BVODEs to be solved here would have the form shown in <a href="#eq-N_lin_first_order_odes" class="quarto-xref">Equation&nbsp;<span>M.1</span></a>. Two features distinguish them as BVODEs. First, both the initial and the final values of the independent variable are known (<span class="math inline">\(z=a\)</span> and <span class="math inline">\(z=b\)</span>). Second, the values of some of the dependent variables are known at <span class="math inline">\(z=a\)</span> while the values of the other dependent variables are known at <span class="math inline">\(z=b\)</span>. Typically these known values of the dependent variables are referred to as the boundary values, not as initial and final values. The equations that equate a boundary value to a particular dependent variables are called boundary conditions.</p>
+<p><span id="eq-N_lin_first_order_odes"><span class="math display">\[
+\begin{matrix}
+\displaystyle \frac{dy_1}{dz} = f_1\left(z,y_1,\cdots, y_N\right) \,;\, a \le z \le b\\
+\vdots \\
+\displaystyle \frac{dy_N}{dz} = f_N\left(z,y_1,\cdots, y_N\right) \,;\, a \le z \le b
+\end{matrix}
+\tag{M.1}\]</span></span></p>
+<p>The numerical solution of a set of BVODEs like those in <a href="#eq-N_lin_first_order_odes" class="quarto-xref">Equation&nbsp;<span>M.1</span></a> consists of a set of values of <span class="math inline">\(z\)</span> spanning the range from <span class="math inline">\(z=a\)</span> to <span class="math inline">\(z=b\)</span>, together with corresponding sets of values of <span class="math inline">\(y_1\)</span> through <span class="math inline">\(y_N\)</span> at each value of <span class="math inline">\(z\)</span>.</p>
+<p>In preparation for numerical solution, the BVODEs should first be written in the form of derivative expressions as shown in <a href="#eq-N_lin_first_order_odes" class="quarto-xref">Equation&nbsp;<span>M.1</span></a>. That is, on the left side of each equation there should be only one derivative, and it should be the derivative of a different dependent variable than in any other equation (i. e. one equation for each dependent variable derivative). On the right side of the equals sign, each equation should have some function of the independent and dependent variables. Any other quantities appearing in those functions should either be a constant, or it should be possible to express it in terms of the independent and dependent variables.</p>
+<p>After the set of BVODEs has been written as a set of derivatives expressions, the boundary conditions should be written as a set of residual expressions (see <a href="apndx_solve_ates.html" class="quarto-xref"><span>Appendix I</span></a>). That is, the boundary conditions should be rearranged to have a zero on one side of the equation and the other side should be set equal to a residual, here donoted as <span class="math inline">\(\epsilon\)</span>. The variables in the residual expressions are the upper and lower limits of the independent variable (<span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>) and the values of the dependent variables at those upper and lower limits (<span class="math inline">\(y_i\big\vert_{z=a}\)</span> and <span class="math inline">\(y_i\big\vert_{z=b}\)</span> with <span class="math inline">\(i=1,\cdots,N\)</span>). The unknowns are the residuals. For example, if one of the boundary conditions is that <span class="math inline">\(y_2\)</span> equals 10.0 at <span class="math inline">\(z\)</span> equals <span class="math inline">\(a\)</span>, the boundary conditions should be written as follows.</p>
+<p><span class="math display">\[
+0 = \epsilon = y_2\big\vert_{z=a} - 10.0
+\]</span></p>
+</section>
+<section id="bvode-solvers" class="level2" data-number="M.2">
+<h2 data-number="M.2" class="anchored" data-anchor-id="bvode-solvers"><span class="header-section-number">M.2</span> BVODE Solvers</h2>
+<p>A BVODE solver is a computer function that solves a set of BVODEs numerically. It does so by first dividing the range of <span class="math inline">\(z\)</span> where the BVODEs apply into <span class="math inline">\(N\)</span> intervals. This is sometimes referred to as mesh generation, and it requires <span class="math inline">\(N+1\)</span> mesh points with <span class="math inline">\(z_1=a\)</span> and <span class="math inline">\(z_{N+1}=b\)</span>. The intervals between successive mesh points do not need to be equally sized.</p>
+<p>To simplify the notation, consider just one dependent variable, <span class="math inline">\(y\)</span>. Functions that contain underermined coefficients are used to approximate <span class="math inline">\(y\)</span> in each interval. Cubic polynomials are a common approximating function. When using a cubic polynomial as the approximating function, the value of <span class="math inline">\(y\)</span> within the <span class="math inline">\(k^{th}\)</span> interval (i. e. between <span class="math inline">\(z_k\)</span> and <span class="math inline">\(z_{k+1}\)</span>) is approximated by <a href="#eq-cubic_approx_func" class="quarto-xref">Equation&nbsp;<span>M.2</span></a>, and its derivative is use to approximate <span class="math inline">\(\frac{dy}{dz}\)</span> within the <span class="math inline">\(k^{th}\)</span> interval, <a href="#eq-cubic_approc_deriv" class="quarto-xref">Equation&nbsp;<span>M.3</span></a>.</p>
+<p><span id="eq-cubic_approx_func"><span class="math display">\[
+y = a_k z^3 + b_k z^2 + c_k z + d_k
+\tag{M.2}\]</span></span></p>
+<p><span id="eq-cubic_approc_deriv"><span class="math display">\[
+\frac{dy}{dz} = 3 a_k z^2 + 2 b_k z + c_k
+\tag{M.3}\]</span></span></p>
+<p>If there are <span class="math inline">\(N\)</span> intervals, this introduces <span class="math inline">\(4N\)</span> undetermined coefficients, <span class="math inline">\(a_1\)</span>, <span class="math inline">\(b_1\)</span>, <span class="math inline">\(c_1\)</span>, and <span class="math inline">\(d_1\)</span> through <span class="math inline">\(a_N\)</span>, <span class="math inline">\(b_N\)</span>, <span class="math inline">\(c_N\)</span>, and <span class="math inline">\(d_N\)</span>. Finding the values of those <span class="math inline">\(4N\)</span> undetermined coefficients yields an approximation for <span class="math inline">\(y\)</span> that spans the full range from <span class="math inline">\(z=a\)</span> to <span class="math inline">\(z=b\)</span>. Doing so requires a set of <span class="math inline">\(4N\)</span> independent equations containing the undetermined coefficients.</p>
+<p>Each of the interior mesh points, <span class="math inline">\(z_2\)</span> through <span class="math inline">\(z_N\)</span> is the end of one interval and the start of the next. To prevent the approximation of <span class="math inline">\(y\)</span> from being discontinuous, at each interior mesh point, <span class="math inline">\(z_k\)</span>, the values of <span class="math inline">\(y\)</span> predicted by the two approximating functions are required to be equal. This results in <span class="math inline">\(N-1\)</span> equations like that given in <a href="#eq-cubic_continuous" class="quarto-xref">Equation&nbsp;<span>M.4</span></a>. In addition a boundary condition will specify the value of <span class="math inline">\(y\)</span> at either <span class="math inline">\(z=a\)</span> or <span class="math inline">\(z=b\)</span>. This gives a total of <span class="math inline">\(N\)</span> equations containing the <span class="math inline">\(4N\)</span> undetermined coefficients.</p>
+<p><span id="eq-cubic_continuous"><span class="math display">\[
+\begin{align}
+a_{k-1} z_k^3 &amp;+ b_{k-1} z_k^2 + c_{k-1} z_k + d_{k-1} \\&amp;= a_k z_k^3 + b_k z_k^2 + c_k z_k + d_k  \end{align} \qquad k = 2, 3, \cdots, N
+\tag{M.4}\]</span></span></p>
+<p>To generate <span class="math inline">\(3N\)</span> additional equations, three collocation points are chosen within each interval. Typically the two end points and the mid-point of the interval are used. At each of these collocation points, the approximating function for that interval can be used to calculate <span class="math inline">\(y\)</span>. Then the function, <span class="math inline">\(f\)</span>, on the right side of the derivative expression for <span class="math inline">\(y\)</span> can be evaluated. The resulting value of <span class="math inline">\(f\)</span> is then set equal to <span class="math inline">\(\frac{dy}{dz}\)</span> calculated using <a href="#eq-cubic_approc_deriv" class="quarto-xref">Equation&nbsp;<span>M.3</span></a>. Doing this at three collocation points within each interval yields brings the total number of equations to <span class="math inline">\(4N\)</span>.</p>
+<p>The <span class="math inline">\(4N\)</span> equations containing the <span class="math inline">\(4N\)</span> undetermined coefficients are non-linear, so they are solved numerically to find the values of the coefficients, <span class="math inline">\(a_1\)</span>, <span class="math inline">\(b_1\)</span>, <span class="math inline">\(c_1\)</span>, and <span class="math inline">\(d_1\)</span> through <span class="math inline">\(a_N\)</span>, <span class="math inline">\(b_N\)</span>, <span class="math inline">\(c_N\)</span>, and <span class="math inline">\(d_N\)</span>. Because they are being solved numerically, an initial guess for the values of those coefficients, or an initial guess that can be used to generate a guess for those coefficients must be provided. When solving a set of BVODEs, there will be multiple dependent variables, and the approach outlined here is applied to each dependent variable.</p>
+<p>Typically a BVODE solver will adjust the number of intervals used in the calculations to ensure an accurate solution. Additionally, guessing and calculating the undetermined coefficients is all handled internally by the solver. When a BVODE solver is called, it generally must be provided with an initial mesh, a guess for the values of the dependent variables at the mesh points, a derivatives function, and a boundary conditions residuals function.</p>
+<p>Depending upon the software package, BVODE solvers may return a substantial amount of information. However, every BVODE solver will return the final mesh it used when solving the equations, the values of the dependent variables, <span class="math inline">\(y_i\)</span>, at each of the final mesh points, and the values of <span class="math inline">\(\frac{dy_i}{dz}\)</span> at each of the final mesh points.</p>
+<section id="the-initial-mesh-and-guess" class="level3" data-number="M.2.1">
+<h3 data-number="M.2.1" class="anchored" data-anchor-id="the-initial-mesh-and-guess"><span class="header-section-number">M.2.1</span> The Initial Mesh and Guess</h3>
+<p>As mentioned, the BVODE solver will typically adjust the number of mesh points as necessary to ensure an accurate solution. It does, however require an initial mesh to get started. The specifics for providing the initial mesh to the solver will depend upon the particular software package being used. In any case, the initial mesh is a set of consecutive values of the dependent variable, <span class="math inline">\(\overline{z}\)</span> that starts at <span class="math inline">\(z=a\)</span> and ends at <span class="math inline">\(z=b\)</span>, <a href="#eq-bvode_initial_mesh" class="quarto-xref">Equation&nbsp;<span>M.5</span></a>. The number of mesh points, <span class="math inline">\(N\)</span>, is not critical because the solver will adjust it. <span class="math inline">\(N=20\)</span> is often a good number of initial mesh points.</p>
+<p><span id="eq-bvode_initial_mesh"><span class="math display">\[
+\text{Choose } z_k \text{  in } \overline{z} \,;\, k = 1,2,...,N \,:\, z_1 = a \text{ and } z_{N} = b
+\tag{M.5}\]</span></span></p>
+<p>Once an initial mesh has been defined, guesses for the values of each dependent variable at each mesh point are required. (The solver will convert these guesses into guesses for the undetermined coefficients in the approximating function.) That seems like a large number of guesses, but very often it is possible to get by with a single guess for the average value of each dependent variable. That average value is then used as the guess for that dependent variable at each of the mesh points, <a href="#eq-bvode_initial_dep_guess" class="quarto-xref">Equation&nbsp;<span>M.6</span></a>. Again, the specifics for providing the initial guess to the solver will depend upon the particular software package being used.</p>
+<p><span id="eq-bvode_initial_dep_guess"><span class="math display">\[
+y_{i,guess}\big\vert_{z_k} = y_{i,avg,guess} \,;\, k = 1, 2, \cdots, N
+\tag{M.6}\]</span></span></p>
+</section>
+<section id="the-derivatives-function" class="level3" data-number="M.2.2">
+<h3 data-number="M.2.2" class="anchored" data-anchor-id="the-derivatives-function"><span class="header-section-number">M.2.2</span> The Derivatives Function</h3>
+<p>The purpose of the derivatives function is to calculate the values of the derivatives at the mesh points, given the mesh points and the values of the dependent variables at the mesh points. That is, its purpose is to calculate each <span class="math inline">\(\frac{dy_i}{dz}\)</span> using <span class="math inline">\(f_i\)</span> in <a href="#eq-N_lin_first_order_odes" class="quarto-xref">Equation&nbsp;<span>M.1</span></a>. The engineer solving the BVODEs must write the derivatives function, but because it will be called by the BVODE solver, the arguments to it and the values it returns are specified by the BVODE solver software package.</p>
+<p>There are two common specifications for the arguments and return values for the derivatives function. Some software packages specify that the arguments are a single mesh point and the corresponding values of the dependent variables at that mesh point. In this case, the specified return values are the values of the derivatives at that one mesh point. Other software packages specify that the arguments are the full set of mesh points (typically in the form of a vector) and the full set of dependent variables values at those mesh points (typcially as a matrix). In this case the specified return values are the values of the derivatives at each of the mesh points (also typically as a matrix).</p>
+<p>In <em>Reaction Engineering Basics,</em> BVODE solutions are formulated assuming that the arguments to the derivatives function are one of the mesh points along with the values of the dependent variables at that mesh point, and that the values of the derivative of each dependent variable with respect to the independent variable at that mesh point are returned. However each formulation in the book notes that some software packages may specify the full set of mesh points and the values of dependent variable values at all of the mesh points as the arguments and the values of the derivatives at all of the mesh point as the return values. (See <a href="#sec-example_M_4_1" class="quarto-xref">Example&nbsp;<span>M.4.1</span></a>)</p>
+<p>In some situations, the derivatives function may need the values of variables other than those passed to it as arguments. Because the arguments are specified by the mathematics software package being use, any such quantities must be provided to the derivatives function by some other means. This is a programming detail that won’t be discussed here other than to note that there are usually a few different ways to make a quantity available to a function (e. g. using a global variable, using a pass-through function, etc.).</p>
+<p>As always, the specifics of how the arguments and return values are formatted will vary from one software package to another, and the reader should become familiar with the software they will be using. <em>Reaction Engineering Basics</em> is written for use with any mathematics software package, and consequently it does not go into the details of numerical implementation of the calculations.</p>
+</section>
+<section id="the-boundary-conditions-residuals-function" class="level3" data-number="M.2.3">
+<h3 data-number="M.2.3" class="anchored" data-anchor-id="the-boundary-conditions-residuals-function"><span class="header-section-number">M.2.3</span> The Boundary Conditions Residuals Function</h3>
+<p>A boundary conditions residuals function must also be provided to the BVODE solver. Its purpose is to evaluate the residuals correspoding to each of the boundary conditions, given the values of the dependent variables at the two boundaries, <span class="math inline">\(z=a\)</span> and <span class="math inline">\(z=b\)</span>. As is the case for the derivatives function, the engineer solving the BVODEs must write the boundary conditions residuals function, but because it will be called by the BVODE solver, the arguments to it and the values it returns are specified by the BVODE solver software package.</p>
+<p>BVODE solvers commonly specify that the arguments to the boundary conditions residuals function are the values of the dependent variables at each of the boundaries and the return values are the corresponding values of the residuals. The specifics of how these arguments and return values are formatted will again depend upon the software package being used. Very often the values of the dependent variables at <span class="math inline">\(z=a\)</span> and at <span class="math inline">\(z=b\)</span> are passed to the boundary conditions residuals function as vectors and the residuals are returned as a vector.</p>
+<p>As with the derivatives function, the boundary conditions residuals function may need the values of variables other than those passed to it as arguments. Because the arguments are specified by the mathematics software package being use, any such quantities must be provided to the derivatives function by some other means.</p>
+</section>
+</section>
+<section id="mathematical-formulation-of-the-numerical-solution-of-a-set-of-bvodes" class="level2" data-number="M.3">
+<h2 data-number="M.3" class="anchored" data-anchor-id="mathematical-formulation-of-the-numerical-solution-of-a-set-of-bvodes"><span class="header-section-number">M.3</span> Mathematical Formulation of the Numerical Solution of a Set of BVODEs</h2>
+<p>In <em>Reaction Engineering Basics,</em> the BVODEs to be solved are usually the design equations for a non-ideal, axial dispersion reactor (see <a href="section_7_axial_dispersion_model.html" class="quarto-xref"><span>Chapter 24</span></a>). The solution of the BVODEs then occurs within an axial dispersion reactor model which will consist of five components. The first component will be a listing of the design equations. The second component is a listing of residual expressions corresponding to the boundary conditions.</p>
+<p>The third, fourth, and fifth components will be specifications of computer functions, namely a derivatives function, a boundary conditions residuals function, and the reactor model function. Each of these components will indicate the arguments that must be provided to the function, any additional quantities that need to be made available to the function because they cannot be passed as arguments, the quantities returned by the function, and the algorithm the function uses to calculate the return values. The algorithm is presented as a series of equations (not as a computer logic diagram).</p>
+<p>The final component, the reactor model function, is where the BVODEs are solved. Before calling the BVODE solver, the initial mesh and guesses for the dependent variables at each mesh point must be defined. At that point the reactor model function will call the BVODE solver, and it will return the final mesh it used when solving the equations, the values of the dependent variables, <span class="math inline">\(y_i\)</span>, at each of the final mesh points, and the values of <span class="math inline">\(\frac{dy_i}{dz}\)</span> at each of the final mesh points.</p>
+</section>
+<section id="example" class="level2" data-number="M.4">
+<h2 data-number="M.4" class="anchored" data-anchor-id="example"><span class="header-section-number">M.4</span> Example</h2>
+<p>The following example illustrates the formulation of the solution of a set of BVODEs.</p>
+<section id="sec-example_M_4_1" class="level3" data-number="M.4.1">
+<h3 data-number="M.4.1" class="anchored" data-anchor-id="sec-example_M_4_1"><span class="header-section-number">M.4.1</span> Solution of a Set of 1<sup>st</sup> Order, Linear BVODEs</h3>
+<p>A reaction engineer is using an axial dispersion model to simulate a reactor. The design equations have been simplified to the form shown in equations (1) and (2) where <span class="math inline">\(D\)</span>, <span class="math inline">\(u_s\)</span>, <span class="math inline">\(k\)</span>, <span class="math inline">\(K\)</span>, and <span class="math inline">\(C_{A,0}\)</span> are known constants listed below. The design equations apply when <span class="math inline">\(0 \le z \le L\)</span>, where <span class="math inline">\(L\)</span> is another known constant listed below. The boundary conditions are given in equations (3) and (4). Formulate a reactor model to solve the design equations to find how <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> vary over the range from <span class="math inline">\(z=0\)</span> to <span class="math inline">\(z=L\)</span>.</p>
+<p><span class="math display">\[
+\frac{dy_1}{dz} = y_2 \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dy_2}{dz} = \frac{1}{D}\left[ \left(k + \frac{k}{K}\right)y_1 + u_s y_2 - \frac{k}{K} C_{A,0}\right] \tag{2}
+\]</span></p>
+<p><span class="math display">\[
+y_1\big\vert_{z=0} = D y_2\big\vert_{z=0} + u_s C_{A,0} \tag{3}
+\]</span></p>
+<p><span class="math display">\[
+y_2\big\vert_{z=L} = 0 \tag{4}
+\]</span></p>
+<p><strong>Known Constants in Consistent Units:</strong> <span class="math inline">\(D\)</span> = 8.0 x 10<sup>-6</sup>, <span class="math inline">\(u_s\)</span> = 0.01, <span class="math inline">\(k\)</span> = 0.012, <span class="math inline">\(K\)</span> = 1.0, <span class="math inline">\(C_{A,0}\)</span> = 1.0, and <span class="math inline">\(L\)</span> = 1.25.</p>
+<hr>
+<p>The assignment narrative states the range of values of the independent variable, <span class="math inline">\(z\)</span> over with the given ODEs apply. Additionally, the boundary conditions involve the values of both <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> at one boundary and the value of <span class="math inline">\(y_2\)</span> at the other boundary. Knowing both the initial and final values of the independent variable, and knowing the initial values of some dependent variables and the final values of the other dependent variables distiguishes the design equations in this assignment as BVODEs.</p>
+<p>As described in this appendix, when the design equations are BVODEs, the reactor model will consist of five components. The first component is a listing of the design equations. The example narrative provides the BVODEs in the form of derivative expressions. If they had not already been in that form, algebraic manipulation or linear algebra would have been used to convert them to the form of derivative expressions. While it isn’t required to do so, it can be useful to include the range of the independent variable along with each of the derivative expressions. Doing so would lead to equations (5) and (6) as the design equations.</p>
+<p><span class="math display">\[
+\frac{dy_1}{dz} = y_2  \,;\, 0 \le z \le L \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dy_2}{dz} = \frac{1}{D}\left[ \left(k + \frac{k}{K}\right)y_1 + u_s y_2 - \frac{k}{K} C_{A,0}\right]  \,;\, 0 \le z \le L \tag{6}
+\]</span></p>
+<p>The next component of the reactor model is a listing of the boundary conditions, written in the form of residual expressions. Neither equation is in the form of a residual expression. Equation (3) needs to be rearranged to have a zero on one side of the equals sign. Both equations need to set the non-zero side equal to a residual. In the interest of consistency, both equations can be re-written with a zero on the left side, set equal to a variable representing the residual, which in turn is set equal to the right side (after rearrangement). Since there are two boundary conditions, <span class="math inline">\(\epsilon_1\)</span> and <span class="math inline">\(\epsilon_2\)</span> can be used to represent the residuals, leading to equations (7) and (8).</p>
+<p><span class="math display">\[
+0 = \epsilon_1 = y_1\big\vert_{z=0} - D y_2\big\vert_{z=0} - u_s C_{A,0} \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_2 = y_2\big\vert_{z=L} \tag{8}
+\]</span></p>
+<p>The third component of a reactor model involving solution of a set of BVODEs is the specification of a derivatives function. Here it is assumed that the arguments to the derivatives function are one of the mesh points together with the corresponding values of the dependent variables at that mesh points. The return value is then assumed to be the values of the derivatives of the dependent variables with respect to the independent variable, <span class="math inline">\(\frac{dy_i}{dz}\)</span> at that mesh point. All of the quantities appearing in the BVODEs, equations (5) and (6), are either known constants or one of the dependent variables, so no other quantities need to be made available to the derivatives function. Since no other quantities need to be calculated in order to evaluate the derivatives, the algorithm simply involves calculating the derivatives using equations (5) and (6) (or, equivalently equations (1) and (2)).</p>
+<p>The fourth component of the reactor model is the specification of a boundary conditions residuals function. The arguments to this residuals functions are the values of <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> at <span class="math inline">\(z=0\)</span> and the values of <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> at <span class="math inline">\(z=L\)</span>. All other quantities appearing in the boundary condition residual equations, (7) and (8), are known constants, so no additional quantities need to be made available to the residuals function. The return values are the residuals, <span class="math inline">\(\epsilon_1\)</span>, and <span class="math inline">\(\epsilon_2\)</span>. Since all of the quantities appearing in the boundary condition residual equations are arguments or known constants, no preliminary calculations are needed, and the algorithm simply involves using equations (7) and (8) to calculate the residuals.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Unlike the derivatives and residuals functions, the reactor function is not called by the BVODE solver. Therefore the arguments to it and the values it returns are not specified by the mathematics software package being used. This means that any necessary quantities can be passed to it as arguments and it is never necessary to make any quantities available to it by other means.</p>
+</div>
+</div>
+</div>
+<p>The last component of the reactor model is a reactor function. In this example, nothing needs to be provided as an argument to the reactor function. It should return the solution of the BVODEs. That is, it should return a set of values of <span class="math inline">\(z\)</span> spanning the range from <span class="math inline">\(z=0\)</span> to <span class="math inline">\(z=L\)</span>, together with corresponding sets of values of <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> at each value of <span class="math inline">\(z\)</span>.</p>
+<p>The algorithm for the reactor model starts by defining the intial mesh, or range of <span class="math inline">\(z\)</span> values between <span class="math inline">\(0\)</span> and <span class="math inline">\(L\)</span>. Next, guesses for the values of <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> at the mesh points must be defined. As suggested earlier in this appendix, The average values of <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> can be guessed and used at all of the mesh points. If the solver fails to converge, though, it may be necessary to revise these guesses. Once the initial mesh and guesses have been defined, the reactor function can call a BVODE solver, passing the initial mesh, guesses, derivatives funtion and residuals function as arguments. The BVODE solver wil return a final set of values of <span class="math inline">\(z\)</span> spanning the range from <span class="math inline">\(z=0\)</span> to <span class="math inline">\(z=L\)</span>, together with corresponding sets of values of <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> at each value of <span class="math inline">\(z\)</span>. The reactor function can then simply return the solution it receives from the BVODE solver. A convenient way to show the return values is <span class="math inline">\(\overline{z}\)</span>, <span class="math inline">\(\overline{y}_1\)</span>, and <span class="math inline">\(\overline{y}_2\)</span> spanning the range from <span class="math inline">\(z=0\)</span> to <span class="math inline">\(z=L\)</span>. (The overbars indicate a range of values.)</p>
+<p>Elsewhere in <em>Reaction Engineering Basics,</em> the formulation will be presented in a succinct form with “Click Here to See What an Expert Might be Thinking at this Point” callouts providing the details written here. The following is what the succinct formulation would look like (without the callouts).</p>
+<p>The formulation that follows assumes that the given and known constants identified in the assignment summary are available at any point in the analysis.</p>
+<center>
+<strong><em>Reactor Model</em></strong>
+</center>
+<p><strong>Design Equations</strong></p>
+<p><span class="math display">\[
+\frac{dy_1}{dz} = y_2  \,;\, 0 \le z \le L \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dy_2}{dz} = \frac{1}{D}\left[ \left(k + \frac{k}{K}\right)y_1 + u_s y_2 - \frac{k}{K} C_{A,0}\right]  \,;\, 0 \le z \le L \tag{6}
+\]</span></p>
+<p><strong>Boundary Condition Residual Equations</strong></p>
+<p><span class="math display">\[
+0 = \epsilon_1 = y_1\big\vert_{z=0} - D y_2\big\vert_{z=0} - u_s C_{A,0} \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_2 = y_2\big\vert_{z=L} \tag{8}
+\]</span></p>
+<p><strong>Derivatives Function:</strong></p>
+<p><u>Arguments:</u> <span class="math inline">\(z\)</span>, <span class="math inline">\(y_1\)</span>, <span class="math inline">\(y_2\)</span></p>
+<p><u>Returns:</u> <span class="math inline">\(\frac{dy_1}{dz}\)</span>, <span class="math inline">\(\frac{dy_2}{dz}\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+\frac{dy_1}{dz} = y_2  \,;\, 0 \le z \le L \tag{5}
+\]</span></p>
+<p><span class="math display">\[
+\frac{dy_2}{dz} = \frac{1}{D}\left[ \left(k + \frac{k}{K}\right)y_1 + u_s y_2 - \frac{k}{K} C_{A,0}\right]  \,;\, 0 \le z \le L \tag{6}
+\]</span></p>
+<p><strong>Boundary Conditions Residuals Function:</strong></p>
+<p><u>Arguments:</u> <span class="math inline">\(y_1\big\vert_{z=0}\)</span>, <span class="math inline">\(y_2\big\vert_{z=0}\)</span>, <span class="math inline">\(y_1\big\vert_{z=L}\)</span>, <span class="math inline">\(y_2\big\vert_{z=L}\)</span></p>
+<p><u>Returns:</u> <span class="math inline">\(\epsilon_1\)</span>, <span class="math inline">\(\epsilon_2\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+0 = \epsilon_1 = y_1\big\vert_{z=0} - D y_2\big\vert_{z=0} - u_s C_{A,0} \tag{7}
+\]</span></p>
+<p><span class="math display">\[
+0 = \epsilon_2 = y_2\big\vert_{z=L} \tag{8}
+\]</span></p>
+<p><strong>Reactor Function:</strong></p>
+<p><u>Arguments:</u> None</p>
+<p><u>Returns:</u> <span class="math inline">\(\overline{z}\)</span>, <span class="math inline">\(\overline{y}_1\)</span>, and <span class="math inline">\(\overline{y}_2\)</span> spanning the range from <span class="math inline">\(z=0\)</span> to <span class="math inline">\(z=L\)</span></p>
+<p><u>Algorithm:</u></p>
+<p><span class="math display">\[
+\text{Choose } z_k \text{  in } \overline{z} \,;\, k = 1,2,...,N \,:\, z_1 = 0 \text{ and } z_{N} = L \tag{9}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\text{Guess } y_{i,avg,guess} \text{  in } \overline{y}_{guess} \,;\, i = 1,2 \tag{10}
+\]</span></p>
+<p>&nbsp;</p>
+<p><span class="math display">\[
+\begin{matrix}
+\begin{matrix}
+\overline{z}, \overline{y}_{guess}, \text{Derivatives Function,}\\ \text{Boundary Conditions Residuals Function} \end{matrix} \\
+\Downarrow \\
+\text{BVODE solver} \\
+\Downarrow \\
+\overline{z}, \overline{y}_1 \text{ and } \overline{y}_2 \,;\, 0 \le z \le L
+\end{matrix} \tag{11}
+\]</span></p>
+<section id="results-analysis-and-discussion" class="level4" data-number="M.4.1.1">
+<h4 data-number="M.4.1.1" class="anchored" data-anchor-id="results-analysis-and-discussion"><span class="header-section-number">M.4.1.1</span> Results, Analysis and Discussion</h4>
+<p>The calculations were performed as described above. Specifically the derivatives function, boundary conditions residuals function, and reactor function were written using a mathematics software package. After calling the reactor function, the results were plotted as shown in <a href="#fig-example_M_4_1_results" class="quarto-xref">Figure&nbsp;<span>M.1</span></a>.</p>
+<div id="fig-example_M_4_1_results" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-example_M_4_1_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="Calculations/example_M_4_1/results.png" class="img-fluid figure-img" style="width:70.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-example_M_4_1_results-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;M.1: Profiles of <span class="math inline">\(y_1\)</span> and <span class="math inline">\(y_2\)</span> between <span class="math inline">\(z=0\)</span> and <span class="math inline">\(z=L\)</span>.
+</figcaption>
+</figure>
+</div>
+</section>
+</section>
+</section>
+<section id="symbols-used-in-sec-apndx_solve_bvodes" class="level2" data-number="M.5">
+<h2 data-number="M.5" class="anchored" data-anchor-id="symbols-used-in-sec-apndx_solve_bvodes"><span class="header-section-number">M.5</span> Symbols Used in <a href="#sec-apndx_solve_bvodes" class="quarto-xref"><span>Appendix M</span></a></h2>
+<table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
 <col style="width: 80%">
@@ -521,7 +763,64 @@ ul.task-list li input[type="checkbox"] {
 <th style="text-align: left;">Meaning</th>
 </tr>
 </thead>
-
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(a\)</span></td>
+<td style="text-align: left;">Lower limit of the independent variable or, undetermined coefficient in an approximating function where a subscript indexes the approximating function.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(b\)</span></td>
+<td style="text-align: left;">Lower limit of the independent variable or, undetermined coefficient in an approximating function where a subscript indexes the approximating function.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(c\)</span></td>
+<td style="text-align: left;">Undetermined coefficient in an approximating function where a subscript indexes the approximating function.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(d\)</span></td>
+<td style="text-align: left;">Undetermined coefficient in an approximating function where a subscript indexes the approximating function.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(k\)</span></td>
+<td style="text-align: left;">Known constant (rate coefficient) in Example <a href="#sec-example_M_4_1" class="quarto-xref"><span>M.4.1</span></a>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(u_s\)</span></td>
+<td style="text-align: left;">Known constant (superficial velocity) in Example <a href="#sec-example_M_4_1" class="quarto-xref"><span>M.4.1</span></a>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(y\)</span></td>
+<td style="text-align: left;">Dependent variable; a subscript denotes which variable when there are more than one.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(z\)</span></td>
+<td style="text-align: left;">Independent variable.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(C_{A,0}\)</span></td>
+<td style="text-align: left;">Known constant (inlet concentration of A) in Example <a href="#sec-example_M_4_1" class="quarto-xref"><span>M.4.1</span></a>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(D\)</span></td>
+<td style="text-align: left;">Known constant (dispersion coefficient) in Example <a href="#sec-example_M_4_1" class="quarto-xref"><span>M.4.1</span></a>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(K\)</span></td>
+<td style="text-align: left;">Known constant (equilibrium constant) in Example <a href="#sec-example_M_4_1" class="quarto-xref"><span>M.4.1</span></a>.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(L\)</span></td>
+<td style="text-align: left;">Known constant (reactor length) in Example <a href="#sec-example_M_4_1" class="quarto-xref"><span>M.4.1</span></a>.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(N\)</span></td>
+<td style="text-align: left;">Number or mesh points or subintervals.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\epsilon\)</span></td>
+<td style="text-align: left;">Residual.</td>
+</tr>
+</tbody>
 </table>
 
 
