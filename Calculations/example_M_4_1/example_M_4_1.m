@@ -9,16 +9,6 @@ function example_M_4_1
     CA0 = 1.0;
     L = 1.25;
 
-    % boundary conditions residuals function
-    function epsilon = BC_Residuals(ya, yb)
-        % evaluate the residuals
-        epsilon_1 = us*ya(1) - D*ya(2) - us*CA0;
-        epsilon_2 = yb(2);
-
-        % combine the residuals as a vector and return
-        epsilon = [epsilon_1; epsilon_2];
-    end
-
     % derivatives function
     function ddz = derivatives(~, y)
         % evaluate the derivatives
@@ -29,32 +19,52 @@ function example_M_4_1
         ddz = [dy1dz; dy2dz];
     end
 
+    % boundary conditions residuals function
+    function epsilon = BC_Residuals(ya, yb)
+        % extract the boundary values
+        y1a = ya(1);
+        y2a = ya(2);
+        y2b = yb(2);
+
+        % evaluate the residuals
+        epsilon_1 = us*y1a - D*y2a - us*CA0;
+        epsilon_2 = y2b;
+
+        % combine the residuals as a vector and return
+        epsilon = [epsilon_1; epsilon_2];
+    end
+
     % reactor function
-    function [z, y] = profiles()
-        % set the range
-        za = 0.0;
-        zb = L;
+    function [z, y1, y2] = profiles()
+        % set the initial mesh
+        z = linspace(0, L, 20);
 
-        % guess the average values of the dependent variables
-        yGuess = [CA0; -CA0/L];
+        % set the guess
+        yGuess = [0.0; 0.0];
+        solinit=bvpinit(z,yGuess);
 
-        [z, y] = solve_bvodes(za, zb, yGuess, @derivatives...
-            , @BC_Residuals);
+        % solve the BVODEs
+        soln = bvp4c(@derivatives, @BC_Residuals, solinit);
+
+        % extract and return the profiles
+        z = soln.x;
+        y1 = soln.y(1,:);
+        y2 = soln.y(2,:);
     end
 
     % quantities of interest
     function quantities_of_interest()
         % get the reactor profiles
-        [z, y] = profiles();
+        [z, y1, y2] = profiles();
 
         % plot the results
         figure;
-        plot(z,y(1,:),'b',z,y(2,:),'k','LineWidth',2)
+        plot(z,y1,'k',z,y2,'b','LineWidth',2)
         set(gca, 'FontSize', 14);
         xlabel('z','FontSize', 14)
         ylabel('y','FontSize', 14)
-        legend({'y_1','y_2'},'Location','southeast','FontSize',14)
-        saveas(gcf,"results.png")
+        legend({'y_1','y_2'},'Location','northeast','FontSize',14)
+        saveas(gcf,"results_matlab.png")
     end
 
     % perform the analysis
