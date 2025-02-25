@@ -68,6 +68,9 @@ def profiles():
 def quantities_of_interest():
 	# solve the design equations
     z, y1, y2 = profiles()
+
+    # report the initial and final mesh sizes
+    print(f"Size of initial mesh: 20, size of final mesh: {len(z)}")
     
     # plot the results
     plt.figure(1) 
