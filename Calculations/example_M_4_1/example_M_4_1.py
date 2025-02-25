@@ -1,4 +1,4 @@
-"""Calculations for Example 12.7.1 of Reaction Engineering Basics"""
+"""Calculations for Example M.4.1 of Reaction Engineering Basics"""
 
 # import libraries
 import numpy as np
@@ -70,7 +70,9 @@ def quantities_of_interest():
     z, y1, y2 = profiles()
 
     # report the initial and final mesh sizes
+    print("")
     print(f"Size of initial mesh: 20, size of final mesh: {len(z)}")
+    print("")
     
     # plot the results
     plt.figure(1) 
