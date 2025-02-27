@@ -1,7 +1,6 @@
 function example_M_4_1
 % Calculations for Example M.4.1 of Reaction Engineering Basics
-    % constants available to all functions
-    % given
+    % global constants
     D = 8.0E-6;
     us = 0.01;
     k = 0.012;
@@ -56,6 +55,12 @@ function example_M_4_1
     function quantities_of_interest()
         % get the reactor profiles
         [z, y1, y2] = profiles();
+
+        % report the initial and final mesh sizes
+        disp("")
+        disp(['Size of initial mesh: 20, size of final mesh: '...
+            num2str(length(z),3)])
+        disp("")
 
         % plot the results
         figure;

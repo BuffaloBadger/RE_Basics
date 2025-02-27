@@ -8,8 +8,7 @@ import matplotlib.pyplot as plt
 # set the dpi for figures
 plt.rc("savefig", dpi = 300)
 
-# constants available to all functions
-# given
+# global constants
 D = 8.0E-6
 us = 0.01
 k = 0.012
