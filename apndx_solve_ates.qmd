@@ -8,9 +8,9 @@ In *Reaction Engineering Basics*, almost any equation that does not contain an o
 
 The quantities that may appear in a set of $N$ ATEs can be classified as (a) known constants, (b) the ATE unknowns, and (c) other unknowns. If there are $N$ ATEs in the set, then there must be $N$ ATE unknowns. The ATE unknowns are the quantities that are found by solving the ATEs. In reaction engineering analyses, it often happens that unknowns other than the ATE unknowns also appear in a set of ATEs. Before the set of ATEs can be solved numerically, the values of these other unknowns must be calculated or provided as will be described subsequently.
 
-In preparation for numerically solving a set of ATEs, an ATE residual must be defined for each equation in the set. This is done by first rearranging the ATE so that there is a zero on one side of the equation. The non-zero side of the equation may contain fractions with ATE unknowns in their denominator. This can cause problems during numerical solution. Therefore, the entire equation next should be multiplied by each denominator. Multiplying the zero on one side of the equations by a denominaor still leaves a zero, but multiplying the non-zero side by the denominator results in the denominator canceling out. When all denomnators containing ATE unknowns that can be removed, have been removed, the ATE residual is equal to the non-zero side of the equation.
+In preparation for numerically solving a set of ATEs, each equations must be rearranged into the form of a residual expression. Doing so is trivially simple. If there is a zero on either side of the equals sign, no rearrangement is necessary. If not, everything on the right side of the equals sign should be subtracted from both sides of the equation. This will result in an equation with a zero on the right side of the equals sign. The non-zero side of that equation is called a residual. A residual expression is created by choosing a variable to represent the residual and setting it equal to the non-zero side of the equation. In *Reaction Engineering Basics,* $\epsilon$ is usually used to represent residuals.
 
-In general each residual can be a function of all of the ATE unknowns. A set of ATE unknowns that solves the ATEs will cause all of the residuals to evaluate to zero. It should be noted that the ATEs may have multiple solutions.
+If a set of $N$ ATEs is being solved, they must be converted into a set of $N$ residual expressions. In general each residual can be a function of all of the ATE unknowns. Substitution of a set of ATE unknowns that solves the ATEs will cause all of the residuals to evaluate to zero. It should be noted that the ATEs may have multiple solutions.
 
 ## ATE Solvers
 
@@ -46,7 +46,9 @@ Sometimes the solver is unable to converge to the point where the residuals are 
 
 When the ATE solver is not able to converge to a solution, it is often because the guess provided to the solver wasn't close enough to a solution. The remedy then, is to make a different initial guess and try again to solve the ATEs. Examining the ATE residuals can sometimes help in making a new initial guess. For example, if all of the residuals are large negative numbers, that may suggest how to change the initial guess so that the ATE residuals become less negative (or even slightly positive) and closer to zero.
 
-A singularity in one or more of the residuals could also prevent the ATE solver from converging. One type of singularity can arise if one or more residual function has a denominator that contains an ATE unknown. As the solver iterates, it may generate an improved guess that causes the denominator to approach zero. Of course this then causes the residual to approach infinity. So, if denominators that contain ATE unknowns were not removed when the residuals were originally defined, the residuals should be manipulated to remove terms that can cause a singularity before trying again to solve the equations.
+A singularity in one or more of the residuals could also prevent the ATE solver from converging. One type of singularity can arise if one or more residual functions have a denominator that contains an ATE unknown. As the solver iterates, it may generate an improved guess that causes such denominators to approach zero. Of course this then causes the residual to approach infinity. 
+
+The manner in which ATE design equations are formulated in *Reaction Engineering Basics* may not make singularities of this kind apparent. Fortunately, in most situations, the solver can be made to converge by refining the initial guess. Alternatively, by substituting expressions for all unknowns that appear in the ATEs other than the ones to be found by solving the ATEs, any fractions with denominators containing ATE unknowns will become apparent. Multiplying both sides of that form of the ATE by each denominator will yield alternative residuals expressions where the singularities have been removed.
 
 Finally, as already noted, sets of ATEs can have more than one solution. For example, a quadratic polynomial has two solutions. If a set of ATEs has multiple solutions, most ATE solvers will only find one of them. To find other solutions, the solver should be re-started using a different initial guess.
 
@@ -79,19 +81,19 @@ source("~/Work/Libraries/R/fmt_tibble_col.R")
 A reaction engineer is simulating an ideal, steady-state CSTR. The reactor design equations have been simplified as shown in equations (1) through (5). In those equations, the rate, $r$, is given by equation (6), wherein $k$, $C_A$, and $C_B$ can be calculated using equations (7) through (9). $\dot{V}$, $C_{A,0}$, $V$, $C_{B,0}$, $\rho$, $\tilde{C}_p$, $T_0$, $\Delta H$, $k_0$, and $E$ are known constants. Formulate a CSTR model to solve the design equations for $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and $T_1$.
 
 $$
-0 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV \tag{1}
+\dot{V}C_{A,0} = \dot{n}_{A,1} + rV \tag{1}
 $$
 
 $$
-0 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV \tag{2}
+\dot{V}C_{B,0} = \dot{n}_{B,1} + rV \tag{2}
 $$
 
 $$
-0 = - \dot{n}_{Y,1} + rV \tag{3}
+\dot{n}_{Y,1} = rV \tag{3}
 $$
 
 $$
-0 = - \dot{n}_{Z,1} + rV \tag{4}
+\dot{n}_{Z,1} = rV \tag{4}
 $$
 
 $$
@@ -122,52 +124,52 @@ The reactor design equations have already been formulated, so the next thing tha
 
 When the design equations are a set of ATEs, the reactor model will have four components: the design equations, a guess for the solution, a residuals function, and a reactor function. Hence, the formulation of the CSTR model begins with a listing of the reactor design equations. They should be written in the form of residual expressions.
 
-In this assignment it wasn't necessary to generate the design equations, they were presented in the assignment narrative, and they had already been written with a zero on one side of the equals sign. There are no fractions that contain ATE unknowns in their denominators, so no additional algebraic manipulation is required to put them in the form of residual expressions. The non-zero side of each equation simply can be used to define a residual for that equation.
+In this assignment it wasn't necessary to generate the design equations, they were presented in the assignment narrative, but in preparation for solving them, they need to be rearranged into the form of residual expressions. Doing so is trivial. If one side of the ATE is a zero, no rearrangement is necessary. Otherwise, simply subtract one side of the ATE from both sides of the equation. This will cause one side of the equation to become zero. The non-zero side is called a residual. To write the equations as residual expression, simply choose a variable to represent the residual and set it equal to the non-zero side of the equation. In *Reaction Engineering Basics,* $\epsilon$ is usually used to represent residuals. The ATE residuals expressions for this assignment then are given by equations (10) through (14).
 
 $$
-0 = \epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV \tag{1}
-$$
-
-$$
-0 = \epsilon_2 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV \tag{2}
+\epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV = 0 \tag{10}
 $$
 
 $$
-0 = \epsilon_3 = - \dot{n}_{Y,1} + rV \tag{3}
+\epsilon_2 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV = 0 \tag{11}
 $$
 
 $$
-0 = \epsilon_4 = - \dot{n}_{Z,1} + rV \tag{4}
+\epsilon_3 = - \dot{n}_{Y,1} + rV = 0 \tag{12}
 $$
 
 $$
-0 = \epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H \tag{5}
+\epsilon_4 = - \dot{n}_{Z,1} + rV = 0 \tag{13}
 $$
 
-Often times the number of unknowns in the ATEs is greater than the number of ATEs, and the reaction engineer must decide which of the unknowns will be found by solving the ATEs. The present assignment narrative has already done that, indicating that the ATE unknowns should be $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and $T_1$.
+$$
+\epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H = 0 \tag{14}
+$$
+
+Often times the number of unknowns in the ATEs is greater than the number of ATEs, and the reaction engineer must decide which of the unknowns will be found by solving the ATEs. The present assignment narrative has already done that, indicating that $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and $T_1$ are the ATE unknowns.
 
 The reactor design equations will be solved numerically using an ATE solver. The solver must be provided with a guess for the solution and a residuals function. Thus, the second component of this CSTR model will be guesses for the ATE unknowns. Generating an initial guess for the solution is not difficult. 
 
-The design equations presented in this assignment were taken out of context and without describing the notation being used. The reaction engineer that formulated them used a subscripted "0" on a molar flow rate or temperature denotes the reactor inlet and a "1" denotes the reactor outlet. So the ATE unknowns are all reactor outlet quantities. The engineer would have determined that the inlet molar flow rates of A and B equal $\dot{V}C_{A,0}$ and $\dot{V}C_{B,0}$, respectively, the inlet molar flow rates of Y and Z are zero, and the inlet temperature is $T_0$. Using the guessing strategy described in this appendix, the engineer might guess that 90% of the A and B remain at the reactor outlet, equations (10) and (11), that there isn't any Y or Z at the outlet, equations (12) and (13), and (because the reaction is exothermic) that the outlet temperature is 5 K greater than the inlet, equation (14).
+The design equations presented in this assignment were taken out of context and without describing the notation being used. The reaction engineer who formulated them used a subscripted "0" on a molar flow rate or temperature to denote the reactor inlet and a "1" to denote the reactor outlet. So the ATE unknowns are all reactor outlet quantities. The engineer would have determined that the inlet molar flow rates of A and B equal $\dot{V}C_{A,0}$ and $\dot{V}C_{B,0}$, respectively, the inlet molar flow rates of Y and Z are zero, and the inlet temperature is $T_0$. Using the guessing strategy described in this appendix, the engineer might guess that 90% of the A and B remain at the reactor outlet, equations (15) and (16), that there isn't any Y or Z at the outlet, equations (17) and (18), and (because the reaction is exothermic) that the outlet temperature is 5 K greater than the inlet, equation (19).
 
 $$
-\dot{n}_{A,1,guess} = 0.9\dot{V}C_{A,0} \tag{10}
-$$
-
-$$
-\dot{n}_{B,1,guess} = 0.9\dot{V}C_{B,0} \tag{11}
+\dot{n}_{A,1,guess} = 0.9\dot{V}C_{A,0} \tag{15}
 $$
 
 $$
-\dot{n}_{Y,1,guess} = 0.0 \tag{12}
+\dot{n}_{B,1,guess} = 0.9\dot{V}C_{B,0} \tag{16}
 $$
 
 $$
-\dot{n}_{Z,1,guess} = 0.0 \tag{13}
+\dot{n}_{Y,1,guess} = 0.0 \tag{17}
 $$
 
 $$
-T_{1,guess} = T_0 + 5.0 \tag{14}
+\dot{n}_{Z,1,guess} = 0.0 \tag{18}
+$$
+
+$$
+T_{1,guess} = T_0 + 5.0 \tag{19}
 $$
 
 :::{.callout-note collapse="false"}
@@ -200,45 +202,45 @@ A succinct formulation of the CSTR model follows. It assumes that the given and 
 **Design Equations**
 
 $$
-0 = \epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV \tag{1}
+\epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV = 0 \tag{10}
 $$
 
 $$
-0 = \epsilon_2 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV \tag{2}
+\epsilon_2 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV = 0 \tag{11}
 $$
 
 $$
-0 = \epsilon_3 = - \dot{n}_{Y,1} + rV \tag{3}
+\epsilon_3 = - \dot{n}_{Y,1} + rV = 0 \tag{12}
 $$
 
 $$
-0 = \epsilon_4 = - \dot{n}_{Z,1} + rV \tag{4}
+\epsilon_4 = - \dot{n}_{Z,1} + rV = 0 \tag{13}
 $$
 
 $$
-0 = \epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H \tag{5}
+\epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H = 0 \tag{14}
 $$
 
 **Initial Guess for $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and ,$T_1$:**
 
 $$
-\dot{n}_{A,1,guess} = 0.9 \dot{V}C_{A,0} \tag{10}
+\dot{n}_{A,1,guess} = 0.9\dot{V}C_{A,0} \tag{15}
 $$
 
 $$
-\dot{n}_{B,1,guess} = 0.9 \dot{V}C_{B,0} \tag{11}
+\dot{n}_{B,1,guess} = 0.9\dot{V}C_{B,0} \tag{16}
 $$
 
 $$
-\dot{n}_{T,1,guess} = 0.0 \tag{12}
+\dot{n}_{Y,1,guess} = 0.0 \tag{17}
 $$
 
 $$
-\dot{n}_{Z,1,guess} = 0.0 \tag{13}
+\dot{n}_{Z,1,guess} = 0.0 \tag{18}
 $$
 
 $$
-T_{1,guess} = T_0 + 5.0 \tag{14}
+T_{1,guess} = T_0 + 5.0 \tag{19}
 $$
 
 **Residuals Function:**
@@ -266,23 +268,23 @@ r = kC_AC_B \tag{6}
 $$
 
 $$
-\epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV \tag{1}
+\epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV = 0 \tag{10}
 $$
 
 $$
-\epsilon_2 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV \tag{2}
+\epsilon_2 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV = 0 \tag{11}
 $$
 
 $$
-\epsilon_3 = - \dot{n}_{Y,1} + rV \tag{3}
+\epsilon_3 = - \dot{n}_{Y,1} + rV = 0 \tag{12}
 $$
 
 $$
-\epsilon_4 = - \dot{n}_{Z,1} + rV \tag{4}
+\epsilon_4 = - \dot{n}_{Z,1} + rV = 0 \tag{13}
 $$
 
 $$
-\epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H \tag{5}
+\epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H = 0 \tag{14}
 $$
 
 **CSTR Function:**
@@ -294,23 +296,23 @@ $$
 [Algorithm:]{.underline}
 
 $$
-\dot{n}_{A,1,guess} = \dot{V}C_{A,0} \tag{10}
+\dot{n}_{A,1,guess} = 0.9\dot{V}C_{A,0} \tag{15}
 $$
 
 $$
-\dot{n}_{B,1,guess} = \dot{V}C_{B,0} \tag{11}
+\dot{n}_{B,1,guess} = 0.9\dot{V}C_{B,0} \tag{16}
 $$
 
 $$
-\dot{n}_{T,1,guess} = 0.0 \tag{12}
+\dot{n}_{Y,1,guess} = 0.0 \tag{17}
 $$
 
 $$
-\dot{n}_{Z,1,guess} = 0.0 \tag{13}
+\dot{n}_{Z,1,guess} = 0.0 \tag{18}
 $$
 
 $$
-T_{1,guess} = T_0 + 5.0 \tag{14}
+T_{1,guess} = T_0 + 5.0 \tag{19}
 $$
 
 &nbsp;
