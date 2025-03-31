@@ -3,7 +3,7 @@ function example_I_4_1
     % global constants
     Vdot = 75;
     CA_0 = 1.0;
-    V = 50.0;
+    V = 50;;
     CB_0 = 1.2;
     rho = 1.0E3;
     Cp = 1.0;
@@ -50,12 +50,14 @@ function example_I_4_1
         guess = [nA1_guess; nB1_guess; nY1_guess; nZ1_guess; T1_guess];
         
         % solve the ATEs
-        [soln, flag, message] = solve_ates(@residuals, guess);
+        options = optimoptions('fsolve','Display','off');
+        [soln, ~, flag, details] = fsolve(@residuals, guess, options);
     
         % check that the solution was found
         if flag <= 0
             disp(' ')
-            disp(['WARNING: The ATE solver did not converge: ',message])
+            disp(['WARNING: The ATE solver did not converge: '...
+                ,details.message])
         end
 
         % extract and return the outlet molar flow rates and temperature

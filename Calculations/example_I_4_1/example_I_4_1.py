@@ -8,7 +8,7 @@ import pandas as pd
 # global constants
 Vdot = 75
 CA_0 = 1.0
-V = 50.0
+V = 50
 CB_0 = 1.2
 rho = 1.0E3
 Cp = 1.0
@@ -83,7 +83,8 @@ def quantities_of_interest():
     print(results_df)
 
     # save the results
-    results_df.to_csv('Calculations/example_I_4_1/results.csv',index=False)
+    results_df.to_csv('Calculations/example_I_4_1/results_python.csv'
+                      ,index=False)
     return
 
 # perform the analysis

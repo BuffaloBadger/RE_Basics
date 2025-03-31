@@ -8,13 +8,13 @@ In *Reaction Engineering Basics*, almost any equation that does not contain an o
 
 The quantities that may appear in a set of $N$ ATEs can be classified as (a) known constants, (b) the ATE unknowns, and (c) other unknowns. If there are $N$ ATEs in the set, then there must be $N$ ATE unknowns. The ATE unknowns are the quantities that are found by solving the ATEs. In reaction engineering analyses, it often happens that unknowns other than the ATE unknowns also appear in a set of ATEs. Before the set of ATEs can be solved numerically, the values of these other unknowns must be calculated or provided as will be described subsequently.
 
-In preparation for numerically solving a set of ATEs, each equations must be rearranged into the form of a residual expression. Doing so is trivially simple. If there is a zero on either side of the equals sign, no rearrangement is necessary. If not, everything on the right side of the equals sign should be subtracted from both sides of the equation. This will result in an equation with a zero on the right side of the equals sign. The non-zero side of that equation is called a residual. A residual expression is created by choosing a variable to represent the residual and setting it equal to the non-zero side of the equation. In *Reaction Engineering Basics,* $\epsilon$ is usually used to represent residuals.
+In preparation for numerically solving a set of ATEs, each equations must be rearranged into the form of a residual expression. Doing so is trivially simple. If there is a zero on either side of the equals sign, no rearrangement is necessary. If not, everything on one side of the equals sign should be subtracted from both sides of the equation. This will result in an equation with a zero on one side of the equals sign. The nonzero side of that equation is called a residual. A residual expression is created by choosing a variable to represent the residual and setting it equal to the nonzero side of the equation. In *Reaction Engineering Basics,* $\epsilon$ is usually used to represent residuals.
 
 If a set of $N$ ATEs is being solved, they must be converted into a set of $N$ residual expressions. In general each residual can be a function of all of the ATE unknowns. Substitution of a set of ATE unknowns that solves the ATEs will cause all of the residuals to evaluate to zero. It should be noted that the ATEs may have multiple solutions.
 
 ## ATE Solvers
 
-An ATE solver is a computer function that solves a set of ATEs numerically. Typically, an ATE solver must be provided with two inputs. The first is an initial guess for the ATE unknowns. The second is a residuals function. The residuals function receives a guess for the ATE unknowns and uses them to evaluate and return the corresponding values of the ATE residuals. 
+An ATE solver is a computer function that solves a set of ATEs numerically. Typically, an ATE solver must be provided with two inputs. The first is an initial guess for the ATE unknowns. The second is a residuals function. The residuals function receives a set of values for the ATE unknowns and uses them to evaluate and return the corresponding values of the ATE residuals. 
 
 Effectively, the ATE solver uses the initial guess and residuals function to find a solution by trial and error. 
 
@@ -34,9 +34,9 @@ As an example, the reactor design equations for a steady-state CSTR are a set of
 
 The purpose of the residuals function is to evaluate the residuals, given a guess for the ATE unknowns. The engineer solving the ATEs must write the residuals function, but because it will be called by the ATE solver, the arguments to it, the values it returns and their formats are all specified by the ATE solver (or the mathematics software package that provides the solver). While the arguments to the response function always include an initial guess for the ATE unknowns and the return value always include the corresponding values of the ATE residuals, the mathematics software package specifies the details (e. g. are the guesses for the ATE unknowns passed as individual arguments or are they combined into a vector, etc.). The engineer calling the ATE solver must write the residuals function so it conforms to those specifications.
 
-The calculations performed within the residuals function are straightforward. Recall that the residuals expressions can contain known constants, the ATE unknowns, and other unknowns. Values for the ATE unknowns are passed to the residuals function, and known constants are available. Therefore the only thing that the residuals function needs to do before it can evaluate the residuals is to calculate the other unknowns. Very often the other unknowns can be calculated using the information available within the residuals function. However if it is not possible to calculate the other unknows within the residuals function, they must be provided to it.
+The calculations performed within the residuals function are straightforward. Values for the ATE unknowns are passed to it, and known constants are available. Therefore the only thing that the residuals function needs to do before it can evaluate the residuals is to calculate any other unknowns that appear in the ATEs. If it is not possible to calculate these other unknows within the residuals function, they must be provided to it.
 
-Providing unknown constants to the residuals function forces a computer programming choice that won't be discussed here. Because the other unknowns cannot be passed to the residuals function as arguments, they need to be provided to the residuals function by other means. The documentation for the mathematics software package may suggest a preferred way to do this such as by using a global variable or by using a pass-through function. Once the other constants are calculated or made available, all that remains to be done within the residuals function is to evaluate the ATE residuals and return them. 
+Providing unknown constants to the residuals function forces a computer programming choice that won't be discussed here. Because the other unknowns cannot be passed to the residuals function as arguments, they need to be made available to the residuals function by other means. The documentation for the mathematics software package may suggest a preferred way to do this such as by using a global variable or by using a pass-through function. Once the other constants are calculated or made available, all that remains to be done within the residuals function is to evaluate the ATE residuals and return the results. 
 
 ### Convergence and Solver Issues {#sec-ate_solver_issues}
 
@@ -50,15 +50,15 @@ A singularity in one or more of the residuals could also prevent the ATE solver 
 
 The manner in which ATE design equations are formulated in *Reaction Engineering Basics* may not make singularities of this kind apparent. Fortunately, in most situations, the solver can be made to converge by refining the initial guess. Alternatively, by substituting expressions for all unknowns that appear in the ATEs other than the ones to be found by solving the ATEs, any fractions with denominators containing ATE unknowns will become apparent. Multiplying both sides of that form of the ATE by each denominator will yield alternative residuals expressions where the singularities have been removed.
 
-Finally, as already noted, sets of ATEs can have more than one solution. For example, a quadratic polynomial has two solutions. If a set of ATEs has multiple solutions, most ATE solvers will only find one of them. To find other solutions, the solver should be re-started using a different initial guess.
+Finally, as already noted, sets of ATEs can have more than one solution. For example, a quadratic polynomial has two solutions. If a set of ATEs has multiple solutions, most ATE solvers will only find one of them. To find other solutions, the solver should be called again using a different initial guess.
 
 ## Mathematical Formulation of the Numerical Solution of a Set of ATEs {#sec-apndx_math_formulation_ates}
 
 Once the ATEs and the ATE unknowns have been identified, the numerical solution can be formulated. The solver requires an initial guess for the solution and a residuals function, so the formulation will begin with those two things. Guessing the solution has already been discussed. The formulation should include equations that can be used to calculate the initial guess. Typically these equations will be assignment statements or very simple calculations.
 
-The formulation should also include the specification of an ATE residuals function. The ATE residuals function specification should list the arguments to be passed to it (values of the ATE unknowns), the quantities it will return (the corresponding ATE residuals), and any other unknowns that must be provided to it. It should also include the algorithm, i. e. the sequence of calculations needed to evaluate the residuals, assuming the given and known constants, arguments, and additional required input are available.
+The formulation should also include the specification of an ATE residuals function. The ATE residuals function specification should list the arguments to be passed to it (values of the ATE unknowns), the quantities it will return (the corresponding ATE residuals), and any other unknowns that must be provided to it. It should also include the algorithm, i. e. the sequence of calculations needed to evaluate the residuals.
 
-The remainder of the formulation entails specifying a function for solving the ATEs. Very often this is a reactor function. The specification should include arguments passed to the function, values returned by it, and the algorithm for calculating the return values. The engineer can choose whatever arguments are needed for this function, so it won't be necessary to make other unknowns available to it. Typically this function will return a set of values of the ATE unknowns that solve the ATEs. As noted, there might be other sets of ATE unknowns that also solve the ATEs.
+The remainder of the formulation entails specifying a function for solving the ATEs. Very often this is a reactor function. The specification should include arguments passed to the function, values returned by it, and the algorithm for calculating the return values. The engineer can choose whatever arguments are needed for this function, so it won't be necessary to make other unknowns available to it. Typically this function will return one set of values of the ATE unknowns that solve the ATEs. As noted, there might be other sets of ATE unknowns that also solve the ATEs.
 
 The algorithm begins with the calculation of an initial guess for the values of the ATE unknowns. If quantities that can't be passed as arguments need be provided to the residuals function, making those quantities available to the residuals function should be the next step in the algorithm. Once that has been accomplished, all that remains is to call the solver. The arguments passed to it will be the name of the ATE residuals function and the guess for the ATE unknowns. The values that will be returned by the solver should be identified. Typically they are then returned by the reactor function. While not necessarily part of the mathematical formulation, the actual computer code should next check that the solver did converge and print some kind of warning if it did not.
 
@@ -76,9 +76,9 @@ library(readxl)
 source("~/Work/Libraries/R/fmt_tibble_col.R")
 ```
 
-### Solution of a Set of ATEs {#sec-example_I_3_1}
+### Solution of a Set of ATEs {#sec-example_I_4_1}
 
-A reaction engineer is simulating an ideal, steady-state CSTR. The reactor design equations have been simplified as shown in equations (1) through (5). In those equations, the rate, $r$, is given by equation (6), wherein $k$, $C_A$, and $C_B$ can be calculated using equations (7) through (9). $\dot{V}$, $C_{A,0}$, $V$, $C_{B,0}$, $\rho$, $\tilde{C}_p$, $T_0$, $\Delta H$, $k_0$, and $E$ are known constants. Formulate a CSTR model to solve the design equations for $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and $T_1$.
+A reaction engineer is simulating an ideal, steady-state CSTR. The reactor design equations have been simplified as shown in equations (1) through (5). In those equations, the rate, $r$, is given by equation (6), wherein $k$, $C_A$, and $C_B$ can be calculated using equations (7) through (9). $\dot{V}$, $C_{A,0}$, $V$, $C_{B,0}$, $\rho$, $\tilde{C}_p$, $T_0$, $\Delta H$, $k_0$, and $E$ are known constants. Formulate a CSTR model and use it to solve the design equations for $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and $T_1$.
 
 $$
 \dot{V}C_{A,0} = \dot{n}_{A,1} + rV \tag{1}
@@ -120,11 +120,22 @@ $$
 
 ---
 
-The reactor design equations have already been formulated, so the next thing that needs to be done is to identify what type of equations they are. Equations (1) through (5) do not contain ordinary or partial derivatives. They only contain simple mathematical operations. The rate, $r$, appearing in the equations contains a rate coefficient which includes a transcendental function, specifically an expoenential function, but not none of the equations contain derivatives. This identifies the design equations as ATEs.
+:::{.callout-note collapse="false"}
+## Note
+
+The assignment narrative identifies equations (1) through (5) as the ATEs to be solved and $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and $T_1$ as the ATE unknowns. That makes the rate, $r$, an additional or other unknown. The defining equation for the rate then introduces $k$, $C_A$, and $C_B$, which are also other unknowns.
+
+This is typical of the way ATEs are formulated in *Reaction Engineering Basics.* As a consequence, the other unknowns, $r$, $k$, $C_A$, and $C_B$, must be calculated within residuals function before the residuals can be evaluated. If any of them can't be calculated within the residuals function, they need to be made available to it by some other means because they can't be passed to it as arguments.
+
+An alternative way to formulate the solution would be to use equations (1) through (9) as the ATEs and $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, $T_1$, $r$, $k$, $C_A$, and $C_B$ as the ATE unknowns. With this formulation, there wouldn't be any other unknowns, but it would be necessary to provide nine initial guesses instead of five.
+
+:::
+
+The reactor design equations have already been formulated, so the next thing that needs to be done is to identify what type of equations they are. Equations (1) through (5) do not contain ordinary or partial derivatives. They only contain simple mathematical operations. The rate, $r$, appearing in the equations contains a rate coefficient which includes a transcendental function, specifically an exponential function, but not none of the equations contain derivatives. This identifies the design equations as ATEs.
 
 When the design equations are a set of ATEs, the reactor model will have four components: the design equations, a guess for the solution, a residuals function, and a reactor function. Hence, the formulation of the CSTR model begins with a listing of the reactor design equations. They should be written in the form of residual expressions.
 
-In this assignment it wasn't necessary to generate the design equations, they were presented in the assignment narrative, but in preparation for solving them, they need to be rearranged into the form of residual expressions. Doing so is trivial. If one side of the ATE is a zero, no rearrangement is necessary. Otherwise, simply subtract one side of the ATE from both sides of the equation. This will cause one side of the equation to become zero. The non-zero side is called a residual. To write the equations as residual expression, simply choose a variable to represent the residual and set it equal to the non-zero side of the equation. In *Reaction Engineering Basics,* $\epsilon$ is usually used to represent residuals. The ATE residuals expressions for this assignment then are given by equations (10) through (14).
+In this assignment it wasn't necessary to generate the design equations, they were presented in the assignment narrative, but in preparation for solving them, they need to be rearranged into the form of residual expressions. Doing so is trivial. If one side of the ATE is a zero, no rearrangement is necessary. Otherwise, simply subtract one side of the ATE from both sides of the equation. This will cause one side of the equation to become zero. The nonzero side is called a residual. To write the equations as residual expression, simply choose a variable to represent the residual and set it equal to the nonzero side of the equation. In *Reaction Engineering Basics,* $\epsilon$ is usually used to represent residuals. The ATE residuals expressions for this assignment then are given by equations (10) through (14).
 
 $$
 \epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV = 0 \tag{10}
@@ -150,7 +161,7 @@ Often times the number of unknowns in the ATEs is greater than the number of ATE
 
 The reactor design equations will be solved numerically using an ATE solver. The solver must be provided with a guess for the solution and a residuals function. Thus, the second component of this CSTR model will be guesses for the ATE unknowns. Generating an initial guess for the solution is not difficult. 
 
-The design equations presented in this assignment were taken out of context and without describing the notation being used. The reaction engineer who formulated them used a subscripted "0" on a molar flow rate or temperature to denote the reactor inlet and a "1" to denote the reactor outlet. So the ATE unknowns are all reactor outlet quantities. The engineer would have determined that the inlet molar flow rates of A and B equal $\dot{V}C_{A,0}$ and $\dot{V}C_{B,0}$, respectively, the inlet molar flow rates of Y and Z are zero, and the inlet temperature is $T_0$. Using the guessing strategy described in this appendix, the engineer might guess that 90% of the A and B remain at the reactor outlet, equations (15) and (16), that there isn't any Y or Z at the outlet, equations (17) and (18), and (because the reaction is exothermic) that the outlet temperature is 5 K greater than the inlet, equation (19).
+The design equations presented in this assignment were taken out of context and without describing the notation being used. The reaction engineer who formulated them used a subscripted "0" on a molar flow rate or temperature to denote the reactor inlet and a "1" to denote the reactor outlet. The ATE unknowns are reactor outlet quantities. The engineer would have determined that the inlet molar flow rates of A and B equal $\dot{V}C_{A,0}$ and $\dot{V}C_{B,0}$, respectively, the inlet molar flow rates of Y and Z are zero, and the inlet temperature is $T_0$. Using the guessing strategy described in this appendix, the engineer might guess that 90% of the A and 90% of the B remain at the reactor outlet, equations (15) and (16), that there isn't any Y or Z at the outlet, equations (17) and (18), and (because the reaction is exothermic) that the outlet temperature is 5 K greater than the inlet, equation (19).
 
 $$
 \dot{n}_{A,1,guess} = 0.9\dot{V}C_{A,0} \tag{15}
@@ -175,25 +186,21 @@ $$
 :::{.callout-note collapse="false"}
 ## Note
 
-The critical aspect of the guesses is that they must be "good enough" for the solver to converge to the solution. One strategy is to guess that not much reaction occurs in the reactor, as the engineer did here. A different reaction engineer might have used different guesses. It is worth mentioning that the guesses do not need to be stoichiometrically consistent. That is the case here.  If 10% of the A reacted, then there would be some Y and Z at the outlet, but the guess here was no Y or Z at the outlet. If the solver converges, the solution it finds will be stoichiometrically consistent, but if the solver does not converge, the guess will need to be improved.
+The critical aspect of the guesses is that they must be "good enough" for the solver to converge to the solution. One strategy is to guess that not much reaction occurs in the reactor, as the engineer did here. A different reaction engineer might have used different guesses. It is worth mentioning that the guesses do not need to be stoichiometrically consistent, as is the case here.  If 10% of the A reacted, then there would be some Y and Z at the outlet, but the guess here was no Y or Z at the outlet. If the solver converges, the solution it finds will be stoichiometrically consistent, but if the solver does not converge, the guess will need to be improved.
 
 :::
 
 As noted above, if the design equations are going to be solved using an ATE solver, the solver must also be provided with a residuals function. Thus, the third component of the CSTR model is a specification of the residuals function. The purpose of the residuals function is to take a set of ATE unknowns and use them to evaluate the design equation residuals. In *Reaction Engineering Basics,* it is always assumed that all of the constants provided in the assignment narrative are available to all functions, including the residuals function.
 
-The residuals function specification should indicate the arguments passed to it, the quantities it returns, any additional quantities that must be made available to it, and the sequence of calculations it must perform to calculate the return values (i. e. the design equation residuals).
+The residuals function specification should indicate the arguments passed to it, the quantities it returns, any additional quantities that must be made available to it, and the sequence of calculations it must perform to calculate the return values (i. e. the design equation residuals). The arguments are always a set of values for the ATE unknowns (here, $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and $T_1$), and the return values are always the corresponding set of design equation residuals (here, $\epsilon_1$, $\epsilon_2$, $\epsilon_3$, $\epsilon_4$, and $\epsilon_5$). In this assignment, no other inputs need to be made available to the residuals function.
 
-The arguments to the residuals function are always a set of values for the ATE unknowns, and the return values are always the corresponding set of design equation residuals. If any additional inputs are needed, other than the constants given in the assignment narrative, the residuals function specification should indicate that those additional inputs need to be made available to it since they can't be provided as arguments.
-
-In the present assignment, the residuals expressions contain the reaction rate which is neither a given constant nor one of the arguments to the residuals function. The reaction rate can be calculated from those quantities, however. Specifically, the rate coefficient and concentrations of A and B can be calculated using equations (7) through (9), after which the rate can be calculated using equation (6). After that is done, the residuals can be evaluated, so no other quantities need to be made available to the residuals function.
-
-Indeed, for the present assignment, the residuals function specification should conclude by listing that sequence of equations for calculating the design equation residuals. In *Reaction Engineering Basics,* a sequence of equations used sequentially to perform calculations is referred to as an algorithm. The residuals function algorithm is included in the CSTR model formulation below.
+The sequence of calculations that needs to be performed by the residuals function, i. e. the algorithm, begins with calculation of the rate coefficient and concentrations of A and B. They can be calculated using equations (7) through (9). The rate then can be calculated using equation (6). Finally, the residuals can be evaluated, using equations (10) through (14).
 
 That completes the first three components of the reactor model: the design equations, the initial guess and specification of the residuals function. The final model component is a reactor function. It is the reactor function that actually calls the ATE solver. The specification of the reactor function is similar to the specification of the residuals function, except there won't ever be a need to provide values by means other than as arguments.
 
-The engineer must write the CSTR function, and when doing so, the engineer can decide what arguments it should accept. If everything needed for solving the design equations has been provided as a given constant in the problem narrative, the reactor function does not need to accept any arguments. The purpose of the CSTR function is to calculate the ATE unknowns, so those are the quantities it should return.
+The engineer must write the CSTR function, and since it won't be called by the ATE solver, the engineer can decide what arguments it should accept and what it will return. In this assignment, there isn't anything that needs to be passed to the CSTR function. Its purpose is to calculate the ATE unknowns, so those are the quantities it should return.
 
-The algorithm is straightforward. To start, the guess is calculated. If any quantities needed to be made available to the residuals function, that would be taken care of next. In this assignment nothing needs to be made available to the residuals function. The ATE solver can then be called to get a set of ATE unknowns that solve the design equations, and those results can be returned by the CSTR function.
+The CSTR function algorithm is straightforward. To start, the guess is calculated. If any quantities needed to be made available to the residuals function, that would be taken care of next, but in this example that isn't necessary. It can call the ATE solver to get one set of ATE unknowns that solve the design equations, returning the results.
 
 A succinct formulation of the CSTR model follows. It assumes that the given and known constants identified in the assignment summary are available at any point in the analysis.
 
@@ -221,7 +228,7 @@ $$
 \epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H = 0 \tag{14}
 $$
 
-**Initial Guess for $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and ,$T_1$:**
+**Initial Guess for $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and $T_1$:**
 
 $$
 \dot{n}_{A,1,guess} = 0.9\dot{V}C_{A,0} \tag{15}
@@ -324,7 +331,7 @@ $$
 \text{ATE Solver} \\
 \Downarrow \\
 \dot{n}_{A,1}, \dot{n}_{B,1}, \dot{n}_{Y,1}, \dot{n}_{Z,1}, T_1
-\end{matrix} \tag{15}
+\end{matrix} \tag{20}
 $$
 
 #### Results, Analysis and Discussion
@@ -332,12 +339,12 @@ $$
 ```{r}
 #| echo: false
 #| output: false
-df <- read.csv("Calculations/example_I_4_1/results.csv")
+df <- read.csv("Calculations/example_I_4_1/results_python.csv")
 ```
 
 A computer code was written to implement the CSTR model as formulated above, Specifically the residuals function and the CSTR function were created using a mathematics software package that included an ATE solver. The residuals function arguments and their formatting were implemented according to the specifications of that software package, as were the values it returns.
 
-Additional code was written to call the CSTR function, display the results, and save the results to a file. The results were as follows: $\dot{n}_{A,1}$ = `r round(df$value[1],1)`, $\dot{n}_{B,1}$ = `r round(df$value[2],1)`, $\dot{n}_{Y,1}$ = `r round(df$value[3],1)`, $\dot{n}_{Z,1}$ = `r round(df$value[4],1)`, and $T_1$ = `r round(df$value[5],1)`. Knowing that there might be other solutions, the code was re-run using different guesses, but it always converged to this solution. That doesn't mean additional solutions don't exist, but if these results make sense physically, the engineer could have some confidence in accepting them.
+Additional code was written to call the CSTR function, display the results, and save the results to a file. The results were as follows: $\dot{n}_{A,1}$ = `r round(df$value[1],1)`, $\dot{n}_{B,1}$ = `r round(df$value[2],1)`, $\dot{n}_{Y,1}$ = `r round(df$value[3],1)`, $\dot{n}_{Z,1}$ = `r round(df$value[4],1)`, and $T_1$ = `r round(df$value[5],1)`. Knowing that there might be other solutions, the code was run again using different guesses, but it always converged to this solution. That doesn't mean additional solutions don't exist, but if these results make sense physically, the engineer could have some confidence in accepting them.
 
 ## Symbols Used in @sec-apndx_solve_ates {#sec-apndx_symbols_soln_of_ates}
 
