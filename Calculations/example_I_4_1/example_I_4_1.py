@@ -1,4 +1,4 @@
-"""Calculations for Example I.4.1 of Reaction Engineering Basics"""
+"""Calculations for the SCoRE Video, Solving ATEs using Python"""
 
 # import libraries
 import numpy as np
@@ -6,17 +6,20 @@ import scipy as sp
 import pandas as pd
 
 # global constants
-Vdot = 75
-CA_0 = 1.0
-V = 50
-CB_0 = 1.2
-rho = 1.0E3
-Cp = 1.0
-T_0 = 303
-dH = -10700
-k0 = 8.72E5
-E = 7200
-R = 1.987
+CA_0 = 1.0 # mol /L
+V = 50 # L
+CB_0 = 1.2 # mol /L
+rho = 1.0E3 # g /L
+Cp = 1.0 # cal /g /K
+T_0 = 303 # K
+dH = -10700 # cal /mol
+k0 = 8.72E5 # L /mol /min
+E = 7200 # cal /mol
+Vdot_case = np.array([75,100]) # L /min
+R = 1.987 # cal /mol /K
+
+# global variables
+g_Vdot = float('nan')
 
 # residuals function
 def residuals(guess):
@@ -29,23 +32,23 @@ def residuals(guess):
 
     # calculate r
     k = k0*np.exp(-E/R/T_1)
-    CA = nDotA_1/Vdot
-    CB = nDotB_1/Vdot
+    CA = nDotA_1/g_Vdot
+    CB = nDotB_1/g_Vdot
     r = k*CA*CB
 
     # evaluate the residuals
-    epsilon_1 = Vdot*CA_0 - nDotA_1 - r*V
-    epsilon_2 = Vdot*CB_0 - nDotB_1 - r*V
+    epsilon_1 = g_Vdot*CA_0 - nDotA_1 - r*V
+    epsilon_2 = g_Vdot*CB_0 - nDotB_1 - r*V
     epsilon_3 = - nDotY_1 + r*V
     epsilon_4 = - nDotZ_1 + r*V
-    epsilon_5 = rho*Vdot*Cp*(T_1 - T_0) + r*V*dH
+    epsilon_5 = rho*g_Vdot*Cp*(T_1 - T_0) + r*V*dH
 
     # return the residuals
     epsilon = np.array([epsilon_1, epsilon_2, epsilon_3, epsilon_4, epsilon_5])
     return epsilon
 
 # CSTR function
-def unknowns():
+def unknowns(Vdot):
     # guess the solution
     nA1_guess = 0.9*Vdot*CA_0
     nB1_guess = 0.9*Vdot*CB_0
@@ -53,6 +56,10 @@ def unknowns():
     nZ1_guess = 0.0
     T1_guess = T_0 + 5.0
     guess = np.array([nA1_guess, nB1_guess, nY1_guess, nZ1_guess, T1_guess])
+
+    # make Vdot globally available
+    global g_Vdot
+    g_Vdot = Vdot
 
     # solve the ATEs
     soln = sp.optimize.root(residuals,guess)
@@ -71,20 +78,26 @@ def unknowns():
     return nA, nB, nY, nZ, T
 
 def quantities_of_interest():
-    # solve the design equations
-    nA, nB, nY, nZ, T = unknowns()
+    # solve the ATEs for both cases
+    nA1, nB1, nY1, nZ1, T1 = unknowns(Vdot_case[0])
+    nA2, nB2, nY2, nZ2, T2 = unknowns(Vdot_case[1])
 
     # tabulate the results
-    data = [['nA',f'{nA}'],['nB',f'{nB}'],['nY',f'{nY}'],['nZ',f'{nZ}']
-            ,['T',f'{T}']]
-    results_df = pd.DataFrame(data, columns=['item','value'])
+    data = [['nA',f'{nA1:.1f}',f'{nA2:.1f}','mol/min'],
+            ['nB',f'{nB1:.1f}',f'{nB2:.1f}','mol/min'],
+            ['nY',f'{nY1:.1f}',f'{nY2:.1f}','mol/min'],
+            ['nZ',f'{nZ1:.1f}',f'{nZ2:.1f}','mol/min']
+            ,['T',f'{T1:.1f}',f'{T2:.1f}','K']]
+    results_df = pd.DataFrame(data, columns=['item',
+                                             f'Vdot = {Vdot_case[0]:.0f}',
+                                             f'Vdot = {Vdot_case[1]:.0f}',
+                                             'units'])
 
     # display the results
     print(results_df)
 
     # save the results
-    results_df.to_csv('Calculations/example_I_4_1/results_python.csv'
-                      ,index=False)
+    results_df.to_csv('Calculations/example_I_4_1/results.csv',index=False)
     return
 
 # perform the analysis
