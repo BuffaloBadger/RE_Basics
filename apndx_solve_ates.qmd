@@ -20,7 +20,7 @@ Effectively, the ATE solver uses the initial guess and residuals function to fin
 
 * It tests the initial guess by calling the residuals function and determining whether all of the ATE residuals equal zero.
 * If the initial guess does not solve the ATEs, the ATE solver generates an improved guess and tests that.
-    * The improved guess will not be an exact solution (unless the ATEs are linear equations), but usually it will be closer to the solution than the previous guess. 
+    * The improved guess will not be an exact solution (unless the ATEs are linear equations), but usually the residuals will be closer to zero than for the previous guess. 
 * The ATE solver keeps generating improved guesses and testing them until no further improvement is possible.
 * It then returns the final, most-improved guess as a solution of the ATEs.
 
@@ -74,11 +74,11 @@ The specifications for the CSTR function include the arguments passed to it, val
 
 The arguments passed to the CSTR function will depend upon the nature of the particular assignment and the preferences of the person writing the code. If no arguments are needed, the specifications for the CSTR function should indicate that none are needed. If arguments are used, the specifications should list them.
 
-As with the arguments, the CSTR function is not required to return any specific values. Generally, though, the CSTR function will return a one solution of the ATEs, and the specifications then should list it. Within the CSTR function, the initial guesses for the ATE unknowns should first be declared or calculated. Next, any input that can't be passed to the residuals function as an argument should be made available to it by some other means. Once that is done, the ATE solver should be called.
+As with the arguments, the CSTR function is not required to return any specific values. Generally, though, the CSTR function will return one solution of the ATEs, and the specifications then should list it. Within the CSTR function, the initial guesses for the ATE unknowns should first be declared or calculated. Next, any input that can't be passed to the residuals function as an argument should be made available to it by some other means. Once that is done, the ATE solver should be called.
 
 The mathematics software will dictate what the solver returns and how it is formatted. Commonly the return values include a solution of the ATEs, and they will provide some mechanism for determining whether the solver converged. When the code is written, it should check that a converged solution has been returned. If the solver did not converge, the code should report that a solution was not obtained.
 
-The algorithm included in the specifications for the CSTR function need not indicate those programming details, however. It should list, in order of use, expressions that declare or calculate the initial values. Next it should indicate that quantities be made available to the residuals function, if necessary. For example, if $x$ needs to be made available to the residuals funtion, an "equation" of the following form should be added to the algorithm.
+The algorithm included in the specifications for the CSTR function need not indicate those programming details, however. It should list, in order of use, expressions that declare or calculate the initial guess. Next it should indicate that quantities be made available to the residuals function, if necessary. For example, if $x$ needs to be made available to the residuals funtion, an "equation" of the following form should be added to the algorithm.
 
 $$
 x \, \Rightarrow \, \text{available to residuals function}
@@ -152,7 +152,7 @@ $$
 r = kC_AC_B \tag{9}
 $$
 
-Having identified the design equations as ATEs, you know that to solve them you must provide an initial guess for the ATE unknowns and a residuals function. As part of your workflow, you concisely summarized the assignment including the listing of known constants and quantities of interest.
+Having identified the design equations as ATEs, you know that to solve them you must provide an initial guess for the ATE unknowns and a residuals function. As part of your workflow, you concisely summarized the assignment including the following listing of known constants and quantities of interest.
 
 **Quantities of Interest:** $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and $T_1$ for $\dot{V}$ = 75 and 100 L min^-1^
 
@@ -160,7 +160,7 @@ Having identified the design equations as ATEs, you know that to solve them you 
 
 You have begun to formulate the CSTR model as shown below where you have already specified an initial guess for the ATE unknowns. Complete the CSTR model formulation by adding the ATEs, written in the form of residual expressions and specifications for the residuals function and the CSTR function. Then solve the ATEs numerically.
 
-<center>**CSTR Model**</center>
+<center>***CSTR Model***</center>
 
 **Design Equations**
 
@@ -233,37 +233,37 @@ The assignment narrative identifies equations (1) through (5) as the ATEs to be 
 
 This is typical of the way ATEs are formulated in *Reaction Engineering Basics.* The value of $\dot{V}$ to use can be passed to the CSTR function, as an argument, but it will be needed in the residuals function. It isn't one of the ATE unknowns, so the CSTR function will need to make it avialable to the residuals function.
 
-Within the residuals function, the additional unknowns, $r$, $k$, $C_A$, and $C_B$, must be calculated before the residuals can be evaluated. In this example, that is possible, but if any of them couldn't be calculated within the residuals function, they too would need to be made available to it by some other means.
+Within the residuals function, the additional unknowns, $r$, $k$, $C_A$, and $C_B$, must be calculated before the residuals can be evaluated. That is possible in this example, assuming $\dot{V}$ is made available, but if any of them couldn't be calculated within the residuals function, they too would need to be made available to it by some other means.
 
 An alternative way to formulate the solution would be to use equations (1) through (9) as the ATEs and $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, $T_1$, $r$, $k$, $C_A$, and $C_B$ as the ATE unknowns. With this formulation, there wouldn't be any additional unknowns, but it would be necessary to provide nine initial guesses instead of five. Also, it still would be necessary to make $\dot{V}$ available to the residuals function.
 
 :::
 
-To begin, equations (1) through (5) need to be rearranged into the form of residual expressions. Doing so is trivial. If one side of the ATE is a zero, no rearrangement is necessary. Otherwise, simply subtract one side of the ATE from both sides of the equation. This will cause one side of the equation to become zero. The nonzero side is called a residual. To write the equations as residual expression, simply choose a variable to represent the residual and set it equal to the nonzero side of the equation. In *Reaction Engineering Basics,* $\epsilon$ is usually used to represent residuals, and the Design Equations section of the CSTR model formulation takes the following form.
+To begin, equations (1) through (5) need to be rearranged into the form of residual expressions. Doing so is trivial. If one side of the ATE is a zero, no rearrangement is necessary. Otherwise, simply subtract one side of the ATE from both sides of the equation. This will cause one side of the equation to become zero. The nonzero side is called a residual. To write the equations as residual expressions, simply choose a variable to represent the residual and set it equal to the nonzero side of the equation. In *Reaction Engineering Basics,* $\epsilon$ is usually used to represent residuals. The Design Equations section of the CSTR model formulation then takes the following form.
 
 **Design Equations**
 
 $$
-\epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV = 0 \tag{10}
+\epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV \tag{10}
 $$
 
 $$
-\epsilon_2 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV = 0 \tag{11}
+\epsilon_2 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV \tag{11}
 $$
 
 $$
-\epsilon_3 = - \dot{n}_{Y,1} + rV = 0 \tag{12}
+\epsilon_3 = - \dot{n}_{Y,1} + rV \tag{12}
 $$
 
 $$
-\epsilon_4 = - \dot{n}_{Z,1} + rV = 0 \tag{13}
+\epsilon_4 = - \dot{n}_{Z,1} + rV \tag{13}
 $$
 
 $$
-\epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H = 0 \tag{14}
+\epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H \tag{14}
 $$
 
-The purpose of the residuals function specifications and the CSTR function specifications is to concisely provide all of the information that is needed to write them. It may be assumed that all of the given and known constants are available to all functions.
+The purpose of the residuals function specifications and the CSTR function specifications is to concisely provide all of the information that is needed to write the computer functions. It may be assumed that all of the given and known constants are available to all functions.
 
 The residuals function specification should indicate the arguments passed to it, the quantities it returns, any additional quantities that must be made available to it, and the sequence of calculations it must perform to calculate the return values. The arguments to a residuals function are always a set of values for the ATE unknowns (here, $\dot{n}_{A,1}$, $\dot{n}_{B,1}$, $\dot{n}_{Y,1}$, $\dot{n}_{Z,1}$, and $T_1$), and the return values are always the corresponding set of design equation residuals (here, $\epsilon_1$, $\epsilon_2$, $\epsilon_3$, $\epsilon_4$, and $\epsilon_5$).
 
@@ -296,30 +296,30 @@ r = kC_AC_B \tag{6}
 $$
 
 $$
-\epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV = 0 \tag{10}
+\epsilon_1 = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV \tag{10}
 $$
 
 $$
-\epsilon_2 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV = 0 \tag{11}
+\epsilon_2 = \dot{V}C_{B,0} - \dot{n}_{B,1} - rV \tag{11}
 $$
 
 $$
-\epsilon_3 = - \dot{n}_{Y,1} + rV = 0 \tag{12}
+\epsilon_3 = - \dot{n}_{Y,1} + rV \tag{12}
 $$
 
 $$
-\epsilon_4 = - \dot{n}_{Z,1} + rV = 0 \tag{13}
+\epsilon_4 = - \dot{n}_{Z,1} + rV \tag{13}
 $$
 
 $$
-\epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H = 0 \tag{14}
+\epsilon_5 = \rho\dot{V}\tilde{C}_p\left(T_1 - T_0\right) + rV\Delta H \tag{14}
 $$
 
-It remains to write the specifications for the CSTR function. The CSTR function will not be called by the ATE solver, so any input it requires can be provided as arguments. Consequently, there won't ever be a need to provide values to the CSTR function by means other than as arguments. The full specifications for the CSTR function, then, consist of listings of the arguments that will be passed to it, the values it will return, and the algorithm it will use to calculate the return values.
+It remains to write the specifications for the CSTR function. The CSTR function will not be called by the ATE solver, so any input it requires can be provided as arguments. Consequently, there won't ever be a need to make values available to the CSTR function by means other than as arguments. The full specifications for the CSTR function, then, consist of listings of the arguments that will be passed to it, the values it will return, and the algorithm it will use to calculate the return values.
 
-In this assignment, the ATEs are to be solved using two different values for $\dot{V}$, so it makes sense to pass the a value for it to the CSTR function. Its purpose is to calculate the ATE unknowns, so those are the quantities it should return.
+In this assignment, the ATEs are to be solved using two different values for $\dot{V}$, so it makes sense to pass the a value for $\dot{V}$ to the CSTR function as an argument. Its purpose is to calculate the ATE unknowns, so those are the quantities it should return.
 
-The CSTR function algorithm is straightforward. To start, the guess is calculated. Next the value of $\dot{V}$ received as an argument is made available to the residuals function. Finally the ATE solver can be called to get one solution of the design equations. This leads to the following specifications for the CSTR function.
+The CSTR function algorithm is straightforward. To start, the guess for the ATE unknowns is calculated. Next the value of $\dot{V}$ received as an argument is made available to the residuals function. Finally the ATE solver can be called to get one solution of the design equations. This leads to the following specifications for the CSTR function.
 
 **CSTR Function:**
 
@@ -375,7 +375,7 @@ df <- read.csv("Calculations/example_I_4_1/results.csv")
 
 A computer code was written to implement the CSTR model as formulated above, Specifically the residuals function and the CSTR function were created using a mathematics software package that included an ATE solver. The residuals function arguments and their formatting were implemented according to the specifications of that software package, as were the values it returns.
 
-Additional code was written to call the CSTR function, display the results, and save the results to a file. @tbl-example_I_4_1_results shows the results.
+Additional code was written to call the CSTR function, display the results, and save the results to a file. @tbl-example_I_4_1_results shows the results, which make sense, physically. 
 
 ```{r}
 #| echo: false
@@ -386,7 +386,7 @@ kbl(df, format = "markdown",  align = "cc", col.names =
 c("Quantity","$\\dot{V}$ = 75 L min^-1^","$\\dot{V}$ = 100 L min^-1^","units"))
 ```
 
-Sets of ATEs can have multiple solutions, so the code was run again using several different initial guesses. It always converged to these solutions, but that doesn't mean additional solutions don't exist. These results do make sense physically. Example [-@sec-example_12_7_4] illustrates a procedure that could be used to determine whether other solutions are possible, but that won't be done here.
+Sets of ATEs can have multiple solutions, so the code was run again using several different initial guesses. It always converged to these solutions, but that doesn't mean additional solutions don't exist. [Example -@sec-example_12_7_4] illustrates a procedure that could be used to determine whether other solutions are possible, but that won't be done here.
 
 ## Symbols Used in @sec-apndx_solve_ates {#sec-apndx_symbols_soln_of_ates}
 
@@ -399,7 +399,8 @@ Sets of ATEs can have multiple solutions, so the code was run again using severa
 | $C_i$ | Molar concentration of reagent $i$, an additional subscripted 0 denotes the reactor inlet and 1 denotes the outlet. |
 | $\tilde{C}_p$ | Gravimetric heat capacity. |
 | $E$ | Activation energy. |
-| $N$ | Number of ATEs being solved and number of ATE unknowns being found. | 
+| $N$ | Number of ATEs being solved and number of ATE unknowns being found. |
+| $R$ | Ideal gas constant. | 
 | $T$ | Temperature, a subscripted 0 denotes the reactor inlet and 1 denotes the outlet. |
 | $V$ | Volume of reacting fluid. |
 | $\dot{V}$ | Volumetric flow rate. |
