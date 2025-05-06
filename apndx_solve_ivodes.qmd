@@ -26,7 +26,7 @@ $$ {#eq-example-ode-4}
 
 While four equations are being used here for illustration purposes, there can be any number of ordinary differential equations in the set as long as the number of ordinary differential equations is equal to the number of dependent variables, and there is only one independent variable. In *Reaction Engineering Basics*, the independent variable is either the elapsed time, $t$, or the axial position, $z$, measured from the inlet of a plug flow reactor.
 
-A set of $N$ linear, first-order ordinary differential equations will contain 1 independent variable and $N$ dependent variables. The other quantities that may appear within the $m_{i,j}$ coefficients and $g_i$ functions are (a) constants, (b) the independent variable, (c) the dependent variables, (d) known constants, and (e) additional unknowns. Before the set of ODEs can be solved, the additional unknowns must be calculated or provided as described later in this appendix.
+A set of $N$ linear, first-order ordinary differential equations will contain 1 independent variable and $N$ dependent variables. The other quantities that may appear within the $m_{i,j}$ coefficients and $g_i$ functions are (a) known constants, (b) the independent variable, (c) the dependent variables, and (d) additional unknowns. Before the set of ODEs can be solved, the additional unknowns must be calculated or provided as described later in this appendix.
 
 ### Identifying IVODEs
 
@@ -38,7 +38,7 @@ If two or more final values are known or can be calculated directly, the equatio
 
 ### Preparing to Solve IVODEs {#sec-mass_matrix}
 
-In preparation for solving a set of $N$ IVODEs, they should be rearranged into a set of derivative functions if they aren't already in that form. For example, Equations [-@eq-example-ode-1] through [-@eq-example-ode-4] need to be converted to derivative expressions of the form shown in Equations [-@eq-example-vector-ode-1] through [-@eq-example-vector-ode-4] where $f_1$, $f_2$, $f_3$, and $f_4$ each may be a function of $x$, $y_1$, $y_2$, $y_3$, and $y_4$ and may also contain known constants and other unknowns that must be calculated or provided before the IVODEs can be solved numerically.
+In preparation for solving a set of $N$ IVODEs, they should be rearranged into a set of derivative functions if they aren't already in that form. For example, Equations [-@eq-example-ode-1] through [-@eq-example-ode-4] need to be converted to derivative expressions of the form shown in Equations [-@eq-example-vector-ode-1] through [-@eq-example-vector-ode-4] where $f_1$, $f_2$, $f_3$, and $f_4$ each may be a function of $x$, $y_1$, $y_2$, $y_3$, and $y_4$ and may also contain known constants and additional unknowns that must be calculated or provided before the IVODEs can be solved numerically.
 
 $$
 \frac{dy_1}{dx}  = f_1 
@@ -86,25 +86,25 @@ $$ {#eq-g-in-terms-of-f}
 
 ## IVODE Solvers
 
-An IVODE solver is a computer function that solves a set of IVODEs numerically. It must be provided with the following inputs: (a) the initial value of the independent variable, (b) the corresponding initial value of each dependent variable, (c) a stopping criterion, and (d) a derivatives function. Typically the stopping criterion for IVODEs is that the variable for which the final value is known reaches that final value. The derivatives function calculates the values of the derivatives given values for the independent and dependent variables.
+An IVODE solver is a computer function that solves a set of IVODEs numerically. It must be provided with the following inputs: (a) the initial value of the independent variable, (b) the corresponding initial value of each dependent variable, (c) a stopping criterion, and (d) a derivatives function. The stopping criterion for IVODEs is that the variable for which the final value is known reaches that final value. The derivatives function calculates the values of the derivatives given values for the independent and dependent variables.
 
 An IVODE solver returns sets of corresponding values of the independent variable and each of the dependent variables spanning the range from their initial value to the point where the stopping criterion was satisfied. The inner workings of IVODE solvers are beyond the scope of *Reaction Engineering Basics*. Nonetheless, a simplified understanding of how IVODEs are solved numerically is useful.
 
-The solver starts from the initial values, as illustrated graphically in part (a) of @fig-ivode-integration-step for any one of the dependent variables. It isn't possible to plot $y$ *vs.* $x$ at that point because $y\left(x\right)$ is not known. (Indeed, $y\left(x\right)$ is the solution to the IVODE.) Instead, the solver uses the IVODEs to calculate the value of each of the derivatives at $\left(x_0,y_0\right)$. The derivative, $\frac{dy}{dx}$, at that point is the slope of the unknown function at $\left(x_0,y_0\right)$. This is shown graphically in part (b) of @fig-ivode-integration-step.
+The solver starts from the initial values, as illustrated graphically in panel (a) of @fig-ivode-integration-step for any one of the dependent variables. It isn't possible to plot $y$ *vs.* $x$ at that point because $y\left(x\right)$ is not known. (Indeed, $y\left(x\right)$ is the solution to the IVODE.) Instead, the solver uses the IVODEs to calculate the value of each of the derivatives at $\left(x_0,y_0\right)$. The derivative, $\frac{dy}{dx}$, at that point is the slope of the unknown function at $\left(x_0,y_0\right)$. This is shown graphically in panel (b) of @fig-ivode-integration-step.
 
 ![Graphical Representation of an IVODE Integration Step. (a) The initial value. (b) The slope at that point. (c) Incrementally increasing x and approximating the corresponding y.](./Graphics/IVODE_Integration_Step.png){#fig-ivode-integration-step}
 
-Starting from the known point, $\left(x_0,y_0\right)$, the solver increases $x$ by a small amount, $\Delta x$, which is known as the *step-size*. It then calculates the corresponding change in $y$, $\Delta y$, using the slope. The resulting point, $\left(x_1,y_1\right)$, is shown in part (c) of @fig-ivode-integration-step. This process is sometimes referred to as taking an integration step. Effectively, the solver uses the small straight line segment between $\left(x_0,y_0\right)$ and $\left(x_1,y_1\right)$ to approximate the true solution, $y\left(x\right)$, in that interval. The accuracy of this approximation increases as $\Delta x$ decreases, so typically the solver uses small steps. A new integration step is then taken starting from $\left(x_1,y_1\right)$.
+Starting from the known point, $\left(x_0,y_0\right)$, the solver increases $x$ by a small amount, $\Delta x$, which is known as the *step-size*. It then calculates the corresponding change in $y$, $\Delta y$, using the slope. The resulting point, $\left(x_1,y_1\right)$, is shown in panel (c) of @fig-ivode-integration-step. This process is sometimes referred to as taking an integration step. Effectively, the solver uses the small straight line segment between $\left(x_0,y_0\right)$ and $\left(x_1,y_1\right)$ to approximate the true solution, $y\left(x\right)$, in that interval. The accuracy of this approximation increases as $\Delta x$ decreases, so typically the solver uses small steps. A new integration step is then taken starting from $\left(x_1,y_1\right)$.
 
 Of course, the solver eventually must stop taking integration steps. After completing each step, the solver checks to determine whether making that step resulted in the stopping criterion being satisfied. If not, the solver takes another integration step. As an example, suppose the stopping criterion is that $y_3$ should equal some value, $y_{3,f}$, the solver would check to see whether $y_3$ did, in fact, reach or surpass $y_{3,f}$ after making the step. In most cases the stopping criterion will have been surpassed by some small amount, in which case the solver interpolates to find final values that exactly satisfy the stopping criterion. It then returns the values of the dependent variables and the independent variable for all of the steps it took while solving the IVODEs, including those final interpolated values.
 
 ### The Derivatives Function  
 
-The IVODE solver is part of a mathematics software package. It must call the derivatives function which is written by the engineer who needs to solve a set of IVODEs. While the arguments to derivatives function are always a set of values of the independent and dependent variables, and while the return values are always the corresponding values of the derivatives that appear in the IVODEs, the details are specified by the mathematics software package. It sets how those quantities are formatted, the order in which they are passed or returned. etc. The engineer calling the IVODE solver must write the derivatives function so it conforms to those specifications.
+The IVODE solver is part of a mathematics software package. It must call the derivatives function which is written by the engineer who needs to solve a set of IVODEs. While the arguments to derivatives function are always a set of values of the independent and dependent variables, and while the return values are always the corresponding values of the derivatives of each dependent variable with respect to the independent variable, the details are specified by the mathematics software package. It sets how those quantities are formatted, the order in which they are passed or returned. etc. The engineer calling the IVODE solver must write the derivatives function so it conforms to those specifications.
 
-The calculations performed within the derivarives function are straightforward. It receives values for the independent and dependent variables, and known constants from the assignment narrative can be used whenever needed. If there are any additional unknowns in the IVODEs, their values are must be calculated first. In most cases these quantities can be calculated using the independent variable, the dependent variables, and the known constants. However, if it is not possible to calculate any of the other unknowns appearing in the IVODEs, they must be provided to the derivatives function.
+The calculations performed within the derivarives function are straightforward. It receives values for the independent and dependent variables, and known constants from the assignment narrative can be used whenever needed. If there are any additional unknowns in the IVODEs, their values are must be calculated first. In most cases these quantities can be calculated using the independent variable, the dependent variables, and the known constants. However, if it is not possible to calculate any of the additional unknowns appearing in the IVODEs, they must be provided to the derivatives function.
 
-Providing unknown constants to the residuals function forces a computer programming choice like that described in @sec-apndx_solve_ates for the residuals function. The issue is that the other unknowns cannot be passed to the derivatives function as arguments. The arguments that can be passed to the derivatives function are fixed by the mathematics software package being used and are limited to values of the independent and dependent variables. As a consequence, any additional unknowns that cannot be calculated within the derivatives function will need to be provided by other means. The documentation for the mathematics software package may suggest a preferred way to do this such as by using a global variable or by using a pass-through function. Once the additional unknowns have been calculated or made available, all that remains to be done within the derivatives function is to evaluate the derivatives using the derivative expressions described.
+Providing unknown constants to the residuals function forces a computer programming choice like that described in @sec-apndx_solve_ates for the residuals function. The issue is that the additional unknowns cannot be passed to the derivatives function as arguments. The arguments that can be passed to the derivatives function are fixed by the mathematics software package being used and are limited to values of the independent and dependent variables. As a consequence, any additional unknowns that cannot be calculated within the derivatives function will need to be provided by other means. The documentation for the mathematics software package may suggest a preferred way to do this such as by using a global variable or by using a pass-through function. Once the additional unknowns have been calculated or made available, all that remains to be done within the derivatives function is to evaluate the derivatives using the derivative expressions described.
 
 ### IVODE Solver Issues
 
@@ -122,7 +122,7 @@ The formulation of the reactor model includes specifications for a derivatives f
 
 ### Specifications for the Derivatives Function
 
-The derivatives function specification should include a list the arguments to be passed to it, a list of the quantities it will return, a list of any quantities that must be provided to it by means other than as an argument, and its algorithm. The arguments to the derivatives function are always a set of values for the independent and dependent variables, and the return values are always the corresponding values of the derivatives appearing in the IVODEs. When the code is written, the arguments and return values must be formatted as specified by the mathematics software being used.
+The derivatives function specification should include a list of the arguments to be passed to it, a list of the quantities it will return, a list of any quantities that must be provided to it by means other than as an argument, and its algorithm. The arguments to the derivatives function are always a set of values for the independent and dependent variables, and the return values are always the corresponding values of the derivatives of each dependent variable with respect to the independent variable. When the code is written, the arguments and return values must be formatted as specified by the mathematics software being used.
 
 The algorithm lists, in order of use, expressions for each quantity that needs to be calculated, ending with the evaluation of the derivatives. Additional unknowns are calculated first, and as the equations for doing so are being listed, it may be found that additional input is needed that can't be provided as arguments. Such input is added to the list of quantities that must be provided by means other than as an argument. The algorithm then concludes with the derivative expressions for evaluating the derivatives.
 
@@ -130,17 +130,17 @@ The algorithm lists, in order of use, expressions for each quantity that needs t
 
 The IVODEs are typicallly the design equations for a reactor. They are solved within a reactor function which, for IVODEs, returns a set of corresponding values of the independent variable and the dependent variables that span the range from their initial values to their final values. The specifications will include a list of the arguments, a list of the return values, and the algorithm.
 
-The reactor function is not called by any functions from a mathematics software package. As such, any input it needs can be provided as arguments, and the specifications will not include a list of quantities that need to be provided by means other than as arguments. The arguments passed to it will depend upon the specifics of the analysis being performed, and it is possible that the reactor function will not have any arguments. As noted above, the return values are most often a set of corresponding values of the independent variable and the dependent variables that span the range from their initial values to their final values.
+The reactor function is not called by any functions from a mathematics software package. As such, any input it needs can be provided as arguments, and it isn't necessary to provide input by any other means. The arguments passed to it will depend upon the specifics of the analysis being performed, and it is possible that the reactor function will not have any arguments. As noted above, the return values are a set of corresponding values of the independent variable and the dependent variables that span the range from their initial values to their final values.
 
-The algorithm for the reactor function will begin with the specification or calculation of the initial values and the stopping criterion. Next, if necessary, it should make any quantities that the derivatives function requires but can't be passed as arguments available to it. Once that is done, it should call the IVODE solver passing the initial values, stopping criterion, and derivatives function as arguments. The IVODE solver will return corresponding values of the independent variable and the dependent variables that span the range from their initial values to their final values, so no further calculations will be necessary.
+The algorithm for the reactor function will begin with the specification or calculation of the initial values and the stopping criterion. Next, if the derivatives function requires input other than the independent and dependent variables, that input should be made available to it. Once that is done, the reactor function should call the IVODE solver passing the initial values, stopping criterion, and derivatives function as arguments. The IVODE solver will return corresponding values of the independent variable and the dependent variables that span the range from their initial values to their final values, so no further calculations will be necessary.
 
 ## Example
 
-The following example illustrates the formulation of the numerical solution of a set of IVODEs.
+The following example illustrates the formulation of the numerical solution of a set of IVODEs. At each step in the formulation presented here, the solution describes how the engineer knew what to do, and then shows how it was done. In examples presented in the body of this book, the discussion of how the engineer knew what to do is made available in callouts with the heading "Click Here to See What an Expert Might be Thinking at this Point."
 
-### Example: Formulation of the Solution of a Set of BSTR Design Equations {#sec-example_J_6_1}
+### Example: Formulation of the Solution of a Set of BSTR Design Equations {#sec-example_J_4_1}
 
-A reaction engineer needs to solve the BSTR design equations shown in equations (1) and (2). Reaction (3) takes place in the reactor, and the rate, $r$, that appears in the design equations can be calculated using equation (3). The rate coefficient, $k$, in equation (4) can be calculated using the Arrhenius expression, equation (5), and the concentration of A, $C_A$, is defined as shown in equation (6). The molar amount of A in the BSTR at $t=0$ is given by equation (7), and there isn't any Z in the reactor initially. The gas constant, $R$ = 8.314 J mol^-1^ K^-1^, reactor volume, $V$ = 1 L, final time, $t_f$ = 30 min, initial concentration of A, $C_{A,0}$ = 0.5 mol L^-1^, and temperature, $T$ = 338 K, are known constants. The constant values of the Arrhenius pre-exponential factor, $k_0$, and activation energy, $E$, will be provided at the time it is necessary to solve equations (1) and (2). Describe and show how the engineer might formulate a model for the BSTR that solves equations (1) and (2) to find the molar amounts of A and Z over the span of time from $t=0$ to $t=t_f$.
+A reaction engineer who needs to model a BSTR generated the design equations shown in equations (1) and (2). Reaction (3) takes place in the reactor. The engineer knows that the rate, $r$, that appears in the design equations can be calculated using equation (4), the rate coefficient, $k$, in equation (4) can be calculated using the Arrhenius expression, equation (5), and the concentration of A, $C_A$, is defined as shown in equation (6).
 
 $$
 \frac{dn_A}{dt} = -rV \tag{1}
@@ -166,35 +166,43 @@ $$
 C_A = \frac{n_A}{V} \tag{6}
 $$
 
+The gas constant, $R$ = 8.314 J mol^-1^ K^-1^, reactor volume, $V$ = 1 L, final time, $t_f$ = 30 min, initial concentration of A, $C_{A,0}$ = 0.5 mol L^-1^, initial concentration of Z, $C_{Z,0}$ = 0.0 mol L^-1^ and temperature, $T$ = 338 K, are known constants. The engineer knows that the molar amounts of A and Z in the BSTR at $t=0$ are given by equations (7) and (8). The constant values of the Arrhenius pre-exponential factor, $k_0$, and activation energy, $E$, will be provided at the time it is necessary to solve equations (1) and (2).
+
 $$
 n_{A,0} = C_{A,0}V \tag{7}
 $$
+
+$$
+n_{Z,0} = C_{Z,0}V \tag{8}
+$$
+
+Describe and show how the engineer might formulate a model for the BSTR that solves equations (1) and (2) to find the molar amounts of A and Z over the span of time from $t=0$ to $t=t_f$.
 
 ---
 
 The assignment narrative asks me to describe the formulation of a model for the BSTR. However, the engineer might summarize the assignment before formulating the BSTR model. In terms of solving the IVODEs, the important components of the assignment summary would be a list of the known constants (and the basis if there was one) and their values, identification of the quantities of interest, and identification of any parameters. (In this example $k_0$ and $E$ are paramters; the design equations will be solved for different sets of values of $k_0$ and $E$.) Those components of the assignment summary might take the following form.
 
-**Quantities of Interest:** $n_A\left(t\right)$ and $n_Z\left(t\right)$, $0\le t \le t_f$ for given values of $k_0$ and $E$.
+**Quantities of Interest:** $n_A\left(t\right)$ and $n_Z\left(t\right)$, as graphs with $0\le t \le t_f$ for given values of $k_0$ and $E$.
 
-**Given and Known Constants:** $V$ = 1 L, $t_f$ = 5 min, $C_{A,0}$ = 0.5 mol L^-1^, $T$ = 338 K, and $R$ = 8.314 J mol^-1^ K^-1^
+**Given and Known Constants:** $V$ = 1 L, $t_f$ = 5 min, $C_{A,0}$ = 0.5 mol L^-1^, , $C_{Z,0}$ = 0.0 mol L^-1^, $T$ = 338 K, and $R$ = 8.314 J mol^-1^ K^-1^.
 
 The next thing the engineer would do is to determine the type of equations (1) and (2). Both equations contain ordinary first derivatives with a common independent variable, $t$, making them ODEs. The values of $n_A$ and $n_Z$ are known at $t=0$. The final value of $t$ is also known while the corresponding final values of $n_A$ and $n_Z$ are not known and can't be calculated directly. When all of the initial values and only one final value are known, the ODEs are IVODEs.
 
-The formulation of the BSTR model would list the design equations. Since the equations are IVODEs, the engineer would know that to solve them numerically initial values, a stopping criterion, and a derivatives function would be needed. Thus, the initial values and stopping criterion would be included in the BSTR model formulation along with the specifications for the derivatives function.
+The formulation of the BSTR model would list the design equations. Since the equations are IVODEs, the engineer would need to know that to solve them numerically initial values, a stopping criterion, and a derivatives function are needed. The initial values and stopping criterion then would be included in the BSTR model formulation along with the specifications for the derivatives function.
 
-The specifications for the derivatives function would include the arguments passed to it (a set of values of the independent and dependent variables), the values it returns (the derivative of each dependent variable with respect to the independent variable), quantities that must be made available to it, and its algorithm. In this example, since $k_0$ and $E$ cannot be calculated within the derivatives function and they aren't among the arguments passed to it, they must be made available by some other means.
+The specifications for the derivatives function would include the arguments passed to it (always being the independent and dependent variables), the values it must return (always being the derivative of each dependent variable with respect to the independent variable), quantities that must be made available to it (by means other than as arguments), and its algorithm. In this example, since $k_0$ and $E$ cannot be calculated within the derivatives function and they aren't among the arguments passed to it, they must be made available by some other means.
 
-In the design equations, $t$ is the independent variable, $n_A$ and $n_Z$ are the dependent variables, and $V$ is a known constant. The rate, $r$, is an additional variable that must be calculated within the derivatives function before the derivatives can be calculated. Equations (4) through (6) can be used to accomplish that.
+In the design equations, $t$ is the independent variable, $n_A$ and $n_Z$ are the dependent variables, and $V$ is a known constant. The rate, $r$, is an additional variable that must be calculated within the derivatives function before the derivatives can be evaluated. Equations (4) through (6) can be used to accomplish that, and then equations (1) and (2) can be used to evaluate the derivatives.
 
-The design equations have been generated, the initial values and stopping criterion have been defined, and the specifications for the derivatives function have been written. It remains to actually solve the IVODEs. A BSTR function will be written to do this, so the final thing added to the BSTR model formulation are specifications for the BSTR function.
+At this point, the design equations have been generated, the initial values and stopping criterion have been defined, and the specifications for the derivatives function have been written. It remains to actually solve the IVODEs. A BSTR function will be written to do this, so the final thing added to the BSTR model formulation are specifications for the BSTR function.
 
-The specifications include the arguments to the BSTR function, the quantities it returns, and its algorithm. In the present example, the values of $k_0$ and $E$ will be provided at the time the IVODEs need to be solved, so they will be passed to the BSTR function as arguments. 
+Those specifications include the arguments to the BSTR function, the quantities it returns, and its algorithm. In the present example, the values of $k_0$ and $E$ will be provided at the time the IVODEs need to be solved, so they will be passed to the BSTR function as arguments. 
 
 The assignment narrative stated that the design equations should be solved for the molar amounts of A and Z over the span of time from $t=0$ to $t=t_f$. The IVODE solver will return a set of values of $t$ and corresponding sets of values of $n_A$ and $n_Z$ that span the range from their initial value to their final values, so the BSTR function can simply return the solution it receives from the solver.
 
 The BSTR function algorithm is straightforward. The initial values and stopping criterion are first set. The values of $k_0$ and $E$ are then made available to the derivatives function. The IVODE solver then can be called to get the solution of the IVODEs.
 
-The formulation of the BSTR model then would take the following form where it is assumed that the known constants are available wherever needed.
+The complete formulation of the BSTR model then would take the following form where it is assumed that the known constants are available wherever needed.
 
 <center>**BSTR Model**</center>
 
@@ -213,8 +221,8 @@ $$
 | Variable | Initial Value | Stopping Criterion |
 |:-------|:-------:|:-------:|
 | $t$ | $0$ | $t_f$ |
-| $n_A$ | $n_{A,0}$ |  |
-| $n_Z$ | $0$ | |
+| $n_A$ | $C_{A,0} V$ |  |
+| $n_Z$ | $C_{Z,0} V$ | |
 
 : Initial values and stopping criterion for solving the design equations, equations (1) and (2). {#tbl-example_J_4_1_initial_values tbl-colwidths="[20, 40, 40]"}
 
@@ -265,7 +273,7 @@ n_{A,0} = C_{A,0}V \tag{7}
 $$
 
 $$
-n_{Z,0} = 0 \tag{9}
+n_{Z,0} = C_{Z,0}V \tag{9}
 $$
 
 $$
