@@ -94,7 +94,7 @@ The solver starts from the initial values, as illustrated graphically in panel (
 
 ![Graphical Representation of an IVODE Integration Step. (a) The initial value. (b) The slope at that point. (c) Incrementally increasing x and approximating the corresponding y.](./Graphics/IVODE_Integration_Step.png){#fig-ivode-integration-step}
 
-Starting from the known point, $\left(x_0,y_0\right)$, the solver increases $x$ by a small amount, $\Delta x$, which is known as the *step-size*. It then calculates the corresponding change in $y$, $\Delta y$, using the slope. The resulting point, $\left(x_1,y_1\right)$, is shown in panel (c) of @fig-ivode-integration-step. This process is sometimes referred to as taking an integration step. Effectively, the solver uses the small straight line segment between $\left(x_0,y_0\right)$ and $\left(x_1,y_1\right)$ to approximate the true solution, $y\left(x\right)$, in that interval. The accuracy of this approximation increases as $\Delta x$ decreases, so typically the solver uses small steps. A new integration step is then taken starting from $\left(x_1,y_1\right)$.
+Starting from the known point, $\left(x_0,y_0\right)$, the solver increases $x$ by a small amount, $\Delta x$, which is known as the *step size*. It then calculates the corresponding change in $y$, $\Delta y$, using the slope. The resulting point, $\left(x_1,y_1\right)$, is shown in panel (c) of @fig-ivode-integration-step. This process is sometimes referred to as taking an integration step. Effectively, the solver uses the small straight line segment between $\left(x_0,y_0\right)$ and $\left(x_1,y_1\right)$ to approximate the true solution, $y\left(x\right)$, in that interval. The accuracy of this approximation increases as $\Delta x$ decreases, so typically the solver uses small steps. A new integration step is then taken starting from $\left(x_1,y_1\right)$.
 
 Of course, the solver eventually must stop taking integration steps. After completing each step, the solver checks to determine whether making that step resulted in the stopping criterion being satisfied. If not, the solver takes another integration step. As an example, suppose the stopping criterion is that $y_3$ should equal some value, $y_{3,f}$, the solver would check to see whether $y_3$ did, in fact, reach or surpass $y_{3,f}$ after making the step. In most cases the stopping criterion will have been surpassed by some small amount, in which case the solver interpolates to find final values that exactly satisfy the stopping criterion. It then returns the values of the dependent variables and the independent variable for all of the steps it took while solving the IVODEs, including those final interpolated values.
 
@@ -184,11 +184,11 @@ The assignment narrative asks me to describe the formulation of a model for the 
 
 **Quantities of Interest:** $n_A\left(t\right)$ and $n_Z\left(t\right)$, as graphs with $0\le t \le t_f$ for given values of $k_0$ and $E$.
 
-**Given and Known Constants:** $V$ = 1 L, $t_f$ = 5 min, $C_{A,0}$ = 0.5 mol L^-1^, , $C_{Z,0}$ = 0.0 mol L^-1^, $T$ = 338 K, and $R$ = 8.314 J mol^-1^ K^-1^.
+**Given and Known Constants:** $V$ = 1 L, $t_f$ = 5 min, $C_{A,0}$ = 0.5 mol L^-1^, $C_{Z,0}$ = 0.0 mol L^-1^, $T$ = 338 K, and $R$ = 8.314 J mol^-1^ K^-1^.
 
 The next thing the engineer would do is to determine the type of equations (1) and (2). Both equations contain ordinary first derivatives with a common independent variable, $t$, making them ODEs. The values of $n_A$ and $n_Z$ are known at $t=0$. The final value of $t$ is also known while the corresponding final values of $n_A$ and $n_Z$ are not known and can't be calculated directly. When all of the initial values and only one final value are known, the ODEs are IVODEs.
 
-The formulation of the BSTR model would list the design equations. Since the equations are IVODEs, the engineer would need to know that to solve them numerically initial values, a stopping criterion, and a derivatives function are needed. The initial values and stopping criterion then would be included in the BSTR model formulation along with the specifications for the derivatives function.
+The formulation of the BSTR model would list the design equations. Since the equations are IVODEs, the engineer would need to know that to solve them numerically initial values, a stopping criterion, and a derivatives function are needed. The initial values and stopping criterion then would be included in the BSTR model formulation along with the specifications for the derivatives function. In the formulation it would be assumed that the given and known constants are available whenever needed.
 
 The specifications for the derivatives function would include the arguments passed to it (always being the independent and dependent variables), the values it must return (always being the derivative of each dependent variable with respect to the independent variable), quantities that must be made available to it (by means other than as arguments), and its algorithm. In this example, since $k_0$ and $E$ cannot be calculated within the derivatives function and they aren't among the arguments passed to it, they must be made available by some other means.
 
@@ -204,7 +204,7 @@ The BSTR function algorithm is straightforward. The initial values and stopping 
 
 The complete formulation of the BSTR model then would take the following form where it is assumed that the known constants are available wherever needed.
 
-<center>**BSTR Model**</center>
+<center>***BSTR Model***</center>
 
 **Design Equations**
 
