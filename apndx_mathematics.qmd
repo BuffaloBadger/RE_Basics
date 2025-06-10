@@ -1,3 +1,326 @@
 # Mathematics {#sec-apndx_mathematics}
 
-This appendix
+*Reaction Engineering Basics* assumes that reactor model equations will be solved numerically. This appendix presents an overview of the types of equations that are encountered, the quantities that appear in them, and their numerical solution. It also considers estimation of parameters using numerical methods.
+
+## Quantities Appearing in Equations
+
+Equations establish a relationship among different quantities. When solving equations numerically, it is important to be able to categorize each quantity that appears in the equations. This can't be done simply by looking at the equations. Also knowing how the equations will be used, though, makes it possible to assign each quantity to one of the following categories.
+
+Known Constants
+: Quantities whose values are known and do not change throughout the analysis.
+
+Variables
+: Quantities whose values are not known, but are found by solving the equations. In differential equations variables are further categorized as the independent variable or a dependent variable.
+
+Derivatives
+: Quantities representing the change of a dependent variable relative to a change in the independent variable.
+
+Additional Unknowns
+: Quantities that are not variables and whose values are not known. They can be further categorized as additional constant unknowns or additional variable unknowns.
+
+Parameters
+: Quantities whose values are constant any one time the equations are solved, but that have different values each time they are solved. Parameters can be further categorized as being either specified or to be estimated.
+
+## ATEs
+
+Algebraic-transcendental equations (ATEs) are one of the equation types that must be solved when performing reaction engineering tasks. (The acronym ATE is used in this book, but it is not generally used in other books or online.) In the context of *Reaction Engineering Basics,* ATEs are easily identifiable because they are the only equation type that does not contain derivatives. Slightly more specifically, a set of ATEs is a group of 1 or more mathematical equations that may involve or contain math operations (addition, subtraction, multiplication, and division). Terms in ATEs can be exponents or bases that are raised to some power, and they can appear in transcendental functions. Exponential functions are the most common transcendental functions appearing in the ATEs found in *Reaction Engineering Basics*. They arise any time an equation includes a rate coefficient that displays Arrhenius temperature dependence, @eq-arrhenius.
+
+## ODEs
+
+Some of the ideal reactor design equations are partial differential equations, but in *Reaction Engineering Basics,* they are always simplified to linear, first-order, ordinary differential equations (ODEs) before they need to be solved. As a reminder, in linear, first-order, ordinary differential equations, only ordinary first derivatives appear, they are not multiplied or divided by other derivatives, and they are not raised to any power other than one.
+
+In sets of ODEs that are solved in *Reaction Engineering Basics,* the independent variable is the same in every derivative in the set. A set of $N$ ODEs must contain the derivatives of $N$ dependent variables with respect to the independent variable. The set of ODEs applies over some range of the independent variable. Each of the dependent variables then span their own corresponding range of values.
+
+Most generally, a set of ODEs will take the form shown in Equations [-@eq-example-ode-1] through [-@eq-example-ode-4]. In those equations $z$ is the independent variable; $y_1$, $y_2$, $y_3$, and $y_4$ are the dependent variables; and $m_{1,1}$ through $m_{4,4}$ and $g_1$ through $g_4$ can be constants (including zero) or functions of the independent and dependent variables. While four equations are being used here for illustration purposes, there can be any number of ordinary differential equations in the set as long as the number of ordinary differential equations is equal to the number of dependent variables, and there is only one independent variable.
+
+$$
+m_{1,1}\frac{dy_1}{dz} + m_{1,2}\frac{dy_2}{dz} + m_{1,3}\frac{dy_3}{dz} + m_{1,4}\frac{dy_4}{dz} = g_1 
+$$ {#eq-example-ode-1}
+
+$$
+m_{2,1}\frac{dy_1}{dz} + m_{2,2}\frac{dy_2}{dz} + m_{2,3}\frac{dy_3}{dz} + m_{2,4}\frac{dy_4}{dz} = g_2 
+$$ {#eq-example-ode-2}
+
+$$
+m_{3,1}\frac{dy_1}{dz} + m_{3,2}\frac{dy_2}{dz} + m_{3,3}\frac{dy_3}{dz} + m_{3,4}\frac{dy_4}{dz} = g_3 
+$$ {#eq-example-ode-3}
+
+$$
+m_{4,1}\frac{dy_1}{dz} + m_{4,2}\frac{dy_2}{dz} + m_{4,3}\frac{dy_3}{dz}  + m_{4,4}\frac{dy_4}{dz} = g_4 
+$$ {#eq-example-ode-4}
+
+In reactor design equations the dependent variables ($y_i$'s above) will be things such as molar amounts or molar flow rates, temperature, pressure, and volumes or volumetric flow rates. The independent variable is either the distance from the reactor inlet ($z$) or time ($t$).
+
+### IVODEs
+
+The second equation type that must be solved when performing reaction engineering tasks is called an initial-value ODE (IVODE). ODEs apply over some range of the independent variable, $z$, beginning at its initial value and increasing or decreasing monotonically to its final value. Very often the initial value is $z=0$, and $z$ increases to its final value. At any value of the independent variable, each dependent variable has a corresponding value. The values of the dependent variables corresponding to the initial value of $z$ are called thier initial values, and those corresponding to the final value of $z$ are their final values. The distinguishing characteristics of IVODEs are that (a) all of the initial values are known or can be calculated directly and (b) only one final value (either for the independent variable or for one of the dependent variables) is known or can be calculated directly. 
+
+### BVODEs
+
+The design equations for the axial dispersion reactor model are boundary-value ODEs (BVODEs). BVODEs are the third type of equation that must be solved when completing reaction engineering tasks. Criteria for identifying them are not needed because the only time they are encountered in *Reaction Engineering Basics* is when modeling a reactor with axial dispersion. The ends of the range where BVODEs apply are called boundaries or upper and lower limits, and the values of the independent and dependent variables at those points are not called initial and final values.
+
+### DAEs
+
+Differential-algebraic equations (DAEs) are the final type of equation that must be solved when completing tasks in *Reaction Engineering Basics.* In a set of DAEs, a set of IVODEs is coupled to set of ATEs. The distinguishing feature of a set of DAEs is that neither the set of IVODEs nor the set of ATEs can be solved independently of the other set.
+
+There are two situations where DAEs are encountered in *Reaction Engineering Basics.* In the first situation, either an initial value or a constant appearing in the IVODEs is an additional unknown. At the same time, two final values are known. The second situation is encountered when analyzing thermally backmixed and recycle PFRs. In this situation, both the initial and final values for one or more dependent variables are unknown, but they are coupled through an ATE, and one other final value is known.
+
+## Important Equation Formats
+
+When solving equations numerically, they often must be formatted appropriately. ATEs must be rewritten as a corresponding set of residuals expressions, and IVODES must be converted to a set of derivative expressions. These equation formats are considered in this section.
+
+### Residual Expressions
+
+In preparation for numerically solving a set of ATEs, each equation must be rewritten as a residual expression. Doing so is trivially simple. If there is a zero on either side of the equals sign, no rearrangement is necessary. If not, everything on one side of the equals sign should be subtracted from both sides of the equation. This will result in an equation with a zero on one side of the equals sign. The nonzero side of that equation is called a residual. A residual expression is created by choosing a variable to represent the residual and setting it equal to the nonzero side of the equation. In *Reaction Engineering Basics,* $\epsilon$ is usually used to represent residuals.
+
+As an example, consider the typical ATE mole balance shown in @eq-ate_not_as_residual. It does not have a zero on either side of the equals sign, so the right side of the equations, $\dot{n}_{A,1} + rV$, is subtracted from both sides, leading to @eq-ate_with_zero. Letting $\epsilon$ represent the residual, the corresponding residual expression, @eq-ate_as_residual, is written by setting $\epsilon$ equal to the non-zero side of @eq-ate_with_zero
+
+$$
+\dot{V}C_{A,0} = \dot{n}_{A,1} + rV
+$$ {#eq-ate_not_as_residual}
+
+$$
+\dot{V}C_{A,0} - \dot{n}_{A,1} - rV =0
+$${#eq-ate_with_zero}
+
+$$
+\epsilon = \dot{V}C_{A,0} - \dot{n}_{A,1} - rV
+$${#eq-ate_as_residual}
+
+If a set of $N$ ATEs is being solved, they must be converted into a set of $N$ residual expressions. In general each residual can be a function of all of the ATE variables. Substitution of a solution (i.e. a set of ATE variables that solve the ATEs) will cause all of the residuals to evaluate to zero.
+
+### Derivative Expressions
+
+In preparation for solving a set of $N$ IVODEs, they should be rearranged into a set of derivative functions if they aren't already in that form. For example, Equations [-@eq-example-ode-1] through [-@eq-example-ode-4] need to be converted to derivative expressions of the form shown in Equations [-@eq-example-vector-ode-1] through [-@eq-example-vector-ode-4] where $f_1$, $f_2$, $f_3$, and $f_4$ each may be a function of $z$, $y_1$, $y_2$, $y_3$, and $y_4$.
+
+$$
+\frac{dy_1}{dz}  = f_1 
+$$ {#eq-example-vector-ode-1}
+
+$$
+\frac{dy_2}{dz} = f_2 
+$$ {#eq-example-vector-ode-2}
+
+$$
+\frac{dy_3}{dz} = f_3 
+$$ {#eq-example-vector-ode-3}
+
+$$
+\frac{dy_4}{dz} = f_4 
+$$ {#eq-example-vector-ode-4}
+
+That can be accomplished by algebraic manipulation of Equations [-@eq-example-ode-1] through [-@eq-example-ode-4], but it is particularly straightforward if the original IVODEs are written as a matrix equation. The coefficients in Equations [-@eq-example-ode-1] through [-@eq-example-ode-4], $m_{1,1}$, $m_{1,2}$, etc., can be used to construct a so-called mass matrix, $\boldsymbol{M}$, as shown in @eq-mass-matrix, the dependent variables can be used to construct a column vector, $\underline{y}$, as in equation @eq-dependent-var-vector, and the functions, $g_1$, $g_2$, $g_3$, and $g_4$, can be used to construct a column vector, $\underline{g}$, as in equation @eq-function-vector.
+
+$$
+\boldsymbol{M} = \begin{bmatrix} m_{1,1} \ m_{1,2} \ m_{1,3} \ m_{1,4} \\m_{2,1} \ m_{2,2} \ m_{2,3} \ m_{2,4} \\m_{3,1} \ m_{3,2} \ m_{3,3} \ m_{3,4} \\ m_{4,1} \ m_{4,2} \ m_{4,3} \ m_{4,4}  \end{bmatrix}
+$$ {#eq-mass-matrix}
+
+$$
+\underline{y} = \begin{bmatrix} y_1 \\ y_2 \\ y_3 \\ y_4 \end{bmatrix}
+$$ {#eq-dependent-var-vector}
+
+$$
+\underline{g} = \begin{bmatrix} g_1 \\ g_2 \\ g_3 \\ g_4 \end{bmatrix}
+$$ {#eq-function-vector}
+
+Equations [-@eq-example-ode-1] through [-@eq-example-ode-4] then can be written as a matrix equation, @eq-matrix-form-ivode. Pre-multiplying each side of @eq-matrix-form-ivode by the inverse of the mass matrix yields the desired derivative expressions, @eq-matrix-form-of-vector-ivodes. That is, comparing @eq-matrix-form-of-vector-ivodes to Equations [-@eq-example-vector-ode-1] through [-@eq-example-vector-ode-4], it is apparent that they are equivalent with  $f_1$, $f_2$, $f_3$, and $f_4$ given by @eq-g-in-terms-of-f.
+
+$$
+\boldsymbol{M}\frac{d}{dz}\underline{y} = \underline{g}
+$$ {#eq-matrix-form-ivode}
+
+$$
+\frac{d}{dz}\underline{y} = \boldsymbol{M}^{-1} \underline{g}
+$$ {#eq-matrix-form-of-vector-ivodes}
+
+$$
+\begin{bmatrix} f_1 \\ f_2 \\ f_3 \\ f_4 \end{bmatrix} = \underline{f} = \boldsymbol{M}^{-1} \underline{g}
+$$ {#eq-g-in-terms-of-f}
+
+## Solving Equations
+
+Equations are solved numerically by calling a function, known as a solver, from a mathematics software package. The documentation for the solver will specifiy the details including the arguments that must be provided and the results that will be returned. It will also stipulate the format and order in which the arguments must be passed and results will be returned.
+
+The equations to be solved must be provided to the solver, and most commonly they are provided in the form of a function. The engineer solving the equations must write this function, but the solver documentation will specify its arguments, their format and their order and the values it must return, their format and their order. The engineer cannot add or remove arguments or return values because the solver will call this function assuming it meets the solver's specifications. An important consequence of this is that if the function providing the equations requires input other than the specified arguments, that input must be made available by some other means.
+
+There are numerous mathematics software packages that provide solvers. For any one type of solver (ATE, IVODE, BVODE) the specifications may vary from one mathematics software package to the next, but the required input is essentially the same irrespective of the software package. The information provided in *Reaction Engineering Basics* is sufficient for understanding the examples that are presented, and it is presented in a manner that allows the reader to solve equations using whatever mathematics software they choose.
+
+Readers who seek further details are encouraged to consult the documentation for the software package they are using or to consult references on numerical methods.
+
+### Solving ATEs {#sec-apndx_solve_ates}
+
+Sets of ATEs can have more than one solution, just as the quadratic equation has two roots. An ATE solution is a set of values, one for each ATE variable, that when substituted into the ATEs, results in each ATE being true. In other words, if you evaluate the two sides of each ATE using the solution, they are numerically equal. Equivalently, when an ATE solution is substituted into the residual expressions corresponding to the ATEs, every residual is equal to zero.
+
+#### ATE Solvers and How They Work
+
+An ATE solver is a computer function that solves a set of ATEs numerically. Typically, an ATE solver must be provided with two inputs. The first is an initial guess for the solution. The second is a residuals function. The residuals function receives a set of values for the ATE variables and uses them to evaluate and return the corresponding values of the ATE residuals.
+
+Effectively, the ATE solver uses an iterative, trial and error process to find a solution.
+
+1. The ATE residuals corresponding to the initial guess are calculated and retained as the best solution so far.
+2. The ATE solver generates a new guess and calculates the corresponding ATE residuals.
+3. The residuals corresponding to the new guess and the best solution so far are compared.
+4. Whichever guess gave residuals that are closer to zero is retained as the best solution so far
+5. Steps 2 through 4 are repeated until the solver determines that either
+    a. the best solution so far is acceptably close to the exact solution, or
+    b. it cannot find a solution that is acceptably close to the exact solution.
+
+For details on how the solver generates guesses, how it determines which set of residuals is closer to zero, and the criteria for the determinations in step 5 one can consult the documentation for the solver being used and reference works on numerical methods.
+
+#### Convergence and Solver Issues {#sec-ate_solver_issues}
+
+Ideally, the ATE residuals should get closer and closer to zero with each iteration. This is called convergence to a solution. As mentioned, the solution returned by the solver will not be exact, but it will be "very close" to the exact solution. Put differently, when a converged solution is found, the difference between the solution returned by the solver and the exact solution is negligible. If the solver is unable to converge to the point where the residuals are "very close" to zero, it will print an error message and/or return a flag variable indicating that it did not converge and why.
+
+ATE solvers can fail to converge for different reasons. Remedying the situaion sometimes requires manipulation of the residuals expression to eliminate terms that are causing the problem. Another common cause for convergence failure is providing an initial guess that isn't close enough to a solution. The remedy then, is to make a different initial guess and try again to solve the ATEs. The latter approach will lead to convergence for the ATEs that are solved in *Reaction Engineering Basics.* 
+
+Finally, as already noted, sets of ATEs can have more than one solution. If a set of ATEs has multiple solutions, most ATE solvers will only find one of them. To find other solutions, the solver should be called again using a different initial guess.
+
+#### The Initial Guess for the ATE variables
+
+As just noted, when an ATE solver is first called, it must be provided with an initial guess for the solution. Providing an acceptable guess is not usually difficult. In reaction engineering analyses, the ATE variables have a physical meaning. That, together with a qualitative understanding of reactor performance, provides guidance for making an initial guess. An initial guess that involves small changes in reacting fluid temperature and reagent flow rates will generally result in convergence to a solution.
+
+In this book, examples that involve solution of sets of ATEs will have "Click Here to See What an Expert Might be Thinking at this Point" callouts that discuss the choice of the initial guess for that set of equations. If the original guess does not lead to convergence, that will be also be noted, and an explanation will be provided that describes the reasoning used to improve the initial guess so that conversion was achieved.
+
+Similarly, some of the ATEs that are solved in *Reaction Engineering Basics* have multiple solutions. When that is the case, the example will describe how the initial guesses leading to each solution were generated. Also, Example [-@sec-example_12_7_4] shows a method for determining whether a set of ATEs has multiple solutions and finding those solutions.
+
+#### The Residuals Function {#sec-apndx_residuals_fcn}
+
+The purpose of the residuals function is to evaluate the residuals, given a guess for the solution. The engineer solving the ATEs must write the residuals function, but because it will be called by the ATE solver, the arguments to it, the values it returns, their orders, and their formats are all specified by the ATE solver. While the arguments to the residuals function always include an guess for the ATE variables and the return value always include the corresponding values of the ATE residuals, the mathematics software package specifies the details (e. g. are the guesses for the ATE variables passed as individual arguments or are they combined into a vector, etc.). The engineer calling the ATE solver must write the residuals function so it conforms to those specifications.
+
+The calculations performed within the residuals function are straightforward. Values for the ATE variables are passed to it, and known constants are presumed to be available. Therefore the only thing that the residuals function needs to do before it can evaluate the residuals is to calculate any additional unknowns that appear in the ATEs. If it is not possible to calculate these additional unknows within the residuals function, they must be made available to it by some means other than passing them as arguments.
+
+Providing additional unknowns to the residuals function forces a computer programming choice that won't be discussed here. Because the additional unknowns cannot be passed to the residuals function as arguments, they need to be made available to the residuals function by other means. The documentation for the mathematics software package may suggest a preferred way to do this, such as by using a global variable or by using a pass-through function. Once the additional unknowns are calculated or made available, all that remains to be done within the residuals function is to evaluate the ATE residuals and return the results. 
+
+#### Formulating the Solution of ATEs
+
+@sec-3_formulating_calcs outlines a workflow for completing reaction engineering tasks or assignments. Assuming that workflow is being used, all known constants and their values will be listed in the task summary. As part of the formulation of the calculations for the assignment, specifications will be written for two functions, one is the function that will call the ATE solver, and the other is the residuals function that will be called by the solver.
+
+The specifications for the residuals function will have at least three components, possibly four. The first component should be a listing of the arguments that must be passed to it. The arguments are always the ATE variables. The second component is a listing of any other input quantities that must be made available to the residuals function. If the residuals function does not require any input other than the arguments, this component is not included in the specifications. The next component of the residuals function specifications is a listing of the things it returns. The return values are always the ATE residuals for the equations being solved, evaluated using the ATE variables passed to the function as arguments.
+
+The final component of the specifications is the algorithm for the residuals function. The first part of the algorithm should calculate any additional unknowns appearing in the residual expressions corresponding to the ATEs being solved. After all additional unknowns have been calculated, the algorithm should conclude by using the residual expressions to evaluate each ATE residual. 
+
+The function that calls the ATE solver is typically a reactor function, but an ATE solver could be called by other functions. Whatever the purpose of the function, the specifications will include its algorithm. At the point in the algorithm where the ATEs need to be solved, the algorithm should do four things. The first is to set or calculate the initial guess for the solution. The second is to make any quantities that can't be passed as arguments but that are needed by the residuals function available to it. These quantities will be identified in the residuals function specifications, above. Generally the algorithm is a list of equations. In *Reaction Engineering Basics,* an "equation" of the following form is used at the point in the algorithm where quantities need to be made available to the residuals function.
+
+$$
+\text{list of quantities} \, \Rightarrow \, \text{available to residuals function}
+$$
+
+Next the algorithm should call the ATE solver. Here, an "equation" like that shown below will be added to the equations in the algorithm. When used in actual specifications, "comma-separated arguments" will be the ATE variables, separated by commas, followed by "residuals function." The "return values" will be the variables representing the ATE residuals, typically $\epsilon_1$, $\epsilon_2$, ....
+
+$$
+\begin{matrix}
+\text{comma-separated arguments} \\
+\Downarrow \\
+\text{ATE Solver} \\
+\Downarrow \\
+\text{return values}
+\end{matrix}
+$$
+
+The last thing the algorithm should do is to check that the ATE solver converged and respond appropriately if it did not. In *Reqction Engineering Basics,* this step is not listed in the algorithm, but it should be included in the computer code when the calculations are implemented.
+
+### Solving IVODEs {#sec-apndx_solve_ivodes}
+
+A set of IVODEs applies over some range of the independent variable, beginning at its initial value and ending at its final value. The numerical solution of a set of IVODEs consists of sets of values (i. e. vectors) of the independent variable and each dependent variable. The sets all contain the same number of values. The independent variable values begin at its initial value and increase or decrease monotonically to its final value. For each dependent variable, the n^th^ value is the value of that dependent variable corresponding to the n^th^ value of the independent variable. A brief way of describing the numerical solution of a set of IVODEs is as sets of corresponding values of the independent and dependent variables spanning the range from the initial value of the independent variable to its final value.
+
+#### IVODE Solvers and How They Work
+
+An IVODE solver is a computer function that solves a set of IVODEs numerically. It must be provided with the following inputs: (a) the initial value of the independent variable, (b) the corresponding initial value of each dependent variable, (c) a stopping criterion, and (d) a derivatives function. The stopping criterion for IVODEs identifies either the independent variables or one of the dependent variables and specifies its final value. The derivatives function evaluates the derivative of each dependent variable with respect to the independent variable, given values for the independent and dependent variables.
+
+An IVODE solver starts from the initial values, as illustrated graphically in panel (a) of @fig-ivode-integration-step for any one of the dependent variables, $y_i$. It isn't possible to plot $y_i$ *vs.* $z$ at that point because $y_i\left(z\right)$ is not known. (Indeed, $y_i\left(z\right)$ is the solution to the IVODE.) Instead, the solver uses the IVODEs to calculate the value of each of the derivatives at $\left(z_0,y_{i,0}\right)$. The derivative, $\frac{dy_i}{dz}$, at that point is the slope of the unknown function at $\left(z_0,y_{i,0}\right)$. This is shown graphically in panel (b) of @fig-ivode-integration-step.
+
+![Graphical Representation of an IVODE Integration Step. (a) The initial value. (b) The slope at that point. (c) Incrementally increasing $z$ and approximating the corresponding $y_i$.](./Graphics/IVODE_Integration_Step.png){#fig-ivode-integration-step}
+
+Starting from the known point, $\left(z_0,y_{i,0}\right)$, the solver increases $z$ by a small amount, $\Delta z$, which is known as the *step size*. It then calculates the corresponding change in $y_1$, $\Delta y_1$, using the slope. The resulting point, $\left(z_1,y_{i,1}\right)$, is shown in panel (c) of @fig-ivode-integration-step. This process is sometimes referred to as taking an integration step. Effectively, the solver uses the small straight line segment between $\left(z_0,y_{i,0}\right)$ and $\left(z_1,y_{i,1}\right)$ to approximate the true solution, $y_i\left(z\right)$, in that interval. The accuracy of this approximation increases as $\Delta z$ decreases, so typically the solver uses small steps. A new integration step is then taken starting from $\left(z_1,y_{i,1}\right)$.
+
+Of course, the solver eventually must stop taking integration steps. After completing each step, the solver checks to determine whether making that step resulted in the stopping criterion being satisfied. If not, the solver takes another integration step. As an example, suppose the stopping criterion is that $y_3$ should equal some value, $y_{3,f}$, the solver would check to see whether $y_3$ did, in fact, reach or surpass $y_{3,f}$ after making the step. In most cases the stopping criterion will have been surpassed by some small amount, in which case the solver interpolates to find final values that exactly satisfy the stopping criterion. It then returns the values of the dependent variables and the independent variable for all of the steps it took while solving the IVODEs, including those final interpolated values.
+
+That was a simplified summary of how an IVODE solver works. For details on how the solver chooses the step size and other variations on how it works, one can consult the documentation for the solver being used and reference works on numerical methods.
+
+#### IVODE Solver Issues
+
+Generally IVODE solvers are quite robust when solving the kinds of ODEs encountered in introductory reaction engineering courses. However, there are three issues to be aware of. The first is failure to reach the known final value of a [dependent]{.underline} variable. When the final value of a dependent variable is being used as the stopping criterion, many solvers require the user to provide *both* that final value *and* a final value for the independent variable. The solver then takes steps as described above, and after each step it checks to see whether either variable has reached its specified final value. If the final value of the *independent* variable is too small, the solver may reach that value first and stop. As a consequence, the specified value of the dependent variable will not have been reached, and the result that is returned will not span the full range in which the ODEs apply. Therefore it is important to check the solution and verify that the dependent variable reached its known final value.
+
+To avoid having the solver stop because it reached the stopping criterion for the *independent* variable, it is tempting to specify a very large final value for it. This could result in the second solver issue. The initial step size used by the solver often increases when the final value of the independent variable is increased. In some extreme cases, if the initial step size becomes too large, the linear approximation indicated in @fig-ivode-integration-step is not valid, resulting in an inaccurate solution. Therefore, it is important to check that the step size was not too large. The solution that is returned will include the final value of the independent variable. To check that the initial step size was not too large, the stopping criterion for the independent variable can be set to a value slightly larger than that, and the ODEs can be solved a second time. Assuming the second solution reaches the desired stopping criterion for the dependent variable, the second solution should be accurate.
+
+The third possible issue arises when solving sets of IVODEs where one of the dependent variables changes very abruptly over a very small range of the independent variable. The abrupt changes in that dependent variable may significantly affect the other dependent variables over a much broader range of the independent variable. Equations like this are called **stiff ODEs**, and they require special treatment of the step size. Therefore, when solving sets of ODEs, one should pay attention to whether any of the dependent variables change very abruptly as the independent variable changes. If they do, it is advisable to repeat the solution using a solver that is specifically tailored to stiff ODEs.
+
+#### Initial and Final Values
+
+The engineer solving the IVODEs can usually define the initial value of the independent variable. Most commonly it is difined to equal zero. The value of each dependent variable when the independent variables is at its initial value are their initial values. When IVODEs, as defined above, are being solved, all of the initial values will be known or it will be possible to calculate them directly. The initial values of the independent and dependent variables are the first two arguments that must be provided to the IVODE solver. The values of the variables at the other end of the range over which the IVODEs apply are called their final values. Either the final value of the independent variable or the final value of one of the dependent variables will also be known, or it will be possible to calculate it directly. The identity of the variable for which the final value is known, along with that final value, make up the stopping criterion that must be provided as the third argument to the IVODE solver.
+
+#### The Derivatives Function {#sec-apndx_derivatives_fcn}
+
+The final argument that must be provided to the IVODE solver is the derivatives function. The purpose of the derivatives function is to evaluate the derivative of each dependent variable with respect to the independent variable, given values for the independent and dependent variables. It is written by the engineer who needs to solve the IVODEs, but is called by the IVODE solver. For that reason, the only arguments are the independent and dependent variables and the only return values are the corresponding values of the derivatives. It sets how those quantities are formatted, the order in which they are passed or returned. etc. The engineer calling the IVODE solver must write the derivatives function so it conforms to those specifications.
+
+As was the case with the residuals function, if the derivatives function needs any input other than the independent and dependent variables, it must be made available by some other means that being passed as an argument. The calculations performed within the derivarives function are straightforward. If there are any additional unknowns in the IVODEs, their values are must be calculated first. Then all that remains to be done is to evaluate the derivatives using the derivative expressions for the IVODEs.
+
+#### Formulating the Solution of IVODEs
+
+As was the case when solving ATEs, when using the task completion workflow described in @sec-3_formulating_calcs, the values of all known constants will be listed in the task summary. As part of the formulation of the calculations for the assignment, specifications will be written for two functions, one is the function that will call the IVODE solver, and the other is the derivatives function that will be called by the solver.
+
+The specifications for the derivatives function are similar to those for a residuals function. The first component will be a listing of the arguments that must be passed to it. The arguments will always be a value for the independent variable and corresponding values of the dependent variables. The second component is a listing of any other input quantities that must be made available to the derivatives function because they cannot be passed to it as arguments. If the derivatives function does not require any input other than the arguments, this component is not included in the specifications. The next component of the derivatives function specifications is a listing of the things it returns, which are always the values of the derivative of each dependent variable with respect to the independent variable, evaluated using the arguments. The final component of the derivative function specifications is the algorithm. The first part of the algorithm should calculate any additional unknowns appearing in the IVODE derivative expressions. Once that is done, the algorithm should conclude by evaluating the derivatives. 
+
+The function that calls the IVODE solver is typically a reactor function, but it could be called by other functions. Whatever the purpose of the function, the specifications for it will include its algorithm. At the point in the algorithm where the IVODEs need to be solved, the algorithm should first set the initial values and the stopping criterion. Next it should make any quantities that can't be passed as arguments available to it. This can take the form of an "equation" like that described above for making quantities available to the residuals function.
+
+After that is done, the alogrithm should include an "equation" indicating that the IVODE solver should be called like that below. Here the "comma-separated arguments" will be the initial values, the stopping criterion and the derivatives function. The return values will be sets (vectors) of corresponding values of the independent variable and each dependent variable.
+
+$$
+\begin{matrix}
+\text{comma-separated arguments} \\
+\Downarrow \\
+\text{IVODE Solver} \\
+\Downarrow \\
+\text{return values}
+\end{matrix}
+$$
+
+### Solving DAEs {#sec-apndx_solve_daes}
+
+A set of IVODEs coupled to a set of ATEs comprise a set of DAEs. The numerical solution, then, is sets of corresponding values of the IVODE independent and dependent variables spanning the range from their initial values to their final values togther with a set of values for the ATE variables that, when substituted into the ATE residual expressions, results in every ATE residual being equal to zero.
+
+To solve the DAEs encountered in *Reaction Engineering Basics,* a special DAE solver is not needed. They can be solved using an ATE solver and an IVODE solver. That means that both a residuals function and a derivatives function must be written when solving DAEs in *Reaction Engineering Basics.*
+
+#### Formulating the Solution of DAEs
+
+It was noted previously that there are two situations where DAEs are encountered in *Reaction Engineering Basics.* In the first situation, either the initial value of a dependent variable or a constant in the IVODEs is an additional unknown, but two final values are known. The ATE in this situation is implicit, indicating that the additional ATE unknown has a value that results in one of the known final values when the IVODEs are solved using the other known final values.
+
+This is perhaps easier to understand in terms of an example. Suppose that $y_1$ and $y_2$ are IVODE dependent variables with known final values of $y_{1,f}$ and $y_{2,f}$, and that $C$ is the additional unknown (either an initial value or a constant appearing in the IVODEs). The ATE component of the DAEs can then be written as shown in @eq-implicit_DAE_ATE where $C$ is the ATE variable. In effect it says $C$ has the value that results in $y_2 = y_{2,f}$ when the final value of $y_1$ is $y_{1,f}$.
+
+$$
+C \, : \, y_2\big\vert_{y_1 = y_{1,f}} = y_{2,f} \qquad \Rightarrow \qquad \epsilon_C = y_2\big\vert_{y_1 = y_{1,f}} - y_{2,f}
+$$ {#eq-implicit_DAE_ATE}
+
+In the second situation, both the initial and final values of one or more dependent variables are unknown, but they are related through an explicit ATE, and one other final value is known. In this case, the unknown initial values should be used as the ATE variables. The unknown final values can then be treated as additional unknowns appearing in the ATEs.
+
+In both situations, the key to solving the DAEs numerically is to call the ATE solver first. When the ATE residuals function is called, a guess for the ATE variables will be passed to it as its only argument. Using that guess, the IVODEs can then be solved within the residuals function, and the residuals can be evaluated. After the ATE solver converges to a solution for the ATEs, the IVODEs can be solved a final time using that solution.
+
+To summarize, when formulating the calculations, the ATE variable or variables will be the unknown IVODE initial value(s) or the unknown constant in the IVODEs. The calculations will begin by guessing a solution for the ATE(s) and calling an ATE solver. If the ATE unknown is a constant appearing in IVODEs, the residuals function algorithm will make it available to the IVODE derivatives function, and then call an IVODE solver. If the ATE unknowns are IVODE initial values, the residuals function algorithm will use them, along with the one of the known final values, to call an IVODE solver. No special considerations are necessary when writing the IVODE derivatives function passed to the IVODE solver.
+
+The solution returned by the IVODE solver will then be used to evaluate the ATE residuals.  The ATE solver will return a solution for the ATEs. That solution can then be used, as above, to solve the IVODEs. The IVODE solver will return a solution for the IVODEs.
+
+### Solving BVODEs {#sec-apndx_solve_bvodes}
+
+[define what a solution is]
+
+#### BVODE Solvers and How They Work
+
+#### Formulating the Solution of BVODEs
+
+## Estimating Parameters {#sec-apndx_parameter_est}
+
+[define parameters that need to be estimated and identify quantities]
+
+### Estimating Linear Model Parameters
+
+### Fitting Functions and How They Work
+
+### Formulating the Estimation of Parameters
+
+## Symbols Used in This Appendix
+
+| Symbol | Meaning |
+|:-------|:--------|
+| $?$ | ?. |
+
+: {tbl-colwidths="[20,80]"}
