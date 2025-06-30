@@ -1,6 +1,6 @@
 # Completing Reaction Engineering Tasks {#sec-3_formulating_calcs}
 
-To complete common reaction engineering tasks, reactor models must be generated and the equations in them must be solved. @sec-3_react_eng_models showed how to generate the reactor design equations for the four ideal reactor types, and @sec-3_react_eng_tasks described four types of reaction engineering tasks. This chapter presents a general workflow that is used throughout the remainder of the book to complete reaction engineering assignments..
+To complete common reaction engineering tasks, reactor models must be generated and the equations in them must be solved. @sec-3_react_eng_models showed how to generate the reactor design equations for the four ideal reactor types, and @sec-3_react_eng_tasks described four types of reaction engineering tasks. This chapter presents a general workflow that is used throughout the remainder of the book to complete reaction engineering assignments.
 
 ## Summarizing Reaction Engineering Assignments {#sec-3_summarize_assignment}
 
@@ -27,10 +27,10 @@ Stimulus Type
 : If stimulus-response data are being analyzed, the type of stimulus should be listed.
 
 Experimental Response
-: When experimental data are being analyzed, quantities that were measured in each experiment should be identified.
+: When experimental data are being analyzed, quantities that were measured in the experiments should be identified.
 
 Quantities of Interest
-: Any variables for which the assignment requests value should be listed. If graphs or tables are requested, they should be listed along with the quantities needed to generate them. If an assessment is requested, the data needed to make it should be listed.
+: Any variables for which the assignment requests values should be listed. If graphs or tables are requested, they should be listed along with the quantities needed to generate them. If an assessment is requested, the data needed to make it should be listed.
 
 Parameters
 : If the assignment entails varying parameters or estimating the values of parameters, the parameters should be listed. If values of parameters to be varied are specified, they should be included in the listing.
@@ -43,15 +43,25 @@ Basis
 
 ## Generating Model Equations
 
-The assignment summary should include all of the information needed for generating the model equations for the system. @sec-3_react_eng_models describes how to generate the reactor design equations for each reactor in the system starting from the appropriate mole, energy and momentum balances. The design equations for any one reactor will be a set of either ATEs, IVODEs, DAEs, or BVODEs.
+The equations for modeling a reactor or other piece of equipment can be arbitrarily classified as model equations, supporting equations, and ancillary equations. All three are considered in this section.
 
-For each reactor in the system, the mole, energy and momentum balances should be simplified as appropriate and the variables to be found by solving them should be identified. If the design equations are ATEs, equations defining an initial guess for the ATE variables should be added. If they are IVODEs, equations defining the initial and final values should be added. If they are DAEs, equations defining both an intial guess for the ATE variables and initial and final values for the IVODE variables should be added. If the design equations are BVODEs, equations should be added for the boundary condition residual expressions, the initial mesh, and the initial guess for the dependent variables.
+### Model Equations
 
-After writing the design equations and the supporting equations listed above, the design equations should be examined to identify all additional unknowns. Equations for calculating each additional unknown using the design equation variables and known constants should be added to the model reactor.
+Generally, a set of model equations should be generated for each reactor in the system. If additional equipment is present in the system, and if the mole and energy balances for that equipment were not incorporated in a reactor model, a set of model equations should be generated for each piece of equipment, too. In simpler systems, there will only be one set of model equations, and they will be the design equations for a reactor. The remainder of this section is written in terms of a simple system like that. Systems with more than one set of model equations will be considered in later chapters.
 
-If the system contains any additional equipment that is not part of any of the reactor models, models for that equipment should also be generated. In *Reaction Engineering Basics,* heat exchangers, stream splitting points, and stream mixing points are the only additional equipment that might be present. Mole and energy balances should be generated for each piece of equipment. These model equations will be ATEs. As for the reactors, the ATE variables should be identified, equations defining an initial guess for the ATE variables should be added, additional unknowns should be identifies, and equations for calculating the additional unknowns using the ATE variables and known constants should be added to the equipment model.
+The assignment summary should include all of the information needed for generating the model equations for the reactor. @sec-3_react_eng_models describes how to generate the reactor design equations for each reactor in the system starting from the appropriate mole, energy and momentum balances. The model equations should be simplified as appropriate for the system being analyzed. The model equations will be a set of ATEs, IVODEs, DAEs, or BVODEs. The type of equations in the set should be identified (see @sec-apndx_mathematics) along with the variables to be found by solving them.
 
-The model equations for each reactor and other piece of equipment will be soved to find the identified variables for that reactor or equipment. A final "model" should be developed that includes equations for calculating all of the quantities of interest using known constants and the variables found by solving the design equations for the reactor(s) and other equipment.
+### Supporting Equations
+
+Supporting equations are necessary for the numerical solution of each of the four types of model equations. If the model equations are ATEs, supporting equations defining an initial guess for the ATE variables should be added to them. If the model equations are IVODEs, supporting equations defining the initial and final values should be added to them. If the model equations are DAEs (coupled sets of ATEs and IVODEs), supporting equations defining both an intial guess for the ATE variables and initial and final values for the IVODE variables should be added to them. Finally, if the model equations are BVODEs, supporting equations defining the initial mesh and the initial guess for the dependent variables should be added to them.
+
+### Ancillary Equations
+
+Additional unknowns appearing in the model and supporting equations also should be identified. Additional unknowns are quantities other than the variables to be found by solving the equations, known constants, and parameters. When solving the model equations numerically, the values of the additional unknowns must be calculated within computer functions called residuals functions and derivatives functions (see @sec-apndx_mathematics). More specifically, each additional unknown must be calculated using the model equation variables and known constants. Ancillary equations for calculating all of the additional unknowns therefore should be added to the model equations.
+
+## Calculating the Quantities of Interest
+
+The model equations described above can be solved to find the values of the reactor variables. The reactor variables are things like the reacting fluid volume, outlet or final molar amounts, outlet temperatures, etc. Often these are not the quantities of interest for the assignment. In that situation, the reactor variables must be used to calculate the quantities of interest. Therefore, in addition to the reactor model equations, the equations for calculating the quantities of interest should be summarized separately. The variables found by solving the reactor model equations can be used in these equations.
 
 ## Formulating Numerical Calculations {#sec-3_formulate_calculations}
 
@@ -59,30 +69,52 @@ In some scenarios the reactor design equations can be solved analytically, but i
 
 Different readers of *Reaction Engineering Basics* may choose to use different mathematics software when completing assignments. For this reason, code for performing numerical calculations is not presented nor provided in the book. Fortunately, computer functions for solving sets of a given type of equations all require essentially the same input, irrespective of the specific mathematics software package they come from. This makes it possible to formulate the calculations needed to complete an assignment by writing specifications for the functions that are needed. Then the specifications can be used to write the actual code using whatever software package one chooses.
 
-The assignment summary and the models generated as described above provide all of the information needed for formulating the numerical calculations. Basically, for each model generated above, specifications for functions to solve the model equations are written. So, for example, if a model for a BSTR was generated above, specifications for functions for solving the BSTR reactor design equations would be included in the formulation of the calculations.
+The assignment summary, the models generated as described above, and the summary of equations for calculating the quantities of interest provide all of the information needed for formulating the numerical calculations. When formulating the calculations it is assumed that known constants are available whenever they are needed. The formulation then consists of specifications for three or four computer functions, depending on the type of equations being solved.
 
-Each model will require specifications for two or three functions, depending of the type of equations involved. @sec-apndx_mathematics describes the functions needed for solving ATE, IVODEs, DAEs, or IVODEs. For each reactor or equipment model, one of the functions will be the reactor (or equipment) model function. This is the function that calls the appropriate equation solver to solve the model equations and returns the results. The specifications for a model function will include (a) the arguments the function accepts, (b) the quantities the function returns, and (c) the algorithm for the function. Here "algorithm" is taken to mean the sequence of equations used to calculate the return values, not a computer logic diagram.
+### Specifications for Residuals and Derivatives Functions
 
-In addition to the model function, specifications at least one additional function must be added to the formulation of the calculations. These functions are described in @sec-apndx_mathematics. If the model equations are ATEs, specifications for a residuals function must be added. If the model equations are IVODEs, specifications for a derivatives function must be added. If the model equations are DAEs, specifications for both a residuals function and a derivatives function must be added. Finally, if the model equations are BVODEs, specifications for a boundary conditions residuals function and for a derivatives function must be added to the formulation of the calculations. The specifications for each of these functions will include (a) the arguments the function accepts, (b) a list of the quantities that must be made available to it by some means other than as an argument, (c) the quantities the function returns, and (d) the algorithm for the function.
+As described in @sec-apndx_mathematics, residuals expressions effectively provide a set of ATEs to a mathematics software package that will solve them and derivatives functions similarly provide a set of ODEs. If the reactor model equations are ATEs, the formulation of the calculations must include specifications for a residuals function. If the reactor model equations are IVODEs, the formulation of the calculations must include specifications for a derivatives function. If the reactor model equations are DAEs or BVODEs, the formulation of the calculations must include specifications for both a residuals function and a derivatives function.
 
-The quantitities of interest "model" is different in that it will call the other model functions, but not any equation solvers from the mathematics software package. Consequently, no additional functions are associated with it. The specifications for it should indicate the arguments, return values, and algorithm. Typically, however, it takes no arguments and returns nothing. The output it generates is normally displayed on screen and saved to a file for later use.
+#### Specifications for a Residuals Function
+
+The first item in the specifications for a residuals function lists the arguments that are passed to it. Because the residuals function is called by the mathematics software package, its [only]{.underline} argument is always a guess for the values of the ATE variables.
+
+If the residuals function requires other input variables for calculating its return values (below), the second item in the specifications lists the other input variables as "must be available." This serves as an alert when actually writing the computer code that these variables must be made available to the residuals function by some means other than passing them as an argument.
+
+The next item in the specifications for a residuals function lists the variables it returns to the function that called it. Again because the residuals function is called by the mathematics software package, it returns [only]{.underline} the ATE residuals corresponding to the guess for the ATE variables that was passed to it as an argument. Residuals are defined in [Appendix -@sec-apndx_residual_expressions]. When the residuals equal zero, the guess used to calculate them is a solution of the ATEs.
+
+The final item in the specifications for a residuals function is its algorithm. Here "algorithm" is taken to mean the sequence of equations used to calculate the return values, not a computer logic diagram. Starting with the guessed values of the ATE variables and the variables that have been made available to it, the algorithm first uses the ancillary equations to calculate each of the additional unknowns in the ATE model equations, and then it calculates the residuals.
+
+#### Specifications for a Derivatives Function
+
+A derivatives function is analogous to a residuals function, and its specifications consist of the same items. The [only]{.underline} arguments are always a value for the independent variable and a value for each of the dependent variables. If the derivatives function requires other input variables for calculating its return values (below), they are listed as "must be available."
+
+A derivatives function returns [only]{.underline} the derivatives of the dependent variables corresponding to the independent and dependent variables that were passed to it as arguments. The evaluation of the derivatives of the dependent variables is discussed in [Appendix -@sec-apndx_derivative_expressions].
+
+The algorithm for a derivatives function starts with the values of the independent and dependent variables passed to it and the variables made available to it. It first uses the ancillary equations to calculate any addition unknowns in the IVODE model equations, and then it evaluates the derivatives.
+
+### Specifications for Reactor Functions
+
+Reactor functions solve the reactor model equations to find and return the reactor model variables. Reactor functions are not called by the mathematics software package, so their specification do not include a list of variables that "must be available." The arguments passed to a reactor function are selected by the engineer who is solving the reactor model equations. If the reactor model equations are going to be solved multiple times using different values of one or more parameters, a value for each parameter is often passed to the reactor function.
+
+In *Reaction Engineering Basics,* reactors almost always return the reactor model variables found by solving the reactor model equations. The algorithm for a reactor function uses the supporting equations to define arguments that must be provided to the solver (a function from a mathematics software package function that will solve the model equations). It makes necessary variables available to the residuals or derivatives functions, calls the solver, and returns the solution found by the solver.
+
+### Specifications for Deliverables Functions
+
+Specifications for one more function must be included in the formulation of the calculations. This function uses the results from solving the reactor model equations to calculate the quantities of interest. In *Reaction Engineering Basics* it is called the deliverables function.
+
+Typically it takes no arguments and doesn't return anything. Its algoritm calls the reactor model function to get the reactor model variables and calculates the quantities of interest using the equations listed earlier. If the assignment involves an optimization task or repeating calculations while varying one or more parameters, the deliverables function will vary the parameters and call the reactor function as necessary. It may also display results on screen and save results to files.
+
+
 
 ## Implementing and Executing Calculations
 
-The assignment summary and the formulation of the calculations will include all of the information that is needed to write the code to perform the calculations using the mathematics software package of one's choice. In *Reaction Engineering Basics,* this stage of the workflow is mentioned, but code is not shown for reasons already mentioned.
+The assignment summary and the formulation of the calculations will include all of the information that is needed to write the code to perform the calculations using the mathematics software package of one's choice. In *Reaction Engineering Basics,* this stage of the workflow is mentioned, but code is not shown for previously noted reasons.
 
 ## Presenting and Discussing Results {#sec-3_assignment_discussion} 
 
 The final component of the assignment completion workflow described here involves discussing the results of the calculation and presenting the quantities of interest as requested in the assignment narrative. While it is often tempting to simply report the results, a better approach includes discussion of the results.
 
-For some calculations, an initial guess is provided to the solvers that solve the model equations. If the specified guess did not yield a converged solution, a discussion of how the guess was modified and the reasoning behind it can be useful. Similarly, if the assignment requested an assessment, for example on the accuracy of a model that was fit to experimental data, the reasoning behind the final assessment can be included.
+For some calculations, an initial guess is provided to the solvers that solve the model equations. If the specified guess did not yield a converged solution, a discussion of how the guess was modified and the reasoning behind it can be useful. Similarly, if the assignment requested an assessment of the accuracy of a model that was fit to experimental data, the reasoning behind the final assessment can be included.
 
 It is also worthwhile to discuss whether the results appear to be reasonable. This is particulary relevant when one is just learning reaction engineering. It causes the engineer to think about the results, and helps develop a greater depth of understanding. Discussions of this kind are often supported by a qualitative analysis of the system as described in @sec-3_qualitative_analysis.  Every assignment is different, but there is almost always some aspect of the results or conclusions that merits further discussion.
-
-## Symbol Used in @sec-3_formulating_calcs
-
-| Symbol | Meaning |
-|:-------|:--------|
-| $N$ | Number of ATEs or number of missing values. |
-
-: {tbl-colwidths="[20,80]"}
