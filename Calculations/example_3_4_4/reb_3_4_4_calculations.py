@@ -37,6 +37,11 @@ n_CH4 = n_CH4_0 + extent[1]
 n_H2O = n_H2O_0 + extent[1] - extent[2]
 n_CO2 = n_CO2_0 + extent[2]
 
+# Check the results by calculating the conversion, yield, and selectivity
+X_CO_check = (n_CO_0 - n_CO)/n_CO_0
+Y_CH3OH_check = n_CH3OH/n_CO_0
+S_CH3OH_CH4_check = n_CH3OH/(n_CH4)
+
 # Display the result
 print(' ')
 print('Final Moles')
@@ -47,6 +52,10 @@ print(' CH4:','%.3g' % n_CH4)
 print(' H2O:','%.3g' % n_H2O)
 print(' CO2:','%.3g' % n_CO2)
 print(' ')
+print('Check')
+print(' X_CO:','%.3g' % X_CO_check)
+print(' Y_CH3OH:','%.3g' % Y_CH3OH_check)
+print(' S_CH3OH_CH4:','%.3g' % S_CH3OH_CH4_check)
 
 # Save the result to a .csv file
 data = [['n_CO', '%.3g' % n_CO, 'mol'], \
@@ -55,6 +64,9 @@ data = [['n_CO', '%.3g' % n_CO, 'mol'], \
     ['n_CH4', '%.3g' % n_CH4, 'mol'], \
     ['n_H2O', '%.3g' % n_H2O, 'mol'], \
     ['n_CO2', '%.3g' % n_CO2, 'mol'], \
+    ['X_CO', '%.3g' % X_CO_check, ''], \
+    ['Y_CH3OH', '%.3g' % Y_CH3OH_check, ''], \
+    ['S_CH3OH_CH4', '%.3g' % S_CH3OH_CH4_check, '']
 ]
 result = pd.DataFrame(data, columns=['item','value','units'])
 result.to_csv("reb_3_4_4_results.csv", index=False)
