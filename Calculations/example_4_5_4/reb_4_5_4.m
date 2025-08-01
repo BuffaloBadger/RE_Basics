@@ -31,7 +31,7 @@ function reb_4_5_4
         set(gca, 'FontSize', 14);
         xlabel('1/T (K^-^1)','FontSize', 14)
         ylabel('k (L mol^-^1 min^-^1)','FontSize', 14)
-        saveas(gcf,"Arrhenius_plot.png")
+        saveas(gcf,"Matlab_Arrhenius_plot.png")
     
         % show the results
         disp(' ')

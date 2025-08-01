@@ -2,7 +2,9 @@ from score_utils import Arrhenius_parameters
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import math
+
+# set the dpi for figures
+plt.rc("savefig", dpi=300)
 
 # an Arrhenius parameters function named Arrhenius_parameters was
 # written and added to the rebutils library
@@ -49,7 +51,7 @@ def perform_the_calculations():
         ['E_upper_limit', f'{E_ci[1]:.3g}', 'kJ mol^-1^'],
         ['R_squared', f'{r_squared:.3g}', '']]
     result = pd.DataFrame(data, columns=['item','value','units'])
-    result.to_csv("reb_4_5_4_results.csv", index=False)
+    result.to_csv("results.csv", index=False)
 
     return
 
