@@ -114,6 +114,6 @@ function reb_9_6_1
         saveas(gcf, 'rate_matlab.png')
     end
 
-    % execution statement
+    % execution command
     deliverables();
 end

@@ -79,7 +79,7 @@ $$
 $$
 
 $$
-\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot Q - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex,out}} \tilde C_{p,ex}dT
+\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex,out}}{dt} = -\dot Q - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex,out}} \tilde C_{p,ex}dT
 $$
 
 $$
@@ -114,7 +114,7 @@ $$
 When heat transfer involves an exchange fluid as shown in @fig-bstr_heat_exchange_schematics, the rate of heat exchange in the energy balances can be calculated using @eq-bstr_heat_transfer. If the reactor operates adiabatically (i. e. it is perfectly insulated and does not have a shell, coil or external heat exchanger), $\dot{Q}$ is equal to zero.
 
 $$
-\dot Q = UA\left( T_{ex} - T \right)
+\dot Q = UA\left( T_{ex,out} - T \right)
 $$
 
 ## General Approach to Modeling Isolated BSTRs
@@ -136,9 +136,9 @@ Often the operational protocol for a BSTR has multiple heating and cooling stage
 
 **Generating the model equations**. When analyzing an isolated BSTR , it will *always* be necessary to generate the reactor design equations that are needed to model that specific BSTR. Selecting which equations are needed to model a given BSTR and simplifying the design equations is described in [Chapter -@sec-ideal_bstr_eqns] and in the preceding section of this chapter.
 
-The design equations for an isolated BSTR will be either a set of IVODEs or a set of DAEs, with $t$ as the independent variable. The dependent variables will always include the molar amounts of the reagents present in the system, $n_i$. Depending which other design equation are needed to model the BSTR, the dependent variables may also include the temperature of the reacting fluid, $T$, its pressure, $P$, and either the instantaneous outlet temperature of the exchange fluid, $T_{ex}$, or the instantaneous fraction of the exchange fluid undergoing phase change, $\gamma$.
+The design equations for an isolated BSTR will be either a set of IVODEs or a set of DAEs, with $t$ as the independent variable. The dependent variables will always include the molar amounts of the reagents present in the system, $n_i$. Depending which other design equation are needed to model the BSTR, the dependent variables may also include the temperature of the reacting fluid, $T$, its pressure, $P$, and either the instantaneous outlet temperature of the exchange fluid, $T_{ex,out}$, or the instantaneous fraction of the exchange fluid undergoing phase change, $\gamma$.
 
-If the reacting fluid is an ideal gas and the reactor design equations include an energy balance on the reacting fluid, the temperature and the pressure will appear as a dependent variables. Consequently, the number of dependent variables will be one greater than the number of IVODEs. In this situation either a dependent variable must be eliminated from the design equations or another IVODE must be added to them ([Appendix -@sec-apndx_solve_ivodes]). A differential form of the ideal gas law, @eq-differential_ideal_gas_law, is used to accomplish that. For a BSTR, $V$ is constant so its time derivative is zero, and does not appear in the differential form of the gas law. The differential ideal gas law can either be added to the reactor design equations, making the number of equations equal to the number of dependent variables, or it can be solved for $\frac{dP}{dt}$ and substituted into the energy balance, thereby eliminating $P$ as a dependent variable. Both of these approaches are illustrated in [Example -@sec-example_9_6_3].
+If the reacting fluid is an ideal gas and the reactor design equations include an energy balance on the reacting fluid, the temperature and the pressure will appear as a dependent variables. Consequently, the number of dependent variables will be one greater than the number of IVODEs. In this situation either a dependent variable must be eliminated from the design equations or another IVODE must be added to them ([Appendix -@sec-apndx_solve_ivodes]). A differential form of the ideal gas law, @eq-differential_ideal_gas_law, is used to accomplish that. For a BSTR, $V$ is constant so its time derivative is zero, and does not appear in the differential form of the gas law. The differential ideal gas law can either be added to the reactor design equations, making the number of equations equal to the number of dependent variables, or it can be solved for $\frac{dP}{dt}$ and substituted into the energy balance, thereby eliminating $P$ as a dependent variable.
 
 $$
 RT\left( \sum_i \frac{dn_i}{dt} \right) + R\left( \sum_i n_i \right)\frac{dT}{dt} - V \frac{dP}{dt} = 0
@@ -170,7 +170,9 @@ source('Code/fmt_tibble_col.R')
 ```
 
 
-The examples in this section illustrate the analysis of isolated BSTRs. Examples [-@sec-example_9_6_1] and [-@sec-example_9_6_2] are response assignments where the assignment specifies a sufficient number of quantities so that the reactor design equations can be solved to find the quantities of interest. In [Example -@sec-example_9_6_1] all necessary reactor inputs and process specifications are provided and the quantities of interest are related to reactor outputs. In [Example -@sec-example_9_6_2] two reactor outputs are specified (the reaction time and the conversion), and one of the unknown quantities of interest is a reactor input (the initial temperature). In addition to illustrating the computational procedure for these two types of response tasks, [Example -@sec-example_9_6_1] involves a single reaction taking place in an adiabatic BSTR while [Example -@sec-example_9_6_2] features two reactions taking place in a BSTR that is cooled using an exchange fluid. Examples [-@sec-example_9_6_3] and [-@sec-example_9_6_4] are optimization assignments that identify a reactor variable that must be maximized or minimized by specifying a reactor input. The BSTR operational protocol in [Example -@sec-example_9_6_3], like those in Examples [-@sec-example_9_6_1] and [-@sec-example_9_6_2], consists of a single stage, but unlike the other examples, the reacting fluid is a gas and not a liquid. [Example -@sec-example_9_6_4] illustrates a situation where there are multiple stages in the operating protocol. It also considers turnaround time and the net rate of reaction.
+The examples in this section illustrate the analysis of isolated BSTRs. Examples [-@sec-example_9_6_1] and [-@sec-example_9_6_2] are response assignments where the assignment specifies a sufficient number of quantities so that the reactor design equations can be solved to find the quantities of interest. In [Example -@sec-example_9_6_1] the BSTR design equations are IVODEs while in [Example -@sec-example_9_6_2] they are DAEs. In addition to illustrating the computational procedure for these two types of equations, [Example -@sec-example_9_6_1] involves a single reaction taking place in an adiabatic BSTR while [Example -@sec-example_9_6_2] features two reactions taking place in a BSTR that is cooled using an exchange fluid.
+
+Examples [-@sec-example_9_6_3] and [-@sec-example_9_6_4] are optimization assignments that identify a reactor variable that must be maximized or minimized by specifying a reactor input. The BSTR operational protocol in [Example -@sec-example_9_6_3], like those in Examples [-@sec-example_9_6_1] and [-@sec-example_9_6_2], consists of a single stage, but unlike the other examples, the reacting fluid is a gas and not a liquid. [Example -@sec-example_9_6_4] illustrates a situation where there are multiple stages in the operating protocol. It also considers turnaround time and the net rate of reaction.
 
 ### Concentration, Temperature and Rate Profiles during Adiabatic Operation of a BSTR {#sec-example_9_6_1}
 
@@ -183,7 +185,7 @@ A + B \rightarrow Y + Z \tag{1}
 $$
 
 $$
-r_1 = k_1C_AC_B \tag{2}
+r = kC_AC_B \tag{2}
 $$
 
 ---
@@ -192,21 +194,37 @@ $$
 
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This assignment describes a single BSTR and no other equipment. The rate expression for the reaction taking place in the reactor is provided, and the quantities of interest are reactor variables. I know from [Chapter -@sec-3_react_eng_tasks] that this combination of characteristics identifies this as an isolated ideal reactor modeling assignment.
+This assignment describes a single BSTR and no other equipment. Information about the reaction, rate, and reactor operation are provided. The quantities of interest are related to the final reagent amounts and temperature. This indicates I will need to solve the BSTR design equations for the reactor.
 
-I'll start by summarizing the given constants, the reactor type and operation, and the quantities of interest. I will use appropriate variable symbols for each quantity, e. g. $n$ for molar amounts, $T$ for temperatures, etc. For quantities that are initial values, I will add a subscripted "0" and for final values I will add a subscripted "f". I'll also add the ideal gas constant to the given constants. Numerical solution of the design equations will yield sets of corresponding values of the independent and dependent variables that span the range from their initial values to their final values. I'll use $n_A\left(t\right)$, etc. to represent those quantities of interest.
+I'll start by summarizing the information provided in the assignment narrative. I will use a subscripted "0" to denote initial values and a subscripted "f" to denote final values. I'll also add the ideal gas constant to the given constants. Numerical solution of the design equations will yield sets of corresponding values of the independent and dependent variables that span the range from their initial values to their final values. I'll use underlined variable symbols, e. g. $\underline{t}$, to represent sets of values.
 
 :::
 
 #### Assignment Summary
 
-**Given and Known Constants**: $\Delta H_1$ = -101.2 kJ mol^-1^, $k_{0,1}$ = 5.11 x 10^4^ L mol^-1^ s^-1^, $E_1$ = 74.8 kJ mol^-1^, $V$ = 1900 L, $T_0$ = (180 + 273.15) K, $C_{A,0}$ = 2.9 mol L^-1^, $C_{B,0}$ = 3.2 mol L^-1^, $\tilde{C}_p$ = 1.23 cal g^-1^ K^-1^, $\rho$ = 1.02 g cm^-3^, $t_f$ = 2 h, and $R$ = 8.314 J mol^-1^ K^-1^.
+**Reaction:** 
 
-**Reactor System**: Adiabatic BSTR with a 1-stage operational protocol.
+$$
+A + B \rightarrow Y + Z \tag{1}
+$$
 
-**Quantities of Interest**: $C_A\left(t\right)$, $C_B\left(t\right)$, $C_Y\left(t\right)$, $C_Z\left(t\right)$, $T\left(t\right)$, and $r\left(t\right)$ as graphs.
+**Rate Expression:** 
 
-#### Mathematical Formulation of the Solution
+$$
+r = kC_AC_B \tag{2}
+$$
+
+**Reactor System:** Adiabatic BSTR
+
+**Reactor Schematic:** 
+
+![A closed (batch), adiabatic stirred tank reactor.](Graphics/bstr_adiabatic.png){#fig-closed_stirred_tank_reactor width="30%"}
+
+**Quantities of Interest**: $\underline{C}_A$, $\underline{C}_B$, $\underline{C}_Y$, $\underline{C}_Z$, $\underline{T}$, and $\underline{r}$ *vs*. $\underline{t}$ as graphs.
+
+**Given and Known Constants**: $\Delta H_1$ = -101.2 kJ mol^-1^, $k_{0}$ = 5.11 x 10^4^ L mol^-1^ s^-1^, $E$ = 74.8 kJ mol^-1^, $V$ = 1900 L, $T_0$ = (180 + 273.15) K, $C_{A,0}$ = 2.9 mol L^-1^, $C_{B,0}$ = 3.2 mol L^-1^, $\tilde{C}_p$ = 1.23 cal g^-1^ K^-1^, $\rho$ = 1.02 g cm^-3^, $t_f$ = 2 h, and $R$ = 8.314 J mol^-1^ K^-1^.
+
+#### Generation of the Model Equations
 
 :::{.callout-tip collapse="true"}
 
@@ -218,53 +236,55 @@ $$
 \frac{dn_i}{dt} = V \sum_j \nu_{i,j}r_j \qquad \Rightarrow \qquad \frac{dn_i}{dt} = V \nu_i r
 $$
 
-This BSTR is not isothermal, so the mole balances cannot be solved independently of an energy balance on the reacting fluid, @eq-bstr_energy_balance. In this assignment the reacting fluid is a liquid which I will assume to be an incompressible ideal solution. Consequently, the reacting fluid volume and the total pressure are constant, and their time derivatives are equal to zero. The reactor is adiabatic, so the rate of heat input, $\dot{Q}$, is equal to zero. There are no shafts or moving boundaries other than the agitator, and the rate at which it performs work is negligible, so $\dot{W}$ is also equal to zero. With only one reaction taking place, the summation over the reactions reduces to a single term. This assignment provides the mass-specific heat capacity of the entire solution, so the sensible heat term can be re-written using that heat capacity, @eq-bstr_equivalent_sens_heat_terms. Finally, the energy balance can be put in the form of a derivative expression by dividing both sides by $\rho V \tilde{C}_p$.
+This BSTR is not isothermal, so the mole balances cannot be solved independently of an energy balance on the reacting fluid, @eq-bstr_energy_balance. In this assignment the reacting fluid is a liquid which I will assume to be an incompressible ideal solution. Consequently, the reacting fluid volume and the total pressure are constant, and their time derivatives are equal to zero. The reactor is adiabatic, so the rate of heat input, $\dot{Q}$, is equal to zero. There are no shafts or moving boundaries other than the agitator, and the rate at which it performs work is negligible, so $\dot{W}$ is also equal to zero. With only one reaction taking place, the summation over the reactions reduces to a single term. This assignment provides the mass-specific heat capacity of the entire solution, so the sensible heat term can be re-written using that heat capacity, @eq-bstr_equivalent_sens_heat_terms. Finally, the energy balance can be put in the form of a derivative expression by dividing both sides by $\rho V \tilde{C}_p$. Since only one reaction is taking place, I don't need a subscript on the rate.
 
 $$
 \cancelto{\rho V \tilde{C}_p}{\left(\sum_i n_i \hat C_{p,i} \right)} \frac{dT}{dt} - \cancelto{0}{V\frac{dP}{dt}}  - \cancelto{0}{P\frac{dV}{dt}}  = \cancelto{0}{\dot Q} - \cancelto{0}{\dot W} - V \cancelto{r \Delta H}{\sum_j \left(r_j \Delta H_j \right)}
 $$
 
 $$
-\rho V \tilde{C}_p \frac{dT}{dt} = - V r_1 \Delta H_1
+\rho V \tilde{C}_p \frac{dT}{dt} = - V r \Delta H_1
 $$
 
 $$
-\frac{dT}{dt} = -\frac{V r_1 \Delta H_1}{\rho V \tilde{C}_p}
+\frac{dT}{dt} = -\frac{V r \Delta H_1}{\rho V \tilde{C}_p}
 $$
 
-In this assignment the BSTR operates adiabatically, so there isn't an exchange fluid, and an exchange fluid energy balance cannot be written. Momentum balances are not used with stirred tank reactors. This gives five reactor design equations that contain five dependent variables, so it is not necessary to add an IVODE or eliminate a dependent variable. So for this reactor, the design equation consist of mole balances on A, B, Y, and Z and an energy balance on the reacting fluid.
+In this assignment the BSTR operates adiabatically, so there isn't an exchange fluid, and an exchange fluid energy balance cannot be written. Momentum balances are not used with stirred tank reactors. This gives five reactor design equations that contain five dependent variables, and consequently it is not necessary to add an IVODE or eliminate a dependent variable. So for this reactor, the design equation consist of mole balances on A, B, Y, and Z and an energy balance on the reacting fluid.
 
 :::
 
-**Reactor Design Equations**
+**BSTR Design Equations**
 
 Mole balance design equations for A, B, Y, and Z are presented in equations (3) through (6), and the energy balance on the reacting fluid is given by equation (7).
 
 $$
-\frac{dn_A}{dt} = -r_1V \tag{3}
+\frac{dn_A}{dt} = -rV \tag{3}
 $$
 
 $$
-\frac{dn_B}{dt} = -r_1V \tag{4}
+\frac{dn_B}{dt} = -rV \tag{4}
 $$
 
 $$
-\frac{dn_Y}{dt} = r_1V \tag{5}
+\frac{dn_Y}{dt} = rV \tag{5}
 $$
 
 $$
-\frac{dn_Z}{dt} = r_1V \tag{6}
+\frac{dn_Z}{dt} = rV \tag{6}
 $$
 
 $$
-\frac{dT}{dt} = -\frac{r_1 \Delta H_1}{\rho \tilde{C}_p} \tag{7}
+\frac{dT}{dt} = -\frac{r \Delta H_1}{\rho \tilde{C}_p} \tag{7}
 $$
 
 :::{.callout-tip collapse="true"}
 
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Initial values and a stopping criterion are needed when solving IVODEs. The instant at which the two solutions are charged into the reactor can be defined as $t=0$. The initial values are then the molar amounts of the reagents and the temperature at that instant. The two solutions that were charged to the BSTR did not contain reagent Y or reagent Z, so their initial amounts are zero. The final value of the time in this assignment is 2 h, which I represented as $t_f$ in the list of known constants. Consequently the stopping criterion is that $t=t_f$.
+Initial values and a stopping criterion are needed when solving IVODEs or DAEs. The instant at which the two solutions are charged into the reactor can be defined as $t=0$. The initial values are then the molar amounts of the reagents and the temperature at that instant. The two solutions that were charged to the BSTR did not contain reagent Y or reagent Z, so their initial amounts are zero. The final value of the time in this assignment is 2 h, which I represented as $t_f$ in the list of known constants. Consequently the stopping criterion is that $t=t_f$.
+
+No other final values are known or can be calculated directly, so the design equations are IVODEs. The initial temperature is known, but the initial molar amounts of A and B are not. However they can be calculated directly from the initial concentrations and the fluid volume, which are known.
 
 :::
 
@@ -281,69 +301,56 @@ Initial values and a stopping criterion are needed when solving IVODEs. The inst
   
 : Initial values and stopping criterion for solving the design equations, equations (3) through (7). {#tbl-example_9_6_1_initial_values}
 
+**Supporting Equations for Calculating the Initial and Final Values**
+
+The initial molar amounts of A and B in @tbl-example_9_6_1_initial_values can be calculated using equations (8) and (9).
+
+$$
+n_{A,0} = C_{A,0}V \tag{8}
+$$
+
+$$
+n_{B,0} = C_{B,0}V \tag{9}
+$$
+
+
 :::{.callout-tip collapse="true"}
 
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_9_6_1_initial_values.
+To solve the IVODEs numerically I'll need to write a derivatives function. It will receive $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$ for the current integration step as arguments, and must return the derivatives calculated using equations (3) through (7). Looking at those equations, all of the other quantities except $r$ are known, so before I can evaluate the derivatives, I need to calculate $r$. 
 
-I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. The design equations are in the form of derivative expressions, so no further manipulation is needed.
-
-I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
-
-Here, the only other variable is $r_1$. The assignment provides the rate expression, equation (2), which can be used to calculate $r_1$. However, the rate expression contains the rate coefficient, $k_1$, and the concentrations of A and B. They, too, will need to be calculated before $r_1$ can be calculated. The rate coefficient can be calculated using the Arrhenius expression, @eq-arrhenius. The defining equation for concentration in a closed system, @eq-concentration_closed, can be used to calculate the concentrations of A and B.
+The assignment provides the rate expression, equation (2), which can be used to calculate $r$, but the rate expression contains the rate coefficient, $k$, and the concentrations of A and B. They, too, will need to be calculated before $r$ can be calculated. The rate coefficient can be calculated using the Arrhenius expression, @eq-arrhenius. The defining equation for concentration in a closed system, @eq-concentration_closed, can be used to calculate the concentrations of A and B.
 
 :::
 
 **Ancillary Equations for Evaluating the Derivatives**
 
-The rate, $r_1$, appearing in the reactor design equations can be calculated using the given rate expression, equation (2). The rate coefficient, $k_1$, appearing in equation (2) can be calculated using the Arrhenius expression, equation (8). The concentrations can be calculated using equations (9) and (10).
+The rate, $r$, appearing in the reactor design equations can be calculated using the given rate expression, equation (2). The rate coefficient, $k$, appearing in equation (2) can be calculated using the Arrhenius expression, equation (10). The concentrations can be calculated using equations (11) and (12).
 
 $$
-k = k_{0,1}\exp{\left( \frac{-E_1}{RT} \right)} \tag{8}
-$$
-
-$$
-C_A = \frac{n_A}{V} \tag{9}
+k = k_{0}\exp{\left( \frac{-E}{RT} \right)} \tag{10}
 $$
 
 $$
-C_B = \frac{n_B}{V} \tag{10}
-$$
-
-
-
-:::{.callout-tip collapse="true"}
-
-## Click Here to See What an Expert Might be Thinking at this Point
-
-When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_9_6_1_initial_values. Checking the the given and known constants in the assignment summary shows that the initial values, $n_{A,0}$ and $n_{B,0}$ are not known. The assignment does provide the initial *concentrations* of A and B and the fluid volume, so I can calculate the initial molar amounts using the defining equation for concentration.
-
-:::
-
-**Ancillary Equations for Calculating the Initial and Final Values**
-
-The initial molar amounts of A and B in @tbl-example_9_6_1_initial_values can be calculated using equations (11) and (12).
-
-$$
-n_{A,0} = C_{A,0}V \tag{11}
+C_A = \frac{n_A}{V} \tag{11}
 $$
 
 $$
-n_{B,0} = C_{B,0}V \tag{12}
+C_B = \frac{n_B}{V} \tag{12}
 $$
 
 :::{.callout-tip collapse="true"}
 
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-At this point the IVODEs can be solved for $n_A\left(t\right)$, $n_B\left(t\right)$, $n_Y\left(t\right)$, $n_Z\left(t\right)$, and $T\left(t\right)$ in the range from $t=0$ to $t=t_f$. Only one of those results, $T\left(t\right)$ is a quantity of interest. All the other quantities of interest still need to be calculated. Yet again, the defining equation for concentration can be used to calculate the concentrations. The instantaneous rate can then be calculated using the rate expression.
+At this point the IVODEs can be solved numerically to obtain corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$ spanning the range from their initial to their final values. $\underline{T}$ and $\underline{t}$ are two of the quantities of interest needed to make one of the requested graphs, but the others need to be calculated using the results from solving the IVODEs. Again, the defining equation for concentration in a closed system, @eq-concentration_closed, can be used to calculate the concentrations. The instantaneous rate can then be calculated using the rate expression.
 
 :::
 
-**Ancillary Equations for Calculating Other Quantities of Interest**
+#### Calculating the Quantities of Interest
 
-With the information given above, equations (3) through (7) can be solved for corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$ that span the range from their initial values to their final values. The concentrations of A, B, Y, and Z, at each time can then be calculated using equations (9), (10), (13), and (14). Then, knowing $C_A$, $C_B$, and $T$, at each time, the instantaeous rate in that range can be calculated using the Arrhenius expression, equation (8), and the rate expression, equation (2).
+With the information given above, equations (3) through (7) can be solved for corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$ that span the range from their initial values to their final values. The concentrations of A, B, Y, and Z, at each time can then be calculated using equations (11), (12), (13), and (14). Then, knowing $C_A$, $C_B$, and $T$, at each time, the instantaeous rate in that range can be calculated using the Arrhenius expression, equation (10), and the rate expression, equation (2).
 
 $$
 C_Y = \frac{n_Y}{V} \tag{13}
@@ -353,56 +360,196 @@ $$
 C_Z = \frac{n_B}{V} \tag{14}
 $$
 
-**Calculations Summary**
+#### Formulation of the Calculations
 
-1. Substitute given and known constants into all equations.
-2. When it is necessary to evaluate the derivatives
-	a. $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$ will be available.
-	b. Calculate $k_1$, $C_A$ and $C_B$ using equations (8), (9), and (10),
-	b. Calculate $r_1$ using equation (2), and
-	c. Calculate the values of the derivatives using equations (3) through (7).
-3. When it is necessary to calculate the initial and final values in @tbl-example_9_6_1_initial_values
-	a. $T_0$ and $t_f$ are known constants.
-	b. Calculate the initial values, $n_{A,0}$ and $n_{B,0}$, use equations (11) and (12).
-4. When it is necessary to calculate the quantities of interest, $C_A\left(t\right)$, $C_B\left(t\right)$, $C_Y\left(t\right)$, $C_Z\left(t\right)$, $T\left(t\right)$, and $r\left(t\right)$
-	a. Corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$, spanning the range from their initial values to their final values will be available.
-	b. Calculate corresponding values of $k_1$, $C_A$, $C_B$, $C_Y$, and $C_Z$ using equations (8), (9), (10), (13), and (14).
-	c. Calculate corresponding values of $r_1$ using equation (2).
+To complete the assignment, the BSTR design equations are solved first, and then the quantities of interest are calculated and the requested graphs are generated. The BSTR design equations are IVODEs, and they can be solved numerically as described in [Appendix -@sec-apndx_solve_ivodes] by writing a derivatives function and a BSTR function. A deliverables function can be added to calculate the quantities of interest and generate the graphs.
 
-#### Numerical Implementation of the Solution
+* The derivatives function must receive the independent and dependent variables at the start of an integration step as arguments, and it must return the derivatives of the dependent variables. To do so it must calculate the rate before it can evaluate the derivatives.
+* The BSTR function does not need any arguments to calculate and return corresponding sets of values of the independent and dependent variables spanning the interval from $t_0$ to $t_f$. To do so it must define the initial values and stopping criterion and then pass them to an IVODE solver along with the derivatives function.
+* The deliverables function does not need any arguments, and it doesn't return anything. It calls the BSTR function, uses the results it returns to calculate the quantities of interest, and generates the requested graphs.
 
-1. Make the given and known constants available for use in all functions.
-2. Write a derivatives function that
-	a. receives the independent and dependent variables, $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$, as arguments,
-	b. evaluates the derivatives as described in step 2 of the calculations summary, and 
-	c. returns the resulting values of the derivatives.
-3. Write a reactor model function that
-	a. calculates the initial and final values in @tbl-example_9_6_1_initial_values as described in step 3 of the calculations summary,
-	b. gets corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
-		i. the initial values and stopping criterion in @tbl-example_9_6_1_initial_values and
-		ii. the name of the derivatives function from step 2 above,
-	c, checks that the solver successfully solved the IVODEs, and
-	d. returns the values returned by the IVODE solver.
-6. Perform the analysis by
-	a. calling the reactor model function from step 3 to get sets of values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$,
-	b. calculating the other quantities of interest, $C_A$, $C_B$, $C_Y$, $C_Z$, and $r_1$, as described in step 4 of the calculation summary, and
-	d. generating the requested graphs.
+Specifications can be written for each of these functions in preparation for writing them. The function specifications given here assume that the known constants are available wherever they are needed.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See the Derivatives Function Specifications
+
+<center>**Derivatives Function Specifications**</center>
+
+[Arguments]{.underline}: $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$
+
+[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_B}{dt}$, $\frac{dn_Y}{dt}$, $\frac{dn_Z}{dt}$, and $\frac{dT}{dt}$
+
+[Algorithm]{.underline}:
+
+$$
+k = k_{0}\exp{\left( \frac{-E}{RT} \right)} \tag{10}
+$$
+
+$$
+C_A = \frac{n_A}{V} \tag{11}
+$$
+
+$$
+C_B = \frac{n_B}{V} \tag{12}
+$$
+
+$$
+r = kC_AC_B \tag{2}
+$$
+
+$$
+\frac{dn_A}{dt} = -rV \tag{3}
+$$
+
+$$
+\frac{dn_B}{dt} = -rV \tag{4}
+$$
+
+$$
+\frac{dn_Y}{dt} = rV \tag{5}
+$$
+
+$$
+\frac{dn_Z}{dt} = rV \tag{6}
+$$
+
+$$
+\frac{dT}{dt} = -\frac{r \Delta H_1}{\rho \tilde{C}_p} \tag{7}
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+
+## Click Here to See the BSTR Function Specifications
+
+<center>**BSTR Function Specifications**</center>
+
+[Arguments]{.underline}: none
+
+[Returns]{.underline}: $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_Y$, $\underline{n}_Z$, and $\underline{T}$
+
+[Algorithm]{.underline}:
+
+$$
+t_{initial} =0 \tag{15}
+$$
+
+$$
+n_{A,initial} = n_{A,0} = C_{A,0}V \tag{8}
+$$
+
+$$
+n_{B,initial} = n_{B,0} = C_{B,0}V \tag{9}
+$$
+
+$$
+n_{Y,initial} = 0 \tag{16}
+$$
+
+$$
+n_{Z,initial} = 0 \tag{17}
+$$
+
+$$
+T_{initial} = T_0 \tag{18}
+$$
+
+$$
+t_{final} = t_f \tag{19}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+t_{initial}, n_{A,initial}, n_{B,initial}, n_{Y,initial}, \\
+n_{Z,initial}, T_{initial}, t_{final}, \text{derivatives function}\\
+\Downarrow \\
+\text{IVODE solver} \\
+\Downarrow \\
+\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T}
+\end{matrix} \tag{20}
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+
+## Click Here to See the Deliverables Function Specifications
+
+<center>**Deliverables Function Specifications**</center>
+
+[Arguments]{.underline}: none
+
+[Returns]{.underline}: nothing
+
+[Algorithm]{.underline}:
+
+$$
+\begin{matrix}
+\text{BSTR function} \\
+\Downarrow \\
+\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T}
+\end{matrix} \tag{21}
+$$
+
+&nbsp;
+
+$$
+\underline{C}_A = \frac{\underline{n}_A}{V} \tag{11}
+$$
+
+$$
+\underline{C}_B = \frac{\underline{n}_B}{V} \tag{12}
+$$
+
+$$
+\underline{C}_Y = \frac{\underline{n}_Y}{V} \tag{13}
+$$
+
+$$
+\underline{C}_Z = \frac{\underline{n}_Z}{V} \tag{14}
+$$
+
+$$
+\underline{k} = k_{0}\exp{\left( \frac{-E}{R\underline{T}} \right)} \tag{10}
+$$
+
+$$
+\underline{r} = \underline{k} \underline{C}_A \underline{C}_B \tag{2}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\underline{t}, \underline{C}_A, \underline{C}_B, \\
+\underline{C}_Y, \underline{C}_Z, \underline{T} \\
+\Downarrow \\
+\text{plotting function} \\
+\Downarrow \\
+\text{requested graphs}
+\end{matrix} \tag{22}
+$$
+
+:::
+
+#### Implementation and Execution of the Calculations
+
+The computer functions above were written as specified using an appropriate mathematics software package. The calculations were then performed by calling the deliverables function.
 
 #### Results and Discussion
 
-The calculations were performed as described above. The variation of concentrations of reagents, A, B, Y, and Z, during the first two hours of operation of the BSTR are shown in  @fig-example_9_6_1_concentrations. The variation of the reacting fluid temperature during that period is shown in @fig-example_9_6_1_temperatures, and the variation of the instantaneous rate is shown in @fig-example_9_6_1_rates.
+The variation of concentrations of reagents, A, B, Y, and Z, during the first two hours of operation of the BSTR are shown in  @fig-example_9_6_1_concentrations. The variation of the reacting fluid temperature during that period is shown in @fig-example_9_6_1_temperatures, and the variation of the instantaneous rate is shown in @fig-example_9_6_1_rates.
 
 ![Concentrations *versus* reaction time.](Calculations/example_9_6_1/concentrations.png){#fig-example_9_6_1_concentrations width="60%"}
 
 ![Temperature *versus* reaction time.](Calculations/example_9_6_1/temperature.png){#fig-example_9_6_1_temperatures width="60%"}
 
-![Rate *versus* reaction time.](Calculations/example_9_6_1/rate.png){#fig-example_9_6_1_rates width="60%"}
+![Instantaneous rate *versus* reaction time.](Calculations/example_9_6_1/rate.png){#fig-example_9_6_1_rates width="60%"}
 
-The concentrations of the reactants, A and B, decrease monotonically during the first two hours of operation while the concentrations of the products, Y and Z, increase. The temperature increases steadily, too. The variation of the reaction rate is different. Initially it increases, but then it passes through a maximum after which it steadily decreases.
-
-**Qualitative Analysis**
-
-A qualitative analysis shows that the variations in the concentrations, temperature and rate seen in Figures [-@fig-example_9_6_1_concentrations], [-@fig-example_9_6_1_temperatures], and [-@fig-example_9_6_1_rates] are expected. At $t=0$, the concentrations of the reagents and the temperature are all at their initial values. 
+The concentrations of the reactants, A and B, decrease monotonically during the first two hours of operation while the concentrations of the products, Y and Z, increase. The temperature increases steadily, too. The variation of the reaction rate is different. Initially it increases, but then it passes through a maximum after which it steadily decreases. A qualitative analysis shows that the variations in the concentrations, temperature and rate seen in Figures [-@fig-example_9_6_1_concentrations], [-@fig-example_9_6_1_temperatures], and [-@fig-example_9_6_1_rates] are expected. At $t=0$, the concentrations of the reagents and the temperature are all at their initial values. 
 
 At that point the rate is positive, so *after a short interval of time* the concentrations of A and B will have decreased slightly and the concentrations of Y and Z will have increased slightly due to the occurrence of the reaction. Because the reaction is exothermic and the reactor operates adiabatically, the temperature will have increased due to the heat released by the reaction.
 
@@ -418,28 +565,70 @@ At the point where the rate reaches its maximum value, the concentration and tem
 
 ### Parallel Reaction Selectivity in a Cooled BSTR with an Unknown Initial Temperature {#sec-example_9_6_2}
 
-{{< include examples/reb_9_6_2/narrative.qmd >}}
+A jacketed, 10 L BSTR is going to be used to process an aqueous solution of A and B. The reactor jacket is perfectly mixed with a volume of 1400 cm^3^, a heat transfer coefficient of 138 cal ft^−2^ min^−1^ K^−1^ and a heat transfer area of 1200 cm^2^. Cooling water at 40 °C flows into the jacket at a rate of 100 g min^-1^. Both the reacting fluid and the cooling water may be taken to have a density of 1 g cm^−3^ and a heat capacity of 1 cal g^−1^ K^−1^. 
 
-{{< include examples/reb_9_6_2/equations.qmd >}}
+Solutions containing A, B, X, Y, and Z are ideal and there is no heat of mixing. The reactor will be charged by mixing two separate solutions, one containing only reagent A and the other containing only reagent B, giving a 10 L charge with initial concentrations of 5 mol A L^-1^ and 7 mol B L^-1^. At the time the reactor is charged, the cooling water temperature is 40 °C. Reactions (1) and (2) will occur in the reactor. The heat of reaction (1) is −16.7 kcal mol^−1^, and that for reaction (2) is −14.3 kcal mol^−1^. The rate expression for reaction (1) is given in equation (3) where the pre-exponential factor is 9.74 x 10^9^ L mol^−1^ min^−1^ and the activation energy is 20.1 kcal mol^−1^. The rate expression for reaction (2) is given in equation (4) where the pre-exponential factor is 2.38 x 10^13^ min^−1^ and the activation energy is 25.3 kcal mol^−1^.
+
+What initial temperature is needed in order to convert 45% of the A in 30 min, and with that initial temperature what will the final temperature, the outlet exchange fluid temperature, and the selectivity for X over Z equal? Discuss ways to increase the selectivity.
+
+$$
+A + B \rightarrow X + Y \tag{1}
+$$
+
+$$
+A \rightarrow Z \tag{2}
+$$
+
+$$
+r_1 = k_1C_AC_B \tag{3}
+$$
+
+$$
+r_2 = k_2C_A \tag{4}
+$$
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This is an isolated reactor modeling assignment: the system consists of only a reactor, it's operation is described, the rate expressions are known and it asks about reactor inputs and outputs. I'll begin by summarizing the assignment. I'll use appropriate variable symbols to represent the given constants. For initial values I'll add a subscripted "0" and for final values a subscripted "f". I'll denote the temperature of the cooling water in the jacked as $T_{ex}$. Thus, $T_{ex,0}$ is the initial temperature of the cooling water in the jacket. Unlike the reactants, cooling water flows into the jacket continuously, so I'll use $T_{ex,in}$ to represent the temperature of the cooling water entering the jacket. I will add the ideal gas constant to the given constants.
+This is an isolated reactor modeling assignment: the system consists of only a reactor, it's operation is described, the rate expressions are known and it asks about reactor inputs and outputs. I'll begin by summarizing the assignment. I'll use appropriate variable symbols to represent the given constants. For initial values I'll add a subscripted "0" and for final values a subscripted "f". Cooling water flows into the jacket continuously, so I'll denote the temperature of the cooling water entering the jacket as $T_{ex,in}$ and the temperature leaving the jacket as $T_{ex,out}$. Because the jacket is perfectly mixed, $T_{ex,out,0}$ is the initial temperature of the cooling water in the jacket. I will add the ideal gas constant to the given constants.
 
 :::
 
 #### Assignment Summary
 
-**Given and Known Constants**: $V$ = 10 L, $V_{ex}$ = 1.4 L, $U$ = 138 cal ft^-2^ min^-1^ K^-1^, $A$ = 1200 cm^2^, $T_{ex,in}$ = 40 °C, $\dot{m}_{ex}$ = 100 g min^-1^, $\rho$ = 1.0 g cm^-3^, $\rho_{ex}$ = 1.0 g cm^-3^, $\tilde{C}_p$ = 1.0 cal g^-1^ K^-1^, $\tilde{C}_{p,ex}$ = 1.0 cal g^-1^ K^-1^, $C_{A,0}$ = 5.0 M, $C_{B,0}$ = 7.0 M, $T_{ex,0}$ = 40 °C, $\Delta H_1$ = -16.7 kcal mol^-1^, $\Delta H_2$ = -14.3 kcal mol^-1^, $k_{0,1}$ = 9.74 x 10^9^ L mol^-1^ min^-1^, $E_1$ = 20.1 kcal mol^-1^, $k_{0,2}$ = 2.38 x 10^13^ min^-1^, $E_2$ = 25.3 kcal mol^-1^, $f_{A,f}$ = 0.45, $t_f$ = 30 min, and $R$ = 1.987 cal mol^-1^ K^-1^.
+**Reactions**:
 
-**Reactor System**: Cooled BSTR with a 1-stage operating protocol.
+$$
+A + B \rightarrow X + Y \tag{1}
+$$
 
-**Quantities of Interest**: $T_0 : f_A \big \vert_{t=tf} = f_{A,f}$, $T_f$, $T_{ex,f}$, and $S_{X/Z,f}$
+$$
+A \rightarrow Z \tag{2}
+$$
 
-#### Mathematical Formulation of the Solution
+**Rate Expressions**:
+
+$$
+r_1 = k_1C_AC_B \tag{3}
+$$
+
+$$
+r_2 = k_2C_A \tag{4}
+$$
+
+**Reactor System**: Cooled BSTR.
+
+**Reactor Schematic**:
+
+![A closed (batch), non-adiabatic stirred tank reactor.](Graphics/bstr_non_adiabatic.png){#fig-closed_stirred_tank_reactor width="30%"}
+
+**Quantities of Interest**: $T_0$, $T_f$, $T_{ex,f}$, and $S_{X/Z,f}$
+
+**Given and Known Constants**: $V$ = 10 L, $V_{ex}$ = 1.4 L, $U$ = 138 cal ft^-2^ min^-1^ K^-1^, $A$ = 1200 cm^2^, $T_{ex,in}$ = 40 °C, $\dot{m}_{ex}$ = 100 g min^-1^, $\rho$ = 1.0 g cm^-3^, $\rho_{ex}$ = 1.0 g cm^-3^, $\tilde{C}_p$ = 1.0 cal g^-1^ K^-1^, $\tilde{C}_{p,ex}$ = 1.0 cal g^-1^ K^-1^, $C_{A,0}$ = 5.0 M, $C_{B,0}$ = 7.0 M, $T_{ex,out,0}$ = 40 °C, $\Delta H_1$ = -16.7 kcal mol^-1^, $\Delta H_2$ = -14.3 kcal mol^-1^, $k_{0,1}$ = 9.74 x 10^9^ L mol^-1^ min^-1^, $E_1$ = 20.1 kcal mol^-1^, $k_{0,2}$ = 2.38 x 10^13^ min^-1^, $E_2$ = 25.3 kcal mol^-1^, $f_{A,f}$ = 0.45, $t_f$ = 30 min, and $R$ = 1.987 cal mol^-1^ K^-1^.
+
+#### Generation of the Model Equations
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -463,20 +652,20 @@ $$
 The reactor is cooled with chilled water which gains sensible heat from the reacting fluid, so an energy balance on that exchange fluid is necessary and is given by @eq-exchange_energy_bal_sensible.
 
 $$
-\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot Q - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex}} \tilde C_{p,ex}dT
+\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex,out}}{dt} = -\dot Q - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex,out}} \tilde C_{p,ex}dT
 $$
 
-The exchange fluid heat capacity is constant, making the evaluation of the integral trivial. Dividing both sides of the exchange fluid energy balance by $\rho_{ex} V_{ex} \tilde C_{p,ex}$ then puts it in the form of a derivative expression.
+The exchange fluid heat capacity is constant, making the evaluation of the integral trivial. 
 
 $$
-\dot m_{ex}\int_{T_{ex,in}}^{T_{ex}} \tilde C_{p,ex}dT \Rightarrow \dot m_{ex}\tilde C_{p,ex}\left( T_{ex} - T_{ex,in} \right)
+\dot m_{ex}\int_{T_{ex,in}}^{T_{ex,out}} \tilde C_{p,ex}dT \Rightarrow \dot m_{ex}\tilde C_{p,ex}\left( T_{ex,out} - T_{ex,in} \right)
 $$
 
-Momentum balances are not used with BSTRS so the full set of design equations consists of mole balances on each of the reagents, A, B, X, Y, and Z, an energy balance on the reacting fluid, and an energy balance on the exchange fluid. They consist of seven IVODEs containing seven dependent variables, so it isn't necessary to add an IVODE or eliminate a dependent variable.
+Dividing both sides of the exchange fluid energy balance by $\rho_{ex} V_{ex} \tilde C_{p,ex}$ then puts it in the form of a derivative expression. Momentum balances are not used with BSTRS so the full set of design equations includes mole balances on each of the reagents, A, B, X, Y, and Z, an energy balance on the reacting fluid, and an energy balance on the exchange fluid. They consist of seven ODEs containing seven dependent variables, so it isn't necessary to add an ODE or eliminate a dependent variable.
 
 :::
 
-**Reactor Design Equations**
+**BSTR Design Equations**
 
 Mole balance design equations for A, B, X, Y, and Z are presented in equations (5) through (9). An energy balance on the reacting fluid is given by equation (10), and an energy balance on the exchange fluid is given by equation (11).
 
@@ -505,13 +694,17 @@ $$
 $$
 
 $$
-\frac{dT_{ex}}{dt} = \frac{-\dot Q - \dot m_{ex} \tilde C_{p,ex}\left(T_{ex} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}} \tag{11}
+\frac{dT_{ex,out}}{dt} = \frac{-\dot Q - \dot m_{ex} \tilde C_{p,ex}\left(T_{ex,out} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}} \tag{11}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Initial values and a stopping ctierion are needed when solving IVODEs numerically. The instant the fluids are mixed in the reactor can be defined as $t=0$. The molar amounts of A, B, X, Y, and Z, the reacting fluid temperature, and the exhhange fluid temperature at that moment are then the initial values. The solutions charged to the reactor did not contain X, Y, or Z, so their initial values are zero. The assignment provides two final values, $f_{A,f}$ and $t_f$. I will use $t_f$ to define the stopping criterion.
+Initial values and a stopping ctierion are needed when solving IVODEs or DAEs numerically. The instant the fluids are mixed in the reactor can be defined as $t=0$. The molar amounts of A, B, X, Y, and Z, the reacting fluid temperature, and the exhhange fluid temperature at that moment are then the initial values. The solutions charged to the reactor did not contain X, Y, or Z, so their initial values are zero. The assignment provides the final value of $t_f$, which I will use to define the stopping criterion.
+
+The initial values of $n_A$ and $n_B$ can be calculated directly from their known initial concentrations and the fluid volume, using the defining equation for concentration in a closed system, @eq-concentration_closed. The initial value of $T$ is not known and cannot be calculated directly, but a second final value, that of $n_A$, can, by using its known conversion.
+
+This makes the design equations DAEs because the initial value of one dependent variable is unknown, but two final values are known. As described in [Appendix -@sec-apndx_solve_daes], that means I also need to write an implicit ATE relating the known final value of $n_A$ to the unknown initial temperature. Since the ATE will be solved numerically, I will write it in the form of a residual expression.
 
 :::
 
@@ -526,20 +719,38 @@ Initial values and a stopping ctierion are needed when solving IVODEs numericall
 | $n_Y$ | $0$ | |
 | $n_Z$ | $0$ | |
 | $T$ | $T_0$ | |
-| $T_{ex}$ | $T_{ex,0}$ | |
+| $T_{ex,out}$ | $T_{ex,out,0}$ | |
   
 : Initial values and stopping criterion for solving design equations, (5) through (11). {#tbl-example_9_6_2_initial_values}
+
+**Supporting Equations for Calculating the Initial and Final Values**
+
+$$
+n_{A,0} = C_{A,0}V \tag{12}
+$$
+
+$$
+n_{B,0} = C_{B,0}V \tag{13}
+$$ 
+
+$$
+n_{A,f} = n_{A,0} \left( 1 - f_{A,f} \right) \tag{14}
+$$
+
+**Implicit ATE Relating $T_0$ to $n_{A,f}$**
+
+$$
+T_0 \, : \, n_A\big\vert_{t = t_f} = n_{A,f} \qquad \Rightarrow \qquad \epsilon_{T_0} = n_A\big\vert_{t = t_f} - n_{A,f}\tag{15}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_9_6_2_initial_values.
+To solve the DAEs numerically, I'll need to write a derivatives function and a residuals function. The residuals function will be passed a guess for $T_0$ as an argument, and it must return the residual $\epsilon_{T_0}$. To do so, it must define the initial values and stopping criterion as already described. Then it will call an IVODE solver to solve the BSTR design equations, and use the final value of $n_A$ that the solver returns to evaluate the residual, equation (15).
 
-I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. The design equations are in the form of derivatives expressions, so it is not necessary to modify them.
+The derivatives function will be passed values of the independent and dependent variables, $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex,out}$, at the start of an integration step as arguments. It must return the derivatives of the dependent variables, calculated using equations (5) through (11). Before it can do that, it will need to calculate any additional unknowns that appear in the derivatives expressions. Upon examination of equations (5) through (11), I see that $r_1$, $r_2$, and $\dot{Q}$ are additional unknowns.
 
-I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
-
-The only other variables that appear in the design equations are $r_1$, $r_2$, and $\dot{Q}$. The two rates, $r_1$ and $r_2$ can be calculated using the rate expressions, equation (3) and (4). The rate expressions contains four additional variables that will need to be calculated, $k_1$, $k_2$, $C_A$ and $C_B$. The rate coefficients can be calculated using the Arrhenius expression, @eq-arrhenius. The concentrations can be calculated using the defining equation for concentration in a closed system, @eq-concentration_closed.
+The two rates, $r_1$ and $r_2$, can be calculated using the rate expressions, equation (3) and (4). The rate expressions contain four additional variables that will need to be calculated, $k_1$, $k_2$, $C_A$ and $C_B$. The rate coefficients can be calculated using the Arrhenius expression, @eq-arrhenius. The concentrations can be calculated using the defining equation for concentration in a closed system, @eq-concentration_closed.
 
 The rate of heat exchange, $\dot{Q}$, can be calculated using the given heat transfer coefficient, $U$, and heat transfer area, $A$, using @eq-heat-trans-rate.
 
@@ -548,171 +759,334 @@ The rate of heat exchange, $\dot{Q}$, can be calculated using the given heat tra
 **Ancillary Equations for Evaluating the Derivatives**
 
 $$
-k_1 = k_{0,1}\exp{\left( \frac{-E_1}{RT} \right) } \tag{12}
+k_1 = k_{0,1}\exp{\left( \frac{-E_1}{RT} \right) } \tag{16}
 $$
 
 $$
-k_2 = k_{0,2}\exp{\left( \frac{-E_2}{RT} \right) } \tag{13}
+k_2 = k_{0,2}\exp{\left( \frac{-E_2}{RT} \right) } \tag{17}
 $$
 
 $$
-C_A = \frac{n_A}{V} \tag{14}
+C_A = \frac{n_A}{V} \tag{18}
 $$
 
 $$
-C_B = \frac{n_B}{V} \tag{15}
+C_B = \frac{n_B}{V} \tag{19}
 $$
 
 $$
-\dot{Q} = UA\left(T_{ex} - T \right) \tag{16}
-$$
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_9_6_2_initial_values. The initial molar amounts of A and B can be calculated using their given initial concentrations and the reacting fluid volume. The final value, $t_f$, is a given constant. However, the initial value of the temperature is not known and it can't be calculated directly from the other given constants.
-
-The other given final value, $f_{A,f}$, can be used to write an implicit equation for $T_0 : f_A \big \vert_{t=tf} = f_{A,f}$ (see @sec-apndx_solve_ivodes). The conversion in a closed system is defined by @eq-conversion_def_closed. Rearranging that equation gives an expression for the final molar amount of A. 
-
-$$
-n_{A,f} = n_{A,0} \left( 1 - f_{A,f} \right)
-$$
-
-The final molar amount of A found by solving the design equations, $n_A \big \vert_{t=t_f}$, will only equal $n_{A,f}$ when the design equations are solved using the desired initial temperature, $T_0$. This can be expressed as an implicit equation for $T_0$, and written in the form of a residual expression (see @sec-apndx_solve_ivodes).
-
-:::
-
-**Ancillary Equations for Calculating the Initial and Final Values**
-
-Equations (17) - (19) can be used to calculate the initial molar amounts. Equation (20) is an implicit equations that can be solved to find the initial value of the temperature. In that equation, $n_A \big \vert_{t=t_f}$ is the final molar amount of A predicted by the design equations and $n_{A,f}$ is the specified final molar amount of A calculated using equation (19).
-
-$$
-n_{A,0} = C_{A,0}V \tag{17}
-$$
-
-$$
-n_{B,0} = C_{B,0}V \tag{18}
-$$ 
-
-$$
-n_{A,f} = n_{A,0} \left( 1 - f_{A,f} \right) \tag{19}
-$$
-
-$$
-0 = n_A \big \vert_{t=t_f} - {n_{A,f}} = \epsilon \tag{20}
+\dot{Q} = UA\left(T_{ex,out} - T \right) \tag{20}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-At this point, equation (20) and the reactor design equations can be solved. Doing so will yield $T_0$, and corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ that span the range from their initial values their final values. $T_0$ is one of the quantities of interest. The others can be found or calculated using the results from solving the IVODEs and the defining equation for selectivity, @eq-selectivity_def_closed.
+At this point the DAEs, equations (5) through (11) and (15), can be solved numerically. Doing so will yield $T_0$ along with corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex,out}$ that span the range from their initial to their final values. $T_0$ and the final values of $T$, and $T_{ex,out}$ are quantities of interest. The other quantity of interest, the final selectivity for X relative to Z, can be calculated using the defining equation for selectivity, @eq-selectivity_def_closed.
 
 :::
 
-**Ancillary Equations for Calculating Other Quantities of Interest**
+#### Calculating the Quantities of Interest
 
-The results from solving the reactor design equations can be used to calculate the final temperature, exchange fluid temperature and selectivity as shown in equations (21), (22), and (23).
+With the information given above, the DAEs, equations (5) through (11) and (15), can be solved numerically, yielding $T_0$ along with corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex,out}$ that span the range from their initial to their final values. $T_0$ is one of the quantities of interest. The final temperature, exchange fluid temperature and selectivity can be calculated using equations (21), (22), and (23).
 
 $$
 T_f = T\big\vert_{t=t_f} \tag{21}
 $$
 
 $$
-T_{ex,f} = T_{ex}\big\vert_{t=t_f} \tag{22}
+T_{ex,out,f} = T_{ex,out}\big\vert_{t=t_f} \tag{22}
 $$
 
 $$
 S_{X/Z,f} = \frac{n_X \Big\vert_{t=t_{rxn}}}{n_Z \Big\vert_{t=t_{rxn}}} \tag{23}
 $$
 
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
+#### Formulation of the Calculations
 
-I have written all of the equations needed to complete the assignment. I will conclude the formulation by summarizing how to use those equations in the numerical implementation of the solution.
+To complete the assignment the BSTR design equations are solved first, and then the quantities of interest are calculated. The BSTR design equations are DAEs, and they can be solved numerically as described in [Appendix -@sec-apndx_solve_daes] by writing a residuals function, a derivatives function, and a BSTR function. A deliverables function can be added to calculate the quantities of interest.
 
-As I implement the solution numerically, I'll make all of the given and known constants available throughout the calculations. As described in @sec-apndx_solve_ivodes, I'll similarly need to make the current value of $T_0$ available. As I perform the numerical solutions I'll need to evaluate the derivatives, calculate the initial and final values, and calculate quantities of interest that aren't found directly by solving the reactor design equations. One thing to note is that I won't calculate $T_0$ directly when I'm calculating the other initial and final values. It will be found separately using an ATE solver, so instead of needing to calculate it, I will need to evaluate the residual for equation (20).
+* The residuals function must receive a guess for the ATE variable, $T_0$, and it must return the residual, $\epsilon_{T_0}$. To do so it must define the initial values and stopping criterion for the ODEs, pass them to an IVODE solver along with the derivatives function, and use the results it returns to evaluate the residual.
+* The derivatives function must receive the independent and dependent variables at the start of an integration step as arguments, and it must return the derivatives of the dependent variables. To do so it must calculate the rate and the rate of heat transfer before it can evaluate the derivatives.
+* For this assignment, the BSTR function must receive an initial guess for the ATE variable and it must return the initial temperature, $T_0$, and sets of corresponding values of the independent and dependent variables spanning the interval from their initial to their final values. To do so it must pass the guess for $T_0$ to an ATE solver along with the residuals function, use the value of $T_0$ returned by the solver to define the initial values and stopping criterion for the ODEs, and then pass them to an IVODE solver along with the derivatives function.
+* The deliverables function does not need any arguments, and it doesn’t return anything. It defines an initial guess for the ATE variable, calls the BSTR function and uses the results it returns to calculate the quantities of interest.
 
-:::
-
-**Calculations Summary**
-
-1. Substitute given and known constants into all equations.
-2. When it is necessary to evaluate the derivatives
-	a. $T_0$, $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ will be available.
-	b. Calculate $\dot{Q}$ using equation (16).
-	b. Calculate $k_1$, $k_2$, $C_A$, and $C_B$ using equations (12) - (15).
-	c. Calculate $r_1$ and $r_2$ using equations (3) and (4).
-	d. Evaluate the derivatives using equations (5) - (11).
-3. When it is necessary to calculate the initial and final values other than $T_0$ in @tbl-example_9_6_2_initial_values
-	a. $t_f$ and $T_{ex,0}$ are known constants.
-	b. Calculate $n_{A,0}$, $n_{B,0}$, and $n_{A,f}$ using equations (17) through (19).
-4. When it is necessary to evaluate the residual, $\epsilon$
-    a. A guess for $T_0$ will be available for use in all equations.
-    b. Solve equations (5) through (11) using that guess and the initial values and stopping criterion in @tbl-example_9_6_2_initial_values and extract $n_A \big \vert_{t=t_f}$ from the results.
-	c. Calculate $\epsilon$ using equation (20).
-5. When it is necessary to calculate the quantities of interest, [list]
-	a. Corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$, spanning the range from their initial values to their final values will be available.
-	b. Calculate $T_f$, $T_{ex,f}$, and $S_{X/Z,f}$ using equations (21) through (23).
-
-#### Numerical Implementation of the Solution
+Specifications can be written for each of these functions in preparation for writing them. The function specifications given here assume that the known constants are available wherever they are needed.
 
 :::{.callout-tip collapse="true"}
 
-## Click Here to See What an Expert Might be Thinking at this Point
+## Click Here to See the Residuals Function Specifications
 
-The equations here are DAEs and can be solved as described in [Appendix -@sec-apndx_solve_daes].
+<center>**Residuals Function Specifications**</center>
+
+[Argument]{.underline}: $T_0$
+
+[Returns]{.underline}: $\epsilon_{T_0}$
+
+[Algorithm]{.underline}:
+
+$$
+t_{initial} = 0 \tag{24}
+$$
+
+$$
+n_{A,initial} = n_{A,0} = C_{A,0}V \tag{12}
+$$
+
+$$
+n_{B,initial} = n_{B,0} = C_{B,0}V \tag{13}
+$$ 
+
+$$
+\begin{matrix}
+n_{X,initial} = 0,\, n_{Y,initial} = 0,\, n_{Z,initial} = 0 \\
+T_{initial} = T_0,\, T_{ex,out,initial} = T_{ex,out,0},\, t_{final} = t_f
+\end{matrix} \tag{25}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+t_{initial}, n_{A,initial}, n_{B,initial}, n_{X,initial}, n_{Y,initial}, \\
+n_{Z,initial}, T_{initial}, n_{A,final}, T_{ex,out,initial}, \\
+\text{derivatives function}\\
+\Downarrow \\
+\text{IVODE solver} \\
+\Downarrow \\
+\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T} ,\underline{T}_{ex,out}
+\end{matrix} \tag{26}
+$$
+
+&nbsp;
+
+$$
+n_{A,f} = n_{A,0} \left( 1 - f_{A,f} \right) \tag{14}
+$$
+
+$$
+\epsilon_{T_0} = n_A\big\vert_{t = t_f} - n_{A,f}\tag{15}
+$$
 
 :::
 
-1. Make the given and known constants available for use in all functions.
-2. Define a variable to hold $T_0$ and make it available to all functions.
-3. Write a derivatives function that
-	a. receives the independent and dependent variables, $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$, as arguments,
-	b. evaluates the derivatives as described in step 2 of the calculations summary, and 
-	c. returns the resulting values of the derivatives.
-4. Write a residuals function that
-	a. receives a guess for $T_0$ and makes it available to all functions,
-	b. evaluates the residual as described in step 4 of the calculations summary, and
-	c. returns the value of $\epsilon$.
-5. Write a reactor model function that
-	a. has access to $T_0$,
-	b. calculates the initial and final values in @tbl-example_9_6_2_initial_values as described in steps 3a and 3b of the calculations summary,
-	c. gets corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
-		i. the initial values and stopping criterion in @tbl-example_9_6_2_initial_values and
-		ii. the name of the derivatives function from step 3 above,
-	d, checks that the solver successfully solved the IVODEs, and
-	e. returns the values returned by the IVODE solver.
-6. Perform the analysis by
-	a. calculating $T_0$ by calling an ATE solver using the following arguments
-		i. an initial guess for $T_0$ and
-		ii. the name of the residuals function from step 4,
-	b. making the resulting value of $T_0$ available to all functions,
-	c. getting corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$, spanning the range from their initial values to their final values by calling the reactor model function from step 5 above,
-	d. calculating $T_f$, $T_{ex,f}$, $S_{X/Z,f}$ as described in step 5 of the calculations summary.
+:::{.callout-tip collapse="true"}
+
+## Click Here to See the Derivatives Function Specifications
+
+<center>**Derivatives Function Specifications**</center>
+
+[Arguments]{.underline}: $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex,out}$
+
+[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_B}{dt}$, $\frac{dn_X}{dt}$, $\frac{dn_Y}{dt}$, $\frac{dn_Z}{dt}$, $\frac{dT}{dt}$, and $\frac{dT_{ex,out}}{dt}$
+
+[Algorithm]{.underline}:
+
+$$
+k_1 = k_{0,1}\exp{\left( \frac{-E_1}{RT} \right) } \tag{16}
+$$
+
+$$
+k_2 = k_{0,2}\exp{\left( \frac{-E_2}{RT} \right) } \tag{17}
+$$
+
+$$
+C_A = \frac{n_A}{V} \tag{18}
+$$
+
+$$
+C_B = \frac{n_B}{V} \tag{19}
+$$
+
+$$
+\dot{Q} = UA\left(T_{ex,out} - T \right) \tag{20}
+$$
+
+$$
+r_1 = k_1C_AC_B \tag{3}
+$$
+
+$$
+r_2 = k_2C_A \tag{4}
+$$
+
+$$
+\frac{dn_A}{dt} = \left(-r_1 -r_2 \right)V \tag{5}
+$$
+
+$$
+\frac{dn_B}{dt} = -r_1 V \tag{6}
+$$
+
+$$
+\frac{dn_X}{dt} = r_1 V \tag{7}
+$$
+
+$$
+\frac{dn_Y}{dt} = r_1 V \tag{8}
+$$
+
+$$
+\frac{dn_Z}{dt} = r_2 V \tag{9}
+$$
+
+$$
+\frac{dT}{dt}  = \frac{\dot Q - V \left(r_1 \Delta H_1 +  r_2 \Delta H_2\right)}{\tilde{C}_p \rho V} \tag{10}
+$$
+
+$$
+\frac{dT_{ex,out}}{dt} = \frac{-\dot Q - \dot m_{ex} \tilde C_{p,ex}\left(T_{ex,out} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}} \tag{11}
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+
+## Click Here to See the BSTR Function Specifications
+
+<center>**BSTR Function Specifications**</center>
+
+[Arguments]{.underline}: $T_{0,guess}$
+
+[Returns]{.underline}: $T_0$, $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_Y$, $\underline{n}_Z$, $\underline{T}$ ,$\underline{T}_{ex,out}$
+
+[Algorithm]{.underline}:
+
+$$
+\begin{matrix}
+T_{0,guess},\, \text{residuals function}\\
+\Downarrow \\
+\text{ATE solver} \\
+\Downarrow \\
+T_0 
+\end{matrix}\tag{27}
+$$
+
+&nbsp;
+
+$$
+t_{initial} = 0 \tag{24}
+$$
+
+$$
+n_{A,initial} = n_{A,0} = C_{A,0}V \tag{12}
+$$
+
+$$
+n_{B,initial} = n_{B,0} = C_{B,0}V \tag{13}
+$$ 
+
+$$
+\begin{matrix}
+n_{X,initial} = 0,\, n_{Y,initial} = 0,\, n_{Z,initial} = 0 \\
+T_{initial} = T_0,\, T_{ex,out,initial} = T_{ex,out,0},\, t_{final} = t_f
+\end{matrix} \tag{25}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+t_{initial}, n_{A,initial}, n_{B,initial}, n_{X,initial}, n_{Y,initial}, \\
+n_{Z,initial}, T_{initial}, n_{A,final}, T_{ex,out,initial}, \\
+\text{derivatives function}\\
+\Downarrow \\
+\text{IVODE solver} \\
+\Downarrow \\
+\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T} ,\underline{T}_{ex,out}
+\end{matrix} \tag{26}
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+
+## Click Here to See the Deliverables Function Specifications
+
+The deliverables function must define an initial guess for $T_0$ to pass as an argument to the BSTR function. The only temperatures I know are the inlet exchange fluid temperature and its initial outlet temperature, and they are both equal to 40 °C. So I'll guess that the initial reacting fluid temperature is also 40 °C, recognizing that if the ATE solver fails to converge, I'll need to repeat the calculations using a different initial guess. 
+
+<center>**Deliverables Function Specifications**</center>
+
+[Arguments]{.underline}: none
+
+[Returns]{.underline}: nothing
+
+[Algorithm]{.underline}: 
+
+$$
+T_{0,guess} = \text{40 °C} \tag{28}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+T_{0,guess}\\
+\Downarrow \\
+\text{BSTR function} \\
+\Downarrow \\
+T_0, \underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T} ,\underline{T}_{ex,out}
+\end{matrix} \tag{29}
+$$
+
+&nbsp;
+
+$$
+T_f = T\big\vert_{t=t_f} \tag{21}
+$$
+
+$$
+T_{ex,out,f} = T_{ex,out}\big\vert_{t=t_f} \tag{22}
+$$
+
+$$
+S_{X/Z,f} = \frac{n_X \Big\vert_{t=t_{rxn}}}{n_Z \Big\vert_{t=t_{rxn}}} \tag{23}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+T_{0}, T_f, T_{ex,out,f}, S_{X/Z,f}\\
+\Downarrow \\
+\text{functions to display and save} \\
+\end{matrix} \tag{30}
+$$
+
+:::
+
+#### Implementation and Execution of the Calculations
+
+The residuals, derivatives, BSTR, and deliverables functions were written as specified above using an appropriate mathematics software package. The calculations were performed by calling the deliverables function. Upon doing so, the ATE solver converged, so it was not necessary to repeat the calculations using a different initial guess for the ATE variable, $T_0$.
 
 #### Results and Discussion
 
 ```{r}
 #| echo: false
 #| output: false
-df <- read.csv("examples/reb_9_6_2/results.csv")
+df <- read.csv("Calculations/example_9_6_2/results.csv")
 df <- fmt_tibble_col(df, 2, 3, 2, 1)
 ```
 
-The calculations were performed as described above. The initial temperature must be `r df$value[1]` `r df$units[1]` for the conversion to equal 45% after 30 min of reaction. At that time, the temperature of the reacting fluid will be `r df$value[2]` `r df$units[2]`, the exit temperature of the exchange fluid will be `r df$value[3]` `r df$units[3]`, and the selectivity will equal `r df$value[4]` `r df$units[4]`.
+The initial temperature must be `r df$value[1]` `r df$units[1]` for the conversion to equal 45\% after 30 min of reaction. At that time, the temperature of the reacting fluid will be `r df$value[2]` `r df$units[2]`, the exit temperature of the exchange fluid will be `r df$value[3]` `r df$units[3]`, and the selectivity will equal `r df$value[4]` `r df$units[4]`.
 
-Solving the reactor design equations using an initial temperature of `r df$value[1]` `r df$units[1]` also yields the final molar amount of $n_A$. One way to check the results is to use that value to calculate the conversion and make sure that it is equal to 45%. Indeed, when the design equations were solved using an initial temperature of `r df$value[1]` `r df$units[1]`, the resulting conversion of A was 45%.
+Solving the reactor design equations using an initial temperature of `r df$value[1]` `r df$units[1]` also yields the final molar amount of $n_A$. One way to check the results is to use that value to calculate the conversion and make sure that it is equal to 45\%. Indeed, when the design equations were solved using an initial temperature of `r df$value[1]` `r df$units[1]`, the resulting conversion of A was 45\%.
 
-When two reactions are taking place, it is quite common for the product of one reaction to be desired and the producs of the other reaction to be undesired. That raises the question, "what can a reaction engineer do to change the selectivity?" There isn't a single, universal answer to that question. However, an examination of the rate expressions and perhaps a quick qualitative analysis can suggest answers for a given system. Two primary ways to affect selectivity are by altering the compositon of the system or by altering the temperature. Of course, changing either of these parameters will affect all of the reactor outputs.
+When two reactions are taking place, it is quite common for the product of one reaction to be desired and the product of the other reaction to be undesired. That raises the question, "what can a reaction engineer do to change the selectivity?" There isn't a single, universal answer to that question. However, for parallel reactions it is often useful to write an expression for the instantaneous selectivity using @eq-def_inst_select. In this system, the instantaneous selectivity for X over Z is given by the net rate of generation of X divided by the net rate of generation of Z as shown in equation (31).
 
-Considering the two reactions in this example, the system has an excess of reagent B. The rate of reaction (1) is proportional to both the concentration of reagent A and the concentration of reagent B. With excess B present, the rate will not decrease as rapidly as it would have otherwise. This improves the selectivity for X over Z. An engineer might perform simulations varying the initial concentration of B to see how it affects the selectivity as well as the conversion and selectivity.
+$$
+\begin{align}
+S_{X/Z,inst} &= \frac{\displaystyle \sum _j r_{X,j}}{\displaystyle \sum _j r_{Z,j}} = \frac{r_1}{r_2} = \frac{k_1C_AC_B}{k_2C_A} = \frac{k_{0,1}\exp{\left(\frac{-E_1}{RT}\right)}}{k_{0,2}\exp{\left(\frac{-E_2}{RT}\right)}}C_B \\ S_{X/Z,inst} &= \frac{k_{0,1}}{k_{0,2}}\exp{\left(\frac{E_2 - E_1}{RT}\right)}C_B
+\end{align} \tag{31}
+$$
 
-The rate expressions show that the activation energy for reaction (2) is greater than that for reaction (1). That means that reaction (2) is more sensitive to temperature than reaction (1). This suggest that another way to increase the selectivity for X over Z would be to lower the temperature. Lowering the temperature will lower both rates, but being more sensitive to temperature, the rate of reaction (2) will be lowered by more than that of reaction (1). As a consequence, while the selectivity should increase, either the conversion will decrease if the reaction time remains 30 min or the reaction time will increase if the conversion remains 45%. Again, simulation can be used to determine the magnitude of the changes. Here, additional simulation shows that if the intitial temperature is reduced to `r df$value[5]` `r df$units[5]`, keeping the conversion at 45%, the selectivity will increase to `r df$value[6]` `r df$units[6]`, but the reaction time will increase to `r df$value[7]` `r df$units[7]`. Given economic data and other operating constraints, an engineer could optimize the performance of this reactor through simulation of this kind.
+The final selectivity will equal the integral of the instantaneous selectivity from $t_0$ to $t_f$. Noting that $E_2$ is greater than $E_1$, equation (31) suggests two ways to increase the instantantous selectivity for X over Z. The first is to maintain a high concentration of B. The second is to decrease the mean temperature during the reaction. In a batch reactor, the only way to increase the average concentration of B is to increase the initial amount. The average temperature could be decreased by using a lower initial temperature or by changing the exchange fluid flow rate or inlet temperature. One point to bear in mind is that decreasing the mean temperature will decrease both reaction rates, not just the undesired rate. As a consequence, to keep the conversion the same, a longer reaction time would be necessary.
+
+To test these predictions, a simulation was performed where the initial temperature was reduced to `r df$value[5]` `r df$units[5]`, keeping the conversion the same at 45\%. The results showed that the selectivity will increase to `r df$value[6]` `r df$units[6]`, but the reaction time will increase to `r df$value[7]` `r df$units[7]`. Given economic data and other operating constraints, an engineer could optimize the performance of this reactor through simulation of this kind.
 
 :::{.callout-note collapse="false"}
 ## Note
 
-This example specified two final values: the reaction time and the fractional conversion. In the solution presented above, the reaction time was used as the stopping criterion when solving the IVODEs and the fractional conversion was used in the implicit equation for the $T_0$.
+This example specified two final values: the reaction time and the fractional conversion. In the solution presented above, the reaction time was used as the stopping criterion when solving the IVODEs and the fractional conversion was used in the implicit equation for $T_0$.
 
 The roles of the reaction time and conversion could have been reversed. The specified conversion could have been used to calculate the corresponding final moles of A, which then could have been used as the stopping criterion. Then the reaction time would have been used in the implicit equation for $T_0$. The results would be the same.
 
@@ -720,28 +1094,68 @@ The roles of the reaction time and conversion could have been reversed. The spec
 
 ### Maximum Intermediate Yield in Series Reactions {#sec-example_9_6_3}
 
-{{< include examples/reb_9_6_3/narrative.qmd >}}
+A BSTR will be charged with 1 atm of A and 2 atm of B at 25 °C. The reactor volume is 2 L, and it has a jacket with an area of 600 cm^2^ and an overall heat transfer coefficient of 0.6 cal cm^-2^ min^-1^ K^-1^. The temperature of the coolant in the perfectly-mixed jacket is maintained at 30°C by a temperature controller. Gas phase reactions (1) and (2) take place within the reactor; the corresponding rate expressions are given in equations (3) and (4). The rate coefficients display Arrhenius temperature dependence with pre-exponental factors of 3.34 x 10^9^ and 1.47 x 10^10^ mol cm^-3^ min^-1^ atm^-2^ for reactions (1) and (2), respectively, and activation energies of 20.5 and 21.8 kcal mol^-1^. The heat of reaction (1) is constant and equal to -6,300 cal mol^-1^; that of reaction (2) is constant and equal to -6,900 cal mol^-1^. The heat capacities of A, B, D, Z and U are constant and equal to 7.4, 8.6, 10.7, 5.2 and 10.3 cal mol^-1^ K^-1^, respectively.
 
-{{< include examples/reb_9_6_3/equations.qmd >}}
+What reaction time will maximize the yield (moles of D per initial mole of A), and what will the yield and the conversion of A equal at that reaction time?
+
+$$
+A + B \rightarrow D + Z \tag{1}
+$$
+
+$$
+D + B \rightarrow U + Z \tag{2}
+$$
+
+$$
+r_1 = k_{0,1} \exp{\left(\frac{-E_1}{RT}\right)}P_AP_B \tag{3}
+$$
+
+$$
+r_2 = k_{0,2} \exp{\left(\frac{-E_2}{RT}\right)}P_DP_B \tag{4}
+$$
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This assignment describes a single BSTR and no other reactors, heat exchangers, or stream mixing/splitting points. It describes the reactor, its operation, and the reactions taking place, including the rate expressions. It asks me to find a reaction time to maximize yield. From these characteristics, I know that this is an isolated reactor modeling assignment. I'll begin by summarizing the assignment. I'll use appropriate variable symbols to represent the given quantities and the quantities of interest. A batch reactor is being used, so I'll use a subscripted "0" to denote initial values and a subscripted "f" to denote final values. I'll let $t_{opt}$ denote the reaction time that maximizes the yield.
+This assignment describes a single BSTR and no other equipment. It describes the reactor, its operation, and the reactions taking place, including the rate expressions. It asks me to find a reaction time to maximize yield. From these characteristics, I know that this is an isolated reactor modeling assignment. I'll begin by summarizing the assignment. I'll use appropriate variable symbols to represent the given quantities and the quantities of interest. A cooled, batch reactor is being used, so I'll use a subscripted "0" to denote initial values and a subscripted "f" to denote final values. I'll let $t_{opt}$ denote the reaction time that maximizes the yield. The exchange fluid temperature is constant and known, but no information is provided about the inlet temperature or flow rate of the heat exchange fluid, so there's no need for subscripts denoting "in" and "out."
 
 :::
 
 #### Assignment Summary
 
-**Reactor**: BSTR with heat transfer
+**Reactions**:
 
-**Given and Known Constants**: $P_{A,0}$ = 1 atm, $P_{B,0}$ = 2 atm, $T_0$ = 25 °C, $V$ = 2 L, $A$ = 600 cm^2^, $U$ = 0.6 cal cm^-2^ min^-1^ K^-1^, $T_{ex}$ = 30 °C, $k_{0,1}$ =  3.34 x 10^9^ mol cm^-3^ min^-1^ atm^-2^, $k_{0,2}$ = 4.99 x 10^9^ mol cm^-3^ min^-1^ atm^-2^, $E_1$ = 20.5 kcal mol^-1^, $E_2$ = 21.8 kcal mol^-1^, $\Delta H_1$ = -6,300 cal mol^-1^, $\Delta H_2$ = -6,900 cal mol^-1^, $\hat C_{p,A}$ = 7.4 cal mol^-1^ K^-1^, $\hat C_{p,B}$ = 8.6 cal mol^-1^ K^-1^, $\hat C_{p,D}$ = 10.7 cal mol^-1^ K^-1^, $\hat C_{p,Z}$ = 5.2 cal mol^-1^ K^-1^, $\hat C_{p,U}$ = 10.3 cal mol^-1^ K^-1^, and $R$ = 1.987 cal mol^-1^ K^-1^ = 82.057 cm^3^ atm mol^-1^ K^-1^.
+$$
+A + B \rightarrow D + Z \tag{1}
+$$
+
+$$
+D + B \rightarrow U + Z \tag{2}
+$$
+
+**Rate Expressions**:
+
+$$
+r_1 = k_{0,1} \exp{\left(\frac{-E_1}{RT}\right)}P_AP_B \tag{3}
+$$
+
+$$
+r_2 = k_{0,2} \exp{\left(\frac{-E_2}{RT}\right)}P_DP_B \tag{4}
+$$
+
+**Reactor System**: BSTR with heat transfer
+
+**Reactor Schematic**: 
+
+![A closed (batch), non-adiabatic stirred tank reactor with a constant exchange fluid temperature.](Graphics/bstr_non_adiabatic_constant_Tex.png){#fig-closed_stirred_tank_reactor width="30%"}
 
 **Quantities of Interest**: $t_{opt} = \underset{t}{\arg\max} \left(Y_{D/A}\right)$, $Y_{D/A}\Big\vert_{t_{opt}}$, and $f_A\Big\vert_{t_{opt}}$.
 
-#### Mathematical Formulation of the Solution
+**Given and Known Constants**: $P_{A,0}$ = 1 atm, $P_{B,0}$ = 2 atm, $T_0$ = 25 °C, $V$ = 2 L, $A$ = 600 cm^2^, $U$ = 0.6 cal cm^-2^ min^-1^ K^-1^, $T_{ex}$ = 30 °C, $k_{0,1}$ =  3.34 x 10^9^ mol cm^-3^ min^-1^ atm^-2^, $k_{0,2}$ = 1.47 x 10^10^ mol cm^-3^ min^-1^ atm^-2^, $E_1$ = 20.5 kcal mol^-1^, $E_2$ = 21.8 kcal mol^-1^, $\Delta H_1$ = -6,300 cal mol^-1^, $\Delta H_2$ = -6,900 cal mol^-1^, $\hat C_{p,A}$ = 7.4 cal mol^-1^ K^-1^, $\hat C_{p,B}$ = 8.6 cal mol^-1^ K^-1^, $\hat C_{p,D}$ = 10.7 cal mol^-1^ K^-1^, $\hat C_{p,Z}$ = 5.2 cal mol^-1^ K^-1^, $\hat C_{p,U}$ = 10.3 cal mol^-1^ K^-1^, and $R$ = 1.987 cal mol^-1^ K^-1^ = 82.057 cm^3^ atm mol^-1^ K^-1^.
+
+#### Generation of the Model Equations
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -766,7 +1180,7 @@ An exchange fluid is present in this reactor, but the assignment states that its
 
 :::
 
-**Reactor Design Equations**
+**BSTR Design Equations**
 
 Mole balances of each of the reagents are presented in equations (5) through (9), and an energy balance on the reacting fluid is presented in equation (10).
 
@@ -799,9 +1213,9 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-At this point I have 6 initial value ordinary differential equations (IVODEs) that contain 7 dependent variables ($n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $P$, and $T$). I either need to eliminate a dependent variable or add an IVODE before I can solve the reactor design equations.
+At this point I have 6 initial value ordinary differential equations that contain 7 dependent variables ($n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $P$, and $T$). I either need to eliminate a dependent variable or add an ODE before I can solve the reactor design equations.
 
-Noting that V is constant, I'm going to take the time-derivative of the ideal gas law and use it as an additional IVODE.
+Noting that V is constant, I'm going to take the time-derivative of the ideal gas law and use it as an additional ODE.
 
 $$
 PV - \left(n_A + n_B + n_D + n_Z + n_U \right)RT =0
@@ -826,9 +1240,11 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The reactor design equations are IVODEs, so initial values and a stopping criterion are needed in order to solve them. I can define $t=0$ to be instant that the A and B are added to the reactor. The other initial values are then the molar amounts of each reagent, the temperature, and the pressure at that time. The assignment states that the BSTR is charged with only A and B, so the initial molar amounts of D, Z, and U are zero.
+The reactor design equations are either IVODEs or DAEs, so initial values and a stopping criterion are needed in order to solve them. I can define $t=0$ to be instant that the A and B are added to the reactor. The other initial values are then the molar amounts of each reagent, the temperature, and the pressure at that time. The assignment states that the BSTR is charged with only A and B, so the initial molar amounts of D, Z, and U are zero.
 
-The final value of the time is the time that maximizes the yield of D from A. I the assignment summary I used $t_f$ to represent that time.
+The initial molar amounts of A and B can be calculated directly using their known initial partial pressures and the ideal gas law. The initial total pressure is simply the sum of the initial partial pressures. 
+
+I need to find the value of $t_f$ that maximizes the yield of D. To do that, I'll choose a large value for the final time, $t_f$. Upon doing so, all of the initial values and one final value will be known or can be calculated directly, so the BSTR design equations in this assignment are IVODEs. As long as the final value I choose is large enough, the yield will reach its maximum before the final time is reached. The time when it reaches its maximum is the optimum time requested in the assignment narrative.
 
 :::
 
@@ -847,14 +1263,30 @@ The final value of the time is the time that maximizes the yield of D from A. I 
   
 : Initial values and stopping criterion for solving the design equations, (5) through (11). {#tbl-example_9_6_3_initial_values}
 
+**Supporting Equations for Calculating the Initial and Final Values**
+
+$$
+n_{A,0} = \frac{P_{A,0}V}{RT_0} \tag{12}
+$$
+
+$$
+n_{B,0} = \frac{P_{B,0}V}{RT_0} \tag{13}
+$$
+
+$$
+P_0 = P_{A,0} + P_{B,0} \tag{14}
+$$
+
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-I now have 7 IVODEs with 7 dependent variables. In order to solve the IVODEs numerically I'll need to do two things: calculate the values of the derivatives at the start of each integration step and calculate all of the initial and final values in @tbl-example_9_6_3_initial_values.
+I now have 7 IVODEs with 7 dependent variables. In order to solve the IVODEs numerically I'll need to calculate the values of the derivatives at the start of each integration step. To begin, I need to write the IVODEs in the form of derivative expressions. I'll use the procedure described in [Appendix -@sec-apndx_derivative_expressions]. It involves writing the IVODEs in the form of a matrix equation.
 
-I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. To begin, I need to write the IVODEs in the form of derivative expressions. I'll use the procedure described in [Appendix -@sec-apndx_derivative_expressions].
+$$
+\boldsymbol{M}\frac{d}{dt} \begin{bmatrix} n_A \\ n_B \\ n_D \\ n_Z \\ n_U \\ T \\ P \end{bmatrix} = \underline{g}
+$$
 
-I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions. That is, I'll need to calculate any other quantities that appear in the vector, $\underline{g}$. Looking at that vector, I see that I will need to calculate $r_1$, $r_2$, and $\dot{Q}$.
+In other words, I'll need to define the elements of the mass matrix, $\boldsymbol{M}$, and the vector, $\underline{g}$. If anything other than known constants, the independent variable, and the dependent variables appear in the elements of $\boldsymbol{M}$ and $\underline{g}$ I'll need to calculate them before I can evaluate the derivatives. Looking at the design equations, I see that I will need to calculate $r_1$, $r_2$, and $\dot{Q}$.
 
 The rate expressions, equations (3) and (4), can be used to calculate the rates, but those equations introduce the additional variables, $P_A$, $P_B$, and $P_D$. Those partial pressures can be calculated using the ideal gas law.
 
@@ -862,158 +1294,278 @@ The rate of heat transfer, $\dot{Q}$, can be calculated using the known heat tra
 
 :::
 
-**Ancillary Equations for Solving the Reactor Design Equations**
+**Ancillary Equations for Evaluating the Derivatives**
 
-The IVODEs, equations (1) through (7) can be written as the matrix equation, (12), with the mass matrix defined as shown in equation (13) and with the vector, $\underline{g}$, defined as shown in equation (14). The IVODEs can then be written as derivative expressions, equation (15).
-
-$$
-\boldsymbol{M}\frac{d}{dt} \begin{bmatrix} n_A \\ n_B \\ n_D \\ n_Z \\ n_U \\ T \\ P \end{bmatrix} = \underline{g}\tag{12}
-$$
+The IVODEs, equations (1) through (7) can be written as the matrix equation, (15), with the mass matrix defined as shown in equation (16) and with the vector, $\underline{g}$, defined as shown in equation (17). The IVODEs can then be written as derivative expressions, equation (18).
 
 $$
-\boldsymbol{M} = \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & \displaystyle\sum_i\left(n_i \hat{C}_{p,i} \right) & -V \\ RT & RT & RT & RT & RT & R\displaystyle\sum_i n_i & -V  \end{bmatrix} \tag{13}
+\boldsymbol{M}\frac{d}{dt} \begin{bmatrix} n_A \\ n_B \\ n_D \\ n_Z \\ n_U \\ T \\ P \end{bmatrix} = \underline{g}\tag{15}
 $$
 
 $$
-\underline{g} = \begin{bmatrix} -r_1V \\ \left(-r_1 - r_2\right)V \\ \left(r_1 - r_2\right)V \\ \left(r_1 + r_2\right)V \\ r_2V \\ \dot{Q} -\left(r_1\Delta H_1 + r_2 \Delta H_2\right)V \\ 0 \end{bmatrix}\tag{14}
+\boldsymbol{M} = \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & \displaystyle\sum_i\left(n_i \hat{C}_{p,i} \right) & -V \\ RT & RT & RT & RT & RT & R\displaystyle\sum_i n_i & -V  \end{bmatrix} \tag{16}
 $$
 
 $$
-\begin{bmatrix} \frac{dn_A}{dt} \\ \frac{n_B}{dt} \\ \frac{n_D}{dt} \\ \frac{n_Z}{dt} \\ \frac{dn_U}{dt} \\ \frac{T}{dt} \\ \frac{P}{dt} \end{bmatrix} = \boldsymbol{M}^{-1} \underline{g} \tag{15}
-$$
-
-The rates, $r_1$ and $r_2$, can be calculated using equations (3) and (4). The partial pressures appearing in the rate expressions can be calculated using equations (16) through (18), and the rate of heat exchange can be calculted using equation (19)
-
-$$
-P_A = \frac{n_ART}{V} \tag{16}
+\underline{g} = \begin{bmatrix} -r_1V \\ \left(-r_1 - r_2\right)V \\ \left(r_1 - r_2\right)V \\ \left(r_1 + r_2\right)V \\ r_2V \\ \dot{Q} -\left(r_1\Delta H_1 + r_2 \Delta H_2\right)V \\ 0 \end{bmatrix}\tag{17}
 $$
 
 $$
-P_B = \frac{n_BRT}{V} \tag{17}
+\begin{bmatrix} \frac{dn_A}{dt} \\ \frac{n_B}{dt} \\ \frac{n_D}{dt} \\ \frac{n_Z}{dt} \\ \frac{dn_U}{dt} \\ \frac{dT}{dt} \\ \frac{dP}{dt} \end{bmatrix} = \boldsymbol{M}^{-1} \underline{g} \tag{18}
+$$
+
+The rates, $r_1$ and $r_2$, can be calculated using equations (3) and (4). The partial pressures appearing in the rate expressions can be calculated using equations (19) through (21), and the rate of heat exchange can be calculted using equation (22)
+
+$$
+P_A = \frac{n_ART}{V} \tag{19}
 $$
 
 $$
-P_D = \frac{n_DRT}{V} \tag{18}
+P_B = \frac{n_BRT}{V} \tag{20}
 $$
 
 $$
-\dot Q = UA\left( T_{ex} - T \right) \tag{19}
-$$
-
-
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_9_6_3_initial_values. The initial molar amounts of A and B can be calculated from the initial partial pressures, reactor volume, and ideal gas law. The initial total pressure is simply the sum of the initial partial pressures.
-
-There are a few different ways to assign a value to $t_f$. I will simply choose a large time. I can then solve the IVODEs for $n_A\left(t\right)$, $n_B\left(t\right)$, $n_D\left(t\right)$, $n_Z\left(t\right)$, $n_U\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$. From those results, I can calculate the yield as a function of time, plot it, and identify the time at which it is maximized. If the plot doesn't have a maximum, I'll have to solve the design equations again, using a larger value of $t_f$.
-
-:::
-
-**Ancillary Equations for Calculating the Initial and Final Values**
-
-The initial molar amounts of A and B can be calculated using equations (20) and (21), and the initial total pressure can be calculated using equation (22). To facilitate finding $t_{opt}$ as described below, $t_f$ will be varied over a range of values.
-
-$$
-n_{A,0} = \frac{P_{A,0}V}{RT} \tag{20}
+P_D = \frac{n_DRT}{V} \tag{21}
 $$
 
 $$
-n_{B,0} = \frac{P_{B,0}V}{RT} \tag{21}
-$$
-
-$$
-P_0 = P_{A,0} + P_{B,0} \tag{22}
+\dot Q = UA\left( T_{ex} - T \right) \tag{22}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-At this point, given a value for $t_f$, the BSTR design equations can be solved for $n_A\left(t\right)$, $n_B\left(t\right)$, $n_D\left(t\right)$, $n_Z\left(t\right)$, $n_U\left(t\right)$, $T\left(t\right)$, and $P\left(t\right)$. The final values can be used to calculate the yield for each value of $t_f$, from which the maximum can be identified. Then the conversion at that time can be calculated using the defining equation for conversion in a closed system, @eq-conversion_def_closed.
+At this point the BSTR design equations can be solved for sets of values of $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_D$, $\underline{n}_Z$, $\underline{n}_U$, $\underline{T}$, and $\underline{P}$ spanning the range from $t_0$ to the chosen final time, $t_f$. At each time the yield can be calculated using @eq-yield_def_closed, and the conversion can be calculated using the defining equation for conversion in a closed system, @eq-conversion_def_closed.
 
-If the yield does not pass through a maximum, the range of values of $t_f$ will need to be increased and the calculations repeated as necessary until the yield does pass through a maximum.
+The resulting set of yields can then be examined to find the maximum value and the time, $t_{opt}$, when it occurred. If the yield does not pass through a maximum, the calculations must be repeated using a larger chosen final time.
 
 :::
 
-**Ancillary Equations for Calculating Other Quantities of Interest**
+#### Calculating the Quantities of Interest
 
-Using the information provided above, the design equations can be solved for a range of values of $t_f$. The results for each value of $t_f$ can be used to calculate the yield, equation (23). The optimum reaction time can then be identified as the final time that maximizes the yield, equation (24). The corresponding yield and conversion can be calculated using equations (25) and (26).
-
-$$
-Y_{D/A}\big\vert_{t_f} = \frac{n_D\big\vert_{t_f}}{n_{A,0}}\tag{23}
-$$
+The BSTR design equations, (5) through (11), can be solved numerically to obtain corresponding sets of values of $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $P$, and $T$ that span the range from $t_0$ to $t_f$. At each time, $t_i$, the corresponding yield of D, $Y_{D/A,i}$, and conversion of A, $f_{A,i}$, can be calculated using equations (23) and (24). The maximum yield, the time at which it occurs, and the corresponding conversion of A can then be identified, equations (25) through (28). If the yield does not pass through a maximum, the calculations must be repeated using a larger chosen final time.
 
 $$
-t_{opt} = \underset{t_f}{\arg\max} \left(Y_{D/A}\big\vert_{t_f}\right)\tag{24}
+Y_{D/A,i} = \frac{n_{D,i}}{n_{A,0}} \tag{23}
 $$
 
 $$
-Y_{D/A}\Big\vert_{t_{opt}} = \underset{t_f}{\max} \left(Y_{D/A}\big\vert_{t_f}\right) \tag{25}
+f_{A,i} = \frac{n_{A,0} - n_{A,i}}{n_{A,0}} \tag{24}
 $$
 
 $$
-f_A\Big\vert_{t_{opt}}=\frac{n_{A,0}-n_A\Big\vert_{t_{opt}}}{n_{A,0}} \tag{26}
+i_{opt} = \underset{i}{\arg\max} \left(Y_{D/A,i}\right) \tag{25}
 $$
 
-**Calculations Summary**
+$$
+Y_{D/A}\big\vert_{t_{opt}} = Y_{D/A,i_{opt}} \tag{26}
+$$
 
-1. Substitute given and known constants into all equations.
-2. When it is necessary to evaluate the derivatives
-	a. $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ will be available.
-	b. Calculate $P_A$, $P_B$, $P_D$, and $\dot{Q}$ using equations (16) through (19).
-	c. Calculate $r_1$ and $r_2$ using equations (3) and (4).
-	d. calculate $\boldsymbol{M}$ and $\underline{g}$ using equations (13) and (14).
-	e. Calculate the values of the derivatives using equation (15).
-3. When it is necessary to calculate the initial and final values in @tbl-example_9_6_3_initial_values
-	a. $t_f$ will be available.
-	b. $T_0$ is a known constant.
-	c. Calculate $n_{A,0}$, $n_{B,0}$, and $P_0$ using equations (20) - (22).
-4. When it is necessary to calculate the yield, $Y_{D/A}\big\vert_{t_f}$
-	a. The values of $n_D\big\vert_{t=t_f}$ and $n_{A,0}$ will be available.
-	b. Calculate $Y_{D/A}\Big\vert_{t_f}$ using equation (23).
-5. When it is necessary to calculate $t_{opt}$, $Y_{D/A}\Big\vert_{t_{opt}}$, and $f_A\Big\vert_{t_{opt}}$
-	a. Sets of corresponding values of $t_f$ and $Y_{D/A}\Big\vert_{t_f}$ will be available.
-	b. Calculate $t_{opt}$, $Y_{D/A}\Big\vert_{t_{opt}}$, and $f_A\Big\vert_{t_{opt}}$ using equations (24), (25), and (26).
+$$
+t_{opt} = t_{f,i_{opt}}\tag{27}
+$$
 
-#### Numerical implementation of the Solution
+$$
+f_A\big\vert_{t_{opt}} = f_{A,i_{opt}} \tag{28}
+$$
 
-1. Make the given and known constants available for use in all functions.
-2. Write a derivatives function that
-	a. receives $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ as arguments and
-	b. evaluates and returns the values of the derivatives as described in step 2 of the calculations summary.
-3. Write a reactor model function that
-	a. receives a large value of $t_f$ as an argument,
-	b. calculates $n_{A,0}$, $n_{B,0}$, and $P_0$ as described in step 3 of the calculations summary
-	c. calculates $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $T$, and $P$ by calling an IVODE solver using the following arguments
-		i. the initial values and stopping criterion in @tbl-example_9_6_3_initial_values and
-		ii. the name of the derivatives function from step 2 above.
-	d. checks that the solver successfully solved the IVODEs, and
-	e. returns the results obtained from the IVODE solver.
-4. Perform the analysis by
-	a. choosing a range of reaction times, $t_f$,
-	b. calling the reactor model function in step 3 to get sets of corresponding values of $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U\$, $T$, and $P$ for each $t_f$
-	c. calculating $Y_{D/A}\big\vert_{t=t_f}$ corresponding to each $t_f$ as described in step 4 of the calculations summary.
-	d. calculating $t_{opt}$, $Y_{D/A}\Big\vert_{t_{opt}}$, and $f_A\Big\vert_{t_{opt}}$ as described in step 5 of the calculations summary.
+#### Formulation of the Calculations
+
+To complete the assignment, the BSTR design equations are solved first, and then the quantities of interest are calculated. The BSTR design equations are IVODEs, and they can be solved numerically as described in [Appendix -@sec-apndx_solve_ivodes] by writing a derivatives function and a BSTR function. A deliverables function can be added to calculate the quantities of interest.
+
+* The derivatives function must be passed the independent and dependent variables at the start of an integration step, and it must return the derivatives of the dependent variables. To do so the algorithm must calculate the rates, $r_1$ and $r_2$, and the rate of heat transfer $\dot{Q}$, form the mass matrix, $\boldsymbol{M}$ and the vector $g$, and evaluate the derivatives.
+
+* The BSTR function will be passed a final time as an argument, and return corresponding sets of the independent and dependent variables spanning the range from their initial to their final values. The algorithm will simply define the initial values and stopping criterion and then call an IVODE solver.
+
+* The deliverables function will take no arguments and return nothing. It will define a large final time, call the BSTR function, use the results to calculate the quantities of interest, display, and save them to a file.
+
+Specifications can be written for each of these functions in preparation for writing them. The function specifications given here assume that the known constants are available wherever they are needed.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See the Derivatives Function Specifications
+
+<center>**Derivatives Function Specifications**</center>
+
+[Arguments]{.underline}: $t$, $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, $P$, and $T$
+
+[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_B}{dt}$, $\frac{dn_D}{dt}$, $\frac{dn_Z}{dt}$, $\frac{dn_U}{dt}$, $\frac{dP}{dt}$, and $\frac{dT}{dt}$
+
+[Algorithm]{.underline}:
+
+$$
+P_A = \frac{n_ART}{V} \tag{19}
+$$
+
+$$
+P_B = \frac{n_BRT}{V} \tag{20}
+$$
+
+$$
+P_D = \frac{n_DRT}{V} \tag{21}
+$$
+
+$$
+r_1 = k_{0,1} \exp{\left(\frac{-E_1}{RT}\right)}P_AP_B \tag{3}
+$$
+
+$$
+r_2 = k_{0,2} \exp{\left(\frac{-E_2}{RT}\right)}P_DP_B \tag{4}
+$$
+
+$$
+\dot Q = UA\left( T_{ex} - T \right) \tag{22}
+$$
+
+$$
+\boldsymbol{M} = \begin{bmatrix} 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 1 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 1 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & \displaystyle\sum_i\left(n_i \hat{C}_{p,i} \right) & -V \\ RT & RT & RT & RT & RT & R\displaystyle\sum_i n_i & -V  \end{bmatrix} \tag{16}
+$$
+
+$$
+\underline{g} = \begin{bmatrix} -r_1V \\ \left(-r_1 - r_2\right)V \\ \left(r_1 - r_2\right)V \\ \left(r_1 + r_2\right)V \\ r_2V \\ \dot{Q} -\left(r_1\Delta H_1 + r_2 \Delta H_2\right)V \\ 0 \end{bmatrix}\tag{17}
+$$
+
+$$
+\begin{bmatrix} \frac{dn_A}{dt} \\ \frac{n_B}{dt} \\ \frac{n_D}{dt} \\ \frac{n_Z}{dt} \\ \frac{dn_U}{dt} \\ \frac{T}{dt} \\ \frac{P}{dt} \end{bmatrix} = \boldsymbol{M}^{-1} \underline{g} \tag{18}
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See the BSTR Function Specifications
+
+<center>**BSTR Function Specifications**</center>
+
+[Arguments]{.underline}: $t_f$
+
+[Returns]{.underline}: $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_D$, $\underline{n}_Z$, $\underline{n}_U$, $\underline{T}$,and $\underline{P}$
+
+[Algorithm]{.underline}:
+
+$$
+t_{initial} = 0 \tag{33}
+$$
+
+$$
+n_{A,initial} = n_{A,0} = \frac{P_{A,0}V}{RT} \tag{12}
+$$
+
+$$
+n_{B,initial} = n_{B,0} = \frac{P_{B,0}V}{RT} \tag{13}
+$$
+
+$$
+n_{D,initial} = 0,\, n_{Z,initial} = 0,\, n_{U,initial} = 0,\, T_{initial} = T_0 \tag{34}
+$$
+
+$$
+P_{initial} = P_0 = P_{A,0} + P_{B,0} \tag{14}
+$$
+
+$$
+t_{final} = t_f \tag{35}
+$$
+
+$$
+\begin{matrix}t_{initial}, n_{A,initial}, n_{B,initial}, n_{D,initial}, \\
+n_{Z,initial}, n_{U,initial}, n_{A,initial}, T_{initial},\\
+P_{initial}, t_{final}, \text{ derivatives function}\\
+\Downarrow\\
+\text{IVODE solver}\\
+\Downarrow\\
+\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_D, \underline{n}_Z, \underline{n}_U, \underline{T},\underline{P}\\
+\end{matrix} \tag{36}
+$$
+
+&nbsp;
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See the Deliverables Function Specifications
+
+The deliverables function must define a final time that is greater than the time when the yield reaches its maximum, but I don't know what that time is. So here I'll set the final time to be 20 minutes. If it takes longer for the yield to reach its maximum, I'll need to increase the final time and repeat the calculations.
+
+<center>**Deliverables Function Specifications**</center>
+
+[Arguments]{.underline}: none
+
+[Returns]{.underline}: nothing
+
+[Algorithm]{.underline}:
+
+$$
+t_f = 20 \tag{37}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}t_f\\
+\Downarrow\\
+\text{BSTR function}\\
+\Downarrow\\
+\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_D, \underline{n}_Z, \underline{n}_U, \underline{T},\underline{P}
+\end{matrix} \tag{38}
+$$
+
+&nbsp;
+
+$$
+\forall\, i \quad Y_{D/A,i} = \frac{n_{D,i}}{n_{A,0}} \tag{23}
+$$
+
+$$
+\forall\, i \quad f_{A,i} = \frac{n_{A,0} - n_{A,i}}{n_{A,0}} \tag{24}
+$$
+
+$$
+i_{opt} = \underset{i}{\arg\max} \left(Y_{D/A,i}\right) \tag{25}
+$$
+
+$$
+Y_{D/A}\big\vert_{t_{opt}} = Y_{D/A,i_{opt}} \tag{26}
+$$
+
+$$
+t_{opt} = t_{f,i_{opt}}\tag{27}
+$$
+
+$$
+f_A\big\vert_{t_{opt}} = f_{A,i_{opt}} \tag{28}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+t_{opt},\, Y_{D/A}\big\vert_{t_{opt}},\, f_A\big\vert_{t_{opt}}\\
+\Downarrow\\
+\text{functions to display and save}
+\end{matrix} \tag{33}
+$$
+
+:::
+
+#### Implementation and Execution of the Calculations
+
+The derivatives, BSTR, and deliverables functions were written as specified above using an appropriate mathematics software package. Upon attempting to perform the calculations by calling the deliverables function, the code ran for a long time, and the results were not realistic. This suggested that the IVODEs might be stiff, so the calculations were repeated after setting the code to use a stiff IVODE solver. The code then ran successfully. The yield of D did pass through a maximum, so it was not necessary to change the chosen value of $t_f$ and repeat the calculations.
 
 #### Results and Discussion
 
 ```{r}
 #| echo: false
 #| output: false
-df <- read.csv("examples/reb_9_6_3/results.csv")
+df <- read.csv("Calculations/example_9_6_3/results.csv")
 df <- fmt_tibble_col(df, 2, 3, 2, 1)
 ```
 
-The calculations were performed as described above using values of $t_f$ between 1 and 60 min. @fig-example_9_6_3_yield_plot shows the variation of the yield as a function of the reaction time. The maximum yield, `r df$value[2]` `r df$units[2]`, occurs at a reaction time of `r df$value[1]` `r df$units[1]`. The conversion of A at that reaction time is `r df$value[3]` `r df$units[3]`.
+@fig-example_9_6_3_yield_plot shows the variation of the yield as a function of the reaction time. The maximum yield, `r df$value[2]` `r df$units[2]`, occurs at a reaction time of `r df$value[1]` `r df$units[1]`. The conversion of A at that reaction time is `r df$value[3]` `r df$units[3]`.
 
-![Yield of D as the reaction time varies.](examples/reb_9_6_3/yield_vs_t.png){#fig-example_9_6_3_yield_plot width="80%"}
+![Yield of D as the reaction time varies.](Calculations/example_9_6_3/yield_vs_t.png){#fig-example_9_6_3_yield_plot width="80%"}
 
-Reactions (1) and (2) constitute a series-parallel reaction network. The desired product, D, is an intermediate product. It is produced in reaction (1) and consumed in reaction (2). Assuming that the temperature affects the two reactions equally, the yield of an intermediate product is expected to pass through a maximum as the reaction time increases as seen in @fig-example_9_6_3_yield_plot. This can be predicted using a quantitative analysis
+Reactions (1) and (2) constitute a series-parallel reaction network. The desired product, D, is an intermediate product. It is produced in reaction (1) and consumed in reaction (2). The yield of an intermediate product is expected to pass through a maximum as the reaction time increases as seen in @fig-example_9_6_3_yield_plot. This can be predicted qualitatively as long as the effect of temperature is comparable for the two reactions.
 
-**Qualitative Analysis**
-
-The reason for the maximum is easy to understand as long as the effect of temperature is comparable for the two reactions. At the start of the reaction, the concentrations of A and B will be large and those of D, U, and Z will be zero. The rate of reaction (1) will be positive while that for reaction (2) will be zero. Consequently, during a very brief interval at the start of the reactive process, the concentrations of A and B will decrease and the concentrations of D and Z will increase.
+At the start of the reaction, the concentrations of A and B will be large and those of D, U, and Z will be zero. The rate of reaction (1) will be positive while that for reaction (2) will be zero. Consequently, during a very brief interval at the start of the reactive process, the concentrations of A and B will decrease and the concentrations of D and Z will increase.
 
 During the next brief interval in time, the rate of reaction (1) will be smaller because the concentrations of A and B will be smaller, and the rate of reaction (2) no longer will equal zero because a small amount D will be present leading to a positive rate. The concentrations of A and B will again decrease and the concentration of Z will again increase. It can be expected that the rate of reaction (1) will be greater than the rate of reaction (2) because only a small concentration of D will be present, so the concentration of D, and its yield, will again increase, as can be seen in @fig-example_9_6_3_yield_plot.
 
@@ -1021,7 +1573,7 @@ For as long as the rate of reaction (2) remains smaller than the rate of reactio
 
 Eventually, the rate of reaction (2) will become equal to the rate of reaction (1). For that instant in time, the yield of D will not be changing. This corresponds to the maximum in @fig-example_9_6_3_yield_plot. At times beyond the maximum the rate of reaction (1) is less than the rate of reaction (2), so the concentration of D decreases. As the concentrations of both reactants, A and D, continue to decrease, both reactions (1) and (2) become slower and slower. This can be seen at larger reaction times in @fig-example_9_6_3_yield_plot where the curve is concave upward. Eventually, at very large reaction time, the rates will equal zero and all of the D will have been consumed.
 
-In this example series-parallel reactions are occurring where the desired product is produced in one reaction and consumed by another. In this situation it is often found that the reaction time has the greatest effect upon the amount of the desired product, as was the case here. Other process parameters such as the initial composition or temperature will also affect the results, but for series and series-parallel reactions their effect on the selectivity is often weaker. Temperature can be an effective parameter for adjusting the selectivity of multiple reactions if the activation energies of the reactions differ significantly. That was the case in [Example -@sec-example_9_6_3], and indeed, the discussion following the example showed that changing the temperature did have a significant effect. 
+In this example series-parallel reactions are occurring where the desired product is produced in one reaction and consumed by another. This assignment shows that the reaction time has a significant effect upon the amount of the desired product. Other process parameters such as the initial composition or temperature will also affect the results, but for series and series-parallel reactions their effect on the selectivity is often weaker. Temperature can be an effective parameter for adjusting the selectivity of multiple reactions if the activation energies of the reactions differ significantly. That was the case in [Example -@sec-example_9_6_2], and indeed, the discussion following that example showed that changing the temperature did have a significant effect. 
 
 :::{.callout-note collapse="false"}
 ## Notes
@@ -1030,24 +1582,32 @@ In this example series-parallel reactions are occurring where the desired produc
 
 2. Yet another approach is to solve equation (11) for $\frac{dP}{dt}$ and substitute the result into equation (10). This reduces the IVODEs to a set of six equations containing six dependent variables: $n_A$, $n_B$, $n_D$, $n_Z$, $n_U$, and $T$. Those six IVODEs can then be written as derivative expressions either by algebraic manipulation or using a mass matrix.
 
-3. Finally, the numerical implementation described here solved the IVODEs many times using different values of the optimization variable, $t_f$. That approach can be used for any optimization variable, and it must be used when the optimization variables is neither the independent variable nor one of the dependent variables. (For example, if the yield had been optimized with respect to the heat transfer area, the approach used here would have to be used.) However, if the optimization variable is the independent variable or one of the dependent variables, the equations only need to be solved once using a large value of the optimization variable. For example, here the design equations only needed to be solved once using a large value of $t_f$. The yield could then have been calculated as a function of time and the maximum identified.
+3. Finally, in this assignment the yield was optimized with respect to an IVODE variable (the reaction time). When that is the case the reactor design equations only need to be solved once, so long as the interval the variables span includes the optimum value of the variable being optimized. When a reactor response is optimized with respect to something other than an independent or dependent ODE variable, the design equations typically need to be solved multiple times. For example, if the yield in this assignment had been optimized with respect to the heat transfer area, the design equations would need to be solved for many different values of the heat transfer area in order to find one that maximizes the yield.
 
 :::
 
 ### Optimization of Net Production Rate {#sec-example_9_6_4}
 
-{{< include examples/reb_9_6_4/narrative.qmd >}}
+The rate expression for liquid-phase reaction (1) is given in equation (2). The rate coefficient displays Arrhenius temperature dependence with a pre-exponential factor of 2.59 x 10^9^ min^-1^ and an activation energy of 16.5 kcal mol^-1^. The heat of reaction (1) may be taken to be constant and equal to -22,200 cal mol^-1^. A solution containing only A at a concentration of 2 M and a temperature of 23 °C is going to be processed in a BSTR. The heat capacity of the solution is approximately constant and equal to 440 cal L^-1^ K^-1^, and its density is constant.
 
-{{< include examples/reb_9_6_4/equations.qmd >}}
+$$
+A \rightarrow Z \tag{1}
+$$
 
-{{< include examples/reb_9_6_4/narrative_2.qmd >}}
+$$
+r_1 = k_1C_A \tag{2}
+$$
+
+The 4.0 L BSTR has a perfectly mixed jacket with a volume of 0.5 L, a heat transfer area of 0.6 ft^2^, and a heat transfer coefficient of 1.13 x 10^4^ cal ft^-2^ h^-1^ K^-1^. Cooling water at 20 °C can be fed to the jacket. The water may be taken to have a constant density of 1 g cm^-3^ and a constant heat capacity of 1 cal g^-1^ K^-1^. A heating coil with a heat transfer coefficient of 3.8 x 10^4^ cal ft^-2^ h^-1^ K^-1^ and a heat transfer area of 0.23 ft^2^ can be submerged in and extracted from the reacting solution. Saturated steam at 120 °C can admitted to the coil.
+
+The BSTR is charged with 4 L of a 2 M solution of A at 23 °C. Initially there is no flow to the jacket, but it is filled with water, also at 23 °C. To start the batch process, the steam is admitted to the coil, and the coil is immersed in the solution. When the reacting fluid reaches 50 °C, the coil is extracted from the reacting fluid and cooling water flow to the jacket is started. When the reacting fluid reaches a temperature of 25 °C the cooling water flow is stopped, the reactor is drained and preparations for processing the next batch begin. The BSTR pressure is constant throughout all stages of processing. If the turnaround time for the reactor is 25 min, what coolant flow rate will maximize the net rate of production of Z? Plot the conversion of A and the reacting fluid temperature *vs*. reaction time corresponding to the coolant flow rate that maximizes the net rate and comment on the results.
 
 ---
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This is an isolated reactor analysis problem: the reactor is the only equipment involved, the reactions and rate expressions are knows, and the questions are about reactor inputs and outputs. To summarize the assignment, I'll assign appropriate variable symbols to every quantity mentioned in the assignment. This is a batch reactor with 2-stage operating protocol. I'll use a subscripted "0" to denote initial conditions, a subscripted "1" to denote values at the end of the first stage in the protocol and a subscripted "f" to denote final values.
+This is an isolated reactor analysis problem: the reactor is the only equipment involved, the reactions and rate expressions are known, and the questions are about reactor inputs and outputs. To summarize the assignment, I'll assign appropriate variable symbols to every quantity mentioned in the assignment. This is a batch reactor with 2-stage operating protocol. I'll use a subscripted "0" to denote initial conditions, a subscripted "1" to denote values at the end of the first stage in the protocol and a subscripted "f" to denote final values. Since there is only one reaction, I won't use subscripts to index reactions.
 
 This reactor has both a coil for heating and a jacket for cooling. I'll use a subscripted "ex" to denote properties associated with the cooling jacket and a sub-scripted "coil" to denote properties associated with the heating coil.
 
@@ -1055,13 +1615,29 @@ This reactor has both a coil for heating and a jacket for cooling. I'll use a su
 
 #### Assignment Summary
 
-**Given and Known Constants**: $k_{0,1}$ = 2.59 x 10^9^ min^-1^, $E_1$ = 16.5 kcal mol^-1^, $\Delta H_1$ = -22,200 cal mol^-1^, $C_{A,0}$ = 2 M, $T_0$ = 23 °C, $\breve{C}_p$ = 440 cal L^-1^ K^-1^, $V$ = 4.0 L, $V_{ex}$ = 0.5 L, $A_{ex}$ = 0.6 ft^2^, $U_{ex}$ = 1.13 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $T_{ex,in}$ = 20 °C, $\rho_{ex}$ = 1 g cm^-3^, $\tilde{C}_{p,ex}$ = 1 cal g^-1^ K^-1^, $U_{coil}$ = 3.8 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $A_{coil}$ =  0.23 ft^2^, $T_{coil}$ = 120 °C, $T_{ex,0}$ = 23 °C, $T_1$ = 50 °C, $T_f$ = 25 °C, $t_{turn}$ = 25 min, and $R$ = 1.987 cal mol^-1^ K^-1^.
+**Reaction:** 
 
-**Reactor**: heated/cooled BSTR with a 2-stage operational protocol.
+$$
+A \rightarrow Z \tag{1}
+$$
 
-**Quantities of Interest**: $\dot{m}_{ex,opt} = \underset{\dot{m}_{ex}}{\arg\max} \left(r_{Z,net}\right)$ and $f_A\big\vert_{\dot{m}_{ex,opt}}\left(t\right)$ and $T\big\vert_{\dot{m}_{ex,opt}}\left(t\right)$ as graphs.
+**Rate Expression:** 
 
-#### Mathematical Formulation of the Solution
+$$
+r = kC_A \tag{2}
+$$
+
+**Reactor System:** BSTR with stage 1 heating and stage 2 cooling.
+
+**Reactor Schematic:** 
+
+![Schematic representation of a closed (batch), stirred tank reactor with a heating coil (yellow) and a cooling jacket (green).](Graphics/bstr_example_9_6_4.png){#fig-closed_stirred_tank_reactor width="30%"}
+
+**Quantities of Interest**: $\dot{m}_{ex,opt} = \underset{\dot{m}_{ex}}{\arg\max} \left(r_{Z,net}\right)$, $\underline{f}_A\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$, and $\underline{T}\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$ as graphs.
+
+**Given and Known Constants**: $k_0$ = 2.59 x 10^9^ min^-1^, $E$ = 16.5 kcal mol^-1^, $\Delta H$ = -22,200 cal mol^-1^, $C_{A,0}$ = 2 M, $T_0$ = 23 °C, $\breve{C}_p$ = 440 cal L^-1^ K^-1^, $V$ = 4.0 L, $V_{ex}$ = 0.5 L, $A_{ex}$ = 0.6 ft^2^, $U_{ex}$ = 1.13 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $T_{ex,in}$ = 20 °C, $\rho_{ex}$ = 1 g cm^-3^, $\tilde{C}_{p,ex}$ = 1 cal g^-1^ K^-1^, $U_{coil}$ = 3.8 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $A_{coil}$ =  0.23 ft^2^, $T_{coil}$ = 120 °C, $T_{ex,out,0}$ = 23 °C, $T_1$ = 50 °C, $T_f$ = 25 °C, $t_{turn}$ = 25 min, and $R$ = 1.987 cal mol^-1^ K^-1^. 
+
+#### Generation of the Model Equations
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -1088,26 +1664,30 @@ $$
 \rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot{Q}_{ex} - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex}} \tilde C_{p,ex}dT
 $$
 
+$$
+\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex,out}}{dt} = -\dot{Q}_{ex} - \dot m_{ex}\tilde C_{p,ex} \left(T_{ex,out}-T_{ex,in}\right)
+$$
+
 The steam in the coil exchanges latent heat, so its temperature is known and constant. As a consequence, the mole balances, energy balance on the reacting fluid and energy balance on the cooling water can be solved independently of the energy balance on the steam. The problem does not ask any questions about the steam flow rate or how much of it condenses, so an energy balance on the steam is not needed.
 
 Momentum balances are not used for stirred tank reactors, so the full set of reactor design equations consists of mole balances on A and Z, an energy balance on the reacting fluid and an energy balance on the cooling water. The mole balances are the same for both stages of operation, but both energy balances change from one stage to the other. For each stage there are four IVODEs and four dependent variables, so it is not necessary to add an IVODE or eliminate a dependent variable.
 
 :::
 
-**Reactor Design Equations**
+**BSTR Design Equations**
 
 Mole balances on A and Z, equations (3) and (4) are the same in heating stage of the protocol and in the cooling stage. An energy balance on the reacting fluid and an energy balance on the coolant in the shell during the heating stage are shown in equations (5) and (6). During the cooling stage of the operating protocol, an energy balance on the reacting fluid and an energy balance on the coolant take the forms shown in equations (7) and (8).
 
 $$
-\frac{dn_A}{dt} = -Vr_1 \tag{3}
+\frac{dn_A}{dt} = -Vr \tag{3}
 $$
 
 $$
-\frac{dn_Z}{dt} = Vr_1 \tag{4}
+\frac{dn_Z}{dt} = Vr \tag{4}
 $$
 
 $$
-\frac{dT}{dt} = \frac{\dot{Q}_{ex} + \dot{Q}_{coil}  - Vr_1 \Delta H_1}{V \breve C_p} \tag{5}
+\frac{dT}{dt} = \frac{\dot{Q}_{ex} + \dot{Q}_{coil}  - Vr \Delta H}{V \breve C_p} \tag{5}
 $$
 
 $$
@@ -1115,25 +1695,25 @@ $$
 $$
 
 $$
-\frac{dT}{dt} = \frac{\dot{Q}_{ex}  - Vr_1 \Delta H_1}{V \breve C_p} \tag{7}
+\frac{dT}{dt} = \frac{\dot{Q}_{ex}  - Vr \Delta H}{V \breve C_p} \tag{7}
 $$
 
 $$
-\frac{dT_{ex}}{dt} = -\left(\frac{\dot{Q}_{ex} + \dot m_{ex} \tilde{C}_{p,ex} \left(T_{ex} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}}\right) \tag{8}
+\frac{dT_{ex,out}}{dt} = -\left(\frac{\dot{Q}_{ex} + \dot m_{ex} \tilde{C}_{p,ex} \left(T_{ex,out} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}}\right) \tag{8}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The BSTR design equations are IVODEs, so initial values and a stopping criterion are needed to solve them. For this system, two sets of initial values and stopping criteria will be needed because the IVODEs need to be solved for each of the two operational stages.
+The BSTR design equations are ODEs, so initial values and a stopping criterion are needed to solve them. For this system, two sets of initial values and stopping criteria will be needed because the ODEs need to be solved for each of the two operational stages.
 
-The instant the solution is added to the reactor can be defined as $t=0$. This marks the start of the heating phase. The molar amounts of A, $n_{A,0}$, and Z, 0.0 (only A is present initially), the reacting fluid temperature, $T_0$, and the cooling water temperature, $T_{ex,0}$, at that time are then the initial values for the analysis of the heating phase. It ends when the reacting fluid reaches $T_1$.
+The instant the solution is added to the reactor can be defined as $t=0$. This marks the start of the heating phase. The molar amount of A, $n_{A,0}$, can be calculated directly using its known initial concentration and the fluid volume. Only A is present initially, so the initial amount of Z is zero. The reacting fluid temperature, $T_0$, and the cooling water temperature, $T_{ex,0}$, at that time are also known. The heating stage ends when the reacting fluid reaches $T_1$, which is also known. All of the initial values for the first stage are known or can be calculated directly, and only one final value is known, so the BSTR design equations for the first stage are IVODEs.
 
-The cooling phase begins the instant the heating phase ends, so the initial values for the cooling phase are the final values from the heating phase. The cooling phase ends when the reacting fluid cools down to $T_f$, so that is the stopping criterion for the cooling phase.
+The cooling phase begins the instant the heating phase ends, so the initial values for the cooling phase are the final values from the heating phase. Assuming that the BSTR design equations for the first stage will be solved before those for the second stage, the initial values for the second stage are all known. The cooling phase ends when the reacting fluid cools down to $T_f$, so that is the stopping criterion for the cooling phase. Again, the BSTR design equations for the second stage are IVODEs.
 
 :::
 
-**Initial Values and Stopping Criterion**
+**Initial Values and Stopping Criteria**
 
 | Variable | Initial Value | Stopping Criterion |
 |:-------|:-------:|:-------:|
@@ -1145,168 +1725,426 @@ The cooling phase begins the instant the heating phase ends, so the initial valu
   
 : Initial values and stopping criterion for solving the design equations, (3) through (6), for the heating stage of the operating protocol. {#tbl-example_9_6_4_heating_initial_values}
 
+&nbsp;
+
 | Variable | Initial Value | Stopping Criterion |
 |:-------|:-------:|:-------:|
 | $t$ | $t_1$ | |
 | $n_A$ | $n_{A,1}$ | |
 | $n_Z$ | $n_{Z,1}$ | |
 | $T$ | $T_1$ | $T_f$ |
-| $T_{ex}$ | $T_{ex,1}$ | |
+| $T_{ex,out}$ | $T_{ex,1}$ | |
   
 : Initial values and stopping criterion for solving the design equations, (3), (4), (7) and (8), for the cooling stage of the operating protocol. {#tbl-example_9_6_4_cooling_initial_values}
+
+
+**Supporting Equations for Calculating the Initial Values**
+
+$$
+n_{A,0} = C_{A,0}V \tag{9}
+$$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-In order to solve the IVODEs numerically I'll need to do four things: calculate the values of the derivatives for each of the two stages at the start of each integration step, calculate all of the initial and final values in @tbl-example_9_6_4_heating_initial_values, and calculate all of the initial and final values in @tbl-example_9_6_4_cooling_initial_values.
+In order to solve the IVODEs numerically I'll need write a derivatives function for each of the two operational stages. Each derivatives function will receive $t$, $n_A$, $n_Z$, $T$, and $T_{ex,out}$ at the start of an integrations step. For the heating stage, it must use equations (3) through (6) to evaluate the derivatives, and then return them. Before the derivatives can be evaluated, any additional unknowns appearing in those equations must be calculated.
+Examination of equations (3) through (6) shows that for the heating stage, $r$, $\dot{Q}_{ex}$, and $\dot{Q}_{coil}$ are additional unknowns that must be calculated. 
 
-I'll start by writing the equations that I'll need in order to evaluate the derivatives appearing in the reactor design equations. The IVODEs are written in the form of derivative expressions. I'll need to evaluate the derivatives at the start of each integration step. At that point, the independent and dependent variables will be known along with the given and known constants. I will need to calculate any other quantities that appear in the derivatives expressions.
+The heat exchange rates can be calculated using the known heat transfer coefficients and heat transfer areas, @eq-heat-trans-rate. The reaction rate can be calculated using the given rate expression, but doing so introduces two more unknowns, $k$ and $C_A$. The rate coefficient can be calculated using the Arrhenius expression, @eq-arrhenius, since the pre-expoenetial factor and activation energy are known. The concentration of reagent A can be calculated using the defining equation for concentration in a closed system, @eq-concentration_closed.
 
-Examination of the reactor design equations for this system shows that $\dot{Q}_{coil}$ needs to be calculated for the first stage, $\dot{m}_{ex}$ needs to be calculated for the second stage, and $r_1$ and $\dot{Q}_{ex}$ need to be calculated for both stages.
-
-The heat exchange rates can be calculated using the known heat transfer coefficients and heat transfer areas, @eq-heat-trans-rate. The reaction rate can be calculated using the given rate expression, but doing so introduces two more variables, $k_1$ and $C_A$. The rate coefficient can be calculated using the Arrhenius expression, @eq-arrhenius, since the pre-expoenetial factor and activation energy are known. The concentration of reagent A can be calculated using the defining equation for concentration in a closed system, @eq-concentration_closed.
-
-The coolant flow rate is not known, but it is known that it is the flow rate that results in the maximum net rate of production of Z. There are a few approaches to making use of that information to calculate $\dot{m}_{ex}$. I will choose a range of values for $\dot{m}_{ex}$, calculate the net rate associated with each coolant flow rate, and plot the resulting data to find the coolant flow rate that maximizes the rate. As such, I will not need to calculate $\dot{m}_{ex}$ at the time I need to evaluate the derivatives. 
+For the cooling stage equations (3), (4), (7), and (8) will be used to evaluate the derivatives. Examination of those equations shows that in addition to $r$ and $\dot{Q}_{coil}$, the coolant flow rate, $\dot{m}_{ex}$, also is an unknown. The reaction rate and the rate of heat transfer to the coil can be calculated as before, but $\dot{m}_{ex}$ cannot be calculated directly. As discussed in [Appendix -@sec-apndx_solve_ivodes], it will need to be made available to the derivatives function by some means other than passing it as an argument.
 
 :::
 
 **Ancillary Equations for Evaluating the Derivatives**
 
-The heating coil is only used during the first stage of operation. During that stage the rate of heat exchange with the steam in the coil is given by equation (9). Cooling water is present in the jacket during both phases of operation. The rate of heat exchange between the water in the jacket and the reacting fluid is given by equation (10).
+During both stages of the operational protocol, the reaction rate can be calculated using the rate expression, equation (2). The rate coefficient and concentration of A appearing in the rate expression can be calculated using equations (10) and (11). The rate of heat transfer to the jacket for both stages can be calculated using equation (12). (Note that Equation (12) uses $T_{ex,out}$ for the temperature in the jacket, but during the heating stage the coolant is not flowing, and the "out" can be omitted as was done in equation (6) and Tables [-@tbl-example_9_6_4_heating_initial_values] and [-@tbl-example_9_6_4_cooling_initial_values].) The coil is only used during the heating stage, and its rate of heat transfer can be calculated using equation (13).
 
 $$
-\dot{Q}_{coil} = U_{coil} A_{coil} \left(T_{coil} - T\right) \tag{9}
-$$
-
-$$
-\dot{Q}_{ex} = U_{ex} A_{ex} \left(T_{ex} - T\right) \tag{10}
-$$
-
-The rate is given by equation (2), where the rate coefficient is found using equation (11) and the concentration of A is found using equation (12).
-
-$$
-k_1 = k_{0,1}\exp{\left( \frac{-E_1}{RT} \right)} \tag{11}
+k_1 = k_{0,1}\exp{\left( \frac{-E_1}{RT} \right)} \tag{10}
 $$
 
 $$
-C_A = \frac{n_A}{V} \tag{12}
+C_A = \frac{n_A}{V} \tag{11}
 $$
 
-The coolant flow rate, $\dot{m}_{ex}$, will be varied to find the maximum net rate of production of Z, but at the time the design equations are solved, the value of $\dot{m}_{ex}$ will be known.
-
-:::{.callout-tip collapse="true"}
-## Click Here to See What an Expert Might be Thinking at this Point
-
-When I solve the IVODEs numerically, I'll also need to know the initial and final values in @tbl-example_9_6_4_heating_initial_values and @tbl-example_9_6_4_cooling_initial_values. The only unknown value for the first stage of processing is the molar amount of A which can be calculated from the known initial concentration and volume. The IVODEs for the first stage of operation will be solved before the IVODEs for the second stage. Consequently, all of the initial and final values for the second stage will be known.
-
-:::
-
-**Ancillary Equations for Calculating the Initial and Final Values**
-
-The initial molar amount of A can be calculated using equation (13).
+$$
+\dot{Q}_{ex} = U_{ex} A_{ex} \left(T_{ex,out} - T\right) \tag{12}
+$$
 
 $$
-n_{A,0} = C_{A,0}V \tag{13}
+\dot{Q}_{coil} = U_{coil} A_{coil} \left(T_{coil} - T\right) \tag{13}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-At this point, the design equations for the first stage can be solved to find corresponding sets of values of $t$, $n_A$, $n_Z$, $T\$, and $T_{ex}$ that span the range from their first-stage initial values to their first-stage final values. Then, given a value of $\dot{m}_{ex}$, the design equations for the second stage can be solved to find corresponding sets of values of $t$, $n_A$, $n_Z$, $T\$, and $T_{ex}$ that span the range from their second-stage initial values to their second-stage final values. Using the final molar amount of Z, the net rate of production of Z can then be calculated from its definition, @eq-def_net_gen_rate. Similarly, using the molar amount of A, the conversion can be calculated at each time using its definition, @eq-conversion_def_closed. If the calculations are repeated using a range of values of $\dot{m}_{ex}$ that is sufficiently wide that $r_{Z,net}$ passes through a maximum, the maximum net rate and the optimum coolant flow rate can be identified.
+At this point, the design equations for the first stage can be solved to find corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ that span the range from their first-stage initial values to their first-stage final values. Then, given a value of $\dot{m}_{ex}$, the design equations for the second stage can be solved to find corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ that span the range from their second-stage initial values to their second-stage final values. Using the final molar amount of Z, the net rate of production of Z can then be calculated from its definition, @eq-def_net_gen_rate. Similarly, using the molar amount of A, the conversion can be calculated at each time using its definition, @eq-conversion_def_closed. If the calculations are repeated using a range of values of $\dot{m}_{ex}$ that is sufficiently wide that $r_{Z,net}$ passes through a maximum, the maximum net rate and the optimum coolant flow rate can be identified.
 
 :::
 
-**Ancillary Equations for Calculating the Other Quantities of Interest**
+#### Calculating the Quantities of Interest
 
-With the information given above, the design equations for the first stage can be solved. Then, given a value of $\dot{m}_{ex}$, the design equations for the second stage can be solved to find corresponding values of $t$, $n_A$, $n_Z$, $T\$, and $T_{ex}$. The net rate can be calculated using equation (14), and the conversion can be calculated using equation (15). By solving the design equations using a range of coolant flow rates, the optimum coolant flow rate can be identified, equations (16).
-
-$$
-r_{Z,net} = \frac{n_Z\big\vert_{t_f}}{t_f + t_{turn}} \tag{14}
-$$
+The coolant flow rate that maximizes the net rate of production of Z is one of the quantities of interest. To identify that optimum coolant flow rate, a set of 100 values of $\dot{m}_{ex}$ between 100 and 250 g min^-1^ can be created, equations (14) and (15).
 
 $$
-f_A = \frac{n_{A,0} - n_A}{n_{A,0}} \tag{15}
+N=100 \tag{14}
 $$
 
 $$
-\dot{m}_{ex,opt} = \underset{\dot{m}_{ex}}{\arg\max}\left( r_{Z,net} \right) \tag{16}
+\underline{\dot{m}}_{ex} = \left[\dot{m}_{ex,1},\cdots,\dot{m}_{ex,N}\right]:\,\dot{m}_{ex,1}=100, \dot{m}_{ex,i} \lt \dot{m}_{ex,i+1} \text{ and } \dot{m}_{ex,N} = 250 \tag{15}
 $$
 
-**Calculations Summary**
+For each coolant flow rate the design equations for the heating stage can be solved numerically, and the final values of the independent and dependent variables can the be used to define the initial values for the cooling stage. The design equations for the cooling stage can then be solved to get corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex,out}$ during the second, cooling stage. Using the final values, corresponding values of the net rate and the conversion can be calculated using equation (16).
 
-1. Substitute given and known constants into all equations.
-2. When it is necessary to evaluate the derivatives for either stage 
-	a. $t$, $n_A$, $n_Z$, $T$, $T_{ex}$, and $\dot{m}_{ex}$ will be available.
-	b. For the first stage,
-		i. Calculate $\dot{Q}_{coil}$, $\dot{Q}_{ex}$, $k_1$, and $C_A$ using equations (9) through (12).
-		ii. Calculate $r_1$ using equation (2), and
-		iii. Evaluate the derivatives using equations (3) - (6).
-	c. For the second stage,
-		i. Calculate $\dot{Q}_{ex}$, $k_1$, and $C_A$ using equations (9) through (12).
-		ii. Calculate $r_1$ using equation (2).
-		iii. Evaluate the derivatives using equations (3), (4), (7), and (8).
-3. When it is necessary to calculate the initial and final values in @tbl-example_9_6_4_heating_initial_values
-	a. $T_0$, $T_{ex,0}$, and $T_1$ are known constants.
-	b. Calculate $n_{A,0}$ using equation (13).
-4. When it is necessary to calculate the net rate, use equation (14).
-5. When it is necessary to calculate $f_A$
-	a. Values of $n_A$ corresponding to times spanning the range from 0 to $t_f$ will be available.
-	b. Calculate $f_A$ using equation (15).
+$$
+\forall \, \dot{m}_{ex,i} \quad \begin{pmatrix}\displaystyle r_{Z,net,i} = \frac{n_{Z,f,i}}{t_{f,i} + t_{turn}}\\
+\\
+\displaystyle f_{A,i} = \frac{n_{A,0} - n_{A,f,i}}{n_{A,0}}
+\end{pmatrix} \tag{16}
+$$
 
-#### Numerical implementation of the Solution
+The resulting set of values for the net rate can be used to identify the coolant flow rate that maximizes the net rate, along with the maximum net rate, equations (17), (18), and (19).
 
-1. Make the given and known constants available for use in all functions.
-2. 2. Define a variable to hold the current value of $\dot{m}_{ex,opt}$ and make it available to all functions.
-3. Write a derivatives function for the first stage of operation that 
-	a. receives $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ as arguments and
-	b. evaluates and returns the values of the derivatives as described in step 2 of the calculations summary.
-4. Write a derivatives function for the second stage of operation that 
-	a. receives $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ as arguments and
-	b. evaluates and returns the values of the derivatives as described in step 2 of the calculations summary.
-5. Write a reactor model function for the first stage of operation that
-	a. calculates the initial and final values in @tbl-example_9_6_4_heating_initial_values as described in step 3 of the calculations summary,
-	b. gets corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
-		i. the initial values and stopping criterion in @tbl-example_9_6_4_heating_initial_values and 
-		ii. the name of the derivatives function from step 3,
-	c. checks that the solver successfully solved the IVODEs, and
-	d. returns the results returned by the IVODE solver.
-6. Write a reactor model function for the secon stage of operation that
-	a. receives the final values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex} from the first stage as arguments,
-	b. gets corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$, spanning the range from their initial values to their final values by calling an IVODE solver and passing the following information to it
-		i. the initial values and stopping criterion in @tbl-example_9_6_4_cooling_initial_values and 
-		ii. the name of the derivatives function from step 4,
-	c. checks that the solver successfully solved the IVODEs, and
-	d. returns the results returned by the IVODE solver.
-7. Perform the analysis by
-	a. calling the reactor model function for the first stage from step 5 above to get $t$, $n_A$, $n_Z$, $T$, and $T_{ex} for the first stage,
-	b. choosing a range of $\dot{m}_{ex}$, and for each value in the range
-		i. making $\dot{m}_{ex}$ available to all functions,
-		ii. calling the reactor model function for the second stage from step 6 above to get $t$, $n_A$, $n_Z$, $T$, and $T_{ex} for the second stage, and
-		iii. calculating and saving the net rate as described in step 4 of the calculations summary,
-	c. using the results from step 7b to identify $\dot{m}_{ex,opt}$ using equation (16),
-	d. calling the reactor model function for the second stage from step 6 above to get $t$, $n_A$, $n_Z$, $T$, and $T_{ex} for the second stage, and
-	e. calculating the conversion for all times as described in step 5 of the calculations summary.
+$$
+i_{opt} = \underset{i}{\arg\max} \left(r_{Z,net,i}\right) \tag{17}
+$$
+
+$$
+\dot{m}_{ex,opt} = \dot{m}_{ex,i_{opt}} \tag{18}
+$$
+
+$$
+r_{Z,net,max} = r_{Z,net,i_{opt}} \tag{19}
+$$
+
+If the net rate is maximized at a coolant flow rate of 100 g min^-1^, the calculations must be repeated using a range of smaller flow rates, and if it is maximized at a coolant flow rate of 250 g min^-1^ they must be repeated using a range of larger flow rates. Otherwise, the BSTR design equations for both stages can be solved using the optimum coolant flow rate, and the results can be combined to generate corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex,out}$ that span both stages of operation. The corresponding conversion can be calculated using equation (20), and plots of $\underline{f}_A\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$, and $\underline{T}\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$ can be generated.
+
+$$
+f_{A,i} = \frac{n_{A,0} - n_{A,f,i}}{n_{A,0}} \tag{20}
+$$
+
+#### Formulation of the Calculations
+
+The BSTR design equations for this assignment are IVODEs, and they can be solved numerically as described in [Appendix -@sec-apndx_solve_ivodes]. To complete the assignment as described in the Calculating the Quantities of Interest section, five computer functions can be written.
+
+* The derivatives function for the heating stage must be passed the independent and dependent variables at the start of an integration step, and it must return the derivatives calculated using equations (3) through (6). To do so, the algorithm must calculate the rate, $r$, and the two heat transfer rates, $\dot{Q}_{ex}$ and $\dot{Q}_{coil}$ and then evaluate the derivatives.
+
+* The derivatives function for the cooling stage must also be must be passed the independent and dependent variables at the start of an integration step and must return the derivatives, but it must calculate them using equations (3), (4), (7), and (8). To do so, the coolant flow rate must be available and the algorithm must calculate the rate, $r$, and the heat transfer rate, $\dot{Q}_{ex}$, before evaluating the derivatives.
+
+* The BSTR function for the heating stage does not need to be passed any arguments, and it returns corresponding sets of values of the independent and dependent variables spanning the duration of that stage. To do so the algorithm must define the initial values and stopping criterion for the first stage and then call an IVODE solver.
+
+* The BSTR function for the cooling stage must be passed the final values of the independent and dependent variables in the first (heating) stage and the coolant flow rate as arguments, and it returns corresponding sets of values of the independent and dependent variables spanning the duration of the cooling stage. To do so the algorithm must make the coolant flow rate available to the second stage derivatives function, define the initial values and stopping criterion, and call an IVODE solver.
+
+* The deliverables function will take no arguments, and it will not return anything. It must then calculate the quantities of interest as described above.
+
+Specifications can be written for each of these functions in preparation for writing them. The function specifications given here assume that the known constants are available wherever they are needed.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See the Derivatives Function for the Heating Stage Specifications
+
+<center>**Derivatives Function for the Heating Stage Specifications**</center>
+
+[Arguments]{.underline}: $t$, $n_A$, $n_Z$, $T$, and $T_{ex,out}$
+
+[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_Z}{dt}$, $\frac{dT}{dt}$, and $\frac{dT_{ex,out}}{dt}$
+
+[Algorithm]{.underline}:
+
+$$
+k_1 = k_{0,1}\exp{\left( \frac{-E_1}{RT} \right)} \tag{10}
+$$
+
+$$
+C_A = \frac{n_A}{V} \tag{11}
+$$
+
+$$
+\dot{Q}_{ex} = U_{ex} A_{ex} \left(T_{ex,out} - T\right) \tag{12}
+$$
+
+$$
+\dot{Q}_{coil} = U_{coil} A_{coil} \left(T_{coil} - T\right) \tag{13}
+$$
+
+$$
+\frac{dn_A}{dt} = -Vr \tag{3}
+$$
+
+$$
+\frac{dn_Z}{dt} = Vr \tag{4}
+$$
+
+$$
+\frac{dT}{dt} = \frac{\dot{Q}_{ex} + \dot{Q}_{coil}  - Vr \Delta H}{V \breve C_p} \tag{5}
+$$
+
+$$
+\frac{dT_{ex}}{dt} = -\left(\frac{\dot{Q}_{ex}}{\rho_{ex} V_{ex} \tilde C_{p,ex}}\right) \tag{6}
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See the Derivatives Function for the Cooling Stage Specifications
+
+<center>**Derivatives Function for the Cooling Stage Specifications**</center>
+
+[Arguments]{.underline}: $t$, $n_A$, $n_Z$, $T$, and $T_{ex,out}$
+
+[Must be Available]{.underline}: $\dot{m}_{ex}$
+
+[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_Z}{dt}$, $\frac{dT}{dt}$, and $\frac{dT_{ex,out}}{dt}$
+
+[Algorithm]{.underline}:
+
+$$
+k_1 = k_{0,1}\exp{\left( \frac{-E_1}{RT} \right)} \tag{10}
+$$
+
+$$
+C_A = \frac{n_A}{V} \tag{11}
+$$
+
+$$
+\dot{Q}_{ex} = U_{ex} A_{ex} \left(T_{ex,out} - T\right) \tag{12}
+$$
+
+$$
+\frac{dn_A}{dt} = -Vr \tag{3}
+$$
+
+$$
+\frac{dn_Z}{dt} = Vr \tag{4}
+$$
+
+$$
+\frac{dT}{dt} = \frac{\dot{Q}_{ex}  - Vr \Delta H}{V \breve C_p} \tag{7}
+$$
+
+$$
+\frac{dT_{ex,out}}{dt} = -\left(\frac{\dot{Q}_{ex} + \dot m_{ex} \tilde{C}_{p,ex} \left(T_{ex,out} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}}\right) \tag{8}
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See the BSTR Function for the Heating Stage Specifications
+
+<center>**BSTR Function for the Heating Stage Specifications**</center>
+
+[Arguments]{.underline}: none.
+
+[Returns]{.underline}: $\underline{t}$, $\underline{n}_A$, $\underline{n}_Z$, $\underline{T}$, and $\underline{T}_{ex}$
+
+[Algorithm]{.underline}:
+
+$$
+t_{initial} = 0 \tag{20}
+$$
+
+$$
+n_{A,initial} = n_{A,0} = C_{A,0}V \tag{9}
+$$
+
+$$
+n_{Z,initial} = 0,\, T_{initial} = T_0,\, T_{ex,initial} = T_{ex,0},\, T_{final} = T_1\tag{21}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}t_{initial}, n_{A,initial}, n_{Z,initial},\\
+T_{initial}, T_{ex,initial}, T_{final},\\
+\text{ derivatives function for the heating stage}\\
+\Downarrow\\
+\text{IVODE solver}\\
+\Downarrow\\
+\underline{t}, \underline{n}_A, \underline{n}_Z, \underline{T}, \underline{T}_{ex}\\
+\end{matrix} \tag{22}
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See the BSTR Function for the Cooling Stage Specifications
+
+<center>**Derivatives Function for the Cooling Stage Specifications**</center>
+
+[Arguments]{.underline}: $\dot{m}_{ex}$, $t_{initial}$, $n_{A,initial}$, $n_{Z,initial}$, $T_{initial}$, and $T_{ex,out,initial}$
+
+[Returns]{.underline}: $\underline{t}$, $\underline{n}_A$, $\underline{n}_Z$, $\underline{T}$, and $\underline{T}_{ex,out}$
+
+[Algorithm]{.underline}:
+
+$$
+\dot{m}_{ex} \, \Rightarrow \, \text{available to the derivatives function for the cooling stage}\tag{23}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}t_{initial}, n_{A,initial}, n_{Z,initial},\\
+ T_{initial}, T_{ex,out,initial}, T_{final},\\
+\text{ derivatives function for the cooling stage}\\
+\Downarrow\\
+\text{IVODE solver}\\
+\Downarrow\\
+\underline{t}, \underline{n}_A, \underline{n}_Z, \underline{T}, \underline{T}_{ex}\\
+\end{matrix} \tag{24}
+$$
+
+:::
+
+:::{.callout-tip collapse="true"}
+## Click Here to See the Deliverables Function Specifications
+
+<center>**Deliverables Function Specifications**</center>
+
+[Arguments]{.underline}: none
+
+[Returns]{.underline}: nothing
+
+[Algorithm]{.underline}:
+
+$$
+\begin{matrix}
+\text{BSTR function for the Heating Stage}\\
+\Downarrow\\
+\underline{t}_{heating}, \underline{n}_{A,heating}, \underline{n}_{Z,heating}, \underline{T}_{heating}, \underline{T}_{ex,heating}
+\end{matrix} \tag{25}
+$$
+
+&nbsp;
+
+$$
+N=100 \tag{14}
+$$
+
+$$
+\underline{\dot{m}}_{ex} = \left[\dot{m}_{ex,1},\cdots,\dot{m}_{ex,N}\right]:\,\dot{m}_{ex,1}=100, \dot{m}_{ex,i} \lt \dot{m}_{ex,i+1} \text{ and } \dot{m}_{ex,N} = 250 \tag{15}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix} t_{initial} = \underline{t}_{heating}\big\vert_{T_1},\, n_{A,initial} = \underline{n}_{A,heating}\big\vert_{T_1},\, n_{Z,initial} = \underline{n}_{Z,heating}\big\vert_{T_1} \\
+T_{initial} = \underline{T}_{heating}\big\vert_{T_1},\, T_{ex,out,initial} = \underline{T}_{ex,heating}\big\vert_{T_1},\, T_{final} = T_f \end{matrix}\tag{26}
+$$
+
+&nbsp;
+
+$$
+\forall \, \dot{m}_{ex,i} \quad 
+\begin{pmatrix}
+\begin{matrix}
+\dot{m}_{ex,i},\, t_{initial},\, n_{A,initial},\, n_{Z,initial},\\
+T_{initial},\, T_{ex,out,initial},\, T_{final} \\
+\Downarrow\\
+\text{BSTR function for the Cooling Stage}\\
+\Downarrow\\
+\underline{t}, \underline{n}_A, \underline{n}_Z, \underline{T}, \underline{T}_{ex}
+\end{matrix}\\
+\\
+\displaystyle r_{Z,net,i} = \frac{n_{Z,f,i}}{t_{f,i} + t_{turn}}
+\end{pmatrix} \tag{16}
+$$
+
+&nbsp;
+
+$$
+i_{opt} = \underset{i}{\arg\max} \left(r_{Z,net,i}\right) \tag{17}
+$$
+
+$$
+\dot{m}_{ex,opt} = \dot{m}_{ex,i_{opt}} \tag{18}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\dot{m}_{ex,opt},\, r_{Z,net,i_{opt}}\\
+\Downarrow\\
+\text{functions to display and save}
+\end{matrix} \tag{27}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\dot{m}_{ex,opt},\, t_{initial},\, n_{A,initial},\, n_{Z,initial},\\
+T_{initial},\, T_{ex,out,initial},\, T_{final} \\
+\Downarrow\\
+\text{BSTR function for the Cooling Stage}\\
+\Downarrow\\
+\underline{t}_{cooling}, \underline{n}_{A,cooling}, \underline{n}_{Z,cooling}, \underline{T}_{cooling}, \underline{T}_{ex,out,cooling}
+\end{matrix} \tag{28}
+$$
+
+&nbsp;
+
+$$
+\underline{t} = \left[ \underline{t}_{heating}, \underline{t}_{cooling}\right] \tag{29}
+$$
+
+$$
+\underline{n}_A = \left[ \underline{n}_{A,heating}, \underline{n}_{A,cooling}\right] \tag{30}
+$$
+
+$$
+\underline{f}_A = \frac{n_{A,0} - \underline{n}_A}{n_{A,0}} \tag{31}
+$$
+
+$$
+\underline{T} = \left[ \underline{T}_{heating}, \underline{T}_{cooling}\right] \tag{32}
+$$
+
+&nbsp;
+
+$$
+\begin{matrix}
+\underline{t},\, \underline{f}_A,\, \underline{T}\\
+\Downarrow\\
+\text{plotting functions}\\
+\Downarrow\\
+\text{requested graphs}
+\end{matrix} \tag{33}
+$$
+
+:::
+
+#### Implementation and Execution of the Calculations
+
+The five functions above were written as specified using an appropriate mathematics software package. The calculations were performed by calling the deliverables function. The optimum coolant flow rate was between 100 and 250 g min^-1^, so it was not necessary to repeat the calculations using a different range of coolant flow rates.
 
 #### Results and Discussion 
 
 ```{r}
 #| echo: false
 #| output: false
-df <- read.csv('examples/reb_9_6_4/results.csv')
+df <- read.csv('Calculations/example_9_6_4/results.csv')
 df <- fmt_tibble_col(df, 2, 3, 3, 2)
 ```
 
-The calculations were performed as described above. The net rate of production of Z is plotted as a function of the cooling water flow rate in @fig-example_9_6_4_net_rate_plot. The maximum net rate, `r df$value[2]` `r df$units[2]`, occurs at a coolant flow rate of `r df$value[1]` `r df$units[1]`. The conversion and reacting fluid temperature profiles at that coolant flow rate are shown in @fig-example_9_6_4_conversion_profile and @fig-example_9_6_4_temperature_profile. 
+The net rate of production of Z is plotted as a function of the cooling water flow rate in @fig-example_9_6_4_net_rate_plot. The maximum net rate, `r df$value[2]` `r df$units[2]`, occurs at a coolant flow rate of `r df$value[1]` `r df$units[1]`. The conversion and reacting fluid temperature profiles at that coolant flow rate are shown in @fig-example_9_6_4_conversion_profile and @fig-example_9_6_4_temperature_profile. Knowing the initial concentration of A and the Arrhenius parameters, the conversion and temperature profiles were used to calculate the instantaneous reaction rate profile shown in @fig-example_9_6_4_rate_profile. It shows that the rate is close to zero when the reactant is charged to the BSTR.
 
-![Net rate of production of Z as cooling water flow rate varies.](examples/reb_9_6_4/net_rate_vs_coolant_flow.png){#fig-example_9_6_4_net_rate_plot width="80%"}
+![Net rate of production of Z as cooling water flow rate varies.](Calculations/example_9_6_4/net_rate_vs_coolant_flow.png){#fig-example_9_6_4_net_rate_plot width="80%"}
 
-![Conversion profile during processing with the optimum coolant flow rate.](examples/reb_9_6_4/conversion_profile.png){#fig-example_9_6_4_conversion_profile width="80%"}
+![Conversion profile during processing with the optimum coolant flow rate.](Calculations/example_9_6_4/conversion_profile.png){#fig-example_9_6_4_conversion_profile width="80%"}
 
-![Temperature profile during processing with the optimum coolant flow rate.](examples/reb_9_6_4/temperature_profile.png){#fig-example_9_6_4_temperature_profile width="80%"}
+![Temperature profile during processing with the optimum coolant flow rate.](Calculations/example_9_6_4/temperature_profile.png){#fig-example_9_6_4_temperature_profile width="80%"}
 
-![Instantaneous reaction rate profile during processing with the optimum coolant flow rate.](examples/reb_9_6_4/inst_rate_profile.png){#fig-example_9_6_4_rate_profile width="80%"}
+![Instantaneous reaction rate profile during processing with the optimum coolant flow rate.](Calculations/example_9_6_4/inst_rate_profile.png){#fig-example_9_6_4_rate_profile width="80%"}
 
-Knowing the initial concentration of A and the Arrhenius parameters, the conversion and temperature profiles were used to calculate the instantaneous reaction rate profile shown in @fig-example_9_6_4_rate_profile. It shows that the rate effectively zero when the reactant is charged to the BSTR. @fig-example_9_6_4_temperature_profile shows the steam heating increases the temperature to 50 °C in ca. 2.5 min, at which time the rate has become significant. The temperature continues to rise because heat is being released by reaction faster than it is being removed by the coolant. As the reactant is depleted, the rate does not increase as rapidly until eventually, after ca. 31.1 min, the rate reaches its maximum value. As the rate decreases, the amount of heat released due to reaction decreases until, at ca. 31.5 min, it becomes equal to the rate at which the coolant is removing heat. At that point the temperature passes through a maximum. After that the coolant removes heat faster than it is generated, and after ca. 100 min the temperature reaches 25 °C and processing ends. The conversion at this point is over 99%.
+Four interesting features of Figures [-@fig-example_9_6_4_conversion_profile] through [-@fig-example_9_6_4_rate_profile] can be rationalized quatitatively. First, @fig-example_9_6_4_temperature_profile shows a kink at approximately 2.5 min. The temperature at that point is 50 °C, and that is the point where the heating stage ends and the cooling stage begins. Just prior to the kink, the temperature was rising rapidly and nearly linearly. That indicates that the temperature rise was primarily due to the heat from the coil. After the kink, the temperature continues to rise, but not as rapidly, because the rate has become large enough that heat is being released by reaction faster than it is being removed by the coolant. The kink in @fig-example_9_6_4_rate_profile occurs for the same reason.
+
+The second interesting observation is that the instantaneous rate (@fig-example_9_6_4_rate_profile) reaches a maximum before the temperature (@fig-example_9_6_4_temperature_profile) does. The reason for the maximum in the instantaneous rate is similar to [Example -@sec-example_9_6_1]. Before the maximum rate is attained, two opposing factors are affecting the change in the reaction rate. The reactant concentrations are decreasing, which tends to decrease the rate, while the temperature is increasing, which tends to increase the rate. Before the maximum is reached, the temperature effect is greater than the concentration effect. When the two effects become equal, the maximum rate occurs. 
+
+In [Example -@sec-example_9_6_1] the temperature rose continually because the reactor was adiabatic, but here @fig-example_9_6_4_temperature_profile shows that the temperature does eventually reach a maximum and then decrease. This is due to heat removal by the cooling jacket. The third interesting feature of the graphs is that the temperature continues to rise for a short period of time after the rate has reached its maximum value. Even though the rate has begun to decrease due to depletion of the reactants, the reaction is still releasing heat faster than the cooling fluid can remove it. When the temperature maximum is reached, the release of heat by reaction has become equal to the removal of heat by the coolant. After the maximum, the coolant removes heat faster than it is generated, so that after ca. 100 min the temperature reaches 25 °C and processing ends.
+
+The conversion at this point is over 99%, but the fourth interesting feature is that the conversion is well over 90% after approximately 30 min. Put differently approximately 90% conversion occurs in the first 30 minutes, but it only increases 9% in the final 70 minutes. This suggests that it might be possible to optimize the system further.
 
 In this assignment, the net rate was maximized with respect to the coolant flow rate. The net rate will also be affected by the duration of the heating stage, or equivalently the temperature at which the coil is removed from the reacting fluid and the coolant flow starts. If the temperatures of the cooling water or the steam could be varied, they, too, would be expected to affect the net rate. In a more realistic optimization, it would not be the net rate that would be optimized. Instead, the rate of financial profit would be maximized. The rate of financial profit would depend on the net rate of the reaction, but it would also depend on the selling price of the product, the costs of the reactant, steam, and cooling water, and a number of other factors. That type of multidimensional optimization is beyond the scope of this book, but at its core, it is similar to the simple optimization illustrated in this assignment.
 
@@ -1326,7 +2164,7 @@ In this assignment, the net rate was maximized with respect to the coolant flow 
 | $C_i$ | concentration of reagent $i$. |
 | $\hat{C}_{p,i}$ | molar, constant-pressure heat capacity of reagent $i$ |
 | $\tilde{C}_{p,ex}$ | mass-specific, constant-pressure heat capacity of the heat exchange fluid. |
-| $\preve{C}_p$ | volume-specific, constant-pressure heat capacity of the reacting fluid, additional subscripts denote fluids other than the reacting fluid. |
+| $\breve{C}_p$ | volume-specific, constant-pressure heat capacity of the reacting fluid, additional subscripts denote fluids other than the reacting fluid. |
 | $M_{ex}$ | molecular weight of the heat exchange fluid. |
 | $P$ | pressure of the reacting fluid, a subscripted $i$ denotes the partial pressure of reagent $i$. |
 | $\dot{Q}$ | rate of heat transfer *to* the reacting fluid, additional subscripts distinguish between different sources of the heat. |
@@ -1335,7 +2173,7 @@ In this assignment, the net rate was maximized with respect to the coolant flow 
 | $U$ | heat transfer coefficient. |
 | $V$ | reacting fluid volume, a subscripted $ex$ denotes the heat exchange fluid. |
 | $\dot{W}$ | rate at which the reacting fluid performs work on its surroundings. |
-| %\gamma$ | fraction of the heat exchange fluid that undergoes phase change. |
+| $\gamma$ | fraction of the heat exchange fluid that undergoes phase change. |
 | $\nu_{i,j}$ | stoichiometric coefficient of reagent $i$ in reaction $j$. |
 | $\rho$ | density, no subscript denotes the reacting fluid, a subscripted $ex$ denotes the heat exchange fluid. |
 | $\Delta H_j$ | heat of reaction $j$. |
