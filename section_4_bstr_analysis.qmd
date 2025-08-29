@@ -79,7 +79,7 @@ $$
 $$
 
 $$
-\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex,out}}{dt} = -\dot Q - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex,out}} \tilde C_{p,ex}dT
+\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot Q - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex}} \tilde C_{p,ex}dT
 $$
 
 $$
@@ -114,7 +114,7 @@ $$
 When heat transfer involves an exchange fluid as shown in @fig-bstr_heat_exchange_schematics, the rate of heat exchange in the energy balances can be calculated using @eq-bstr_heat_transfer. If the reactor operates adiabatically (i. e. it is perfectly insulated and does not have a shell, coil or external heat exchanger), $\dot{Q}$ is equal to zero.
 
 $$
-\dot Q = UA\left( T_{ex,out} - T \right)
+\dot Q = UA\left( T_{ex} - T \right)
 $$
 
 ## General Approach to Modeling Isolated BSTRs
@@ -136,7 +136,7 @@ Often the operational protocol for a BSTR has multiple heating and cooling stage
 
 **Generating the model equations**. When analyzing an isolated BSTR , it will *always* be necessary to generate the reactor design equations that are needed to model that specific BSTR. Selecting which equations are needed to model a given BSTR and simplifying the design equations is described in [Chapter -@sec-ideal_bstr_eqns] and in the preceding section of this chapter.
 
-The design equations for an isolated BSTR will be either a set of IVODEs or a set of DAEs, with $t$ as the independent variable. The dependent variables will always include the molar amounts of the reagents present in the system, $n_i$. Depending which other design equation are needed to model the BSTR, the dependent variables may also include the temperature of the reacting fluid, $T$, its pressure, $P$, and either the instantaneous outlet temperature of the exchange fluid, $T_{ex,out}$, or the instantaneous fraction of the exchange fluid undergoing phase change, $\gamma$.
+The design equations for an isolated BSTR will be either a set of IVODEs or a set of DAEs, with $t$ as the independent variable. The dependent variables will always include the molar amounts of the reagents present in the system, $n_i$. Depending which other design equation are needed to model the BSTR, the dependent variables may also include the temperature of the reacting fluid, $T$, its pressure, $P$, and either the instantaneous outlet temperature of the exchange fluid, $T_{ex}$, or the instantaneous fraction of the exchange fluid undergoing phase change, $\gamma$.
 
 If the reacting fluid is an ideal gas and the reactor design equations include an energy balance on the reacting fluid, the temperature and the pressure will appear as a dependent variables. Consequently, the number of dependent variables will be one greater than the number of IVODEs. In this situation either a dependent variable must be eliminated from the design equations or another IVODE must be added to them ([Appendix -@sec-apndx_solve_ivodes]). A differential form of the ideal gas law, @eq-differential_ideal_gas_law, is used to accomplish that. For a BSTR, $V$ is constant so its time derivative is zero, and does not appear in the differential form of the gas law. The differential ideal gas law can either be added to the reactor design equations, making the number of equations equal to the number of dependent variables, or it can be solved for $\frac{dP}{dt}$ and substituted into the energy balance, thereby eliminating $P$ as a dependent variable.
 
@@ -592,7 +592,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This is an isolated reactor modeling assignment: the system consists of only a reactor, it's operation is described, the rate expressions are known and it asks about reactor inputs and outputs. I'll begin by summarizing the assignment. I'll use appropriate variable symbols to represent the given constants. For initial values I'll add a subscripted "0" and for final values a subscripted "f". Cooling water flows into the jacket continuously, so I'll denote the temperature of the cooling water entering the jacket as $T_{ex,in}$ and the temperature leaving the jacket as $T_{ex,out}$. Because the jacket is perfectly mixed, $T_{ex,out,0}$ is the initial temperature of the cooling water in the jacket. I will add the ideal gas constant to the given constants.
+This is an isolated reactor modeling assignment: the system consists of only a reactor, it's operation is described, the rate expressions are known and it asks about reactor inputs and outputs. I'll begin by summarizing the assignment. I'll use appropriate variable symbols to represent the given constants. For initial values I'll add a subscripted "0" and for final values a subscripted "f". Cooling water flows into the jacket continuously, so I'll denote the temperature of the cooling water entering the jacket as $T_{ex,in}$ and the temperature leaving the jacket as $T_{ex}$. Because the jacket is perfectly mixed, $T_{ex,0}$ is the initial temperature of the cooling water in the jacket. I will add the ideal gas constant to the given constants.
 
 :::
 
@@ -626,7 +626,7 @@ $$
 
 **Quantities of Interest**: $T_0$, $T_f$, $T_{ex,f}$, and $S_{X/Z,f}$
 
-**Given and Known Constants**: $V$ = 10 L, $V_{ex}$ = 1.4 L, $U$ = 138 cal ft^-2^ min^-1^ K^-1^, $A$ = 1200 cm^2^, $T_{ex,in}$ = 40 °C, $\dot{m}_{ex}$ = 100 g min^-1^, $\rho$ = 1.0 g cm^-3^, $\rho_{ex}$ = 1.0 g cm^-3^, $\tilde{C}_p$ = 1.0 cal g^-1^ K^-1^, $\tilde{C}_{p,ex}$ = 1.0 cal g^-1^ K^-1^, $C_{A,0}$ = 5.0 M, $C_{B,0}$ = 7.0 M, $T_{ex,out,0}$ = 40 °C, $\Delta H_1$ = -16.7 kcal mol^-1^, $\Delta H_2$ = -14.3 kcal mol^-1^, $k_{0,1}$ = 9.74 x 10^9^ L mol^-1^ min^-1^, $E_1$ = 20.1 kcal mol^-1^, $k_{0,2}$ = 2.38 x 10^13^ min^-1^, $E_2$ = 25.3 kcal mol^-1^, $f_{A,f}$ = 0.45, $t_f$ = 30 min, and $R$ = 1.987 cal mol^-1^ K^-1^.
+**Given and Known Constants**: $V$ = 10 L, $V_{ex}$ = 1.4 L, $U$ = 138 cal ft^-2^ min^-1^ K^-1^, $A$ = 1200 cm^2^, $T_{ex,in}$ = 40 °C, $\dot{m}_{ex}$ = 100 g min^-1^, $\rho$ = 1.0 g cm^-3^, $\rho_{ex}$ = 1.0 g cm^-3^, $\tilde{C}_p$ = 1.0 cal g^-1^ K^-1^, $\tilde{C}_{p,ex}$ = 1.0 cal g^-1^ K^-1^, $C_{A,0}$ = 5.0 M, $C_{B,0}$ = 7.0 M, $T_{ex,0}$ = 40 °C, $\Delta H_1$ = -16.7 kcal mol^-1^, $\Delta H_2$ = -14.3 kcal mol^-1^, $k_{0,1}$ = 9.74 x 10^9^ L mol^-1^ min^-1^, $E_1$ = 20.1 kcal mol^-1^, $k_{0,2}$ = 2.38 x 10^13^ min^-1^, $E_2$ = 25.3 kcal mol^-1^, $f_{A,f}$ = 0.45, $t_f$ = 30 min, and $R$ = 1.987 cal mol^-1^ K^-1^.
 
 #### Generation of the Model Equations
 
@@ -652,13 +652,13 @@ $$
 The reactor is cooled with chilled water which gains sensible heat from the reacting fluid, so an energy balance on that exchange fluid is necessary and is given by @eq-exchange_energy_bal_sensible.
 
 $$
-\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex,out}}{dt} = -\dot Q - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex,out}} \tilde C_{p,ex}dT
+\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot Q - \dot m_{ex} \int_{T_{ex,in}}^{T_{ex}} \tilde C_{p,ex}dT
 $$
 
 The exchange fluid heat capacity is constant, making the evaluation of the integral trivial. 
 
 $$
-\dot m_{ex}\int_{T_{ex,in}}^{T_{ex,out}} \tilde C_{p,ex}dT \Rightarrow \dot m_{ex}\tilde C_{p,ex}\left( T_{ex,out} - T_{ex,in} \right)
+\dot m_{ex}\int_{T_{ex,in}}^{T_{ex}} \tilde C_{p,ex}dT \Rightarrow \dot m_{ex}\tilde C_{p,ex}\left( T_{ex} - T_{ex,in} \right)
 $$
 
 Dividing both sides of the exchange fluid energy balance by $\rho_{ex} V_{ex} \tilde C_{p,ex}$ then puts it in the form of a derivative expression. Momentum balances are not used with BSTRS so the full set of design equations includes mole balances on each of the reagents, A, B, X, Y, and Z, an energy balance on the reacting fluid, and an energy balance on the exchange fluid. They consist of seven ODEs containing seven dependent variables, so it isn't necessary to add an ODE or eliminate a dependent variable.
@@ -694,7 +694,7 @@ $$
 $$
 
 $$
-\frac{dT_{ex,out}}{dt} = \frac{-\dot Q - \dot m_{ex} \tilde C_{p,ex}\left(T_{ex,out} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}} \tag{11}
+\frac{dT_{ex}}{dt} = \frac{-\dot Q - \dot m_{ex} \tilde C_{p,ex}\left(T_{ex} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}} \tag{11}
 $$
 
 :::{.callout-tip collapse="true"}
@@ -719,7 +719,7 @@ This makes the design equations DAEs because the initial value of one dependent 
 | $n_Y$ | $0$ | |
 | $n_Z$ | $0$ | |
 | $T$ | $T_0$ | |
-| $T_{ex,out}$ | $T_{ex,out,0}$ | |
+| $T_{ex}$ | $T_{ex,0}$ | |
   
 : Initial values and stopping criterion for solving design equations, (5) through (11). {#tbl-example_9_6_2_initial_values}
 
@@ -748,7 +748,7 @@ $$
 
 To solve the DAEs numerically, I'll need to write a derivatives function and a residuals function. The residuals function will be passed a guess for $T_0$ as an argument, and it must return the residual $\epsilon_{T_0}$. To do so, it must define the initial values and stopping criterion as already described. Then it will call an IVODE solver to solve the BSTR design equations, and use the final value of $n_A$ that the solver returns to evaluate the residual, equation (15).
 
-The derivatives function will be passed values of the independent and dependent variables, $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex,out}$, at the start of an integration step as arguments. It must return the derivatives of the dependent variables, calculated using equations (5) through (11). Before it can do that, it will need to calculate any additional unknowns that appear in the derivatives expressions. Upon examination of equations (5) through (11), I see that $r_1$, $r_2$, and $\dot{Q}$ are additional unknowns.
+The derivatives function will be passed values of the independent and dependent variables, $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$, at the start of an integration step as arguments. It must return the derivatives of the dependent variables, calculated using equations (5) through (11). Before it can do that, it will need to calculate any additional unknowns that appear in the derivatives expressions. Upon examination of equations (5) through (11), I see that $r_1$, $r_2$, and $\dot{Q}$ are additional unknowns.
 
 The two rates, $r_1$ and $r_2$, can be calculated using the rate expressions, equation (3) and (4). The rate expressions contain four additional variables that will need to be calculated, $k_1$, $k_2$, $C_A$ and $C_B$. The rate coefficients can be calculated using the Arrhenius expression, @eq-arrhenius. The concentrations can be calculated using the defining equation for concentration in a closed system, @eq-concentration_closed.
 
@@ -775,26 +775,26 @@ C_B = \frac{n_B}{V} \tag{19}
 $$
 
 $$
-\dot{Q} = UA\left(T_{ex,out} - T \right) \tag{20}
+\dot{Q} = UA\left(T_{ex} - T \right) \tag{20}
 $$
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-At this point the DAEs, equations (5) through (11) and (15), can be solved numerically. Doing so will yield $T_0$ along with corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex,out}$ that span the range from their initial to their final values. $T_0$ and the final values of $T$, and $T_{ex,out}$ are quantities of interest. The other quantity of interest, the final selectivity for X relative to Z, can be calculated using the defining equation for selectivity, @eq-selectivity_def_closed.
+At this point the DAEs, equations (5) through (11) and (15), can be solved numerically. Doing so will yield $T_0$ along with corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ that span the range from their initial to their final values. $T_0$ and the final values of $T$, and $T_{ex}$ are quantities of interest. The other quantity of interest, the final selectivity for X relative to Z, can be calculated using the defining equation for selectivity, @eq-selectivity_def_closed.
 
 :::
 
 #### Calculating the Quantities of Interest
 
-With the information given above, the DAEs, equations (5) through (11) and (15), can be solved numerically, yielding $T_0$ along with corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex,out}$ that span the range from their initial to their final values. $T_0$ is one of the quantities of interest. The final temperature, exchange fluid temperature and selectivity can be calculated using equations (21), (22), and (23).
+With the information given above, the DAEs, equations (5) through (11) and (15), can be solved numerically, yielding $T_0$ along with corresponding sets of values of $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$ that span the range from their initial to their final values. $T_0$ is one of the quantities of interest. The final temperature, exchange fluid temperature and selectivity can be calculated using equations (21), (22), and (23).
 
 $$
 T_f = T\big\vert_{t=t_f} \tag{21}
 $$
 
 $$
-T_{ex,out,f} = T_{ex,out}\big\vert_{t=t_f} \tag{22}
+T_{ex,f} = T_{ex}\big\vert_{t=t_f} \tag{22}
 $$
 
 $$
@@ -839,7 +839,7 @@ $$
 $$
 \begin{matrix}
 n_{X,initial} = 0,\, n_{Y,initial} = 0,\, n_{Z,initial} = 0 \\
-T_{initial} = T_0,\, T_{ex,out,initial} = T_{ex,out,0},\, t_{final} = t_f
+T_{initial} = T_0,\, T_{ex,initial} = T_{ex,0},\, t_{final} = t_f
 \end{matrix} \tag{25}
 $$
 
@@ -848,12 +848,12 @@ $$
 $$
 \begin{matrix}
 t_{initial}, n_{A,initial}, n_{B,initial}, n_{X,initial}, n_{Y,initial}, \\
-n_{Z,initial}, T_{initial}, n_{A,final}, T_{ex,out,initial}, \\
+n_{Z,initial}, T_{initial}, n_{A,final}, T_{ex,initial}, \\
 \text{derivatives function}\\
 \Downarrow \\
 \text{IVODE solver} \\
 \Downarrow \\
-\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_X, \underline{n}_Y, \underline{n}_Z, \underline{T} ,\underline{T}_{ex,out}
+\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_X, \underline{n}_Y, \underline{n}_Z, \underline{T} ,\underline{T}_{ex}
 \end{matrix} \tag{26}
 $$
 
@@ -875,9 +875,9 @@ $$
 
 <center>**Derivatives Function Specifications**</center>
 
-[Arguments]{.underline}: $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex,out}$
+[Arguments]{.underline}: $t$, $n_A$, $n_B$, $n_X$, $n_Y$, $n_Z$, $T$, and $T_{ex}$
 
-[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_B}{dt}$, $\frac{dn_X}{dt}$, $\frac{dn_Y}{dt}$, $\frac{dn_Z}{dt}$, $\frac{dT}{dt}$, and $\frac{dT_{ex,out}}{dt}$
+[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_B}{dt}$, $\frac{dn_X}{dt}$, $\frac{dn_Y}{dt}$, $\frac{dn_Z}{dt}$, $\frac{dT}{dt}$, and $\frac{dT_{ex}}{dt}$
 
 [Algorithm]{.underline}:
 
@@ -898,7 +898,7 @@ C_B = \frac{n_B}{V} \tag{19}
 $$
 
 $$
-\dot{Q} = UA\left(T_{ex,out} - T \right) \tag{20}
+\dot{Q} = UA\left(T_{ex} - T \right) \tag{20}
 $$
 
 $$
@@ -934,7 +934,7 @@ $$
 $$
 
 $$
-\frac{dT_{ex,out}}{dt} = \frac{-\dot Q - \dot m_{ex} \tilde C_{p,ex}\left(T_{ex,out} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}} \tag{11}
+\frac{dT_{ex}}{dt} = \frac{-\dot Q - \dot m_{ex} \tilde C_{p,ex}\left(T_{ex} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}} \tag{11}
 $$
 
 :::
@@ -947,7 +947,7 @@ $$
 
 [Arguments]{.underline}: $T_{0,guess}$
 
-[Returns]{.underline}: $T_0$, $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_Y$, $\underline{n}_Z$, $\underline{T}$ ,$\underline{T}_{ex,out}$
+[Returns]{.underline}: $T_0$, $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_Y$, $\underline{n}_Z$, $\underline{T}$ ,$\underline{T}_{ex}$
 
 [Algorithm]{.underline}:
 
@@ -978,7 +978,7 @@ $$
 $$
 \begin{matrix}
 n_{X,initial} = 0,\, n_{Y,initial} = 0,\, n_{Z,initial} = 0 \\
-T_{initial} = T_0,\, T_{ex,out,initial} = T_{ex,out,0},\, t_{final} = t_f
+T_{initial} = T_0,\, T_{ex,initial} = T_{ex,0},\, t_{final} = t_f
 \end{matrix} \tag{25}
 $$
 
@@ -987,12 +987,12 @@ $$
 $$
 \begin{matrix}
 t_{initial}, n_{A,initial}, n_{B,initial}, n_{X,initial}, n_{Y,initial}, \\
-n_{Z,initial}, T_{initial}, n_{A,final}, T_{ex,out,initial}, \\
+n_{Z,initial}, T_{initial}, n_{A,final}, T_{ex,initial}, \\
 \text{derivatives function}\\
 \Downarrow \\
 \text{IVODE solver} \\
 \Downarrow \\
-\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T} ,\underline{T}_{ex,out}
+\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T} ,\underline{T}_{ex}
 \end{matrix} \tag{26}
 $$
 
@@ -1024,7 +1024,7 @@ T_{0,guess}\\
 \Downarrow \\
 \text{BSTR function} \\
 \Downarrow \\
-T_0, \underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T} ,\underline{T}_{ex,out}
+T_0, \underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T} ,\underline{T}_{ex}
 \end{matrix} \tag{29}
 $$
 
@@ -1035,7 +1035,7 @@ T_f = T\big\vert_{t=t_f} \tag{21}
 $$
 
 $$
-T_{ex,out,f} = T_{ex,out}\big\vert_{t=t_f} \tag{22}
+T_{ex,f} = T_{ex}\big\vert_{t=t_f} \tag{22}
 $$
 
 $$
@@ -1046,7 +1046,7 @@ $$
 
 $$
 \begin{matrix}
-T_{0}, T_f, T_{ex,out,f}, S_{X/Z,f}\\
+T_{0}, T_f, T_{ex,f}, S_{X/Z,f}\\
 \Downarrow \\
 \text{functions to display and save} \\
 \end{matrix} \tag{30}
@@ -1635,7 +1635,7 @@ $$
 
 **Quantities of Interest**: $\dot{m}_{ex,opt} = \underset{\dot{m}_{ex}}{\arg\max} \left(r_{Z,net}\right)$, $\underline{f}_A\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$, and $\underline{T}\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$ as graphs.
 
-**Given and Known Constants**: $k_0$ = 2.59 x 10^9^ min^-1^, $E$ = 16.5 kcal mol^-1^, $\Delta H$ = -22,200 cal mol^-1^, $C_{A,0}$ = 2 M, $T_0$ = 23 °C, $\breve{C}_p$ = 440 cal L^-1^ K^-1^, $V$ = 4.0 L, $V_{ex}$ = 0.5 L, $A_{ex}$ = 0.6 ft^2^, $U_{ex}$ = 1.13 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $T_{ex,in}$ = 20 °C, $\rho_{ex}$ = 1 g cm^-3^, $\tilde{C}_{p,ex}$ = 1 cal g^-1^ K^-1^, $U_{coil}$ = 3.8 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $A_{coil}$ =  0.23 ft^2^, $T_{coil}$ = 120 °C, $T_{ex,out,0}$ = 23 °C, $T_1$ = 50 °C, $T_f$ = 25 °C, $t_{turn}$ = 25 min, and $R$ = 1.987 cal mol^-1^ K^-1^. 
+**Given and Known Constants**: $k_0$ = 2.59 x 10^9^ min^-1^, $E$ = 16.5 kcal mol^-1^, $\Delta H$ = -22,200 cal mol^-1^, $C_{A,0}$ = 2 M, $T_0$ = 23 °C, $\breve{C}_p$ = 440 cal L^-1^ K^-1^, $V$ = 4.0 L, $V_{ex}$ = 0.5 L, $A_{ex}$ = 0.6 ft^2^, $U_{ex}$ = 1.13 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $T_{ex,in}$ = 20 °C, $\rho_{ex}$ = 1 g cm^-3^, $\tilde{C}_{p,ex}$ = 1 cal g^-1^ K^-1^, $U_{coil}$ = 3.8 x 10^4^ cal ft^-2^ h^-1^ K^-1^, $A_{coil}$ =  0.23 ft^2^, $T_{coil}$ = 120 °C, $T_{ex,0}$ = 23 °C, $T_1$ = 50 °C, $T_f$ = 25 °C, $t_{turn}$ = 25 min, and $R$ = 1.987 cal mol^-1^ K^-1^. 
 
 #### Generation of the Model Equations
 
@@ -1665,7 +1665,7 @@ $$
 $$
 
 $$
-\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex,out}}{dt} = -\dot{Q}_{ex} - \dot m_{ex}\tilde C_{p,ex} \left(T_{ex,out}-T_{ex,in}\right)
+\rho_{ex} V_{ex} \tilde C_{p,ex}\frac{dT_{ex}}{dt} = -\dot{Q}_{ex} - \dot m_{ex}\tilde C_{p,ex} \left(T_{ex}-T_{ex,in}\right)
 $$
 
 The steam in the coil exchanges latent heat, so its temperature is known and constant. As a consequence, the mole balances, energy balance on the reacting fluid and energy balance on the cooling water can be solved independently of the energy balance on the steam. The problem does not ask any questions about the steam flow rate or how much of it condenses, so an energy balance on the steam is not needed.
@@ -1699,7 +1699,7 @@ $$
 $$
 
 $$
-\frac{dT_{ex,out}}{dt} = -\left(\frac{\dot{Q}_{ex} + \dot m_{ex} \tilde{C}_{p,ex} \left(T_{ex,out} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}}\right) \tag{8}
+\frac{dT_{ex}}{dt} = -\left(\frac{\dot{Q}_{ex} + \dot m_{ex} \tilde{C}_{p,ex} \left(T_{ex} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}}\right) \tag{8}
 $$
 
 :::{.callout-tip collapse="true"}
@@ -1733,7 +1733,7 @@ The cooling phase begins the instant the heating phase ends, so the initial valu
 | $n_A$ | $n_{A,1}$ | |
 | $n_Z$ | $n_{Z,1}$ | |
 | $T$ | $T_1$ | $T_f$ |
-| $T_{ex,out}$ | $T_{ex,1}$ | |
+| $T_{ex}$ | $T_{ex,1}$ | |
   
 : Initial values and stopping criterion for solving the design equations, (3), (4), (7) and (8), for the cooling stage of the operating protocol. {#tbl-example_9_6_4_cooling_initial_values}
 
@@ -1747,7 +1747,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-In order to solve the IVODEs numerically I'll need write a derivatives function for each of the two operational stages. Each derivatives function will receive $t$, $n_A$, $n_Z$, $T$, and $T_{ex,out}$ at the start of an integrations step. For the heating stage, it must use equations (3) through (6) to evaluate the derivatives, and then return them. Before the derivatives can be evaluated, any additional unknowns appearing in those equations must be calculated.
+In order to solve the IVODEs numerically I'll need write a derivatives function for each of the two operational stages. Each derivatives function will receive $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ at the start of an integrations step. For the heating stage, it must use equations (3) through (6) to evaluate the derivatives, and then return them. Before the derivatives can be evaluated, any additional unknowns appearing in those equations must be calculated.
 Examination of equations (3) through (6) shows that for the heating stage, $r$, $\dot{Q}_{ex}$, and $\dot{Q}_{coil}$ are additional unknowns that must be calculated. 
 
 The heat exchange rates can be calculated using the known heat transfer coefficients and heat transfer areas, @eq-heat-trans-rate. The reaction rate can be calculated using the given rate expression, but doing so introduces two more unknowns, $k$ and $C_A$. The rate coefficient can be calculated using the Arrhenius expression, @eq-arrhenius, since the pre-expoenetial factor and activation energy are known. The concentration of reagent A can be calculated using the defining equation for concentration in a closed system, @eq-concentration_closed.
@@ -1758,7 +1758,7 @@ For the cooling stage equations (3), (4), (7), and (8) will be used to evaluate 
 
 **Ancillary Equations for Evaluating the Derivatives**
 
-During both stages of the operational protocol, the reaction rate can be calculated using the rate expression, equation (2). The rate coefficient and concentration of A appearing in the rate expression can be calculated using equations (10) and (11). The rate of heat transfer to the jacket for both stages can be calculated using equation (12). (Note that Equation (12) uses $T_{ex,out}$ for the temperature in the jacket, but during the heating stage the coolant is not flowing, and the "out" can be omitted as was done in equation (6) and Tables [-@tbl-example_9_6_4_heating_initial_values] and [-@tbl-example_9_6_4_cooling_initial_values].) The coil is only used during the heating stage, and its rate of heat transfer can be calculated using equation (13).
+During both stages of the operational protocol, the reaction rate can be calculated using the rate expression, equation (2). The rate coefficient and concentration of A appearing in the rate expression can be calculated using equations (10) and (11). The rate of heat transfer to the jacket for both stages can be calculated using equation (12). (Note that Equation (12) uses $T_{ex}$ for the temperature in the jacket, but during the heating stage the coolant is not flowing, and the "out" can be omitted as was done in equation (6) and Tables [-@tbl-example_9_6_4_heating_initial_values] and [-@tbl-example_9_6_4_cooling_initial_values].) The coil is only used during the heating stage, and its rate of heat transfer can be calculated using equation (13).
 
 $$
 k_1 = k_{0,1}\exp{\left( \frac{-E_1}{RT} \right)} \tag{10}
@@ -1769,7 +1769,7 @@ C_A = \frac{n_A}{V} \tag{11}
 $$
 
 $$
-\dot{Q}_{ex} = U_{ex} A_{ex} \left(T_{ex,out} - T\right) \tag{12}
+\dot{Q}_{ex} = U_{ex} A_{ex} \left(T_{ex} - T\right) \tag{12}
 $$
 
 $$
@@ -1795,7 +1795,7 @@ $$
 \underline{\dot{m}}_{ex} = \left[\dot{m}_{ex,1},\cdots,\dot{m}_{ex,N}\right]:\,\dot{m}_{ex,1}=100, \dot{m}_{ex,i} \lt \dot{m}_{ex,i+1} \text{ and } \dot{m}_{ex,N} = 250 \tag{15}
 $$
 
-For each coolant flow rate the design equations for the heating stage can be solved numerically, and the final values of the independent and dependent variables can the be used to define the initial values for the cooling stage. The design equations for the cooling stage can then be solved to get corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex,out}$ during the second, cooling stage. Using the final values, corresponding values of the net rate and the conversion can be calculated using equation (16).
+For each coolant flow rate the design equations for the heating stage can be solved numerically, and the final values of the independent and dependent variables can the be used to define the initial values for the cooling stage. The design equations for the cooling stage can then be solved to get corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ during the second, cooling stage. Using the final values, corresponding values of the net rate and the conversion can be calculated using equation (16).
 
 $$
 \forall \, \dot{m}_{ex,i} \quad \begin{pmatrix}\displaystyle r_{Z,net,i} = \frac{n_{Z,f,i}}{t_{f,i} + t_{turn}}\\
@@ -1818,7 +1818,7 @@ $$
 r_{Z,net,max} = r_{Z,net,i_{opt}} \tag{19}
 $$
 
-If the net rate is maximized at a coolant flow rate of 100 g min^-1^, the calculations must be repeated using a range of smaller flow rates, and if it is maximized at a coolant flow rate of 250 g min^-1^ they must be repeated using a range of larger flow rates. Otherwise, the BSTR design equations for both stages can be solved using the optimum coolant flow rate, and the results can be combined to generate corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex,out}$ that span both stages of operation. The corresponding conversion can be calculated using equation (20), and plots of $\underline{f}_A\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$, and $\underline{T}\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$ can be generated.
+If the net rate is maximized at a coolant flow rate of 100 g min^-1^, the calculations must be repeated using a range of smaller flow rates, and if it is maximized at a coolant flow rate of 250 g min^-1^ they must be repeated using a range of larger flow rates. Otherwise, the BSTR design equations for both stages can be solved using the optimum coolant flow rate, and the results can be combined to generate corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ that span both stages of operation. The corresponding conversion can be calculated using equation (20), and plots of $\underline{f}_A\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$, and $\underline{T}\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$ can be generated.
 
 $$
 f_{A,i} = \frac{n_{A,0} - n_{A,f,i}}{n_{A,0}} \tag{20}
@@ -1845,9 +1845,9 @@ Specifications can be written for each of these functions in preparation for wri
 
 <center>**Derivatives Function for the Heating Stage Specifications**</center>
 
-[Arguments]{.underline}: $t$, $n_A$, $n_Z$, $T$, and $T_{ex,out}$
+[Arguments]{.underline}: $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$
 
-[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_Z}{dt}$, $\frac{dT}{dt}$, and $\frac{dT_{ex,out}}{dt}$
+[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_Z}{dt}$, $\frac{dT}{dt}$, and $\frac{dT_{ex}}{dt}$
 
 [Algorithm]{.underline}:
 
@@ -1860,7 +1860,7 @@ C_A = \frac{n_A}{V} \tag{11}
 $$
 
 $$
-\dot{Q}_{ex} = U_{ex} A_{ex} \left(T_{ex,out} - T\right) \tag{12}
+\dot{Q}_{ex} = U_{ex} A_{ex} \left(T_{ex} - T\right) \tag{12}
 $$
 
 $$
@@ -1890,11 +1890,11 @@ $$
 
 <center>**Derivatives Function for the Cooling Stage Specifications**</center>
 
-[Arguments]{.underline}: $t$, $n_A$, $n_Z$, $T$, and $T_{ex,out}$
+[Arguments]{.underline}: $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$
 
 [Must be Available]{.underline}: $\dot{m}_{ex}$
 
-[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_Z}{dt}$, $\frac{dT}{dt}$, and $\frac{dT_{ex,out}}{dt}$
+[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_Z}{dt}$, $\frac{dT}{dt}$, and $\frac{dT_{ex}}{dt}$
 
 [Algorithm]{.underline}:
 
@@ -1907,7 +1907,7 @@ C_A = \frac{n_A}{V} \tag{11}
 $$
 
 $$
-\dot{Q}_{ex} = U_{ex} A_{ex} \left(T_{ex,out} - T\right) \tag{12}
+\dot{Q}_{ex} = U_{ex} A_{ex} \left(T_{ex} - T\right) \tag{12}
 $$
 
 $$
@@ -1923,7 +1923,7 @@ $$
 $$
 
 $$
-\frac{dT_{ex,out}}{dt} = -\left(\frac{\dot{Q}_{ex} + \dot m_{ex} \tilde{C}_{p,ex} \left(T_{ex,out} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}}\right) \tag{8}
+\frac{dT_{ex}}{dt} = -\left(\frac{\dot{Q}_{ex} + \dot m_{ex} \tilde{C}_{p,ex} \left(T_{ex} - T_{ex,in}\right)}{\rho_{ex} V_{ex} \tilde C_{p,ex}}\right) \tag{8}
 $$
 
 :::
@@ -1971,9 +1971,9 @@ $$
 
 <center>**Derivatives Function for the Cooling Stage Specifications**</center>
 
-[Arguments]{.underline}: $\dot{m}_{ex}$, $t_{initial}$, $n_{A,initial}$, $n_{Z,initial}$, $T_{initial}$, and $T_{ex,out,initial}$
+[Arguments]{.underline}: $\dot{m}_{ex}$, $t_{initial}$, $n_{A,initial}$, $n_{Z,initial}$, $T_{initial}$, and $T_{ex,initial}$
 
-[Returns]{.underline}: $\underline{t}$, $\underline{n}_A$, $\underline{n}_Z$, $\underline{T}$, and $\underline{T}_{ex,out}$
+[Returns]{.underline}: $\underline{t}$, $\underline{n}_A$, $\underline{n}_Z$, $\underline{T}$, and $\underline{T}_{ex}$
 
 [Algorithm]{.underline}:
 
@@ -1985,7 +1985,7 @@ $$
 
 $$
 \begin{matrix}t_{initial}, n_{A,initial}, n_{Z,initial},\\
- T_{initial}, T_{ex,out,initial}, T_{final},\\
+ T_{initial}, T_{ex,initial}, T_{final},\\
 \text{ derivatives function for the cooling stage}\\
 \Downarrow\\
 \text{IVODE solver}\\
@@ -2029,7 +2029,7 @@ $$
 
 $$
 \begin{matrix} t_{initial} = \underline{t}_{heating}\big\vert_{T_1},\, n_{A,initial} = \underline{n}_{A,heating}\big\vert_{T_1},\, n_{Z,initial} = \underline{n}_{Z,heating}\big\vert_{T_1} \\
-T_{initial} = \underline{T}_{heating}\big\vert_{T_1},\, T_{ex,out,initial} = \underline{T}_{ex,heating}\big\vert_{T_1},\, T_{final} = T_f \end{matrix}\tag{26}
+T_{initial} = \underline{T}_{heating}\big\vert_{T_1},\, T_{ex,initial} = \underline{T}_{ex,heating}\big\vert_{T_1},\, T_{final} = T_f \end{matrix}\tag{26}
 $$
 
 &nbsp;
@@ -2039,7 +2039,7 @@ $$
 \begin{pmatrix}
 \begin{matrix}
 \dot{m}_{ex,i},\, t_{initial},\, n_{A,initial},\, n_{Z,initial},\\
-T_{initial},\, T_{ex,out,initial},\, T_{final} \\
+T_{initial},\, T_{ex,initial},\, T_{final} \\
 \Downarrow\\
 \text{BSTR function for the Cooling Stage}\\
 \Downarrow\\
@@ -2075,11 +2075,11 @@ $$
 $$
 \begin{matrix}
 \dot{m}_{ex,opt},\, t_{initial},\, n_{A,initial},\, n_{Z,initial},\\
-T_{initial},\, T_{ex,out,initial},\, T_{final} \\
+T_{initial},\, T_{ex,initial},\, T_{final} \\
 \Downarrow\\
 \text{BSTR function for the Cooling Stage}\\
 \Downarrow\\
-\underline{t}_{cooling}, \underline{n}_{A,cooling}, \underline{n}_{Z,cooling}, \underline{T}_{cooling}, \underline{T}_{ex,out,cooling}
+\underline{t}_{cooling}, \underline{n}_{A,cooling}, \underline{n}_{Z,cooling}, \underline{T}_{cooling}, \underline{T}_{ex,cooling}
 \end{matrix} \tag{28}
 $$
 
