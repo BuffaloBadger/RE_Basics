@@ -848,7 +848,7 @@ $$
 $$
 \begin{matrix}
 t_{initial}, n_{A,initial}, n_{B,initial}, n_{X,initial}, n_{Y,initial}, \\
-n_{Z,initial}, T_{initial}, n_{A,final}, T_{ex,initial}, \\
+n_{Z,initial}, T_{initial}, t_{final}, T_{ex,initial}, \\
 \text{derivatives function}\\
 \Downarrow \\
 \text{IVODE solver} \\
@@ -987,7 +987,7 @@ $$
 $$
 \begin{matrix}
 t_{initial}, n_{A,initial}, n_{B,initial}, n_{X,initial}, n_{Y,initial}, \\
-n_{Z,initial}, T_{initial}, n_{A,final}, T_{ex,initial}, \\
+n_{Z,initial}, T_{initial}, t_{final}, T_{ex,initial}, \\
 \text{derivatives function}\\
 \Downarrow \\
 \text{IVODE solver} \\
@@ -1223,7 +1223,7 @@ $$
 
 $$
 \begin{aligned}
-V\frac{dP}{dt} &- RT\left(\frac{dn_A}{dt} + \frac{n_B}{dt} + \frac{n_D}{dt} + \frac{n_Z}{dt} + \frac{n_U}{dt} \right) \\&- R\left(n_A + n_B + n_D + n_Z + n_U \right)\frac{dT}{dt} = 0
+V\frac{dP}{dt} &- RT\left(\frac{dn_A}{dt} + \frac{dn_B}{dt} + \frac{dn_D}{dt} + \frac{dn_Z}{dt} + \frac{dn_U}{dt} \right) \\&- R\left(n_A + n_B + n_D + n_Z + n_U \right)\frac{dT}{dt} = 0
 \end{aligned}
 $$
 
@@ -1466,9 +1466,8 @@ t_{final} = t_f \tag{35}
 $$
 
 $$
-\begin{matrix}t_{initial}, n_{A,initial}, n_{B,initial}, n_{D,initial}, \\
-n_{Z,initial}, n_{U,initial}, n_{A,initial}, T_{initial},\\
-P_{initial}, t_{final}, \text{ derivatives function}\\
+\begin{matrix}t_{initial}, n_{A,initial}, n_{B,initial}, n_{D,initial}, n_{Z,initial}, \\
+n_{U,initial}, T_{initial}, P_{initial}, t_{final}, \text{ derivatives function}\\
 \Downarrow\\
 \text{IVODE solver}\\
 \Downarrow\\
@@ -1511,11 +1510,11 @@ $$
 &nbsp;
 
 $$
-\forall\, i \quad Y_{D/A,i} = \frac{n_{D,i}}{n_{A,0}} \tag{23}
+\forall\, n_{D,i} \in \underline{n}_D \quad Y_{D/A,i} = \frac{n_{D,i}}{n_{A,0}} \tag{23}
 $$
 
 $$
-\forall\, i \quad f_{A,i} = \frac{n_{A,0} - n_{A,i}}{n_{A,0}} \tag{24}
+\forall\, n_{A,i} \in \underline{n}_A \quad f_{A,i} = \frac{n_{A,0} - n_{A,i}}{n_{A,0}} \tag{24}
 $$
 
 $$
@@ -1785,43 +1784,41 @@ At this point, the design equations for the first stage can be solved to find co
 
 #### Calculating the Quantities of Interest
 
-The coolant flow rate that maximizes the net rate of production of Z is one of the quantities of interest. To identify that optimum coolant flow rate, a set of 100 values of $\dot{m}_{ex}$ between 100 and 250 g min^-1^ can be created, equations (14) and (15).
+The coolant flow rate that maximizes the net rate of production of Z is one of the quantities of interest. To identify that optimum coolant flow rate, a set of 100 values of $\dot{m}_{ex}$ between 100 and 250 g min^-1^ can be created, equation (14).
 
 $$
-N=100 \tag{14}
+\begin{align}
+\underline{\dot{m}}_{ex} &= \left[\dot{m}_{ex,1},\cdots,\dot{m}_{ex,100}\right]:\\ &\dot{m}_{ex,1}=100, \dot{m}_{ex,i} \lt \dot{m}_{ex,i+1} \text{ and } \dot{m}_{ex,100} = 250
+\end{align} \tag{14}
 $$
 
-$$
-\underline{\dot{m}}_{ex} = \left[\dot{m}_{ex,1},\cdots,\dot{m}_{ex,N}\right]:\,\dot{m}_{ex,1}=100, \dot{m}_{ex,i} \lt \dot{m}_{ex,i+1} \text{ and } \dot{m}_{ex,N} = 250 \tag{15}
-$$
-
-For each coolant flow rate the design equations for the heating stage can be solved numerically, and the final values of the independent and dependent variables can the be used to define the initial values for the cooling stage. The design equations for the cooling stage can then be solved to get corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ during the second, cooling stage. Using the final values, corresponding values of the net rate and the conversion can be calculated using equation (16).
+For each coolant flow rate the design equations for the heating stage can be solved numerically, and the final values of the independent and dependent variables can the be used to define the initial values for the cooling stage. The design equations for the cooling stage can then be solved to get corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ during the second, cooling stage. Using the final values, corresponding values of the net rate and the conversion can be calculated using equation (15).
 
 $$
-\forall \, \dot{m}_{ex,i} \quad \begin{pmatrix}\displaystyle r_{Z,net,i} = \frac{n_{Z,f,i}}{t_{f,i} + t_{turn}}\\
+\forall \, \dot{m}_{ex,i} \in \underline{\dot{m}}_{ex} \quad \begin{pmatrix}\displaystyle r_{Z,net,i} = \frac{n_{Z,f,i}}{t_{f,i} + t_{turn}}\\
 \\
 \displaystyle f_{A,i} = \frac{n_{A,0} - n_{A,f,i}}{n_{A,0}}
-\end{pmatrix} \tag{16}
+\end{pmatrix} \tag{15}
 $$
 
-The resulting set of values for the net rate can be used to identify the coolant flow rate that maximizes the net rate, along with the maximum net rate, equations (17), (18), and (19).
+The resulting set of values for the net rate can be used to identify the coolant flow rate that maximizes the net rate, along with the maximum net rate, equations (16), (17), and (18).
 
 $$
-i_{opt} = \underset{i}{\arg\max} \left(r_{Z,net,i}\right) \tag{17}
-$$
-
-$$
-\dot{m}_{ex,opt} = \dot{m}_{ex,i_{opt}} \tag{18}
+i_{opt} = \underset{i}{\arg\max} \left(r_{Z,net,i}\right) \tag{16}
 $$
 
 $$
-r_{Z,net,max} = r_{Z,net,i_{opt}} \tag{19}
+\dot{m}_{ex,opt} = \dot{m}_{ex,i_{opt}} \tag{17}
 $$
 
-If the net rate is maximized at a coolant flow rate of 100 g min^-1^, the calculations must be repeated using a range of smaller flow rates, and if it is maximized at a coolant flow rate of 250 g min^-1^ they must be repeated using a range of larger flow rates. Otherwise, the BSTR design equations for both stages can be solved using the optimum coolant flow rate, and the results can be combined to generate corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ that span both stages of operation. The corresponding conversion can be calculated using equation (20), and plots of $\underline{f}_A\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$, and $\underline{T}\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$ can be generated.
+$$
+r_{Z,net,max} = r_{Z,net,i_{opt}} \tag{18}
+$$
+
+If the net rate is maximized at a coolant flow rate of 100 g min^-1^, the calculations must be repeated using a range of smaller flow rates, and if it is maximized at a coolant flow rate of 250 g min^-1^ they must be repeated using a range of larger flow rates. Otherwise, the BSTR design equations for both stages can be solved using the optimum coolant flow rate, and the results can be combined to generate corresponding sets of values of $t$, $n_A$, $n_Z$, $T$, and $T_{ex}$ that span both stages of operation. The corresponding conversion can be calculated using equation (19), and plots of $\underline{f}_A\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$, and $\underline{T}\big\vert_{\dot{m}_{ex,opt}}$ *vs.* $\underline{t}$ can be generated.
 
 $$
-f_{A,i} = \frac{n_{A,0} - n_{A,f,i}}{n_{A,0}} \tag{20}
+\forall n_{A,i} \in \underline{n}_A \quad f_{A,i} = \frac{n_{A,0} - n_{A,f,i}}{n_{A,0}} \tag{19}
 $$
 
 #### Formulation of the Calculations
@@ -1940,7 +1937,7 @@ $$
 [Algorithm]{.underline}:
 
 $$
-t_{initial} = 0 \tag{20}
+t_{initial} = 0 \tag{19}
 $$
 
 $$
@@ -1948,7 +1945,7 @@ n_{A,initial} = n_{A,0} = C_{A,0}V \tag{9}
 $$
 
 $$
-n_{Z,initial} = 0,\, T_{initial} = T_0,\, T_{ex,initial} = T_{ex,0},\, T_{final} = T_1\tag{21}
+n_{Z,initial} = 0,\, T_{initial} = T_0,\, T_{ex,initial} = T_{ex,0},\, T_{final} = T_1\tag{20}
 $$
 
 &nbsp;
@@ -1961,7 +1958,7 @@ T_{initial}, T_{ex,initial}, T_{final},\\
 \text{IVODE solver}\\
 \Downarrow\\
 \underline{t}, \underline{n}_A, \underline{n}_Z, \underline{T}, \underline{T}_{ex}\\
-\end{matrix} \tag{22}
+\end{matrix} \tag{21}
 $$
 
 :::
@@ -1969,7 +1966,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See the BSTR Function for the Cooling Stage Specifications
 
-<center>**Derivatives Function for the Cooling Stage Specifications**</center>
+<center>**BSTR Function for the Cooling Stage Specifications**</center>
 
 [Arguments]{.underline}: $\dot{m}_{ex}$, $t_{initial}$, $n_{A,initial}$, $n_{Z,initial}$, $T_{initial}$, and $T_{ex,initial}$
 
@@ -1978,7 +1975,7 @@ $$
 [Algorithm]{.underline}:
 
 $$
-\dot{m}_{ex} \, \Rightarrow \, \text{available to the derivatives function for the cooling stage}\tag{23}
+\dot{m}_{ex} \, \Rightarrow \, \text{available to the derivatives function for the cooling stage}\tag{22}
 $$
 
 &nbsp;
@@ -1991,7 +1988,7 @@ $$
 \text{IVODE solver}\\
 \Downarrow\\
 \underline{t}, \underline{n}_A, \underline{n}_Z, \underline{T}, \underline{T}_{ex}\\
-\end{matrix} \tag{24}
+\end{matrix} \tag{23}
 $$
 
 :::
@@ -2012,30 +2009,28 @@ $$
 \text{BSTR function for the Heating Stage}\\
 \Downarrow\\
 \underline{t}_{heating}, \underline{n}_{A,heating}, \underline{n}_{Z,heating}, \underline{T}_{heating}, \underline{T}_{ex,heating}
-\end{matrix} \tag{25}
+\end{matrix} \tag{24}
 $$
 
 &nbsp;
 
 $$
-N=100 \tag{14}
-$$
-
-$$
-\underline{\dot{m}}_{ex} = \left[\dot{m}_{ex,1},\cdots,\dot{m}_{ex,N}\right]:\,\dot{m}_{ex,1}=100, \dot{m}_{ex,i} \lt \dot{m}_{ex,i+1} \text{ and } \dot{m}_{ex,N} = 250 \tag{15}
+\begin{align}
+\underline{\dot{m}}_{ex} &= \left[\dot{m}_{ex,1},\cdots,\dot{m}_{ex,100}\right]:\\ &\dot{m}_{ex,1}=100, \dot{m}_{ex,i} \lt \dot{m}_{ex,i+1} \text{ and } \dot{m}_{ex,100} = 250
+\end{align} \tag{14}
 $$
 
 &nbsp;
 
 $$
 \begin{matrix} t_{initial} = \underline{t}_{heating}\big\vert_{T_1},\, n_{A,initial} = \underline{n}_{A,heating}\big\vert_{T_1},\, n_{Z,initial} = \underline{n}_{Z,heating}\big\vert_{T_1} \\
-T_{initial} = \underline{T}_{heating}\big\vert_{T_1},\, T_{ex,initial} = \underline{T}_{ex,heating}\big\vert_{T_1},\, T_{final} = T_f \end{matrix}\tag{26}
+T_{initial} = \underline{T}_{heating}\big\vert_{T_1},\, T_{ex,initial} = \underline{T}_{ex,heating}\big\vert_{T_1},\, T_{final} = T_f \end{matrix}\tag{25}
 $$
 
 &nbsp;
 
 $$
-\forall \, \dot{m}_{ex,i} \quad 
+\forall \, \dot{m}_{ex,i} \in \underline{\dot{m}}_{ex} \quad 
 \begin{pmatrix}
 \begin{matrix}
 \dot{m}_{ex,i},\, t_{initial},\, n_{A,initial},\, n_{Z,initial},\\
@@ -2067,7 +2062,7 @@ $$
 \dot{m}_{ex,opt},\, r_{Z,net,i_{opt}}\\
 \Downarrow\\
 \text{functions to display and save}
-\end{matrix} \tag{27}
+\end{matrix} \tag{26}
 $$
 
 &nbsp;
@@ -2080,25 +2075,25 @@ T_{initial},\, T_{ex,initial},\, T_{final} \\
 \text{BSTR function for the Cooling Stage}\\
 \Downarrow\\
 \underline{t}_{cooling}, \underline{n}_{A,cooling}, \underline{n}_{Z,cooling}, \underline{T}_{cooling}, \underline{T}_{ex,cooling}
-\end{matrix} \tag{28}
+\end{matrix} \tag{27}
 $$
 
 &nbsp;
 
 $$
-\underline{t} = \left[ \underline{t}_{heating}, \underline{t}_{cooling}\right] \tag{29}
+\underline{t} = \left[ \underline{t}_{heating}, \underline{t}_{cooling}\right] \tag{28}
 $$
 
 $$
-\underline{n}_A = \left[ \underline{n}_{A,heating}, \underline{n}_{A,cooling}\right] \tag{30}
+\underline{n}_A = \left[ \underline{n}_{A,heating}, \underline{n}_{A,cooling}\right] \tag{29}
 $$
 
 $$
-\underline{f}_A = \frac{n_{A,0} - \underline{n}_A}{n_{A,0}} \tag{31}
+\forall n_{A,i} \in \underline{n}_A \quad f_{A,i} = \frac{n_{A,0} - n_{A,f,i}}{n_{A,0}} \tag{19}
 $$
 
 $$
-\underline{T} = \left[ \underline{T}_{heating}, \underline{T}_{cooling}\right] \tag{32}
+\underline{T} = \left[ \underline{T}_{heating}, \underline{T}_{cooling}\right] \tag{30}
 $$
 
 &nbsp;
@@ -2110,7 +2105,7 @@ $$
 \text{plotting functions}\\
 \Downarrow\\
 \text{requested graphs}
-\end{matrix} \tag{33}
+\end{matrix} \tag{31}
 $$
 
 :::

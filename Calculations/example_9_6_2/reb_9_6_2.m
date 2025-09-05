@@ -5,7 +5,7 @@ function reb_9_6_2
     Vex = 1.4E3; % cm^3
     Uex = 138.; % cal /ft^2 /min /K
     Aex = 1200./929.; % ft^2
-    Tex_out_0 = 40. + 273.15; % K
+    Tex0 = 40. + 273.15; % K
     Tex_in = 40. + 273.15; % K
     mDot_ex = 100.; % g /min
     rho = 1.0; % g /cm^3
@@ -25,12 +25,12 @@ function reb_9_6_2
     Re = 1.987; % cal /mol /K
 
     % residual function
-    function resid = residual(T0_guess)
+    function epsilon_T0 = residual(T0_guess)
         % set the initial values
         ind_0 = 0.0;
         nA_0 = CA_0*V;
         nB_0 = CB_0*V;
-        dep_0 = [nA_0; nB_0; 0.0; 0.0; 0.0; T0_guess; Tex_out_0];
+        dep_0 = [nA_0; nB_0; 0.0; 0.0; 0.0; T0_guess; Tex0];
 
         % define the stopping criterion
         stop_var = 0;
@@ -54,16 +54,16 @@ function reb_9_6_2
         % evaluate and return the residual
         nA_0 = CA_0*V;
         nA_f = nA_0*(1 - fA_f);
-        resid = nA_f_calc - nA_f;
+        epsilon_T0 = nA_f_calc - nA_f;
     end
 
     % derivatives function
-    function derivs = derivatives(~, dep)
+    function ddt = derivatives(~, dep)
         % extract necessary dependent variables for this integration step
         nA = dep(1);
         nB = dep(2);
         T = dep(6);
-        Tex_out = dep(7);
+        Tex = dep(7);
 
         % calculate the rate
         CA = nA/V;
@@ -74,7 +74,7 @@ function reb_9_6_2
         r2 = k_2*CA;
 
         % calculate the rate of heat exchange
-        Qdot = Uex*Aex*(Tex_out-T);
+        Qdot = Uex*Aex*(Tex-T);
 
         % evaluate the derivatives
         dnAdt = -V*(r1 + r2);
@@ -83,14 +83,14 @@ function reb_9_6_2
         dnYdt = V*r1;
         dnZdt = V*r2;
         dTdt = (Qdot - V*(r1*dH_1 + r2*dH_2))/rho/V/Cp;
-        dTexdt = (-Qdot - mDot_ex*Cp_ex*(Tex_out-Tex_in))/rho_ex/Vex/Cp_ex;
+        dTexdt = (-Qdot - mDot_ex*Cp_ex*(Tex-Tex_in))/rho_ex/Vex/Cp_ex;
 
         % return the derivatives
-        derivs = [dnAdt; dnBdt; dnXdt; dnYdt; dnZdt; dTdt; dTexdt];
+        ddt = [dnAdt; dnBdt; dnXdt; dnYdt; dnZdt; dTdt; dTexdt];
     end
 
     % BSTR function
-    function [T0, t, nA, nB, nX, nY, nZ, T, Tex_out] = BSTR_variables(T0_guess)
+    function [T0, t, nA, nB, nX, nY, nZ, T, Tex] = BSTR_variables(T0_guess)
         % calculate T0
         [T0, flag, message] = solve_ates(@residual, T0_guess);
     
@@ -104,7 +104,7 @@ function reb_9_6_2
         ind_0 = 0.0;
         nA_0 = CA_0*V;
         nB_0 = CB_0*V;
-        dep_0 = [nA_0; nB_0; 0.0; 0.0; 0.0; T0; Tex_out_0];
+        dep_0 = [nA_0; nB_0; 0.0; 0.0; 0.0; T0; Tex0];
 
         % define the stopping criterion
         stop_var = 0;
@@ -128,7 +128,7 @@ function reb_9_6_2
         nY = dep(:,4);
         nZ = dep(:,5);
         T = dep(:,6);
-        Tex_out = dep(:,7);
+        Tex = dep(:,7);
     end
 
     % deliverables function
@@ -137,17 +137,17 @@ function reb_9_6_2
         initial_guess = Tex_in;
     
         % solve the reactor design equations
-        [T0, ~, ~, ~, nX, ~, nZ, T, Tex_out] = BSTR_variables(initial_guess);
+        [T0, ~, ~, ~, nX, ~, nZ, T, Tex] = BSTR_variables(initial_guess);
     
         % calculate the other quantities of interest
         T0 = T0 - 273.15;
         T_f = T(end) - 273.15;
-        Tex_out = Tex_out(end) - 273.15;
+        Tex = Tex(end) - 273.15;
         sel_X_Z = nX(end)/nZ(end);
 
         % tabulate the results
         item = ["T0";"T_f";"Te_f";"sel_X_Z"];
-        value = [T0; T_f; Tex_out; sel_X_Z];
+        value = [T0; T_f; Tex; sel_X_Z];
         units = ["°C"; "°C"; "°C"; "mol X per mol Z"];
         results_table = table(item,value,units);
     
@@ -155,7 +155,7 @@ function reb_9_6_2
         disp(' ')
         disp(['Initial Temperature: ',num2str(T0,3), ' °C'])
         disp(['Final Temperature: ',num2str(T_f,3), ' °C'])
-        disp(['Outlet Coolant Temperature: ',num2str(Tex_out,3), ' °C'])
+        disp(['Outlet Coolant Temperature: ',num2str(Tex,3), ' °C'])
         disp(['Selectivity: ',num2str(sel_X_Z,3), ' mol X per mol Z'])
     
         % save the results

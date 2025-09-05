@@ -12,7 +12,7 @@ V = 10.0E3 # cm^3
 Vex = 1.4E3 # cm^3
 Uex = 138. # cal /ft^2 /min /K
 Aex = 1200./929. # ft^2
-Tex_out_0 = 40. + 273.15 # K
+Tex0 = 40. + 273.15 # K
 Tex_in = 40. + 273.15 # K
 mDot_ex = 100. # g /min
 rho = 1.0 # g /cm^3
@@ -37,7 +37,7 @@ def residual(T0_guess):    # solve the reactor design equations
     ind_0 = 0.0
     nA_0 = CA_0*V
     nB_0 = CB_0*V  
-    dep_0 = np.array([nA_0, nB_0, 0.0, 0.0, 0.0, T0_guess, Tex_out_0])
+    dep_0 = np.array([nA_0, nB_0, 0.0, 0.0, 0.0, T0_guess[0], Tex0])
 
 	# define the stopping criterion
     stop_var = 0
@@ -58,10 +58,10 @@ def residual(T0_guess):    # solve the reactor design equations
     # evaluate the residual
     nA_0 = CA_0*V
     nA_f = nA_0*(1 - fA_f)
-    resid = nA_f_calc - nA_f
+    epsilonT0 = nA_f_calc - nA_f
 
     # return the residual
-    return resid
+    return epsilonT0
 
 # derivatives function
 def derivatives(ind, dep):
@@ -69,7 +69,7 @@ def derivatives(ind, dep):
     nA = dep[0]
     nB = dep[1]
     T = dep[5]
-    Tex_out = dep[6]
+    Tex = dep[6]
 
 	# calculate the rate
     CA = nA/V
@@ -80,7 +80,7 @@ def derivatives(ind, dep):
     r_2 = k_2*CA
 
     # calculate the rate of heat exchange
-    Qdot = Uex*Aex*(Tex_out - T)
+    Qdot = Uex*Aex*(Tex - T)
 
 	# evaluate the derivatives
     dnAdt = -(r_1 + r_2)*V
@@ -89,7 +89,7 @@ def derivatives(ind, dep):
     dnYdt = r_1*V
     dnZdt = r_2*V
     dTdt = (Qdot-(r_1*dH_1 + r_2*dH_2)*V)/rho/V/Cp
-    dTexdt = (-Qdot - mDot_ex*Cp_ex*(Tex_out - Tex_in))/rho_ex/Vex/Cp_ex
+    dTexdt = (-Qdot - mDot_ex*Cp_ex*(Tex - Tex_in))/rho_ex/Vex/Cp_ex
 
 	# return the derivatives
     return [dnAdt, dnBdt, dnXdt, dnYdt, dnZdt, dTdt, dTexdt]
@@ -110,7 +110,7 @@ def BSTR_variables(T0_guess):
     ind_0 = 0.0
     nA_0 = CA_0*V
     nB_0 = CB_0*V  
-    dep_0 = np.array([nA_0, nB_0, 0.0, 0.0, 0.0, T0, Tex_out_0])
+    dep_0 = np.array([nA_0, nB_0, 0.0, 0.0, 0.0, T0, Tex0])
 
 	# define the stopping criterion
     stop_var = 0
@@ -142,18 +142,18 @@ def deliverables():
     initial_guess = Tex_in
 
     # solve the reactor design equations
-    T0, _, nA, _, nX, _, nZ, T, Tex_out = BSTR_variables(initial_guess)
+    T0, _, nA, _, nX, _, nZ, T, Tex = BSTR_variables(initial_guess)
 
     # calculate the other quantities of interest
     T0 = T0 - 273.15
     T_f = T[-1] - 273.15
-    Tex_out = Tex_out[-1] - 273.15
+    Tex = Tex[-1] - 273.15
     sel_X_Z = nX[-1]/nZ[-1]
 
     # tabulate the results
     data = [['T0', f'{T0}', '°C'],
     ['Tf', f'{T_f}', '°C'],
-    ['Te_out',f'{Tex_out}', '°C'],
+    ['Te_out',f'{Tex}', '°C'],
     ['sel_X_Z',f'{sel_X_Z}','mol X per mol Z']]
     results_df = pd.DataFrame(data, columns=['item','value','units'])
 
@@ -161,7 +161,7 @@ def deliverables():
     print(' ')
     print(f'Initial Temperature: {T0:.3g} °C')   
     print(f'Final Temperature: {T_f:.3g} °C')
-    print(f'Outlet Coolant Temperature: {Tex_out:.3g} °C')
+    print(f'Outlet Coolant Temperature: {Tex:.3g} °C')
     print(f'Selectivity: {sel_X_Z:.3g} mol X per mol Z')
 
     # save the results
