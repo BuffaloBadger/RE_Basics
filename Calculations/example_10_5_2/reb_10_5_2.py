@@ -25,7 +25,7 @@ Re = 1.987 # cal/mol/K
 Rw = 0.08206 # L-atm/mol/K
 
 # global specified parameter
-add_times = np.array([1.0, 3.0, 5.0, 7.0])
+add_time = np.array([1.0, 3.0, 5.0, 7.0])
 
 # global variable
 g_tAdd = float('nan')
@@ -127,10 +127,10 @@ def deliverables():
     S_DoverU = np.zeros(4)
     Y_DfromB = np.zeros(4)
 
-    nAddTimes = len(add_times)
+    nAddTimes = len(add_time)
     for iAdd in range(0,nAddTimes):
         # set t_add
-        tAdd = add_times[iAdd]
+        tAdd = add_time[iAdd]
 
         # solve the reactor design equations
         t, nA, nB, nD, nU, T = SBSTR_variables(tAdd)
@@ -145,12 +145,13 @@ def deliverables():
     Y_DfromB = 100.0*Y_DfromB
     
     # tabulate, display and save the results
-    results_df = pd.DataFrame({'t_add':add_times , 'f_B':f_B
+    results_df = pd.DataFrame({'t_add':add_time , 'f_B':f_B
                                ,'S_DoverU':S_DoverU, 'Y_DfromB':Y_DfromB})
     print(results_df)
     results_df.to_csv("results.csv", index=False)
 
     return
 
+# execution command
 if __name__=="__main__":
     deliverables()

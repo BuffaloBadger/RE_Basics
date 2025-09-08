@@ -20,7 +20,7 @@ function reb_10_5_2
     Rw = 0.08206; % L*atm/mol/K
 
     % global specified parameter
-    add_times = [1.0; 3.0; 5.0; 7.0];
+    add_time = [1.0; 3.0; 5.0; 7.0];
 
     % global variable
     g_tAdd = nan(1,1);
@@ -125,10 +125,10 @@ function reb_10_5_2
         Y_DfromB = nan(4,1);
 
         % loop through the add times
-        nAddTimes = length(add_times);
+        nAddTimes = length(add_time);
         for iAdd = 1:nAddTimes
             % set t_add
-            tAdd = add_times(iAdd);
+            tAdd = add_time(iAdd);
 
             % solve the reactor design equations
             [~, ~, nB, nD, nU, ~] = SBSTR_variables(tAdd);
@@ -144,11 +144,11 @@ function reb_10_5_2
         Y_DfromB = 100.0*Y_DfromB;
 
         % tabulate, display and save the results
-        results_table = table(add_times, f_B, S_DoverU, Y_DfromB);
+        results_table = table(add_time, f_B, S_DoverU, Y_DfromB);
         disp(results_table)
         writetable(results_table,'matlab_results.csv');
     end
 
-    % perform the analysis
+    % execution command
     deliverables();
 end
