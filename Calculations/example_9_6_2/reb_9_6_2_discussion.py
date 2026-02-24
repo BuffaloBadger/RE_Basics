@@ -10,14 +10,14 @@ import reb_9_6_2
 CA_0 = reb_9_6_2.CA_0
 CB_0 = reb_9_6_2.CB_0
 V = reb_9_6_2.V
-Tex_out_0 = reb_9_6_2.Tex_out_0
+Tex0 = reb_9_6_2.Tex0
 fA_f = reb_9_6_2.fA_f
 
 # set a lower initial temperature
 T_0 = 55 + 273.15 # K
 
 ind_0 = 0.0
-dep_0 = np.array([CA_0*V, CB_0*V, 0.0, 0.0, 0.0, T_0, Tex_out_0])
+dep_0 = np.array([CA_0*V, CB_0*V, 0.0, 0.0, 0.0, T_0, Tex0])
 
 # define the stopping criterion
 f_var = 1
