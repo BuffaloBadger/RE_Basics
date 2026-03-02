@@ -1,1 +1,0 @@
-This problem is based upon AFCoKaRE Example 5.1.
