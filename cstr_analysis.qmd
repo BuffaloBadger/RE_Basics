@@ -1,6 +1,6 @@
 # CSTR Analysis {#sec-ch6}
 
-@sec-ch5 presented an overview of the analysis of ideal reactors. This chapter introduces ideal continuous stirred tank reactors and discusses their analysis.
+@sec-ch5 presented an overview of the analysis of ideal reactors. This chapter introduces ideal continuous stirred tank reactors and discusses their analysis. It may prove helpful to keep the Learning Objectives in [Section -@sec-ch6_learning_objectives] in mind while reading it.
 
 ## Ideal Continuous Stirred Tank Reactors (CSTRs)
 
@@ -61,7 +61,9 @@ $$
 \frac{\rho_{ex} V_{ex} \Delta H_{\text{latent},ex}^0}{M_{ex}} \frac{d \gamma}{dt} = - \dot Q - \gamma \dot m_{ex} \frac{\Delta H_{\text{latent},ex}^0}{M_{ex}}
 $$
 
-The transient CSTR design equations are initial value ordinary differential equations (IVODEs). The numerical solution of IVODEs requires initial values for each of the dependent variables. This can lead to confusion when first learning to model transient CSTRs because both initial and inlet variables are used when solving the design equations. The key point to remember is that the dependent variables in the IVODEs are the *[outlet]{.underline}* molar flow rates, temperature and exchange fluid temperature. As a consequence, the initial values that are needed to solve the IVODEs are the [initial]{.underline} values of the [outlet]{.underline} molar flows and temperatures, not their inlet values.
+The transient CSTR design equations are initial value ordinary differential equations (IVODEs). The dependent variables are the molar flow rates, reacting fluid temperature, and exchange fluid temperature and the independent variable is the elapsed time. The design equations are solved to find corresponding sets of these variables over a span of time from the start of the transient until a one of them attains a known final value. In some instances, two final values are known, allowing the design equations to additionally be solved for one additional variable that does not vary with time. 
+
+The numerical solution of IVODEs requires initial values for each of the dependent variables. This can lead to confusion when first learning to model transient CSTRs because both initial and inlet molar flow rates and temperatures appear in the design equations. The key point to remember is that the dependent variables in the IVODEs are the *[outlet]{.underline}* molar flow rates, temperature and exchange fluid temperature. As a consequence, the initial values that are needed to solve the IVODEs are the [initial]{.underline} values of the [outlet]{.underline} molar flows and temperatures, not their inlet values.
 
 The pressure is almost always constant in a CSTR in which case its time derivative is zero. For gases in a rigid-walled reactor, the same is true of the volume. For liquids, if the inlet and outlet flow rates are not equal, the reacting fluid volume in a CSTR will change over time. In situations where the pressure or volume derivatives are not equal to zero, it is important to note that the $V\frac{dP}{dt}$ and $P\frac{dV}{dt}$ terms in the transient reacting fluid energy balance, @eq-gen_cstr_energy_bal, will have different units (pressure × volume ÷ time) than the other terms (energy ÷ time). The pressure-volume units can be converted to energy units by simply multiplying by the ideal gas constant in energy units and dividing by the ideal gas constant in pressure-volume units. The power required to agitate the reacting fluid in a CSTR is most often negligible, $\dot{W} = 0$, compared to heat terms.
 
@@ -92,6 +94,8 @@ $$
 $$
 0 = - \dot Q - \gamma \dot m_{ex} \frac{\Delta H_{\text{latent},ex}^0}{M_{ex}}
 $$
+
+The steady-state CSTR design equations are algebraic-transcendental equations (ATEs). If there are $N$ design equations, they can be solved to find the values of $N$ variables that appear in them. Very often the steady-state CSTR design equations are solved to find the outlet molar flow rates, the outlet reacting fluid temperature, and the outlet exchange fluid temperature, but if one or more of those quantities are known, the design equations can be solved for other variables they contain. 
 
 When rate expressions are substituted into the CSTR design equations, they will introduce concentrations or, for gases, partial pressures. Noting that the CSTR is perfectly mixed so that the outlet composition and temperature are the same as that of the reacting fluid, the concentrations or partial pressures in the rate expressions should be expressed in terms of the outlet molar flow rates and temperature.
 
@@ -165,23 +169,43 @@ There is another possible result of perturbing a reactor from an unstable steady
 
 ## Parametric Sensitivity of CSTRs{#sec-ch6_ignition_and_extinction}
 
-For reasons just described, real CSTRs do not operate at unstable steady states. This leads to one type of parametric sensitivity known as hysteresis. @fig-hysteresis shows only the stable steady states from @fig-T_vs_Tin_unstable. Consider a CSTR operating at steady state with an inlet temperature of 90 °C and an outlet temperature of ca. 100 °C. This point is on the lower solid black line just to the left of the solid red vertical line. If the inlet temperature is very slowly increased in a way that the reactor remains at steady-state, the outlet temperature will slowly rise along the lower black curve in the figure until it reaches the solid red line.
+For reasons just described, real CSTRs do not operate at unstable steady states, but some *stable* steady states display similar behavior known as parametric sensitivity. @fig-ch6_sensitivity again shows the outlet temperature from a CSTR as a function of inlet temperature, but with the red and blue lines and the unsteady states removed from @fig-ch6_multiplicity. It also shows two stable steady states labeled as $S_{ext}$ and $S_{ign}$. These are stable steady states that display one type of parametric sensitivity. They are called extinction and ignition points.
 
-![Steady-state outlet temperature of a CSTR as a function of the inlet temperature.](solutions/ch6_ex4/hysteresis.png){#fig-hysteresis width="80%"}
+![Stable steady-state outlet temperatures of a CSTR as a function of the inlet temperature.](figures/CSTR_sensitivity.png){#fig-ch6_sensitivity width="80%"}
 
-The point where the temperature just reaches the solid red line is called the ignition point. A slight increase in the temperature beyond the ignition point causes the reactor to rapidly "jump" to the upper curve. That is, if the temperature is raised just slightly above the ignition point, the temperature jumps from ca. 100 °C to over 300 °C. This is clearly undesirable and unsafe.
+Notice that if a CSTR was operating at a stable steady state near the extinction point, $S_{ext}$, a slight perturbation to a lower temperature would cause the system to drop to the lower branch of the steady-state curve where the temperature is very low. This would result in a large decrease in the reaction rate, hence the name, extinction. Similarly, if a CSTR was operating at a stable steady state near the ignition point, $S_{ign}$, a slight perturbation to a higher temperature would cause the system to jump to the upper branch of the steady-state curve where the temperature is much greater. If it occurred without explosion, this would result in a large increase in the reaction rate, hence the name, ignition.
 
-If the CSTR was operating at an inlet temperature of 100 °C (outlet temperature ~320 °C) and the feed temperature was very slowly decreased so that the reactor remained at steady state, it would follow the upper black curve in the figure until it reached the dashed red line. The point where the temperature just reaches the dashed red line is called the extinction point. Lowering the temperature just slightly below the extinction point would cause the reactor temperature to drop to the lower black curve. That is, the reaction rate would suddenly become very small.
-
-Ignition and extinction are demonstrated quantitatively in [Example -@sec-ch6_ex6]. The area bounded on the sides by the red lines and on top and bottom by the black lines is known as a hysteresis loop. As the temperature is slowly raised, the system follows the lower black curve until it reached the solid red line, where upon it jumps to the upper black curve. Upon cooling, the system traces the upper black curve until it reaches the dashed red line at which point it jumps to the lower black curve.
-
-Ignition and extinction are one type of parametric sensitivity. More generally, when a small change in a reactor operating parameter results in an extreme change in the output, the reactor is said to be parametrically sensitive to the parameter being changed. Identifying and avoiding operation at conditions near points of parametric sensitivity is essential for the safe operation of CSTRs.
+Ignition and extinction are one type of parametric sensitivity; there are other types. Parametric sensitivity pertains to reactors operating at [stable]{.underline} steady states. Generally, when a small change in a reactor operating parameter results in an extreme change in the output, the reactor is said to be parametrically sensitive to the parameter being changed. Identifying and avoiding operation at conditions near points of parametric sensitivity is essential for the safe operation of CSTRs.
 
 Other types of parametric sensitivity and methods for identifying them are typically presented in more advanced books and courses on reaction engineering. They have been introduced here so that readers are aware of the phenomenon. 
 
-## Examples
+## Learning Objectives and Examples {#sec-ch6_learning_objectives}
 
-The first four examples in this section involve steady-state CSTRs. [Example -@sec-ch6_ex1] and [Example -@sec-ch6_ex2] illustrate steady-state CSTR response tasks. The former involves two liquid-phase reactions while the second involves a gas phase reaction. In [Example -@sec-ch6_ex1] the assignment is to calculate the reactor output, while in [Example -@sec-ch6_ex2] the assignment is to calculate the input needed to achieve a specified output. [Example -@sec-ch6_ex3] presents the solution of an optimization task involving a steady-state CSTR. [Example -@sec-ch6_ex4] features a steady-state CSTR where three steady states are possible. Start-up of a CSTR, a transient process, is analyzed in [Example -@sec-ch6_ex5]. Finally, [Example -@sec-ch6_ex6] follows three transients that result when an operating parameter of a steady-state CSTR is perturbed. In the first analysis the CSTR is operating at an unstable steady state, and when it is perturbed, the transient ends when it reaches a different, stable steady state. The other two analyses illustrate ignition and extinction.
+Upon completion of this chapter, readers should
+
+* know the definition and/or defining equation for instantaneous yield, instantaneous selectivity, steady-state multiplicity, stable/unstable steady state, and parametric sensitivity
+* understand that
+	* there may be more than one physically realizable solution of the steady-state CSTR design equations
+	* there is only one inlet CSTR temperature for each outlet temperature
+	* the procedure used to start up a CSTR determines the steady state it attains
+	* when a reactor is perturbed from a steady state it may return to that steady state, transition to a different steady state, or go into sustained oscillations
+* be able to
+	* differentiate between reaction engineering assignments involving a steady-state CSTR and those involving a transient CSTR
+	* select and simplify the CSTR design equations for modeling a given CSTR
+	* use the CSTR design equations, together with any other necessary equations, to complete a reaction engineering assignment involving
+		* steady-state or transient operation
+		* non-isothermal or adiabatic operation
+		* heat exchange fluids that transfer latent or sensible heat
+		* gas or liquid phase reacting systems
+		* single or multiple reactions
+		* response or optimization tasks
+		* single or multiple steady states
+	* use instantaneous selectivity/yield to assess the effects of temperature and composition on overall selectivity
+	* determine whether multiple CSTR steady states are possible and obtain solutions of the design equations for each of them
+	* identify unstable steady states, ignition points and extinction points
+	* use transient CSTR analysis to determine the stability or parametric sensitivity of a steady state
+
+Reaction engineers must know how to analyze steady-state and transient CSTRs, isothermal, non-isothermal and adiabatic CSTRs, CSTRs that transfer latent and sensible exchange fluid heat, CSTRs with gas and liquid phase reacting fluids, CSTRs with multiple reactions, CSTRs with multiple steady states, and CSTRs with steady states that are unstable and parametrically sensitive. The examples that follow illustrate most of these possibilities, but a few of the heat transfer possibilities and isothermal operation are illustrated in later chapters.
 
 ```{r}
 #| echo: false
