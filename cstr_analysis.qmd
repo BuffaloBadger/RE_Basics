@@ -17,7 +17,7 @@ A perfectly-mixed cylindrical tank with continuous flow of feed in and product o
 Schematic representations of three continuous stirred tank reactors, wherein heat is exchanged with an external fluid through the walls of (a) a jacket, (b) a submerged coil, and (c) an external heat exchanger.
 :::
 
-The full set of assumptions used in the ideal CSTR model is provided in [Appendix -@sec-apx_CSTR_balances]. While stirred tanks are the most common type of CSTR in commercial facilities, other physical geometries and formats are possible, as long as their contents are a perfectly mixed, single-phase fluid and they satisfy the other assumptions of the ideal CSTR model. Stirred tanks are well-suited to liquid phase reactions because a simple impeller can be used to do the mixing. Attaining perfect mixing of gases in large vessels can be more challenging.
+The full set of assumptions used in the ideal CSTR model is provided in [Appendix -@sec-apx_CSTR_balances]. While stirred tanks are the most common type of CSTR in commercial facilities, other physical geometries are possible, as long as their contents are a perfectly mixed, single-phase fluid and they satisfy the other assumptions of the ideal CSTR model. Stirred tanks are well-suited to liquid phase reactions because a simple impeller can be used to do the mixing. Attaining perfect mixing of gases in large vessels can be more challenging.
 
 The characteristic that differentiates a CSTR from other ideal stirred tank reactors is the continuous flow of fluid into *and* out of the reactor as the reaction is taking place. This eliminates the need to stop processing to remove products and add fresh feed, and allows them to operate for extended periods of time without interruption. It results in two possible modes of operation, steady-state and transient. At steady-state, nothing changes over time. The inlet flow rate, temperature, and composition; the outlet flow rate, temperature, and composition; and the heat exchange fluid flow rate, inlet temperature, and outlet temperature are all constant. CSTRs are designed to operate at steady-state. Once a steady state has been reached, the labor demands to operate the reactor are minimal. Integration with other operations in the process such as feed purification, product separation, etc. is easier to implement when the entire process operates at steady-state.
 
@@ -35,7 +35,7 @@ The requirement that the reacting fluid be perfectly mixed can be a disadvantage
 
 CSTRs are designed to operate at steady-state for extended periods of time. Before that can happen, the reactor must be started up. Start-up is a transient process. There are many, many different ways to start up a CSTR. Three goals of start-up are to bring the reactor to steady-state as quickly as possible, to minimize waste while doing so, and to do it all safely. One option is to fill the reactor with the feed and operate it as a batch reactor (no feed or effluent, see @sec-ch7) until the composition and temperature are close to their intended steady-state values, at which time the feed and product flow can be started.
 
-Occasionally CSTRs must be shut down, too. This may be necessary to perform maintenance on the reactor itself, or it may be necessary because an upstream, downstream, or utility process (chilled water, etc.) needs to be shut down. Again, shut-down is a transient process, and the same guidelines as for start-up apply. It is particularly important to analyze startup and shut-down process prior to implementing them, especially for exothermic processes. If the wrong procedure is used to start up or shut down a reactor, explosions and other undesired events can ensue.
+Occasionally CSTRs must be shut down, too. This may be necessary to perform maintenance on the reactor itself, or it may be necessary because an upstream, downstream, or utility process (chilled water, etc.) needs to be shut down. Again, shut-down is a transient process, and the same guidelines as for start-up apply. It is particularly important to analyze startup and shut-down processes prior to implementing them, especially for exothermic processes. If the wrong procedure is used to start up or shut down a reactor, explosions and other undesired events can ensue.
 
 During steady-state operation, automatic control systems can be used to maintain steady-state processing of the feed. Such control systems can make small adjustments to compensate for minor variations in the reactor inputs. Reactor models like those described in this chapter can be used when designing control systems for a CSTR.
 
@@ -71,13 +71,19 @@ $$
 \frac{dV}{dt} = \dot{V}_{in} - \dot{V}
 $${#eq-liquid_volume_accumulation}
 
-Typically, the outlet volumetric flow rate of a liquid phase reacting fluid is zero while the reactor is filling, and it equals the inlet volumetric flow rate when the reactor is full. As a consequence, $\frac{d\dot{V}}{dt}$ is equal to zero at all times unless the inlet volumetric flow rate is varying. In contrast, the outlet volumetric flow rate of an ideal gas must obey the ideal gas law, which can be expressed in differential form shown in @eq-differential_ideal_gas_law and must be added to the design equations. As already noted, $\frac{dP}{dt}$ in that equation is almost always equal to zero.
+Typically, the outlet volumetric flow rate of a liquid phase reacting fluid is zero while the reactor is filling, and it equals the inlet volumetric flow rate when the reactor is full. As a consequence, $\frac{d\dot{V}}{dt}$ is equal to zero at all times unless the inlet volumetric flow rate is being deliberately manipulated. In contrast, the outlet volumetric flow rate of an ideal gas must obey the ideal gas law, which can be expressed in differential form as shown in @eq-differential_ideal_gas_law, which then must be added to the design equations. As already noted, $\frac{dP}{dt}$ in that equation is almost always equal to zero.
 
 $$
 \dot{V} \frac{dP}{dt} + P \frac{d\dot{V}}{dt} = R\left(\sum_i{\dot{n}_i} \frac{dT}{dt} + T \sum_i{\frac{d\dot{n}_i}{dt}}\right)
 $${#eq-differential_ideal_gas_law}
 
-A few other simplifications or modifications of the design equations may be possible or necessary. When the only moving shaft or boundary is that of an agitator, the associated power of agitation is negligible, $\dot{W} = 0$, unless the reacting fluid is highly viscous. If the reactor operates adiabatically, the rate of heat transfer is zero, $\dot{Q} = 0$. In addition, the units of the $P\frac{dV}{dt}$ term in the energy balance (pressure × volume ÷ time) will need to be converted to the same units as the other terms (energy ÷ time). A few additional simplifications may also be possible.
+A few other simplifications or modifications of the design equations may be possible or necessary. When the only moving shaft or boundary is that of an agitator, the associated power of agitation is negligible, $\dot{W} = 0$, unless the reacting fluid is highly viscous. In addition, the units of the $P\frac{dV}{dt}$ term in the energy balance (pressure × volume ÷ time) will need to be converted to the same units as the other terms (energy ÷ time).
+
+If the reactor operates adiabatically, the rate of heat transfer is zero, $\dot{Q} = 0$. Otherwise, assuming both the reacting fluid and the heat exchange fluid to be perfectly mixed, the rate of heat transfer to the reacting fluid can be expressed as shown in @eq-heat_transfer_rate, where $U$ is the overall heat transfer coefficient and $A$ is the area through which heat is transferred.
+
+$$
+\dot{Q} = UA(T_{ex} - T)
+$${#eq-heat_transfer_rate}
 
 Finally, in the reacting fluid energy balance, @eq-gen_cstr_energy_bal, the sensible heat is expressed in terms of molar heat capacities. When the reacting fluid is a liquid, the gravimetric or volumetric heat capacity of the whole solution may be known instead of the molar heat capacities of the individual reagents. When this is the case, the sensible heat terms can be modified as indicated below.
 
@@ -89,15 +95,15 @@ $$
 \sum_i \dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT\ \Leftrightarrow\ \rho \dot V_{in} \int_{T_{in}}^T \tilde C_pdT\ \Leftrightarrow\ \dot V_{in} \int_{T_{in}}^T \breve C_pdT
 $$
 
-Being IVODEs, the transient CSTR design equations are solved to find corresponding sets of the independent and dependent variables over a span of time from the start of the transient until a one of them attains a known final value. In some instances, two final values are known, allowing the design equations to be solved for one additional variable that does not vary with time.
+Being IVODEs, the transient CSTR design equations are solved to find corresponding sets of values of the independent and dependent variables over a span of time defined in terms of the initial values of those variables and a "stopping criterion" (see [Appendix -@sec-apxd_ivodes]). A very common stopping criterion is simply that one of the dependent variables or the independent variable attains a known final value. In some instances, two final values are known, allowing the design equations to be solved for one additional variable that does not vary with time (again, see [Appendix -@sec-apxd_ivodes]).
 
-The numerical solution of IVODEs requires initial values for each of the dependent variables. This can lead to confusion when first learning to model transient CSTRs because both initial and inlet molar flow rates and temperatures appear in the design equations. The key point to remember is that the dependent variables in the IVODEs are the *[outlet]{.underline}* molar flow rates, volumetric flow rate, temperature and exchange fluid temperature. As a consequence, the initial values that are needed to solve the IVODEs are the [initial]{.underline} values of the [outlet]{.underline} molar flows, volumetric flow, and temperatures, not their inlet values.
+Thus, the numerical solution of IVODEs requires initial values for each of the dependent variables. This can lead to confusion when first learning to model transient CSTRs because both initial and inlet molar flow rates and temperatures appear in the design equations. The key point to remember is that the dependent variables in the IVODEs are the *[outlet]{.underline}* molar flow rates, volumetric flow rate, temperature and exchange fluid temperature. As a consequence, the initial values that are needed to solve the IVODEs are the [initial]{.underline} values of the [outlet]{.underline} molar flows, volumetric flow, and temperatures, not their inlet values.
 
 ### Transient *vs.* Steady-State Operation
 
 Transient operation occurs when a reactor variable or parameter changes. Therefore whenever an analysis involves a reactor where a reactor input or operating parameter has changed, the transient design equations must be used. The change may be intentional, as during startup or shut down, or unintended.
 
-When inputs and operating parameters stop changing, most CSTRs reach a steady-state where nothing changes over time. At that point the time derivatives in the design equations all equal zero, resulting in the steady-state mole balance shown in equation @eq-ss_cstr_mole_bal and the steady-state energy balance shown in @eq-ss_cstr_energy_bal. For completeness, the steady state versions of the energy balances for a heat exchange fluid that exchanges only sensible heat, @eq-exchange_energy_bal_sensible_ss, and for one that only exchanges latent heat, @eq-exchange_energy_bal_latent_ss, are also reproduced here.
+When inputs and operating parameters stop changing, most CSTRs eventually reach a steady-state where nothing changes over time. At that point the time derivatives in the design equations all equal zero, resulting in the steady-state mole balance shown in equation @eq-ss_cstr_mole_bal and the steady-state energy balance shown in @eq-ss_cstr_energy_bal. For completeness, the steady state versions of the energy balances for a heat exchange fluid that exchanges only sensible heat, @eq-exchange_energy_bal_sensible_ss, and for one that only exchanges latent heat, @eq-exchange_energy_bal_latent_ss, are also reproduced here.
 
 $$
 0 = \dot n_{i,in} - \dot n_i + V \sum_j \nu_{i,j}r_j
@@ -117,7 +123,7 @@ $$
 
 The steady-state CSTR design equations are algebraic-transcendental equations (ATEs, see [Appendix -@sec-apxd_ates]). If there are $N$ design equations, they can be solved to find the values of $N$ variables that appear in them. Very often the steady-state CSTR design equations are solved to find the outlet molar flow rates, the outlet reacting fluid temperature, and the outlet exchange fluid temperature, but if one or more of those quantities are known, the design equations can be solved for other variables they contain. 
 
-When rate expressions are substituted into either the transient or steady-state CSTR design equations, they will introduce concentrations or, for gases, partial pressures. Noting that the CSTR is perfectly mixed so that the outlet composition and temperature are the same as that of the reacting fluid, the concentrations or partial pressures in the rate expressions should be expressed in terms of the outlet molar flow rates and temperature.
+When rate expressions are substituted into either the transient or steady-state CSTR design equations, they will introduce concentrations or, for gases, partial pressures. Noting that the CSTR is perfectly mixed so that the outlet composition and temperature are the same as that of the reacting fluid, the concentrations or partial pressures in the rate expressions should be expressed in terms of the outlet molar flow rates, volumetric flow rate, and temperature.
 
 $$
 C_i = \frac{\dot{n}_i}{\dot{V}}
@@ -133,7 +139,7 @@ $$
 
 ## Steady-State Multiplicity and Stability
 
-Upon substitution of rate expressions, the steady-state CSTR design equations are non-linear because the rate expression contains an exponential temperature term and may also contain concentrations or partial pressures raised to powers other than one. Non-linear equations can have more than one solution. For example, a quadratic equation has two solutions. Not only are multiple solutions possible, but the steady-state CSTR design equations can have more than one physically meaningful solution. This phenomenon is known as steady-state multiplicity.
+Upon substitution of rate expressions, the steady-state CSTR design equations become non-linear because the rate expression contains an exponential temperature term and may also contain concentrations or partial pressures raised to powers other than one. Non-linear equations can have more than one solution. For example, a quadratic equation has two solutions. Not only are multiple solutions possible, but the steady-state CSTR design equations can have more than one physically meaningful solution. This phenomenon is known as steady-state multiplicity.
 
 ### Steady-State Multiplicity {#sec-ch6_multiplicity}
 
@@ -227,10 +233,17 @@ The numbers in parentheses in the following list of learning objectives refer to
 		* specification (-@sec-ch6_ex1, -@sec-ch6_ex2, -@sec-ch6_ex4, -@sec-ch6_ex5, -@sec-ch6_ex6) or optimization (-@sec-ch6_ex3) tasks
 		* single (-@sec-ch6_ex1, -@sec-ch6_ex2, -@sec-ch6_ex3, -@sec-ch6_ex5) or multiple (-@sec-ch6_ex4, -@sec-ch6_ex6) steady states
 	* determine whether multiple CSTR steady states are possible (-@sec-ch6_ex1, -@sec-ch6_ex3, -@sec-ch6_ex4)
-	* identify unstable steady states, ignition points and extinction points
 	* use transient CSTR analysis to determine the stability of a steady state (-@sec-ch6_ex6)
 	* use qualitative analysis to assess and explain results from a quantitative analysis (-@sec-ch6_ex1, -@sec-ch6_ex2, -@sec-ch6_ex3, -@sec-ch6_ex4)
-	* use instantaneous selectivity/yield to assess the effects of temperature and composition on overall selectivity (-@sec-ch6_ex1)
+
+::: {.callout-important collapse="true"}
+## Computer Code for Performing Calculations
+
+The examples presented in *REB, The Book* describe how to perform the necessary calculations numerically, but they do not provide computer code for doing so. This is intentional so that readers can use whatever programming language and development environment they choose.
+
+For readers who are interested, the Assignments by Topic Section of [*REB, The Course*]() describes and discusses performing the calculations for each example using Python, and includes links to the source code.
+
+:::
 
 ### Response of a Steady-State CSTR {#sec-ch6_ex1}
 
@@ -267,7 +280,7 @@ I'll start by summarizing the assignment using common symbols to represent the q
 
 :::
 
-#### Assignment Summary
+<center>**Assignment Summary**</center>
 
 [Reactions]{.underline}:
 
@@ -295,7 +308,7 @@ $$
 
 [Deliverables]{.underline}: $f_A$, $S_{D/U}$, and $T$
 
-#### Formulation of the Equations
+<center>**Formulation of the Equations**</center>
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -429,7 +442,7 @@ $$
 S_{D/U} = \frac{\dot{n}_D}{\dot{n}_U} \tag{19}
 $$
 
-#### Implementation of the Calculations
+<center>**Implementation of the Calculations**</center>
 
 Computer code to perform the calculations can be written using a variety of programming languages and environments, and the actual code can be structured in a variety of ways. Referring to the preceding assignment summary, computational strategy and formulation of the equations, here are the essential things the computer code must do, irrespective of the programming language and environment that is used. 
 
@@ -442,14 +455,7 @@ Computer code to perform the calculations can be written using a variety of prog
 5. Calculate the conversion of A and selectivity for D over U.
 6. Check whether other steady states are possible.
 
-::: {.callout-important collapse="true"}
-## A Python Implementation of the Calculations
-
-This example is also presented in *REB, The Course.* [There](), for readers who are interested, the implementation and execution of the calculations using Python is illustrated and discussed.
-
-:::
-
-#### Results and Discussion
+<center>**Results and Discussion**</center>
 
 The calculations were performed as described above. The calculations were repeated changing the initial guess for the outlet temperature to 0.01 K greater than the inlet temperature and to 100 K greater than the inlet temperature. In all three cases the solver converged to the same steady-state solution. While not a rigorous test, these results were taken to indicate that only one steady state is possible for this CSTR. To test more rigorously, a multiplicity plot could be generated and examined to see whether additional outlet temperatures are possible for the 350 K inlet temperature in this assignment.
 
@@ -465,7 +471,7 @@ The activation energy for reaction (2) is larger than that for reaction (1), so 
 
 To verify this prediction, the feed temperature was decreased to 325 K and the calculations were repeated. The selectivity did indeed increase to 10.6 mol D per mol U, but the conversion decreased to 46.7%. Increasing the temperature to 375 K gave a lower selectivity of 6.9 mol D per mol U at a higher conversion of 61.5%.
 
-#### Deliverables
+<center>**Deliverables**</center>
 
 A single steady state was identified for the CSTR described in the assignment narrative. At that steady state 54.9% of reagent A is converted with a selectivity of 8.39 mol D per mole of U. The outlet temperature is 383 K.
 
@@ -494,7 +500,7 @@ I'll begin with an assignment summary making sure to use appropriate symbols to 
 
 :::
 
-#### Assignment Summary
+<center>**Assignment Summary**</center>
 
 [Reaction]{.underline}:
 
@@ -516,7 +522,7 @@ $$
 
 [Deliverables]{.underline}: $\tau$ and $T$
 
-#### Formulation of the Equations
+<center>**Formulation of the Equations**</center>
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -646,7 +652,7 @@ $$
 \tau = \frac{V}{\dot V_{in}}
 $$
 
-#### Implementation of the Calculations
+<center>**Implementation of the Calculations**</center>
 
 Computer code to perform the calculations can be written using a variety of programming languages and environments, and the actual code can be structured in a variety of ways. Referring to the preceding assignment summary, computational strategy and formulation of the equations, here are the essential things the computer code must do, irrespective of the programming language and environment that is used.
 
@@ -658,20 +664,13 @@ Computer code to perform the calculations can be written using a variety of prog
 	b. Receive a solution of the reactor design equations which will include the requested outlet temperature.
 5. Calculate the space time.
 
-::: {.callout-important collapse="true"}
-## A Python Implementation of the Calculations
-
-This example is also presented in *REB, The Course.* [There](), for readers who are interested, the implementation and execution of the calculations using Python is illustrated and discussed.
-
-:::
-
-#### Results and Discussion
+<center>**Results and Discussion**</center>
 
 The calculations were performed as described above. In this analysis, the initial composition and the conversion were specified. As such, the amount of heat released is fixed, and since the reactor is adiabatic, that also fixes the final temperature. Consequently, there is no need to check for other steady states.
 
 The reaction taking place is exothermic and the reactor operates adiabatically, so the temperature is expected to increase, and it does. The inlet temperature is 165 °C and the outlet temperature is 265 °C. The feed is immediately heated to the final temperature as it enters the reactor due to perfect mixing. As a consequence the reaction takes place at 265 °C. In this case, that must correspond to a large rate coefficient, because the required space time is only 0.42 min. In a plug flow reactor (see @sec-ch9) the feed would be heating from 165 to 265 °C as it was reacting. At 165 °C, the rate coefficient would be lower, and that would mean that a longer space time would be needed in a plug flow reactor.
 
-#### Deliverables
+<center>**Deliverables**</center>
 
 The space time necessary to reduce the inlet amount of reagent A from 10% to 0.1% is 0.42 min (25.2 s). The temperature will increase from 165 to 265 °C while doing so.
 
@@ -717,7 +716,7 @@ I'll begin with an assignment summary using common symbols to represent the quan
 
 :::
 
-#### Assignment Summary
+<center>**Assignment Summary**</center>
 [Reaction]{.underline}:
 
 $$
@@ -742,7 +741,7 @@ $$
 
 [Deliverables]{.underline}: $T_{in, opt}$ and $f_{A,max}$.
 
-#### Formulation of the Equations
+<center>**Formulation of the Equations**</center>
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -863,7 +862,7 @@ $$
 f_{A,max} = \underline{f}_A \big\vert_{T_{in,opt}}\tag{15}
 $$
 
-#### Implementation of the Calculations
+<center>**Implementation of the Calculations**</center>
 
 Computer code to perform the calculations can be written using a variety of programming languages and environments, and the actual code can be structured in a variety of ways. Referring to the preceding assignment summary, computational strategy and formulation of the equations, here are the essential things the computer code must do, irrespective of the programming language and environment that is used.
 
@@ -881,14 +880,7 @@ Computer code to perform the calculations can be written using a variety of prog
 6. Find the maximum conversion and the corresponding initial temperature
 7. Check that no other steady states are possible at the inlet temperature where the conversion is maximized.
 
-::: {.callout-important collapse="true"}
-## A Python Implementation of the Calculations
-
-This example is also presented in *REB, The Course.* [There](), for readers who are interested, the implementation and execution of the calculations using Python is illustrated and discussed.
-
-:::
-
-#### Results and Discussion
+<center>**Results and Discussion**</center>
 
 A range of inlet temperatures between 75 and 125 °C was chosen for analysis and the calculations were performed as described above. Figure 1 shows the conversion for each inlet temperature in the range. The conversion does pass through a maximum, indicating that the chosen range of inlet temperatures did not need to be adjusted.
 
@@ -904,7 +896,7 @@ So looking at the rate expression, the first term will increase as with increasi
 
 CSTRs can sometimes have multiple steady states. To check rigorously here, a multiplicity plot could be generated and examined to see whether multiple steady states are possible at the optimum inlet temperature, 94.7 °C. Instead of doing that, the conversion and outlet temperature at an inlet temperature of 94.7 were calculated using outlet temperature guesses of 94.71, 99.7, and 294.7 °C. The same conversion (33.1%) and outlet temperature (110 °C) was found in all three cases. Also, the original calculations began at the lowest inlet temperature of the chosen range, and then proceeded through successively greater inlet temperatures. The curve does not show any discontinuities, which might occur if at any inlet temperature the solution jumped to a different steady state.  While not a rigorous test, these results suggests that there is only one steady state.
 
-#### Deliverables
+<center>**Deliverables**</center>
 
 The maximum conversion, 33%, occurs at an inlet temperature of 95 °C, and the corresponding outlet temperature is 110 °C. Lower inlet temperatures result in a lower rate that yields lower conversions. At higher temperatures, thermodynamic equilibrium limits the conversion. Because the reaction is exothermic, the equilibrium conversion decreases as the temperature increases. Thus the maximum in the conversion is due to the opposing effects of temperature on the rate coefficient and the equilibrium constant.
 
@@ -935,7 +927,7 @@ I'll start by summarizing the two parts of the assignment, letting $N_{ss}$ repr
 
 :::
 
-#### Assignment Summary
+<center>**Assignment Summary**</center>
 
 [Reaction]{.underline}:
 
@@ -1089,7 +1081,7 @@ f_A = \frac{\dot{n}_{A,in} - \dot n_A}{\dot{n}_{A,in}} \tag{14}
 $$
 
 
-#### Implementation of the Calculations
+<center>**Implementation of the Calculations**</center>
 
 Computer code to perform the calculations can be written using a variety of programming languages and environments, and the actual code can be structured in a variety of ways. Referring to the preceding assignment summary, computational strategy and formulation of the equations, here are the essential things the computer code for Part A must do, irrespective of the programming language and environment that is used.
 
@@ -1117,14 +1109,7 @@ Here are the essential things that the code for Part B it must do.
 		ii. receive a solution of the reactor design equations which will include the requested temperature
 	c. calculate the conversion
 
-::: {.callout-important collapse="true"}
-## A Python Implementation of the Calculations
-
-This example is also presented in *REB, The Course.* [There](), for readers who are interested, the implementation and execution of the calculations using Python is illustrated and discussed.
-
-:::
-
-#### Results and Discussion
+<center>**Results and Discussion**</center>
 
 The calculations for Parts A and B were performed as described above. The resulting multiplicity plot from Part A is shown in @fig-ch6_ex4_T_vs_Tin. The range of values chosen for the outlet temperature did not need to be adjusted. It was broad enough to show that between inlet temperatures of ca. 4 and 90°, three steady states are possible. At the specified inlet temperature of 50 °C, indicated by the blue line in the figure, it can be seen the three steady-state outlet temperatures are approximately 50, 140, and 270 °C.
 
@@ -1134,7 +1119,7 @@ Those approximate outlet temperatures, read from @fig-ch6_ex4_T_vs_Tin, were use
 
 @fig-ch6_ex4_T_vs_Tin shows the inlet temperature increases steadily from low temperature until it reaches an ignition point at 90.5 °C, where it begins decreasing. It continues to decrease until it reaches an extinction point at 3.9 °C, where it again begins increasing. [Example -@sec-ch6_ex6] examines the stability of the steady states using their transient response to small perturbations of the reactor's outlet temperature.
 
-#### Deliverables
+<center>**Deliverables**</center>
 
 Three steady states are possible for the specified CSTR. They have outlet temperatures of 50, 138, and 265 °C, and corresponding conversions of 0.03%, 39.9%, and 97.5%, respectively.
 
@@ -1178,7 +1163,7 @@ Rate expressions for the reactions are not provided as equations, but the narrat
 In the assignment summary I'll use a subscripted "in" to denote values at the inlet and a subscripted "0" to denote values at the instant the flows into the reactor start.
 
 :::
-#### Assignment Summary
+<center>**Assignment Summary**</center>
 
 [Reactions]{.underline}:
 
@@ -1214,7 +1199,7 @@ $$
 
 [Deliverables]{.underline}: $\underline{T}$, $\underline{T}_{ex}$, and $\underline{C}_B$ *vs.* $\underline{t}$ as graphs.
 
-#### Formulation of the Equations
+<center>**Formulation of the Equations**</center>
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -1368,7 +1353,7 @@ $$
 \underline{C}_B = \frac{\underline{\dot{n}}_B}{\dot{V}} \tag{19}
 $$
 
-#### Implementation of the Calculations
+<center>**Implementation of the Calculations**</center>
 
 Computer code to perform the calculations can be written using a variety of programming languages and environments, and the actual code can be structured in a variety of ways. Referring to the preceding assignment summary, computational strategy and formulation of the equations, here are the essential things the computer code must do, irrespective of the programming language and environment that is used.
 
@@ -1381,14 +1366,7 @@ Computer code to perform the calculations can be written using a variety of prog
 5. Calculate a corresponding set of values of the concentration of B
 6. Generate graphs showing $\underline{T}$, $\underline{T}_{ex}$, and $\underline{C}_B$ *vs.* $\underline{t}$
 
-::: {.callout-important collapse="true"}
-## A Python Implementation of the Calculations
-
-This example is also presented in *REB, The Course.* [There](), for readers who are interested, the implementation and execution of the calculations using Python is illustrated and discussed.
-
-:::
-
-#### Results and Discussion
+<center>**Results and Discussion**</center>
 
 The calculations were performed as described above. The reacting fluid temperature, exchange fluid temperature and concentration of B during the first 30 min of startup are shown in Figures [-@fig-ch6_ex5_T_vs_t], [-@fig-ch6_ex5_Te_vs_t], and [-@fig-ch6_ex5_CB_vs_t]. There are no undesired temperature excursions, and all three quantities appear to be approaching steady-state after 30 minutes. Specifically the reacting fluid temperature is approximately 58 °C, the exchange fluid, 48 °C, and the concentration of B, 0.2 mol gal^-1^. 
 
@@ -1400,7 +1378,7 @@ The calculations were performed as described above. The reacting fluid temperatu
 
 There are many ways to start-up a reactor. Here the reactor was filled with one reactant and the feed flow was initiated. Another option would be to charge the reactor with the feed and let it react in BSTR mode until the composition and temperature are near their steady-state values, and then start the flow. The start-up procedure that is ultimately used will likely be chosen, at least in part, on the basis of economics. For example, in this assignment the reactor operated for 30 minutes and still hadn't quite reached steady-state. During that time it was not producing the intended product. If there is no use for that partially reacted product, or if the reactants are relatively expensive, the alternative method described above might be preferred because it wastes less feed and generates less partially reacted product.
 
-#### Deliverables
+<center>**Deliverables**</center>
 
 The startup procedure does not cause any undesirable temperature behavior. After 30 min the the reactor appears to be close to steady-state with a reacting fluid temperature of 58 °C, an exchange fluid temperature of 48 °C and a concentration of B of 0.2 mol gal^-1^. 
 
@@ -1433,7 +1411,7 @@ I'll begin by summarizing the assignment. For the reactor variables I'll use the
 
 :::
 
-#### Assignment Summary
+<center>**Assignment Summary**</center>
 
 [Reaction]{.underline}:
 
@@ -1453,7 +1431,7 @@ $$
 
 [Deliverables]{.underline}: $\underline{t}$ *vs.* $\underline{T}$ following ± 1 °C perturbations from the U~mid~ steady state and ± 20 °C perturbations form the S~high~ and S~low~ steady states.
 
-#### Formulation of the Equations
+<center>**Formulation of the Equations**</center>
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -1571,7 +1549,7 @@ Solving the design equations will yield the quantities to be plotted, so no furt
   
 : Initial and final values of the design equation variables. {#tbl-ch6_ex6_initial_values}
 
-#### Implementation of the Calculations
+<center>**Implementation of the Calculations**</center>
 
 Computer code to perform the calculations can be written using a variety of programming languages and environments, and the actual code can be structured in a variety of ways. Referring to the preceding assignment summary, computational strategy and formulation of the equations, here are the essential things it must do.
 
@@ -1586,14 +1564,7 @@ Computer code to perform the calculations can be written using a variety of prog
 	d. Call an IVODE solver as in step 3b.
 4. Generate graphs showing $\underline{T}$ *vs.* $\underline{t}$ for positive and negative perturbations from each of the three steady states.
 
-::: {.callout-important collapse="true"}
-## A Python Implementation of the Calculations
-
-This example is also presented in *REB, The Course.* [There](), for readers who are interested, the implementation and execution of the calculations using Python is illustrated and discussed.
-
-:::
-
-#### Results and Discussion
+<center>**Results and Discussion**</center>
 
 The calculations were performed as described above. @fig-ch6_ex6_unsteady shows the temperature as a function of time following perturbation from the unstable steady state by plus and minus 1 °C holding all of the inputs constant. Since none of the reactor inputs changed, the temperature would have returned to 138 °C had that been a stable steady state. Instead, the figure shows that following a 1 °C increase in the reacting fluid temperature, it continues to increase and stabilizes at the high temperature steady state. Following a 1°C decrease in the reacting fluid temperature, it continues to decrease and stabilizes at the low temperature steady state. This provides a rigorous confirmation of the argument made in @sec-ch6_stability that the middle temperature steady state is unstable.
 
@@ -1605,7 +1576,7 @@ For both the high temperature, @fig-ch6_ex6_high, and low temperature, @fig-ch6_
 
 ![Reacting fluid temperature following a +1 °C (blue) and a -1 °C (orange) perturbation from the low temperature (black) steady state.](solutions/ch6_ex6/example_6_6_6_response_at_S_low.png){#fig-ch6_ex6_low width="80%"}
 
-#### Deliverables
+<center>**Deliverables**</center>
 
 A 1°C change of the reacting fluid temperature from the unstable steady state initiates transient operation leading to one of the stable steady states. This shows confirms that the initial steady state is, indeed, unstable. In contrast, a 20 °C change of the eacting fluid temperature from either of the stable steady states initiates transient operation leading back to the original steady state, confirming that these initial steady states are stable.
 
