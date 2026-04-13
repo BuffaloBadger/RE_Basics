@@ -30,7 +30,7 @@ $$
 0 = -\dot{Q} - \dot {m}_{ex} \int_{T_{ex,in}}^{T_{ex}} \tilde{C}_{p,ex}dT 
 $$ {#eq-exchange_energy_bal_sensible_ss}
 
-In @eq-exchange_energy_bal_sensible and @eq-exchange_energy_bal_sensible_ss the sensible heat terms are written in terms of the gravimetric heat capacity of the exchange fluid, $\tilde{C}_{p,ex}$. It has units of energy per mass of exchange fluid per degree of temperature change. The sensible heat terms could also be written in terms of either the volumetric heat capacity ($\breve{C}_p$, energy per volume of exchange fluid per degree of temperature change) or the molar heat capacity ($\hat{C}_p$, energy per mole of exchange fluid per degree of temperature change). @eq-equivalent_sens_heat_accumulation_terms shows the three equivalent ways of writing the accumulation term and @eq-equivalent_sens_heat_terms shows the three equivalent ways of writing the term for the sensible heat change.
+In @eq-exchange_energy_bal_sensible and @eq-exchange_energy_bal_sensible_ss the sensible heat terms are expressed using the gravimetric heat capacity of the exchange fluid, $\tilde{C}_{p,ex}$. It has units of energy per mass of exchange fluid per degree of temperature change. The sensible heat terms could also be written using either the volumetric heat capacity ($\breve{C}_p$, energy per volume of exchange fluid per degree of temperature change) or the molar heat capacity ($\hat{C}_p$, energy per mole of exchange fluid per degree of temperature change). @eq-equivalent_sens_heat_accumulation_terms shows the three equivalent ways of writing the accumulation term and @eq-equivalent_sens_heat_terms shows the three equivalent ways of writing the term for the sensible heat change.
 
 $$
 \rho_{ex} V_{ex} \tilde{C}_{p,ex}\frac{dT_{ex}}{dt}\ \Leftrightarrow\ V_{ex} \breve{C}_{p,ex}\frac{dT_{ex}}{dt}\ \Leftrightarrow\ \frac{\rho_{ex} V_{ex} \hat{C}_{p,ex}}{M_{ex}}\frac{dT_{ex}}{dt}
@@ -59,7 +59,7 @@ The purpose of an ideal reactor model is to relate the reactor outputs to the re
 
 Energy balances on the reacting fluid and on the separate heat exchange fluid relate their output temperatures to the reactor inputs and parameters. The energy balance on the reacting fluid also accounts for any work it performs on the surroundings. Normally, the reacting fluid and exchange fluid energy balances are also included as reactor model equations. As discussed below, there are circumstances where a reactor can be modeled without using one or both of the energy balances.
 
-A momentum balance accounts for the conversion of kinetic energy of a flowing fluid to thermal energy. While this energy is negligible with respect to terms in the energy balance, it can have a significant effect upon the pressure of the flowing fluid. Momentum balances are not needed with any of the ideal stirred tank reactors, but they are sometimes necessary when modeling ideal PFRs. When a momentum balance is not needed, the outlet pressure can be calculated from the other output variables using the equation of state (i. e. using the ideal gas law or assuming liquids to have constant density).
+A momentum balance accounts for the conversion of kinetic energy of a flowing fluid to thermal energy. While the magnitude of this energy is negligible with respect to the terms in the energy balance, it can have a significant effect upon the pressure of the flowing fluid. Momentum balances are not needed with any of the ideal stirred tank reactors, but they are sometimes necessary when modeling ideal PFRs. When a momentum balance is not needed, the outlet pressure can be calculated from the other output variables using the equation of state (i. e. using the ideal gas law or assuming liquids to have constant density).
 
 Collectively, the mole balances, energy balances, and momentum balance, as needed, are referred to as the design equations for the reactor. In some situations where the design equations are ordinary differential equations, the mole, energy, and momentum balances are found to contain one too many dependent variables. In these cases a differential form of the ideal gas law must be added to the reactor design equations.
 
@@ -107,17 +107,54 @@ That level of design task is well beyond the scope of *Reaction Engineering Basi
 
 **Parameter estimation tasks** are inherently different from the three types of tasks described above, but they do use the same reactor design equations and those equations are solved the same way as in the other tasks. Briefly, a parameter estimation task involves using a reactor to generate data, and then using the data, together with a model for the reactor, to estimate the values of parameters appearing in a rate expression. The use of the ideal reactor models to estimate rate expression parameters is examined in @sec-ch11. A similar approach can be used to estimate parameters that appear in empirical models for non-ideal reactors such as those considered in @sec-ch13.
 
+## Assignment Completion Workflow {#sec-ch5_workflow}
+
+As the preceeding discussion suggests, the reactor design equations that are needed to complete a reaction engineering assignment will vary from assignment to assignment, as will the way that they are solved. To one who is just beginning to learn reaction engineering, it can seem that every assignment is different, and knowing how to proceed can seem overwhelming. As such, it can be helpful to establish a computational strategy and workflow that can be used consistently when completing assignments.
+
+The assignments in the next four chapters will all involve the analysis of a single, ideal reactor. In *Reaction Engineering Basics,* the reactor design equations are always solved numerically, and the computer code for doing so can often be structured in a variety of ways. However the same computational strategy can be employed in each analysis.
+
+1. Select and simplify the design equaations needed to model the reactor.
+2. Identify the reactor model variables that will be found by solving the design equations.
+3. Identify any additional unknowns that appear in the design equations, classifying them as computable, uncomputable, or coupled.
+4. Write equations for calculating the additional computable and coupled unknowns.
+5. If appropriate, define a range of values for the adjusted variable (parameter) to be used for generating a graph or optimizing a target variable.
+6. Solve the reactor design equations to get the values of the reactor model variables (for each value of the adjusted variable, if there is one).
+7. Use the results from solving the design equations to calculate any additional quantities of interest and for generating requested graphs.
+
+At this point, it may not be clear what some of these steps mean or entail. The examples included in the next four chapters will illustrate the use of this strategy and should clarify the meaning of the steps. The strategy is intended to be general enough to apply to any assignment involving the analysis of a single ideal reactor, but should not be viewed as a rigid recipe that must be followed exactly. It offers a general approach that can be adapted as needed.
+
+The remainder of this section describes a workflow that supports the preceding computational strategy and that will be used in every *Reaction Engineering Basics* example assignment involving the analysis of a single ideal reactor. Later chapters of the book will add items to this workflow as new reactor systems or engineering tasks are introduced. The workflow progresses through five sequential stages.
+
+* Assignment Summary
+* Formulation of the Equations
+* Implementation of the Calculations
+* Results and Discussion
+* Deliverables
+
+The intent of the assignment summary is to replace the longer assignment narrative with a concise listing of the information it provides and requests. That information is organized under the following headings: Reactions, Rate Expressions, Reactor, Given Constants, Basis, Parameters, and Deliverables. Some examples will not require all of these headings. Upon completion of the assignment summary, it should not be necessary to read through the assignment narrative again.
+
+The formulation of the equations begins with the equations for modeling the reactor. The necessary reactor design equations are selected and simplified first, and the variables to be found by solving them are enumerated. Next, if there are additional computable unknowns appearing in the design equations, the equations for calculating them are listed. If there are additional coupled unknowns (see [Appendix -@sec-apxd_ivodes]), implicit equations for calculating them are written. Then, if there are uncomputable unknowns, they are listed next (they will need to be provided as input when the reactor design equations are solved). 
+
+The reactor design equations will either be algebraic-transcendental equations (ATEs) or initial value ordinary differential equations (IVODEs). The formulation of the equations continues with addition of the input that must be provided to the numerical equation solver or solvers that will be used to solve the ATEs or IVODEs. Finally, equations for calculating any additional quantities requested in the assignment are added.
+
+The implementation of the calculations involves writing computer code. *Reaction Engineering Basics, The Book* describes the code in general terms so readers can write it using whatever programming environment and language they choose. Most of the examples in the book are also presented in  *Reaction Engineering Basics, The Course,* and there the implementation of the calculations using Python is presented and discussed. Links are provided so interested readers can view the Python implementation.
+
+The results and discussion section presents the results from performing the calculations. Qualitative analysis, which is described next, is used to interpret the results on a physical basis. Interesting or unexpected features of the results are identified and rationalized. If the assignment requires the engineer to make an assessment or recommendation, the basis for it is developed in the discussion.
+
+The term "Deliverables" is used here to refer to the things requested in the assignment narrative. The deliverables section is simply a concise presentation of the deliverables, based upon the preceding results and discussion.
+
+This is a *suggested* workflow, not a required one. Readers may adapt it however they choose, or ignore it completely. It has not been described at length, but upon progression through the examples in the following chapters, the purpose and content of the five sections should become evident.
+
 ## Qualitative Reactor Analysis {#sec-ch5_qual_analysis}
 
-Qualitative analysis focuses upon how the composition and temperature will vary as the reaction or reactions progress, but not on the magnitude of the variations. In batch reactors the time during which reactions occur is measured using clock time. The reaction time is the difference between the clock time when the reaction started and the clock time when it ended. It is customary to define an elapsed time, $t$, as being equal to zero when the reaction starts, in which case the reaction time is equal to the elapsed time when the reaction stops. 
+Qualitative analysis focuses upon how  composition and temperature vary as reactions progress, but not on the magnitude of the variations. In batch reactors the time during which reactions occur is measured using clock time. The total reaction time is the difference between the clock time when the reaction starts and the clock time when it ends. It is customary to define an elapsed time, $t$, as being equal to zero when the reaction starts, in which case the total reaction time is equal to the elapsed time when the reaction stops. 
 
-In continuous flow systems, the time during which reactions occur is equal to the amount of time that the reagents spend in the reactor. One one measure of the time reagents spend in the reactor is the space time, $\tau$, defined in @eq-space_time. Reactions progress over time, so in qualitative analysis, changes in composition and temperature with increasing batch reaction time or flow reactor space time are of interest.
-
+In continuous flow systems, the time during which reactions occur is equal to the amount of time that the reagents spend in the reactor. One measure of the time reagents spend in the reactor is the space time, $\tau$, defined in @eq-space_time. For flow reactors, the mixing of the reacting fluid while it is in the reactor is also critical to a physical understanding of reactor performance. That aspect of qualitative analysis is considered in the chapters on ideal flow reactors. This chapter focuses on the variation of concentrations and temperatures as functions of reaction time or space time.
 $$
-\tau = \frac{V}{\dot{V}_{0}}
+\tau = \frac{V}{\dot{V}_{in}}
 $$ {#eq-space_time}
 
-Because the analysis is qualitative, the rate expression is not used directly. Instead, the general behavior of reactions must be used, noting that for a typical reaction
+Because the analysis is qualitative, the rate expression is not used directly. Instead, the general behavior of reactions must be used, noting that for a typical reaction, holding all other conditions constant,
 
 * the rate will increase if the temperature of the reacting system is increased,
 * the rate will decrease if the concentration of one or more reactants decreases,
@@ -126,81 +163,140 @@ Because the analysis is qualitative, the rate expression is not used directly. I
 * the equilibrium constant decreases as the temperature increases if the reaction is exothermic, and
 * the equilibrium constant increases as the temperature increases if the reaction is endothermic.
 
-Of course, not all reactions behave “typically.” The qualitative analysis methodology presented here also can be applied to atypical reactions if the general behavior above is appropriately adjusted. Atypical behavior can often be recognized by examining the rate expression, if it is available. For example, if the rate increases as the concentration of a *product* increases, the reaction is said to be autocatalytic, and the qualitative behavior can be adjusted accordingly. It is important to note, however, that as a reaction approaches thermodynamic equilibrium, it will asymptotically approach "typical" behavior.
+Of course, not all reactions behave “typically.” The qualitative analysis methodology presented here also can be applied to atypical reactions if the general behavior above is appropriately adjusted. Atypical behavior can often be recognized by examining the rate expression, if it is available. For example, if the rate increases as the concentration of a *product* increases, the reaction is said to be autocatalytic, and the qualitative behavior can be adjusted accordingly. It is important to note, however, that as a reaction with atypical kinetics approaches thermodynamic equilibrium, it will asymptotically approach "typical" behavior.
 
-The driving force for a chemical reaction is reducing the free energy of the system. Put differently, a chemical reaction always proceeds toward chemical reaction equilibrium. As a consequence, in an isothermal or adiabatic reactor, a single chemical reaction will never change direction spontaneously. To do so, the reaction would have to go beyond equilibrium and then turn around and go back. Since a single reaction will never change directions, the concentrations of the reactants will continually decrease over time and the concentrations of the products will continually increase over time until equilibrium is reached. When equilibrium is reached, the concentrations will stop changing over time.
+The goal of qualitative analysis is to use understanding of physical effects to predict how the concentrations of reagents and the temperature vary as a function of reaction time or space time. This is easiest and most reliable when only one reaction is taking place in a reactor that operates either adiabatically or isothermally. When only one exothermic reaction is taking place adiabatically, the temperature will rise continually since the reaction is releasing heat, and that heat is not being removed. Similarly, when only one endothermic reaction takes place adiabatically, the temperature will drop continually. When a reactor operates isothermally, the temperature does not change as the reaction proceeds and does not need to be considered. When a reactor is neither adiabatic nor isothermal, qualitative analysis can be more difficult with greater uncertainty in the results.
 
-The other factor to be considered in a qualitative analysis is the extent to which heat is added or removed as the reaction or reactions progress. There are a number of possibilities in this regard. Qualitative analysis is easiest and most reliable when only one reaction is taking place in a reactor that operates either adiabatically or isothermally. When only one exothermic reaction is taking place adiabatically, the temperature will rise continually since the reaction is releasing heat, and that heat is not being removed. Similarly, when only one endothermic reaction takes place adiabatically, the temperature will drop continually. When a reactor operates isothermally, the temperature does not change as the reaction proceeds. When a reactor is neither adiabatic nor isothermal, qualitative analysis can be more difficult with greater uncertainty in the results.
+Plots of a reagent's concentration or of the temperature versus reaction time will begin at a reaction time of zero. At time zero, the concentration or temperature will be located either at the orign or on the positive y-axis. The initial slope and curvature, and any changes in slope or curvature will depend upon the system being analyzed. Nonetheless, as the reaction approaches completion the curves must either be decreasing with a concave upward curvature or increasing with a concave downward shape as illustraed in @fig-ch5_final_shape. It can be seen that in both cases the quantity being plotted asymptotically approaches its final value. The goal of qualitative analysis, then, is to predict the shape of the curves between the y-axis and the point where they attain one of those two shapes.
 
-When a reactor operates adiabatically or isothermally with only one or two reactions taking place, the shape of plots of concentration, temperature, rate, selectivity, etc. *versus* reaction time or space time can be predicted qualitatively as follows.
+![As a reaction approaches completion, a plot of a reagent's concentration or of the temperature as a function of reaction time must either be decreasing with a concave upward shape (blue) or increasing with a concave downward shape (orange).](figures/concave_up_and_down.png){#fig-ch5_final_shape width="80%"}
 
-1. Determine the reactor operating procedure (e. g. isothermal or adiabatic).
-2. Determine whether the reaction is typical or atypical, establishing the expected behavior as conditions change.
-3. Draw sets of axes with reagent concentrations, temperature, and any other quantity of interest on the y-axes and reaction time or space time on the x-axes.
-4. Plot a point on each y-axis representing the initial values of the quantities. (The axes need not have a scale, and as such, plotted values only indicate whether the quantity is initially large, intermediate or small in value.)
-5. Determine the initial slope of each graph by considering how the concentrations and temperature will change during a short interval of time and how those changes will affect the other quantities plotted.
-6. Determine the initial curvature of each graph by considering whether the changes in the next short interval of time will be greater than, equal to, or less than those in the first interval of time.
-7. Determine whether the initial curvature eventually will result in the system approaching equilibrium (i. e. will each graph asymptotically approach a horizontal line?).
-8. If the initial curvature will not lead to equilibrium, infer what must happen so that the system eventually will go to equilibrium (i. e. will there be an inflection point or a minimum/maximum?), and qualitatively explain what will cause these changes in the curvature.
+The slope and shape plots of concentration or temperature change when the reaction rate changes. Important variables for a qualitative analysis are those that affect the reaction rate. If the reactions are irreversible, then only the concentrations of reactants are important, but if they are reversible, the concentrations of both reactants and products may be important. Similarly, if the reactor operates isothermally, then temperature is not important, but if the reactor is adiabatic or otherwise non-isothermal, the temperature is important.
 
-In *Reaction Engineering Basics*, qualitative analyses of this type often will be used in the discussion of the results of a quantitative analysis. In that context, qualitative analysis can be used to answer the question, "Do these results make sense?" Additionally, performing a qualitative analysis after the quantitative analysis helps new reaction engineers develop a physical understanding of results that complements the mathematical understanding obtained in quantitative analysis. As a reaction engineer gains experience and develops the necessary skills and understanding, qualitative analysis can often provide insight and guidance before beginning an assignment. This is particularly true for reactor design tasks like those described above.
+To begin a qualitative analysis, a set of axes is drawn to plot each important variable versus reaction time. Often it is also useful to draw a set of axes to plot reaction rate versus reaction time, too. Then the initial values of the important variables are plotted as points on their respective y-axes. The axes need not have a scale, and as such, plotted values only need to indicate whether the quantity is initially large, intermediate, small, or zero in value.
 
-## Assignment Completion Workflow {#sec-ch5_workflow}
+Next, the initial rate of each reaction is determined to be either positive (if every reactant concentration is initially non-zero) or zero (if any reactant concentration is initially zero). The initial rates of the reactions determine the initial slopes of the concentration vs. time and temperature vs. time curves. Specifically curves for concentrations of reactants will have negative initial slopes, and curves for concentrations of products will have positive initial slopes. If a reagent is a reactant in one reaction and a product in another, its initial slope will depend on the relative rates of the two reactions. That may not be known, and it may be necessary to consider both possibilities. The initial slope of the temperature vs. time curve will be positive if the reaction is exothermic and negative if it is endothermic.
 
-As the preceeding discussion suggests, the reactor design equations that are needed to complete a reaction engineering assignment will vary from assignment to assignment, as will the way that they are solved. To one who is just beginning to learn reaction engineering, it can seem that every assignment is different, and knowing how to proceed can seem overwhelming. As such, it can be helpful to establish a computational strategy and aworkflow that can be used consistently when completing assignments.
+To determine the initial curvature of the graphs, the values of the important variables after a very small interval of time are considered. The critical questions are whether each of the reaction rates at the end of the interval will be larger or smaller than their initial values. That then determines whether the change in each important varible during the next small interval of time will be greater than, equal to, or less than the change during the first small interval of time. So, for example, if an important variable decreased during the first interval and it will decrease more during the next interval, then initially that variable will be decreasing with a concave downward shape. If it will decrease less during the next interval, then initially that variable will be decreasing with a concave upward shape. If it will decrease by the same amount during the next interval, then there will be no curvature (i. e. it will be a straight line) at least for some initial period of time. Similarly, if an important variable increases more during the second interval than during the first, it is increasing with a concave upward shape, and if it increases less during the second interval than during the first, it is increasing with a concave downward shape.
 
-The assignments in the next four chapters will all involve the analysis of a single, ideal reactor. In *Reaction Engineering Basics,* the reactor design equations are always solved numerically, and the computer code for doing so can often be structured in a variety of ways. However the same computational strategy can be employed in each analysis.
+That may complete the qualitative analysis if the curves are all either decreasing with a concave upward shape or increasing with a concave downward shape as shown in @fig-ch5_final_shape. If not, it is necessary to infer what must happen to get to either of those shapes (i. e. pass through an inflection point, minimum, maximum, etc.), and explain why that happens on a physical basis.
 
-1. Select and simplify the design equaations needed to model the reactor.
-2. Identify the reactor model variables that will be found by solving the design equations.
-3. Identify any additional unknowns that appear in the design equations and classify them as computable, uncomputable, or coupled.
-4. Write equations for calculating the additional computable and coupled unknowns.
-5. Define a range of values for the adjusted variable (parameter) if necessary for generating a graph or optimizing a target variable.
-6. Solve the reactor design equations to get the values of the reactor model variables (for each value of the adjusted variable, if there is one).
-7. Use the results from solving the design equations to calculate any additional quantities of interest.
-
-The remainder of this section describes a workflow that supports that strategy, and that will be used in every *Reaction Engineering Basics* example assignment involving the analysis of a single ideal reactor. Later chapters of the book will add items to this workflow as new reactor systems or engineering tasks are introduced. The workflow progresses through five stages that are completed sequentially.
-
-* Assignment Summary
-* Formulation of the Equations
-* Implementation of the Calculations
-* Results and Discussion
-* Deliverables
-
-The intent of the assignment summary is to replace the longer assignment narrative with a concise listing of the information provides and requests. That information is organized under the following headings: Reactions, Rate Expressions, Reactor, Given Constants, Basis, Parameters, and Deliverables. Some examples will not require all of these headings. Upon completion of the assignment summary, it should not be necessary to read through the assignment narrative again.
-
-The formulation of the equations begins with the equations for modeling the reactor. The necessary reactor design equations are selected and simplified first, and the variables to be found by solving them are enumerated. Next equations for calculating any additional unknowns appearing in the equations are listed. Then if there are additional coupled unknowns (see [Appendix -@sec-apxd_ivodes]), implicit equations for calculating them are written. If there are uncomputable unknowns, they are listed next (they will need to be provided as input when the reactor design equations are solved). Input that must be provided to the numerical equation solver or solvers is then listed. Finally, equations for calculating any additional quantities requested in the assignment are listed.
-
-The implementation of the calculations involves writing computer code. *Reaction Engineering Basics, The Book* describes the code in general terms so readers can write it using whatever programming environment and language they choose. Most of the examples in the book are also presented in  *Reaction Engineering Basics, The Course,* and there the implementation of the calculations using Python is presented and discussed. Links are provided so interested readers can view the Python implementation.
-
-The results and discussion section presents the results from performing the calculations. Qualitative analysis is used to interpret them on a physical basis. Interesting or unexpected features of the results are identified and rationalized. If the assignment requires the engineer to make an assessment or recommendation, the basis for it is developed in the discussion.
-
-The term "Deliverables" is used here to refer to the things requested in the assignment narrative. The deliverables section is simply a concise presentation of the deliverables, based upon the preceding results and discussion.
-
-This is a *suggested* workflow, not a required one. Readers may adapt it however they choose, or ignore it completely. It has not been described at length, but upon progression through the examples in the following chapters, the purpose and content of the five sections should become evident. 
+In *Reaction Engineering Basics*, qualitative analyses of this type often will be used in the discussion of the results of a quantitative analysis. In that context, qualitative analysis can be used to answer the question, "Do these results make sense?" or "Why does that graph have that shape?" Additionally, performing a qualitative analysis after the quantitative analysis helps new reaction engineers develop a physical understanding of results that complements the mathematical understanding obtained in quantitative analysis. As a reaction engineer gains experience and develops the necessary skills and understanding, qualitative analysis can often provide insight and guidance before beginning an assignment. This is particularly true for reactor design tasks like those described above.
 
 ## Learning Objectives and Examples {#sec-ch5_learning_objectives}
 
 Upon completion of this chapter, readers should
 
 * know the definition/defining equation for steady-state/transient/isothermal/adiabatic/non-isothermal/isobaric/isochoric reactor operation, sensible/latent heat, and response/optimization/design/parameter estimation tasks
-* be able to qualitatively describe how the reaction rate, composition, temperature, and related quantities evolve with reaction time, given appropriate information about rate expressions, reaction exothermicity, and reactor heat exchange
+* be able to qualitatively describe how composition, temperature, and related quantities evolve with reaction time, given appropriate information about rate expressions, reaction exothermicity, and reactor heat exchange
 
-Qualitative analyses will be used in subsequent chapters to provide a physical interpretation of the results of quantitative analyses. Here two examples are provided. The first illustrates analysis of a single reaction where both compositional and thermal effects are important. The second involves two reactions in series with the assumption that thermal effects are not significant.
+Qualitative analyses will be used in subsequent chapters to provide a physical interpretation of the results of quantitative analyses. Here two examples of the second learning objective are provided. The first illustrates analysis of a single reaction where both compositional and thermal effects are important. The second involves two reactions in series where thermal effects are not significant.
 
-### Example with qual analysis of thermal effects
+### Qualitative Analysis of a Reversible, Exothermic Reaction {#sec-ch5_ex1}
 
-AFCoKaRE Problem 18.1
+Consider the typical reaction, A → Z, which is irreversible and exothermic. Suppose that reaction is run in an adiabatic reactor starting with pure A. Sketch the concentration of A, and the temperature versus reaction time. Describe the shape of each graph noting slopes, curvature, inflection points, etc. Then explain the shape on a physical basis.
 
-### Example with qual analysis of composition effects
+---
 
-AFCoKaRE Example 18.3
+<center>**Analysis and Discussion**</center>
 
-## Symbols Used in @sec-ch4
+Generally the reaction rate is affected by composition and temperature. Here the reaction is irreversible and the kinetics are typical, so the only important concentration is that of the reactant, A. The reaction is exothermic and the reactor is adiabatic, so the temperature will increase due to reaction, and consequently the temperature is also important.
+
+At the start of the reaction, the concentration of A and the temperature will both have positive values. The corresponding rate will be positive, so initially the concentration of A is decreasing because it is a reactant, and the temperature is increasing because the reaction is exothermic and the reactor is adiabatic.
+
+So after a very brief interval of time, the concentration of A will have decreased and the temperature will have increased. The curvature of the reactant concentration vs. time and temperature vs. time graphs will depend upon whether the reaction rate at the end of the small interval of time is greater of less than the initial rate. However, the decrease in reactant concentration and the increase in temperature have opposing effects on the rate. Decreasing reactant concentration decreases the composition term in the rate expression while increasing the temperature increases the rate through the Arrhenius term.
+
+In a qualitative analysis it isn’t possible to know whether the concentration decrease will have the greater effect leading to a rate decrease or whether the temperature increase will have the greater effect leading to a rate increase. Both possibilities must be considered.
+
+If the decrease in reactant concentration predominates over the increase in temperature the rate will decrease. That means that the concentration of A will decrease less during the next brief interval of time so that initially (over these brief time intervals) the concentration of A is decreasing with a concave upward shape. At the same time, the temperature will increase less during the second brief interval than during the first, so initially the temperature is increasing with a concave downward shape. These trends can continue for as long as required until eventually both the concentration and the temperature will asymptotically approach constant values as shown in @fig-ch5_ex1_conc_profile_r_decreasing.
+
+::: {#fig-ch5_ex1_conc_profile_r_decreasing layout-ncol=2 .center}
+
+![](solutions/ch5_ex1/example_5_5_1_conc_profile_when_r_decreasing.png){}
+
+![](/solutions/ch5_ex1/example_5_5_1_temp_profile_when_r_decreasing.png){}
+
+Concentration (left) and temperature (right) profiles during the adiabatic conversion of A to Z under conditions where the concentration dependence of the rate predominates over the temperature dependence.
+
+:::
+
+The other possibility is that the increase in temperature predominates over the decrease in reactant concentration and the rate increases. In this case the concentration initially decreases with a concave downward shape and the temperature initially increases with a concave upward shape. This can be seen at lower times in the concentration and temperature profiles shown in @fig-ch5_ex1_conc_profile_r_increasing. Those trends cannot continue indefinitely because they would lead an infinite negative concentration and an infinite positive temperature. Very clearly, and as shown in the figure, the curves must pass through an inflection point where their curvatures invert. The trends after the inflection point can continue for as long as required until eventually both the concentration and the temperature will asymptotically approach constant values.
+
+::: {#fig-ch5_ex1_conc_profile_r_increasing layout-ncol=2 .center}
+
+![](solutions/ch5_ex1/example_5_5_1_full_conc_profile.png){}
+
+![](/solutions/ch5_ex1/example_5_5_1_full_temp_profile.png){}
+
+Concentration (left) and temperature (right) profiles during the adiabatic conversion of A to Z under conditions where the temperature dependence of the rate initially predominates over the concentration dependence.
+
+:::
+
+The physical reason for the inflection point can be understood by considering the rate as a function of reaction time, shown in @fig-ch5_ex1_rate_profile. Initially the increase in temperature predominates over the decrease in reactant concentration and the rate increases. That cannot continue indefinitely, however, because eventually the reactant will run out and at which point the rate must equal zero. So as the reaction proceeds, the temperature effect becomes less and less predominant until a point is reached where the effects of the decreasing concentration and increasing temperature become equal. At that point, the rate reaches a maximum. The reaction time where the maximum rate occurs coincides with the times where the inflection points occur in the concentration and temperature profiles (@fig-ch5_ex1_conc_profile_r_increasing). At times beyond that point, the concentration term predominates over the temperature term. From this point on, the analysis is the same as first possibility considered above wherein the concentration term predominated from the start. Specifically the concentration decreases with a concave upward shape, the temperature increases with a concave downward shape, and they both asymptotically approach constant values at sufficiently large reaction times.
+
+![Rate profile during the adiabatic conversion of A to Z under conditions where the temperature dependence of the rate initially predominates over the concentration dependence.](solutions/ch5_ex1/example_5_5_1_full_rate_profile.png){#fig-ch5_ex1_rate_profile width="80%"}
+
+A qualitative analysis is not always conclusive when used to predict the behavior of a system. That was seen here where two possible behaviors were identified depending on whether concentration effects on the rate or temperature effects on the rate predominate initially. In this case, one would expect the heat of reaction to play a significant role in determining which effect predominates. If the heat of reaction was equal to zero, the reaction would become isothermal (no heat released or absorbed) and there would not be a temperature effect. The greater the heat of reaction, then, the more likely that the temperature effect would predominate over the concentration effect.
+Even though qualitative analysis may not offer a unique prediction of reactor behavior, it can still be extremely helpful for understanding the actual observed behavior of a reactor or the behavior predicted by a quantitative analysis. For example, if a reaction engineer was studying or modeling an reaction system like that considered here, and the engineer observed concentration and temperature profiles like those shown in @fig-ch5_ex1_conc_profile_r_increasing, the qualitative analysis presented here provides valuable physical insight into why the system performs as it does.
+
+### Qualitative Analysis of Series Reactions {#sec-ch5_ex2}
+
+Suppose the irreversible series reactions given in equations (1) and (2) take place in the liquid phase in an isothermal reactor. Only reagent A is present initially, and the kinetics of both reactions are typical. On a single set of axes, sketch the concentrations of A, D, and U versus reaction time. Describe the shape of each curve noting slopes, curvature, inflection points, etc. Then interpret the results in physical terms.
+
+$$
+A \rightarrow D \tag{1}
+$$
+
+$$
+D \rightarrow U \tag{2}
+$$
+
+---
+
+<center>Analysis and Discussion</center>
+
+Generally the reaction rate is affected by composition and temperature, but the reactor in this system operates isothermally so temperature is not important. The reactions are irreversible and the kinetics are typical, so only the concentrations of the reactants, A and D, are important in terms of the qualitative analysis, but the assignment narrative requests that the concentration of U be included as well.
+
+It is worth noting that because the rate of reaction (1) depends only on the concentration of A, it will track with it. That is, if at some reaction time the concentration of A is increasing with a concave upward shape, the rate of reaction (1) will also be increasing with a concave upward shape at that point. The same relationship holds between the concentration of D and the rate of reaction (2).
+
+At the start of the reaction, the concentration of A will have a positive value while the concentrations of both D and U will equal zero. The initial rate of reaction (1) will be positive, but because the initial concentration of D is zero, the initial rate of reaction (2) will equal zero. So to summarize, the concentration of A will start with a positive value that is decreasing. The concentration of D will start at zero, and it will be increasing because it is being produced by reaction (1). The concentration of U will start at zero and will not be changing initially because the rate of reaction (2) is zero initially.
+
+After a very brief interval of time the concentration of A will have decreased due to its participation in reaction (1). At the end of that brief interval, the concentration of A will be smaller than its initial value, and since the rate of reaction (2) tracks with the concentration of A, the rate of reaction (1) will be smaller than the its initial rate. Consequently, at the start of the next brief interval of time, the rate of reaction 1 will be smaller than at the start of the first interval, and therefore, the concentration of A will decrease by less during the second interval than it did during the first interval. In other words, the concentration of A will initially decrease with a shape that is concave upward. This trend can continue for as long as required until eventually the concentration of A will asymptotically approach zero as shown in @fig-ch5_series_conc_profiles.
+
+![Concentrations of A, D, and U as functions of reaction time.](solutions/ch5_ex2/example_5_5_2_concentration_profiles.png){#fig-ch5_series_conc_profiles width="80%"}
+
+Since the rate of reaction (1) tracks with the concentration of A, the rate of reaction (1) decreases continuously by smaller and smaller amounts. The concentration of D, and hence the rate of reaction (2) starts at zero. So during the first very brief interval of time, the concentration of D will increase because it is being produced by reaction (1) and not being consumed by reaction (2). At the start of the next brief interval of time, less D will be generated by reaction (1) due to its decreasing rate, and more will be consumed by reaction (2), due to its increasing rate. The net effect is that the concentration of D will increase during the second time interval, but by less than during the first interval.
+
+In other words, the concentration of D initially will be increasing from zero with a curvature that is concave downward. The concentration of D cannot continue to increase indefinitely because eventually all of the D must be converted to U. Instead, the concentration of D must pass through a maximum where it changes from increasing to decreasing. In addition, it must pass through an inflection point where its shape changes from being concave downward to concave upward. That trend can then continue for as long as required until eventually the concentration of D asymptotically approaches zero as shown in @fig-ch5_series_conc_profiles.
+
+The physical reason for the maximum in the concentration of D can be understood by considering how the rates vary over time. During the period where the concentration of D is increasing with a concave downward curvature, the rate of reaction (2) is greater than the rate of reaction (1), but the difference is getting smaller and smaller leading to the concave downward curvature. The maximum in the concentration of D occurs at the reaction time where the two rates become equal.
+This is consistent with the change in the concentration of U which is only produced by reaction (2). Up to the time where D reaches a maximum. the rate of reaction (2), which tracks the concentration of D, is increasing, so the concentration of U increases by larger and larger amounts. It starts at zero and increases with a concave up curvature up to the time where D reaches a maximum. Beyond the maximum, the rate of reaction (2) is decreasing, so the concentration of U increases by smaller and smaller amounts. That is, at the point where D reaches a maximum and the rates of reactions (1) and (2) become equal, the concentration of U passes through an inflection point. After that, the concentration of U is increasing with a concave downward curvature. That trend can continue for as long as required until eventually the concentration of U asymptotically approaches the initial concentration of A as shown in @fig-ch5_series_conc_profiles. (It approaches the initial concentration of A due to the one-to-one stoichiometry an irreversibility of the reactions.)
+
+It remains to provide the physical reason for the change in the shape of the curve for the concentration of D from concave down to concave up after the maximum in the D concentration. The reason is more subtle, and cannot be seen directly in @fig-ch5_series_conc_profiles. The concentrations in @fig-ch5_series_conc_profiles correspond to reaction rates that become equal when the concentration of D reaches its maximum value as shown in @fig-ch5_series_rate_profiles.
+
+![Rates of reactions (1) and (2) as functions of reaction time.](solutions/ch5_ex2/example_5_5_2_rate_profiles.png){#fig-ch5_series_rate_profiles width="80%"}
+
+Immediately after the maximum, the curve for the concentration of D remains concave down because the rate of reaction (1) is decreasing faster than the rate of reaction (2). This is evidenced in @fig-ch5_series_rate_profiles by the widening gap between the two rates just after the maximum. However as reactant A approaches complete conversion, the rate of reaction (1) decreases more slowly. At some point the two reaction rates decrease at equal rates, corresponding to the inflection point. This is the point in @fig-ch5_series_rate_profiles where the gap between the two rates is greatest. After that, the rate of reaction (2) decreases faster than the rate of reaction 1, and the curve becomes concave up.
+
+## Symbols Used in @sec-ch5
 
 | Symbol | Meaning |
 |:-------|:--------|
-| $i$ | Subscript denoting a reagent. |
-
+| $\tilde{C}_p$ | Mass-specific heat capacity of a fluid. |
+| $\breve{C}_p$ | Volume-specific heat capacity of a fluid. |
+| $\hat{C}_p$ | Molar heat capacity of a fluid. |
+| $ex$ | Subscript denoting a property of the heat exchange fluid. |
+| $in$ | Subscript denoting a property of an inlet stream. |
+| $\dot{m}$ | Mass flow rate of a fluid. |
+| $M$ | Molecular weight. |
+| $\dot{Q}$ | Rate of heat transfer from the exchange fluid to the reacting fluid. |
+| $t$ | Elapsed time. |
+| $T$ | Temperature of a fluid. |
+| $\rho$ | Density of a fluid. |
+| $V$ | Volume of a fluid. |
+| $\dot{V}$ | Volumetric flow rate of a fluid. |
+| $\Delta H_{\text{latent}}^0$ | Molar latent heat of a fluid. |
+| $\gamma$ | Vapor fraction of a fluid. |
+| $\tau$ | Space time of a flow reactor. |
 
 : {tbl-colwidths="[20,80]"}
