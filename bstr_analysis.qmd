@@ -63,6 +63,12 @@ $$
 \frac{\rho_{ex} V_{ex} \Delta H_{\text{latent},ex}^0}{M_{ex}} \frac{d \gamma}{dt} = - \dot Q - \gamma \dot m_{ex} \frac{\Delta H_{\text{latent},ex}^0}{M_{ex}}
 $$
 
+As noted in @sec-ch5_ideal_reactor_analysis, when the condensation of a vapor, such as saturated steam, is used to heat a reactor, the steam pressure in the jacket, coil, or external heat exchanger may be held constant, removing only the condensed water as it forms. In this mode of operation, the exchange fluid temperature is known, so the mole and reacting fluid energy balances can be solved independently. The exchange fluid energy balance is then given by @eq-latent_heat_removing_only_liquid, where $\dot{m}_{ex}$ is the instantaneous mass flow rate of the condensed water leaving the jacket, coil, or external heat exchanger.
+
+$$
+0 = \dot Q + \dot m_{ex} \frac{\Delta H_{\text{latent},ex}^0}{M_{ex}}
+$${#eq-latent_heat_removing_only_liquid}
+
 :::{.callout-note collapse="false"}
 ## Note
 
@@ -79,7 +85,7 @@ It is important to notice that the $V\frac{dP}{dt}$ and $P\frac{dV}{dt}$ terms i
 
 $$
 \left(\sum_i n_i \hat C_{p,i} \right) \frac{dT}{dt}\ \Leftrightarrow\ \rho V \tilde C_p \frac{dT}{dt}\ \Leftrightarrow\ V \breve C_p \frac{dT}{dt}
-$$
+$${#eq-equiv_bstr_sens_heat_terms}
 
 The BSTR design equations are initial value ordinary differential equations (IVODEs, see [Appendix -@sec-apxd_ivodes]). When the reacting fluid is an ideal, incompressible liquid mixture, the $\frac{dP}{dt}$ and $\frac{dV}{dt}$ terms equal zero, as noted above. This will cause the number of IVODEs and the number of dependent variables appearing in them to be equal, so that the design equations can be solved. However, when the reacting fluid is an ideal gas, and the reactor walls are rigid, the $\frac{dV}{dt}$ term will equal zero, but generally the $\frac{dP}{dt}$ term will not. In this situation, the differential form of the ideal gas law for a closed system (with $\frac{dV}{dt}$ set equal to zero), @eq-differential_closed_ideal_gas_law, must be added to the other BSTR design equations before they can be solved.
 
@@ -120,15 +126,15 @@ The numbers in parentheses in the following list of learning objectives refer to
     * heat exchange fluid may flow through the reactor shell, coil, or external heat exchanger while reactions are taking place 
     * generally, for gas phase systems, the differential form of the ideal gas law for a closed system must be added to the other BSTR design equations before they can be solved.
 * be able to
-	* select, modify, and simplify the design equations for modeling a given BSTR ()
+	* select, modify, and simplify the design equations for modeling a given BSTR (-@sec-ch7_ex1, -@sec-ch7_ex2, -@sec-ch7_ex3, -@sec-ch7_ex4, -@sec-ch7_ex5)
 	* use the BSTR design equations, together with any other necessary equations, to complete a reaction engineering assignment involving
-        * operational protocols with one () or more () stages
-		* gas () or liquid () phase reacting systems
-		* non-isothermal () or adiabatic operation ()
-		* heat exchange fluids that transfer latent () or sensible () heat
-		* single () or multiple () reactions
-		* response () or optimization () tasks
-	* use qualitative analysis to assess and explain results from a quantitative analysis ()
+        * operational protocols with one (-@sec-ch7_ex1, -@sec-ch7_ex2, -@sec-ch7_ex3, -@sec-ch7_ex5) or more (-@sec-ch7_ex4) stages
+		* gas (-@sec-ch7_ex3) or liquid (-@sec-ch7_ex1, -@sec-ch7_ex2, -@sec-ch7_ex4, -@sec-ch7_ex5) phase reacting systems
+		* non-isothermal (-@sec-ch7_ex2, -@sec-ch7_ex3, -@sec-ch7_ex4, -@sec-ch7_ex5) or adiabatic operation (-@sec-ch7_ex1)
+		* heat exchange fluids that transfer latent (-@sec-ch7_ex4, -@sec-ch7_ex5) or sensible (-@sec-ch7_ex2, -@sec-ch7_ex4) heat
+		* single (-@sec-ch7_ex1, -@sec-ch7_ex4) or multiple (-@sec-ch7_ex2, -@sec-ch7_ex3, -@sec-ch7_ex5) reactions
+		* response (-@sec-ch7_ex1, -@sec-ch7_ex2, -@sec-ch7_ex5) or optimization (-@sec-ch7_ex3, -@sec-ch7_ex4) tasks
+	* use qualitative analysis to assess and explain results from a quantitative analysis (-@sec-ch7_ex1, -@sec-ch7_ex2, -@sec-ch7_ex3, -@sec-ch7_ex4, -@sec-ch7_ex5)
 
 ::: {.callout-important collapse="true"}
 ## Computer Code for Performing Calculations
@@ -139,7 +145,7 @@ For readers who are interested, the Assignments by Topic Section of [*REB, The C
 
 :::
 
-### Concentration, Temperature and Rate Profiles during Adiabatic Operation of a BSTR {#sec-example_9_6_1}
+### Concentration, Temperature and Rate Profiles during Adiabatic Operation of a BSTR {#sec-ch7_ex1}
 
 The liquid-phase reaction between A and B, equation (1), is irreversible. At the conditions of interest, the heat of reaction is constant and equal to -101.2 kJ mol^-1^. The rate expression is given in equation (2), where the rate coefficient exhibits Arrhenius temperature dependence with a pre-exponential factor of 5.11 x 10^4^ L mol^-1^ s^-1^ and an activation energy of 74.8 kJ mol^-1^.
 
@@ -156,383 +162,267 @@ $$
 ---
 
 :::{.callout-tip collapse="true"}
-
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-This assignment describes a single BSTR and no other equipment. Information about the reaction, rate, and reactor operation are provided. The quantities of interest are related to the final reagent amounts and temperature. This indicates I will need to solve the BSTR design equations for the reactor.
+This assignment describes a single BSTR that operates adiabatically. At least one extensive quantity (the volume) is known so a basis cannot be chosen. The assignment requests final concentrations and temperatures, so it will be necessary to generate, simplify and solve the BSTR design equations. Doing so will yield the moles and temperature as functions of time, so I don't need to use time as a parameter.
 
-I'll start by summarizing the information provided in the assignment narrative. I will use a subscripted "0" to denote initial values and a subscripted "f" to denote final values. I'll also add the ideal gas constant to the given constants. Numerical solution of the design equations will yield sets of corresponding values of the independent and dependent variables that span the range from their initial values to their final values. I'll use underlined variable symbols, e. g. $\underline{t}$, to represent sets of values.
+I'll start by summarizing the information provided in the assignment narrative. I will use a subscripted "0" to denote initial values and a subscripted "f" to denote final values. I'll use underlined variable symbols, e. g. $\underline{t}$, to represent arrays containing more than one value of the variable.
 
 :::
 
-#### Assignment Summary
-
-**Reaction:** 
+<center>**Assignment Summary**</center>
+[Reaction]{.underline}:
 
 $$
 A + B \rightarrow Y + Z \tag{1}
 $$
 
-**Rate Expression:** 
+[Rate Expression]{.underline}:
 
 $$
 r = kC_AC_B \tag{2}
 $$
 
-**Reactor System:** Adiabatic BSTR
+[Reactor]{.underline}: liquid-phase, adiabatic BSTR with a one-stage operating protocol
 
-**Reactor Schematic:** 
+[Given Constants]{.underline}: $\Delta H_1$ = -101.2 kJ mol^-1^, $k_{0,1}$ = 5.11 x 10^4^ L mol^-1^ s^-1^, $E_1$ = 74.8 kJ mol^-1^, $V$ = 1900 L, $T_0$ = (180 + 273.15) K, $C_{A,0}$ = 2.9 mol L^-1^, $C_{B,0}$ = 3.2 mol L^-1^, $\tilde{C}_p$ = 1.23 cal g^-1^ K^-1^, $\rho$ = 1.02 g cm^-3^, and $t_f$ = 2 h.
 
-![A closed (batch), adiabatic stirred tank reactor.](Graphics/bstr_adiabatic.png){#fig-closed_stirred_tank_reactor width="30%"}
+[Deliverables]{.underline}: $\underline{C}_A$, $\underline{C}_B$, $\underline{C}_Y$, $\underline{C}_Z$, $\underline{T}$, and $\underline{r}_1$ *vs.* $\underline{t}$ as graphs.
 
-**Quantities of Interest**: $\underline{C}_A$, $\underline{C}_B$, $\underline{C}_Y$, $\underline{C}_Z$, $\underline{T}$, and $\underline{r}$ *vs*. $\underline{t}$ as graphs.
-
-**Given and Known Constants**: $\Delta H_1$ = -101.2 kJ mol^-1^, $k_{0}$ = 5.11 x 10^4^ L mol^-1^ s^-1^, $E$ = 74.8 kJ mol^-1^, $V$ = 1900 L, $T_0$ = (180 + 273.15) K, $C_{A,0}$ = 2.9 mol L^-1^, $C_{B,0}$ = 3.2 mol L^-1^, $\tilde{C}_p$ = 1.23 cal g^-1^ K^-1^, $\rho$ = 1.02 g cm^-3^, $t_f$ = 2 h, and $R$ = 8.314 J mol^-1^ K^-1^.
-
-#### Generation of the Model Equations
-
+<center>**Formulation of the Equations**</center>
 :::{.callout-tip collapse="true"}
-
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Reactor analysis always requires a set of reactor design equations. The selection of the specific design equations for a given analysis was described in [Chapter -@sec-ideal_bstr_eqns]. Mole balances are always needed. I'll write a BSTR mole balance, @eq-bstr_mole_balance, on each of the reagents. In this assignment, only one reaction is taking place, so the summation reduces to a single term.
+I'll follow the computational strategy described in @sec-ch5_workflow which begins with generation and simplification of the reactor design equations for modeling the reactor. Mole balances are always needed, and I'll write a BSTR mole balance, @eq-bstr_mole_balance, on each of the reagents. In this assignment, only one reaction is taking place, so the summation reduces to a single term.
 
 $$
-\frac{dn_i}{dt} = V \sum_j \nu_{i,j}r_j \qquad \Rightarrow \qquad \frac{dn_i}{dt} = V \nu_i r
+\frac{dn_i}{dt} = V \sum_j \nu_{i,j}r_j \qquad \Rightarrow \qquad \frac{dn_i}{dt} = V \nu_i r_1
 $$
 
-This BSTR is not isothermal, so the mole balances cannot be solved independently of an energy balance on the reacting fluid, @eq-bstr_energy_balance. In this assignment the reacting fluid is a liquid which I will assume to be an incompressible ideal solution. Consequently, the reacting fluid volume and the total pressure are constant, and their time derivatives are equal to zero. The reactor is adiabatic, so the rate of heat input, $\dot{Q}$, is equal to zero. There are no shafts or moving boundaries other than the agitator, and the rate at which it performs work is negligible, so $\dot{W}$ is also equal to zero. With only one reaction taking place, the summation over the reactions reduces to a single term. This assignment provides the mass-specific heat capacity of the entire solution, so the sensible heat term can be re-written using that heat capacity, @eq-bstr_equivalent_sens_heat_terms. Finally, the energy balance can be put in the form of a derivative expression by dividing both sides by $\rho V \tilde{C}_p$. Since only one reaction is taking place, I don't need a subscript on the rate.
+This BSTR is not isothermal, so the mole balances cannot be solved independently of an energy balance on the reacting fluid, @eq-bstr_energy_balance. Here the reacting fluid is a liquid which I will assume to be an incompressible ideal solution. Consequently, the reacting fluid volume and the total pressure are constant, and their time derivatives are equal to zero. The reactor is adiabatic, so the rate of heat input, $\dot{Q}$, is equal to zero. There are no shafts or moving boundaries other than the agitator, and the rate at which it performs work is negligible, so $\dot{W}$ is also equal to zero. With only one reaction taking place, the summation over the reactions reduces to a single term. The mass-specific heat capacity of the entire solution is provided, so the sensible heat term can be re-written using that heat capacity, @eq-equiv_bstr_sens_heat_terms. Finally, the energy balance can be put in the form of a derivative expression by dividing both sides by $\rho V \tilde{C}_p$.
 
 $$
 \cancelto{\rho V \tilde{C}_p}{\left(\sum_i n_i \hat C_{p,i} \right)} \frac{dT}{dt} - \cancelto{0}{V\frac{dP}{dt}}  - \cancelto{0}{P\frac{dV}{dt}}  = \cancelto{0}{\dot Q} - \cancelto{0}{\dot W} - V \cancelto{r \Delta H}{\sum_j \left(r_j \Delta H_j \right)}
 $$
 
 $$
-\rho V \tilde{C}_p \frac{dT}{dt} = - V r \Delta H_1
+\rho V \tilde{C}_p \frac{dT}{dt} = - V r_1 \Delta H_1
 $$
 
 $$
-\frac{dT}{dt} = -\frac{V r \Delta H_1}{\rho V \tilde{C}_p}
+\frac{dT}{dt} = -\frac{V r_1 \Delta H_1}{\rho V \tilde{C}_p}
 $$
 
 In this assignment the BSTR operates adiabatically, so there isn't an exchange fluid, and an exchange fluid energy balance cannot be written. Momentum balances are not used with stirred tank reactors. This gives five reactor design equations that contain five dependent variables, and consequently it is not necessary to add an IVODE or eliminate a dependent variable. So for this reactor, the design equation consist of mole balances on A, B, Y, and Z and an energy balance on the reacting fluid.
 
 :::
 
-**BSTR Design Equations**
-
-Mole balance design equations for A, B, Y, and Z are presented in equations (3) through (6), and the energy balance on the reacting fluid is given by equation (7).
+[Reactor Model Equations]{.underline}
 
 $$
-\frac{dn_A}{dt} = -rV \tag{3}
+\frac{dn_A}{dt} = -r_1V \tag{3}
 $$
 
 $$
-\frac{dn_B}{dt} = -rV \tag{4}
+\frac{dn_B}{dt} = -r_1V \tag{4}
 $$
 
 $$
-\frac{dn_Y}{dt} = rV \tag{5}
+\frac{dn_B}{dt} = -r_1V \tag{5}
 $$
 
 $$
-\frac{dn_Z}{dt} = rV \tag{6}
+\frac{dn_Z}{dt} = r_1V \tag{6}
 $$
 
 $$
-\frac{dT}{dt} = -\frac{r \Delta H_1}{\rho \tilde{C}_p} \tag{7}
+\frac{dT}{dt} = -\frac{r_1 \Delta H_1}{\rho \tilde{C}_p} \tag{7}
 $$
 
 :::{.callout-tip collapse="true"}
-
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Initial values and a stopping criterion are needed when solving IVODEs or DAEs. The instant at which the two solutions are charged into the reactor can be defined as $t=0$. The initial values are then the molar amounts of the reagents and the temperature at that instant. The two solutions that were charged to the BSTR did not contain reagent Y or reagent Z, so their initial amounts are zero. The final value of the time in this assignment is 2 h, which I represented as $t_f$ in the list of known constants. Consequently the stopping criterion is that $t=t_f$.
+For a BSTR, the design equations are IVODEs, and they are solved numerically to find corresponding sets of values of the independent and dependent variables.
 
-No other final values are known or can be calculated directly, so the design equations are IVODEs. The initial temperature is known, but the initial molar amounts of A and B are not. However they can be calculated directly from the initial concentrations and the fluid volume, which are known.
+The only additional unknown appearing in the design equations is the rate which can be calculated using the given rate expression. That introduces three other additional unknowns, the rate coefficient and the concentrations of A and B. The former can be calculated using the Arrhenius expression and the concentrations, using their defining equations for a closed system.
 
 :::
 
-**Intial Values and Stopping Criterion**
+[Reactor Model Variables]{.underline}: $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_Y$, $\underline{n}_Z$, and $\underline{T}$
 
-| Variable | Initial Value | Stopping Criterion |
+[Additional Computable Unknowns]{.underline}: $r_1$, $k_1$, $C_A$, and $C_B$
+
+$$
+k_1 = k_{0,1}\exp{\left( \frac{-E_1}{RT} \right)} \tag{8}
+$$
+
+$$
+C_i = \frac{n_i}{V} \quad i = A \text{ and } B \tag{9}
+$$
+
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+To solve the design equations numerically (see [Appendix -@sec-apxd_ivodes]) I must provide initial values for all of the variables, a stopping criterion, and a derivatives function. I can define $t=0$ to be the instant that the two solutions are mixed into the reactor. The initial values of the dependent variables are then equal to the molar amounts added to the reactor and the temperature at that instant. The assignment narrative provides the initial concentrations and the reacting fluid volume, so calculating the initial molar amounts is straightforward.
+
+The assignment requests graphs of the concentrations, temperature and instantaneous reaction rate over the first two hours of operation. As such, the stopping criterion is that $t = t_f$ (2 h).
+
+The derivatives function must accept values of the independent and dependent variables at the start of an integration step as its only arguments and return the values of the derivatives. To do so, the values of the independent and dependent variables at the start of an integration step can be used to calculate the additional computable unknowns using the equations given above. Then the derivatives can be evaluated using the reactor design equations and returned.
+
+Solving the design equations will yield corresponding sets of values of the molar amounts and reacting fluid temperature spanning times from $t=0$ to $t=t_f$. The reacting fluid temperature can be plotted directly *vs.* time. The concentrations over time can be calculated using the defining equation for concentration in a flow system, and then plotted. Finally, the temperature, concentration of A, and concentration of B can be used to calculate the instantaneous rate *vs.* time.
+
+:::
+
+[IVODE Solver Inputs]{.underline}: 
+
+1. Initial values of the reactor model variables shown in Table 1.
+2. Stopping criterion that $t$ equals the final value shown in Table 1.
+3. Derivatives function that
+	a. receives the BSTR model variables ($t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$) at the start of an integration step and
+	b. calculates and returns the corresponding values of the BSTR model derivatives, equations (3) through (7).
+
+| Variable | Initial Value | Final Value |
 |:------:|:-------:|:-------:|
 | $t$ | $0$ | $t_f$ |
-| $n_A$ | $n_{A,0}$ | |
-| $n_B$ | $n_{B,0}$ | |
-| $n_Y$ | $0$ | |
-| $n_Z$ | $0$ | |
+| $n_A$ | $n_{A,0} = C_{A,0}V$ | |
+| $n_B$ | $n_{B,0} = C_{B,0}V$ | |
+| $n_Y$ | 0 | |
+| $n_Z$ | 0 | |
 | $T$ | $T_0$ | |
   
-: Initial values and stopping criterion for solving the design equations, equations (3) through (7). {#tbl-example_9_6_1_initial_values}
+: Initial and final values of the design equation variables. {#tbl-ch7_ex1_initial_values}
 
-**Supporting Equations for Calculating the Initial and Final Values**
+[Deliverables Equations]{.underline}:
 
-The initial molar amounts of A and B in @tbl-example_9_6_1_initial_values can be calculated using equations (8) and (9).
-
-$$
-n_{A,0} = C_{A,0}V \tag{8}
-$$
-
-$$
-n_{B,0} = C_{B,0}V \tag{9}
-$$
-
-
-:::{.callout-tip collapse="true"}
-
-## Click Here to See What an Expert Might be Thinking at this Point
-
-To solve the IVODEs numerically I'll need to write a derivatives function. It will receive $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$ for the current integration step as arguments, and must return the derivatives calculated using equations (3) through (7). Looking at those equations, all of the other quantities except $r$ are known, so before I can evaluate the derivatives, I need to calculate $r$. 
-
-The assignment provides the rate expression, equation (2), which can be used to calculate $r$, but the rate expression contains the rate coefficient, $k$, and the concentrations of A and B. They, too, will need to be calculated before $r$ can be calculated. The rate coefficient can be calculated using the Arrhenius expression, @eq-arrhenius. The defining equation for concentration in a closed system, @eq-concentration_closed, can be used to calculate the concentrations of A and B.
-
-:::
-
-**Ancillary Equations for Evaluating the Derivatives**
-
-The rate, $r$, appearing in the reactor design equations can be calculated using the given rate expression, equation (2). The rate coefficient, $k$, appearing in equation (2) can be calculated using the Arrhenius expression, equation (10). The concentrations can be calculated using equations (11) and (12).
-
-$$
-k = k_{0}\exp{\left( \frac{-E}{RT} \right)} \tag{10}
-$$
-
-$$
-C_A = \frac{n_A}{V} \tag{11}
-$$
-
-$$
-C_B = \frac{n_B}{V} \tag{12}
-$$
-
-:::{.callout-tip collapse="true"}
-
-## Click Here to See What an Expert Might be Thinking at this Point
-
-At this point the IVODEs can be solved numerically to obtain corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$ spanning the range from their initial to their final values. $\underline{T}$ and $\underline{t}$ are two of the quantities of interest needed to make one of the requested graphs, but the others need to be calculated using the results from solving the IVODEs. Again, the defining equation for concentration in a closed system, @eq-concentration_closed, can be used to calculate the concentrations. The instantaneous rate can then be calculated using the rate expression.
-
-:::
-
-#### Calculating the Quantities of Interest
-
-With the information given above, equations (3) through (7) can be solved for corresponding sets of values of $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$ that span the range from their initial values to their final values. The concentrations of A, B, Y, and Z, at each time can then be calculated using equations (11), (12), (13), and (14). Then, knowing $C_A$, $C_B$, and $T$, at each time, the instantaeous rate in that range can be calculated using the Arrhenius expression, equation (10), and the rate expression, equation (2).
-
-$$
-C_Y = \frac{n_Y}{V} \tag{13}
-$$
-
-$$
-C_Z = \frac{n_B}{V} \tag{14}
-$$
-
-#### Formulation of the Calculations
-
-To complete the assignment, the BSTR design equations are solved first, and then the quantities of interest are calculated and the requested graphs are generated. The BSTR design equations are IVODEs, and they can be solved numerically as described in [Appendix -@sec-apndx_solve_ivodes] by writing a derivatives function and a BSTR function. A deliverables function can be added to calculate the quantities of interest and generate the graphs.
-
-* The derivatives function must receive the independent and dependent variables at the start of an integration step as arguments, and it must return the derivatives of the dependent variables. To do so it must calculate the rate before it can evaluate the derivatives.
-* The BSTR function does not need any arguments to calculate and return corresponding sets of values of the independent and dependent variables spanning the interval from $t_0$ to $t_f$. To do so it must define the initial values and stopping criterion and then pass them to an IVODE solver along with the derivatives function.
-* The deliverables function does not need any arguments, and it doesn't return anything. It calls the BSTR function, uses the results it returns to calculate the quantities of interest, and generates the requested graphs.
-
-Specifications can be written for each of these functions in preparation for writing them. The function specifications given here assume that the known constants are available wherever they are needed.
-
-:::{.callout-tip collapse="true"}
-## Click Here to See the Derivatives Function Specifications
-
-<center>**Derivatives Function Specifications**</center>
-
-[Arguments]{.underline}: $t$, $n_A$, $n_B$, $n_Y$, $n_Z$, and $T$
-
-[Returns]{.underline}: $\frac{dn_A}{dt}$, $\frac{dn_B}{dt}$, $\frac{dn_Y}{dt}$, $\frac{dn_Z}{dt}$, and $\frac{dT}{dt}$
-
-[Algorithm]{.underline}:
-
-$$
-k = k_{0}\exp{\left( \frac{-E}{RT} \right)} \tag{10}
-$$
-
-$$
-C_A = \frac{n_A}{V} \tag{11}
-$$
-
-$$
-C_B = \frac{n_B}{V} \tag{12}
-$$
-
-$$
-r = kC_AC_B \tag{2}
-$$
-
-$$
-\frac{dn_A}{dt} = -rV \tag{3}
-$$
-
-$$
-\frac{dn_B}{dt} = -rV \tag{4}
-$$
-
-$$
-\frac{dn_Y}{dt} = rV \tag{5}
-$$
-
 $$
-\frac{dn_Z}{dt} = rV \tag{6}
+\underline{C}_i = \frac{\underline{n}_i}{V} \qquad i = A, B, Y, \text{ and } Z \tag{10}
 $$
 
 $$
-\frac{dT}{dt} = -\frac{r \Delta H_1}{\rho \tilde{C}_p} \tag{7}
+\underline{r}_1 = k_{0,1} \exp{\left(\frac{-E_1}{R\underline{T}}\right)}\underline{C}_A\underline{C}_B \tag{11}
 $$
-
-:::
-
-:::{.callout-tip collapse="true"}
-
-## Click Here to See the BSTR Function Specifications
-
-<center>**BSTR Function Specifications**</center>
-
-[Arguments]{.underline}: none
-
-[Returns]{.underline}: $\underline{t}$, $\underline{n}_A$, $\underline{n}_B$, $\underline{n}_Y$, $\underline{n}_Z$, and $\underline{T}$
-
-[Algorithm]{.underline}:
-
-$$
-t_{initial} =0 \tag{15}
-$$
-
-$$
-n_{A,initial} = n_{A,0} = C_{A,0}V \tag{8}
-$$
-
-$$
-n_{B,initial} = n_{B,0} = C_{B,0}V \tag{9}
-$$
-
-$$
-n_{Y,initial} = 0 \tag{16}
-$$
-
-$$
-n_{Z,initial} = 0 \tag{17}
-$$
-
-$$
-T_{initial} = T_0 \tag{18}
-$$
-
-$$
-t_{final} = t_f \tag{19}
-$$
-
-&nbsp;
-
-$$
-\begin{matrix}
-t_{initial}, n_{A,initial}, n_{B,initial}, n_{Y,initial}, \\
-n_{Z,initial}, T_{initial}, t_{final}, \text{derivatives function}\\
-\Downarrow \\
-\text{IVODE solver} \\
-\Downarrow \\
-\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T}
-\end{matrix} \tag{20}
-$$
-
-:::
-
-:::{.callout-tip collapse="true"}
-
-## Click Here to See the Deliverables Function Specifications
-
-<center>**Deliverables Function Specifications**</center>
-
-[Arguments]{.underline}: none
-
-[Returns]{.underline}: nothing
-
-[Algorithm]{.underline}:
-
-$$
-\begin{matrix}
-\text{BSTR function} \\
-\Downarrow \\
-\underline{t}, \underline{n}_A, \underline{n}_B, \underline{n}_Y, \underline{n}_Z, \underline{T}
-\end{matrix} \tag{21}
-$$
-
-&nbsp;
-
-$$
-\underline{C}_A = \frac{\underline{n}_A}{V} \tag{11}
-$$
-
-$$
-\underline{C}_B = \frac{\underline{n}_B}{V} \tag{12}
-$$
-
-$$
-\underline{C}_Y = \frac{\underline{n}_Y}{V} \tag{13}
-$$
-
-$$
-\underline{C}_Z = \frac{\underline{n}_Z}{V} \tag{14}
-$$
-
-$$
-\underline{k} = k_{0}\exp{\left( \frac{-E}{R\underline{T}} \right)} \tag{10}
-$$
-
-$$
-\underline{r} = \underline{k} \underline{C}_A \underline{C}_B \tag{2}
-$$
-
-&nbsp;
-
-$$
-\begin{matrix}
-\underline{t}, \underline{C}_A, \underline{C}_B, \\
-\underline{C}_Y, \underline{C}_Z, \underline{T} \\
-\Downarrow \\
-\text{plotting function} \\
-\Downarrow \\
-\text{requested graphs}
-\end{matrix} \tag{22}
-$$
-
-:::
 
-#### Implementation and Execution of the Calculations
+<center>**Implementation of the Calculations**</center>
+Computer code to perform the calculations can be written using a variety of programming languages and environments, and the actual code can be structured in a variety of ways. Referring to the preceding assignment summary and formulation of the equations, here are the essential things it must do, irrespective of the programming language and environment that is used.
 
-The computer functions above were written as specified using an appropriate mathematics software package. The calculations were then performed by calling the deliverables function.
+1. Make the given and known constants available wherever they are needed.
+2. Define the derivatives function.
+3. Define the initial values and stopping criterion.
+4. Call an IVODE solver
+	a. pass the initial values, stopping criterion, and derivatives function as arguments, and
+	b. receive the reactor model variables which will consist of corresponding sets of values of the elapsed time, molar amounts of A, B, Y, and Z, and the reacting fluid temperature.
+5. Calculate corresponding sets of values of the concentrations of A, B, Y, Z, and the reaction rate.
+6. Generate the requested graphs.
 
-#### Results and Discussion
+<center>**Results and Discussion**</center>
 
-The variation of concentrations of reagents, A, B, Y, and Z, during the first two hours of operation of the BSTR are shown in  @fig-example_9_6_1_concentrations. The variation of the reacting fluid temperature during that period is shown in @fig-example_9_6_1_temperatures, and the variation of the instantaneous rate is shown in @fig-example_9_6_1_rates.
+The calculations were performed as described above. The variation of concentrations of reagents, A, B, Y, and Z, during the first two hours of operation of the BSTR are shown in  @fig-example_7_4_1_concentrations. The variation of the reacting fluid temperature during that period is shown in @fig-example_7_4_1_temperatures, and the variation of the instantaneous rate is shown in @fig-example_7_4_1_rates.
 
-![Concentrations *versus* reaction time.](Calculations/example_9_6_1/concentrations.png){#fig-example_9_6_1_concentrations width="60%"}
+![Concentrations *versus* reaction time.](solutions/ch7_ex1/example_7_4_1_Ci_vs_t.png){#fig-example_7_4_1_concentrations width="60%"}
 
-![Temperature *versus* reaction time.](Calculations/example_9_6_1/temperature.png){#fig-example_9_6_1_temperatures width="60%"}
+![Temperature *versus* reaction time.](solutions/ch7_ex1/example_7_4_1_T_vs_t.png){#fig-example_7_4_1_temperatures width="60%"}
 
-![Instantaneous rate *versus* reaction time.](Calculations/example_9_6_1/rate.png){#fig-example_9_6_1_rates width="60%"}
+![Instantaneous rate *versus* reaction time.](solutions/ch7_ex1/example_7_4_1_r_vs_t.png){#fig-example_7_4_1_rates width="60%"}
 
-The concentrations of the reactants, A and B, decrease monotonically during the first two hours of operation while the concentrations of the products, Y and Z, increase. The temperature increases steadily, too. The variation of the reaction rate is different. Initially it increases, but then it passes through a maximum after which it steadily decreases. A qualitative analysis shows that the variations in the concentrations, temperature and rate seen in Figures [-@fig-example_9_6_1_concentrations], [-@fig-example_9_6_1_temperatures], and [-@fig-example_9_6_1_rates] are expected. At $t=0$, the concentrations of the reagents and the temperature are all at their initial values. 
+The concentrations of the reactants, A and B, decrease monotonically during the first two hours of operation while the concentrations of the products, Y and Z, increase. The temperature increases steadily, too. The variation of the reaction rate is different. Initially it increases, but then it passes through a maximum after which it steadily decreases. A qualitative analysis shows that the variations in the concentrations, temperature and rate seen in Figures [-@fig-example_7_4_1_concentrations], [-@fig-example_7_4_1_temperatures], and [-@fig-example_7_4_1_rates] are expected.
 
-At that point the rate is positive, so *after a short interval of time* the concentrations of A and B will have decreased slightly and the concentrations of Y and Z will have increased slightly due to the occurrence of the reaction. Because the reaction is exothermic and the reactor operates adiabatically, the temperature will have increased due to the heat released by the reaction.
+At $t=0$, the concentrations of the reagents and the temperature are all at their initial values. At that point the rate is positive, so *after a short interval of time* the concentrations of A and B will have decreased slightly and the concentrations of Y and Z will have increased slightly due to the occurrence of the reaction. Because the reaction is exothermic and the reactor operates adiabatically, the temperature will have increased due to the heat released by the reaction.
 
-The rate could either increase or decrease during this short interval. The concentrations of the reactants, A and B, are decreasing, and this alone would cause the rate to decrease. However, at the same time the temperature is increasing, and that alone would cause the rate to increase. Generally, at the start of the reaction the exponential dependence of the rate upon the temperature will be stronger than its dependence upon the reactant concentrations, and the rate will increase. This is seen to be the case in @fig-example_9_6_1_rates. (Had the heat of reaction been very small, leading to a small increase in the temperature, it is possible that the rate would have decreased, especially if the activation was also small).
+The rate could either increase or decrease during this short interval. The concentrations of the reactants, A and B, are decreasing, and this alone would cause the rate to decrease. However, at the same time the temperature is increasing, and that alone would cause the rate to increase. Generally, at the start of the reaction the exponential dependence of the rate upon the temperature will be stronger than its dependence upon the reactant concentrations, and the rate will increase. This is seen to be the case in @fig-example_7_4_1_rates. (Had the heat of reaction been very small, leading to a small increase in the temperature, it is possible that the rate would have decreased, especially if the activation was also small).
 
 To summarize, *during that initial short interval of time*, the concentrations of Y and Z, the temperature, and the rate all have positive slopes while the concentrations of A and B have negative slopes. During the *next* short interval of time, the rate is larger than during the first interval of time. As a consequence, the concentrations and temperature will change more during the second interval. That means that the curvature of the temperature, Y concentration, and Z concentration profiles is initially concave upward and the curvature of the A and B concentration profiles is initially concave downward. Again during this second short interval, opposing effects on the rate are associated with the decreasing reactant concentrations and the increasing temperature.
 
-It is hard to see in @fig-example_9_6_1_concentrations and @fig-example_9_6_1_temperatures, but because initially the rate is increasing, the concentrations of A and B are decreasing faster and faster and the concentrations of Y and Z and the temperature are increasing faster and faster. These trends cannot continue indefinitely, if they did, $C_Y$, $C_Z$, and $T$ would approach positive infinity and $C_A$ and $C_B$ would approach negative infinity.
+It is hard to see in @fig-example_7_4_1_concentrations and @fig-example_7_4_1_temperatures, but because initially the rate is increasing, the concentrations of A and B are decreasing faster and faster and the concentrations of Y and Z and the temperature are increasing faster and faster. These trends cannot continue indefinitely, if they did, $C_Y$, $C_Z$, and $T$ would approach positive infinity and $C_A$ and $C_B$ would approach negative infinity.
 
-In fact, the curvature does change because *at some point the effect of decreasing reactant concentrations upon the rate becomes stronger than the effect of increasing temperature*. At the point where the two effects become equal, the rate reaches a maximum. Beyond the maximum, the effect of decreasing reactant concentration dominates and the rate decreases. This is seen in @fig-example_9_6_1_rates where the instantaneous rate passes through a maximum.
+In fact, the curvature does change because *at some point the effect of decreasing reactant concentrations upon the rate becomes stronger than the effect of increasing temperature*. At the point where the two effects become equal, the rate reaches a maximum. Beyond the maximum, the effect of decreasing reactant concentration dominates and the rate decreases. This is seen in @fig-example_7_4_1_rates where the instantaneous rate passes through a maximum.
 
 At the point where the rate reaches its maximum value, the concentration and temperature profiles exhibit an inflection point. (Again, in this example this is very, very subtle and cannot be discerned in the figures.) Beyond that point, the $C_Y$, $C_Z$, and $T$ profiles are concave downward and the $C_A$ and $C_B$ are concave upward. That is, the changes over time become smaller and smaller. This behavior can continue indefinitely. Eventually the concentrations and temperature will stop changing and become constant. In this example, A is the limiting reactant, and the reaction is irreversible, so the concentrations and temperature will become constant when $C_A$ becomes equal to zero.
 
-### Parallel Reaction Selectivity in a Cooled BSTR with an Unknown Initial Temperature {#sec-example_9_6_2}
+<center>**Deliverables**</center>
+
+The concentration, temperature and instantaneous rate profiles during the first 2 h of reaction are shown in [Figures -@fig-example_7_4_1_concentrations], -@fig-example_7_4_1_temperatures, and -@fig-example_7_4_1_rates.
+
+---
+
+### Parallel Reaction Selectivity in a Cooled BSTR with an Unknown Initial Temperature {#sec-ch7_ex2}
+
+narrative
+equations
+---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+identify the reactor as adiabatic or non-isothermal, gas or liquid, and steady-state or transient
+
+comment on or choose basis
+
+identify the deliverables, if necessary, id the limiting reactant, determine whether they can be calculated by solving the reactor design equations one time, or if multiple solutions are needed, if multiple, identify the parameter
+
+describe any unusual notation
+
+:::
+<center>**Assignment Summary**</center>
+[Reactions]{.underline}:
+[Rate Expressions]{.underline}:
+[Reactor]{.underline}: 
+[Given Constants]{.underline}: 
+[Basis]{.underline}: 
+[Parameters]{.underline}: 
+[Deliverables]{.underline}:
+<center>**Formulation of the Equations**</center>
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+refer to computational strategy
+identify balance equations that are needed and their simplification
+
+:::
+[Reactor Model Equations]{.underline}
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+identify reactor model variables and other unknowns
+
+describe calculation of computable unknowns
+
+identify uncomputable unknowns and note need to provide them at the time equations are solved
+
+identify coupled unknowns and equations for calculating them
+
+:::
+[Reactor Model Variables]{.underline}: 
+[Additional Computable Unknowns]{.underline}: 
+[Additional Uncomputable Unknowns]{.underline}: 
+[Additional Coupled Unknowns]{.underline}: 
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+identify equation type and what must be provided to solve them numerically
+
+describe calculation of deliverables from results of solving design equations
+
+:::
+[? Solver Inputs]{.underline}: 
+1.
+[Deliverables Equations]{.underline}:
+<center>**Implementation of the Calculations**</center>
+Computer code to perform the calculations can be written using a variety of programming languages and environments, and the actual code can be structured in a variety of ways. Referring to the preceding assignment summary, computational strategy and formulation of the equations, here are the essential things it must do.
+1.
+
+<center>**Results and Discussion**</center>
+<center>**Deliverables**</center>
+
+
+
+
+
+
 
 A jacketed, 10 L BSTR is going to be used to process an aqueous solution of A and B. The reactor jacket is perfectly mixed with a volume of 1400 cm^3^, a heat transfer coefficient of 138 cal ft^−2^ min^−1^ K^−1^ and a heat transfer area of 1200 cm^2^. Cooling water at 40 °C flows into the jacket at a rate of 100 g min^-1^. Both the reacting fluid and the cooling water may be taken to have a density of 1 g cm^−3^ and a heat capacity of 1 cal g^−1^ K^−1^. 
 
-Solutions containing A, B, X, Y, and Z are ideal and there is no heat of mixing. The reactor will be charged by mixing two separate solutions, one containing only reagent A and the other containing only reagent B, giving a 10 L charge with initial concentrations of 5 mol A L^-1^ and 7 mol B L^-1^. At the time the reactor is charged, the cooling water temperature is 40 °C. Reactions (1) and (2) will occur in the reactor. The heat of reaction (1) is −16.7 kcal mol^−1^, and that for reaction (2) is −14.3 kcal mol^−1^. The rate expression for reaction (1) is given in equation (3) where the pre-exponential factor for the rate coefficient is 9.74 x 10^9^ L mol^−1^ min^−1^ and the activation energy is 20.1 kcal mol^−1^. The rate expression for reaction (2) is given in equation (4) where the pre-exponential factor for the rate coefficient is 2.38 x 10^13^ min^−1^ and the activation energy is 25.3 kcal mol^−1^.
+Solutions containing A, B, X, Y, and Z are ideal, and there is no heat of mixing. The reactor will be charged by mixing two separate solutions, one containing only reagent A and the other containing only reagent B, giving a 10 L charge with initial concentrations of 5 mol A L^-1^ and 7 mol B L^-1^. At the time the reactor is charged, the cooling water temperature is 40 °C. Reactions (1) and (2) will occur in the reactor. The heat of reaction (1) is −16.7 kcal mol^−1^, and that for reaction (2) is −14.3 kcal mol^−1^. The rate expression for reaction (1) is given in equation (3) where the pre-exponential factor for the rate coefficient is 9.74 x 10^9^ L mol^−1^ min^−1^ and the activation energy is 20.1 kcal mol^−1^. The rate expression for reaction (2) is given in equation (4) where the pre-exponential factor for the rate coefficient is 2.38 x 10^13^ min^−1^ and the activation energy is 25.3 kcal mol^−1^.
 
 What initial temperature is needed in order to convert 45% of the A in 30 min, and with that initial temperature what will the final temperature, the outlet exchange fluid temperature, and the selectivity for X over Z equal? Discuss ways to increase the selectivity.
 
@@ -1050,7 +940,7 @@ The roles of the reaction time and conversion could have been reversed. The spec
 
 :::
 
-### Maximum Intermediate Yield in Series Reactions {#sec-example_9_6_3}
+### Maximum Intermediate Yield in Series Reactions {#sec-ch7_ex3}
 
 A BSTR will be charged with 1 atm of A and 2 atm of B at 25 °C. The reactor volume is 2 L, and it has a jacket with an area of 600 cm^2^ and an overall heat transfer coefficient of 0.6 cal cm^-2^ min^-1^ K^-1^. The temperature of the coolant in the perfectly-mixed jacket is maintained at 30°C by a temperature controller. Gas phase reactions (1) and (2) take place within the reactor; the corresponding rate expressions are given in equations (3) and (4). The rate coefficients display Arrhenius temperature dependence with pre-exponental factors of 3.34 x 10^9^ and 1.47 x 10^10^ mol cm^-3^ min^-1^ atm^-2^ for reactions (1) and (2), respectively, and activation energies of 20.5 and 21.8 kcal mol^-1^. The heat of reaction (1) is constant and equal to -6,300 cal mol^-1^; that of reaction (2) is constant and equal to -6,900 cal mol^-1^. The heat capacities of A, B, D, Z and U are constant and equal to 7.4, 8.6, 10.7, 5.2 and 10.3 cal mol^-1^ K^-1^, respectively.
 
@@ -1536,7 +1426,7 @@ In this example series-parallel reactions are occurring where the desired produc
 
 :::
 
-### Optimization of Net Production Rate {#sec-example_9_6_4}
+### Optimization of Net Production Rate {#sec-ch7_ex4}
 
 The rate expression for liquid-phase reaction (1) is given in equation (2). The rate coefficient displays Arrhenius temperature dependence with a pre-exponential factor of 2.59 x 10^9^ min^-1^ and an activation energy of 16.5 kcal mol^-1^. The heat of reaction (1) may be taken to be constant and equal to -22,200 cal mol^-1^. A solution containing only A at a concentration of 2 M and a temperature of 23 °C is going to be processed in a BSTR. The heat capacity of the solution is approximately constant and equal to 440 cal L^-1^ K^-1^, and its density is constant.
 
@@ -2079,13 +1969,35 @@ The net rate of production of Z is plotted as a function of the cooling water fl
 
 Four interesting features of Figures [-@fig-example_9_6_4_conversion_profile] through [-@fig-example_9_6_4_rate_profile] can be rationalized quatitatively. First, @fig-example_9_6_4_temperature_profile shows a kink at approximately 2.5 min. The temperature at that point is 50 °C, and that is the point where the heating stage ends and the cooling stage begins. Just prior to the kink, the temperature was rising rapidly and nearly linearly. That indicates that the temperature rise was primarily due to the heat from the coil. After the kink, the temperature continues to rise, but not as rapidly, because the rate has become large enough that heat is being released by reaction faster than it is being removed by the coolant. The kink in @fig-example_9_6_4_rate_profile occurs for the same reason.
 
-The second interesting observation is that the instantaneous rate (@fig-example_9_6_4_rate_profile) reaches a maximum before the temperature (@fig-example_9_6_4_temperature_profile) does. The reason for the maximum in the instantaneous rate is similar to [Example -@sec-example_9_6_1]. Before the maximum rate is attained, two opposing factors are affecting the change in the reaction rate. The reactant concentrations are decreasing, which tends to decrease the rate, while the temperature is increasing, which tends to increase the rate. Before the maximum is reached, the temperature effect is greater than the concentration effect. When the two effects become equal, the maximum rate occurs. 
+The second interesting observation is that the instantaneous rate (@fig-example_9_6_4_rate_profile) reaches a maximum before the temperature (@fig-example_9_6_4_temperature_profile) does. The reason for the maximum in the instantaneous rate is similar to [Example -@sec-example_7_4_1]. Before the maximum rate is attained, two opposing factors are affecting the change in the reaction rate. The reactant concentrations are decreasing, which tends to decrease the rate, while the temperature is increasing, which tends to increase the rate. Before the maximum is reached, the temperature effect is greater than the concentration effect. When the two effects become equal, the maximum rate occurs. 
 
-In [Example -@sec-example_9_6_1] the temperature rose continually because the reactor was adiabatic, but here @fig-example_9_6_4_temperature_profile shows that the temperature does eventually reach a maximum and then decrease. This is due to heat removal by the cooling jacket. The third interesting feature of the graphs is that the temperature continues to rise for a short period of time after the rate has reached its maximum value. Even though the rate has begun to decrease due to depletion of the reactants, the reaction is still releasing heat faster than the cooling fluid can remove it. When the temperature maximum is reached, the release of heat by reaction has become equal to the removal of heat by the coolant. After the maximum, the coolant removes heat faster than it is generated, so that after ca. 100 min the temperature reaches 25 °C and processing ends.
+In [Example -@sec-example_7_4_1] the temperature rose continually because the reactor was adiabatic, but here @fig-example_9_6_4_temperature_profile shows that the temperature does eventually reach a maximum and then decrease. This is due to heat removal by the cooling jacket. The third interesting feature of the graphs is that the temperature continues to rise for a short period of time after the rate has reached its maximum value. Even though the rate has begun to decrease due to depletion of the reactants, the reaction is still releasing heat faster than the cooling fluid can remove it. When the temperature maximum is reached, the release of heat by reaction has become equal to the removal of heat by the coolant. After the maximum, the coolant removes heat faster than it is generated, so that after ca. 100 min the temperature reaches 25 °C and processing ends.
 
 The conversion at this point is over 99%, but the fourth interesting feature is that the conversion is well over 90% after approximately 30 min. Put differently approximately 90% conversion occurs in the first 30 minutes, but it only increases 9% in the final 70 minutes. This suggests that it might be possible to optimize the system further.
 
 In this assignment, the net rate was maximized with respect to the coolant flow rate. The net rate will also be affected by the duration of the heating stage, or equivalently the temperature at which the coil is removed from the reacting fluid and the coolant flow starts. If the temperatures of the cooling water or the steam could be varied, they, too, would be expected to affect the net rate. In a more realistic optimization, it would not be the net rate that would be optimized. Instead, the rate of financial profit would be maximized. The rate of financial profit would depend on the net rate of the reaction, but it would also depend on the selling price of the product, the costs of the reactant, steam, and cooling water, and a number of other factors. That type of multidimensional optimization is beyond the scope of this book, but at its core, it is similar to the simple optimization illustrated in this assignment.
+
+#### Coolant Flow for Isothermal Operation {#sec-ch7_ex5}
+
+Liquid phase reactions (1) and (2) take place in a batch stirred-tank reactor; the reaction rate expressions are given in equations (3) and (4). The rate coefficients for reactions (1) and (2) obey the Arrhenius expression. For reaction (1) the pre-exponential factor is 1.6 × 10^18^ gal lbmol^−1^ h^−1^, and the activation energy is 46,000 BTU lbmol^−1^. For reaction (2) the pre-exponential factor is 4.5 × 10^18^ gal lbmol^−1^ h^−1^, and the activation energy is 48,000 BTU lbmol^−1^. The heat capacity of the reacting liquid is constant and equal to 65 BTU ft^−3^ °R^−1^. The heat of reaction (1) is constant and equal to 45,000 BTU lbmol^−1^, and the heat of reaction (2) is constant and equal to 39,500 BTU lbmol^−1^. The 50 gal reactor initially contains only A and B at concentrations of 0.014 lbmol A gal^−1^ and 0.020 lbmol B gal^−1^. The initial temperature of the reacting fluid is 70 °F. The reactor is jacketed with an overall heat transfer coefficient of 60 BTU ft^−2^ °R^−1^ h^−1^ and a heat transfer area of 13 ft^2^. Saturated steam at 220 °F condenses in the jacket, leaving as a saturated liquid. (The heat of vaporization of steam at 220 °F is 966 BTU lb~m~^–1^.) Plot the yield of D (moles of D per initial mole of A), the temperature and the mass flow rate of water leaving the jacket as a function of the conversion of B.
+
+$$
+A + B \rightarrow D + Z \tag{1}
+$$
+
+$$
+D + B \rightarrow U + Z \tag{2}
+$$
+
+$$
+r_1 = k_1C_AC_B \tag{3}
+$$
+
+$$
+r_2=k_2C_DC_B \tag{4}
+$$
+
+---
 
 ## Symbols Used in @sec-ch7
 
