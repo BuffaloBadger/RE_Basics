@@ -664,7 +664,7 @@ Going through the design equations term-by-term, I see that I'll need to calcula
 
 The initial values and the final volume of the reactor are uncomputable, too. They have two values depending on which reactor is being modeled, so they, too, will need to be passed to the model function as arguments.
 
-The PFR model function will use an IVODE solver to solve the design equations, so in addition to the initial values and stopping criterion, I'll need to write a derivatives function.
+The PFR model function will use an IVODE solver to solve the design equations, so in addition to the initial values and stopping criterion, I'll need to write a derivatives function. The PFR model function must make the pre-exponential factor and activation energy available to the derivatives function before calling the solver.
 
 :::
 
@@ -816,7 +816,7 @@ The system examined in this assignment is not optimized. Typically dry feed comp
 
 ### Minimizing the Total Volume of Two CSTRs in Series {#sec-ch12_ex3}
 
-An aqueous solution at 30 °C containing A and B at concentrations of 1.0 and 1.2 M, respectively, is to be fed to two CSTRs in series at a flow rate of 75 L min^-1^. Reaction (1) will occur in the adiabatic reactors with a rate of reaction that is accurately described by equation (2). The rate coefficient exhibits Arrhenius temperature dependence with a pre-exponential factor of 8.72 x 10^5^ L mol^-1^ min^-1^ and an activation energy of 7200 cal mol^-1^. The heat of reaction (1) is -10,700 cal mol^-1^ and may be assumed to be constant. The heat capacity of the solution and the density of the solution may be taken to be constant and equal to those of water (1.0 cal g^-1^ K^-1^ and 1.0 g cm^-3^). If 90% of the A needs to be converted, what is the minimum total volume required, and how is it divided between the two reactors?
+An aqueous solution at 30 °C containing A and B at concentrations of 1.0 and 1.2 M, respectively, is to be fed to two CSTRs in series at a flow rate of 75 L min^-1^. Reaction (1) will occur in the adiabatic reactors with a rate of reaction that is accurately described by equation (2). The rate coefficient exhibits Arrhenius temperature dependence with a pre-exponential factor of 8.72 x 10^5^ L mol^-1^ min^-1^ and an activation energy of 7200 cal mol^-1^. The heat of reaction (1) is -10,700 cal mol^-1^ and may be assumed to be constant. The heat capacityand the density of the solution may be taken to be constants and equal to those of water (1.0 cal g^-1^ K^-1^ and 1.0 g cm^-3^). If 90% of the A needs to be converted, what is the minimum total volume required, and how is it divided between the two reactors?
 
 $$
 A + B \rightarrow Y + Z \tag{1}
@@ -827,6 +827,98 @@ r_1 = k_1 C_A C_B \tag{2}
 $$
 
 ---
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+I'll start by summarizing the information provided in the assignment narrative. The reactor system consists of two CSTRs in series. I'll draw a schematic diagram with the reactors and streams labeled. Then I'll use those labels as subscripts on flow rates, temperatures, etc. 
+
+:::
+
+<center>**Assignment Summary**</center>
+[Reaction]{.underline}:
+
+$$
+A + B \rightarrow Y + Z \tag{1}
+$$
+
+$$
+r_1 = k_1 C_A C_B \tag{2}
+$$
+
+[Rate Expression]{.underline}:
+
+$$
+r_1 = k_1 C_A C_B \tag{2}
+$$
+
+[Reactor System]{.underline}: Two adiabatic, steady-state CSTRs in series as shown in @fig-ch12_ex3_schematic.
+
+![Schematic representation of the reactor network with reactors R1 and R2.](solutions/ch12_ex3/network_schematic.png){#fig-ch12_ex3_schematic width="60%"}
+
+[Given Constants]{.underline}: $T_0$ = 30 °C, $C_{A,0}$ = 1.0 mol l^–1^, $C_{B,0}$ = 1.2 mol l^–1^, $\dot{V}_0$ = 75 L min^–1^, $k_{0,1}$ = 8.72 x 10^5^ L mol^–1^ min^–1^, $E_1$ = 7200 cal mol^–1^, $\Delta H_1$ = -10,700 cal mol^–1^, $\tilde{C}_p$ = 1.0 cal g^–1^ K^–1^, $\rho$ = 1.0 g cm^–3^, and $f_A$ = 0.9.
+
+[Deliverables]{.underline}: $V_{total,min}$, $V_{R1,opt}$, and $V_{R2,opt}$.
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+describe reactor to be modeled
+generate design equations
+identify reactor model variables
+identify additional computable unknowns and equations for calculating them (including initial/final values
+identify additional uncomputable unknowns and note they will need to be passed as arguments
+mention solver type and that need to write residuals or derivatives function anything that must be made available to it
+
+:::
+
+<center>**PFR Model Function**</center>
+
+[PFR Model Equations]{.underline}
+[PFR Model Variables]{.underline}:
+[Additional Computable Unknowns]{.underline}:
+[Additional Uncomputable Unknowns]{.underline}:
+[IVODE Solver Inputs]{.underline}:
+
+1. Initial values of the reactor model variables
+2. Stopping criterion
+3. Derivatives function that
+    a. receives values of the PFR model variables at the start of an integration step
+    b. can access the current values of $k_0$ and $E$
+    c. calculates the additional unknowns using equations (2), (3), (10), and (11)
+    d. evaluates and returns the PFR design equation derivatives using equations (4) - (9)
+
+***** repeat for other models or model functions
+
+<center>**Deliverables Function**</center>
+
+1. algorithm
+4. Calculate the deliverables
+
+give equations
+
+<center>**Implementation of the Calculations.**</center>
+
+1. Make the given constants available wherever they are needed.
+2. Declare global variables for quantities that cannot be passed to the PFR derivatives function as arguments.
+3. Define the PFR model, PFR derivatives, and deliverables functions.
+4. Call the deliverables function.
+
+<center>**Results and Discussion**</center>
+
+<center>**Summary**</center>
+
+
+
+
+
+
+
+
+
+
+
+
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
