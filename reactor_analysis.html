@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Reactor Analysis – Reaction Engineering Basics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./cstr_analysis.html" rel="next">
+<link href="./mech_rate_expressions.html" rel="prev">
+<link href="./graphics/BuffaloBadger_16_16.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-d3f7f8e73c8d287b30bcf59c2b563615.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="http://buffalobadger.github.io" class="navbar-brand navbar-brand-logo">
+    <img src="./graphics/Banner.png" alt="" class="navbar-logo light-content">
+    <img src="./graphics/Banner.png" alt="" class="navbar-logo dark-content">
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics"> 
+<span class="menu-text">REB, The Book</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics_Course"> 
+<span class="menu-text">REB, The Course</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/RE_Basics_Design"> 
+<span class="menu-text">REB, The Design</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/The_Sett"> 
+<span class="menu-text">The Sett</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="http://buffalobadger.github.io/about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-reader-toggle quarto-navigation-tool px-1" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./reactor_analysis.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reactor Analysis</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rxn_eng_ethics_safety.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Reaction Engineering, Ethics, and Safety</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rxns_stoichiometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Reactions and Stoichiometry</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./rates_rate_expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reaction Rates and Rate Expressions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./mech_rate_expressions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Mechanistic Rate Expressions</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reactor_analysis.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reactor Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./bstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">BSTR Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./sbstr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">SBSTR Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pfr_analysis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">PFR Analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./design_reactors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Design of Reactors</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./gen_anal_kin_data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Generation and Analysis of Kinetics Data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./reactor_networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Reactor Networks</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./empir_non_ideal_reactors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Empirical Non-Ideal Reactor Models</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apx_notation_terminology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Notation and Terminology</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apx_kinetics_theories.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">B</span>&nbsp; <span class="chapter-title">Kinetics Theories</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apx_reactor_design_eqns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">C</span>&nbsp; <span class="chapter-title">Reactor Design Equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./apx_numerical_methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">D</span>&nbsp; <span class="chapter-title">Numerical Methods</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#sec-ch5_ideal_reactor_analysis" id="toc-sec-ch5_ideal_reactor_analysis" class="nav-link active" data-scroll-target="#sec-ch5_ideal_reactor_analysis"><span class="header-section-number">5.1</span> Ideal Reactor Modeling</a>
+  <ul class="collapse">
+  <li><a href="#reactor-heat-transfer" id="toc-reactor-heat-transfer" class="nav-link" data-scroll-target="#reactor-heat-transfer"><span class="header-section-number">5.1.1</span> Reactor Heat Transfer</a></li>
+  </ul></li>
+  <li><a href="#sec-ch5_quant_analysis" id="toc-sec-ch5_quant_analysis" class="nav-link" data-scroll-target="#sec-ch5_quant_analysis"><span class="header-section-number">5.2</span> Quantitative Reactor Analysis</a>
+  <ul class="collapse">
+  <li><a href="#determining-which-reactor-design-equations-are-needed" id="toc-determining-which-reactor-design-equations-are-needed" class="nav-link" data-scroll-target="#determining-which-reactor-design-equations-are-needed"><span class="header-section-number">5.2.1</span> Determining Which Reactor Design Equations are Needed</a></li>
+  <li><a href="#quantitative-reaction-engineering-tasks" id="toc-quantitative-reaction-engineering-tasks" class="nav-link" data-scroll-target="#quantitative-reaction-engineering-tasks"><span class="header-section-number">5.2.2</span> Quantitative Reaction Engineering Tasks</a></li>
+  </ul></li>
+  <li><a href="#sec-ch5_workflow" id="toc-sec-ch5_workflow" class="nav-link" data-scroll-target="#sec-ch5_workflow"><span class="header-section-number">5.3</span> Assignment Completion Workflow</a></li>
+  <li><a href="#sec-ch5_qual_analysis" id="toc-sec-ch5_qual_analysis" class="nav-link" data-scroll-target="#sec-ch5_qual_analysis"><span class="header-section-number">5.4</span> Qualitative Reactor Analysis</a></li>
+  <li><a href="#sec-ch5_learning_objectives" id="toc-sec-ch5_learning_objectives" class="nav-link" data-scroll-target="#sec-ch5_learning_objectives"><span class="header-section-number">5.5</span> Learning Objectives and Examples</a>
+  <ul class="collapse">
+  <li><a href="#sec-ch5_ex1" id="toc-sec-ch5_ex1" class="nav-link" data-scroll-target="#sec-ch5_ex1"><span class="header-section-number">5.5.1</span> Qualitative Analysis of a Reversible, Exothermic Reaction</a></li>
+  <li><a href="#sec-ch5_ex2" id="toc-sec-ch5_ex2" class="nav-link" data-scroll-target="#sec-ch5_ex2"><span class="header-section-number">5.5.2</span> Qualitative Analysis of Series Reactions</a></li>
+  </ul></li>
+  <li><a href="#symbols-used-in-sec-ch5" id="toc-symbols-used-in-sec-ch5" class="nav-link" data-scroll-target="#symbols-used-in-sec-ch5"><span class="header-section-number">5.6</span> Symbols Used in <span>Chapter 5</span></a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="sec-ch5" class="quarto-section-identifier"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reactor Analysis</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Rate expressions like those considered in <a href="rates_rate_expressions.html" class="quarto-xref"><span>Chapter 3</span></a> and <a href="mech_rate_expressions.html" class="quarto-xref"><span>Chapter 4</span></a> are used in mathematical models for reactors. This chapter presents an introduction to the modeling of ideal chemical reactors. It may prove helpful to keep the Learning Objectives in <a href="#sec-ch5_learning_objectives" class="quarto-xref">Section&nbsp;<span>5.5</span></a> in mind while reading it.</p>
+<section id="sec-ch5_ideal_reactor_analysis" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="sec-ch5_ideal_reactor_analysis"><span class="header-section-number">5.1</span> Ideal Reactor Modeling</h2>
+<p>A piece of equipment within which chemical reactions take place is called a reactor. Mathematical models of reactors are essential for reaction engineering analyses. A reactor model is a set of equations that relates what goes into a reactor to what comes out. Other reactor parameters that affect the relationship between what goes in and what come out appear within the model.</p>
+<p>Reactor models that make certain assumptions about the flow and mixing of fluid are called ideal reactor models, and the associated equations are called the reactor design equations. Four ideal reactor models will be considered in subsequent chapters, and their model equations are derived in <a href="apx_reactor_design_eqns.html" class="quarto-xref"><span>Appendix C</span></a>. They are continuous stirred tank reactors (CSTRs), batch stirred tank reactors (BSTRs), semibatch stirred tank reactors (SBSTRs), and plug-flow reactors (PFRs). This chapter focuses on general aspects of modeling a single ideal reactor.</p>
+<p>In a batch, or closed, reactor, a fluid containing the reactants is put into the reactor before the reaction starts. The fluid is isolated while reaction takes place, then when the processing is complete, the reacted fluid is removed. In a continuous, or open, reactor, fluid containing the reactants continually flows into the reactor. Reaction takes place within the reactor, and reacted fluid continually flows out.</p>
+<p>As described next, heat can be added or removed from both batch and continuous reactors. If the rate of heat addition or removal is such that the reacting fluid temperature is constant and the same everywhere, the reactor is isothermal. If the reacting fluid temperature is not constant, the reactor is non-isothermal. If no heat is added or removed from the reacting fluid, the reactor is adiabatic. If the pressure of the reacting fluid is constant and the same everywhere in the reactor, the reactor is isobaric, and if the fluid volume is constant, it is isochoric.</p>
+<section id="reactor-heat-transfer" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="reactor-heat-transfer"><span class="header-section-number">5.1.1</span> Reactor Heat Transfer</h3>
+<p>Supplying or removing heat is an essential aspect of reactor operation, and while there are several ways of doing so, <em>Reaction Engineering Basics</em> only considers heat transfer between the reacting fluid and a separate heat exchange fluid. The two fluids do not mix; there is a solid wall that separates them, and heat is transferred through it. If the reactor has separate chambers for the reacting fluid and the heat exchange fluid, the chamber containing the heat exchange fluid is often called the shell. Sometimes, instead, the exchange fluid flows through a coil of tubing that is immersed in the reacting fluid, or a heat exchanger external to the reactor is used to transfer heat. In all of these cases, though, heat is transferred between the fluids through a solid wall.</p>
+<p>The equations for modeling heat transfer between the reacting fluid and a heat exchange fluid are derived <a href="apx_reactor_design_eqns.html#sec-apndx_heat_exch" class="quarto-xref">Appendix&nbsp;<span>C.1</span></a>. The exchange fluid is assumed to be a pure, perfectly mixed fluid that either undergoes phase change (exchanges latent heat) or experiences temperature change (exchanges sensible heat), but not both. Consequently, there are two forms of the energy balance on the exchange fluid: one for exchange of latent heat and one for exchange of sensible heat. Unless the reactor is adiabatic, one of these two equations is included among the reactor design equations. To avoid duplicating their description in each of the following four chapters, they are considered here.</p>
+<section id="exchange-of-sensible-heat" class="level4" data-number="5.1.1.1">
+<h4 data-number="5.1.1.1" class="anchored" data-anchor-id="exchange-of-sensible-heat"><span class="header-section-number">5.1.1.1</span> Exchange of Sensible Heat</h4>
+<p>When the exchange fluid undergoes only temperature change, the energy balance on it is given by <a href="apx_reactor_design_eqns.html#eq-ext_fluid_energy_bal_sens" class="quarto-xref">Equation&nbsp;<span>C.1</span></a>, which is reproduced here as <a href="#eq-exchange_energy_bal_sensible" class="quarto-xref">Equation&nbsp;<span>5.1</span></a>. The term on the left side of the equation represents the accumulation of sensible heat in the exchange fluid. The first term on the right side of the equation represents the rate at which heat is transferred from the exchange fluid to the reacting fluid. The last term represents the change in the sensible heat of the exchange fluid as it flows through the reactor. If the reactor operates at steady-state, the time derivative is equal to zero and the energy balance on the exchange fluid reduces to the form shown in <a href="#eq-exchange_energy_bal_sensible_ss" class="quarto-xref">Equation&nbsp;<span>5.2</span></a>.</p>
+<p><span id="eq-exchange_energy_bal_sensible"><span class="math display">\[
+\rho_{ex} V_{ex} \tilde{C}_{p,ex}\frac{dT_{ex}}{dt} = -\dot{Q} - \dot{m}_{ex} \int_{T_{ex,in}}^{T_{ex,out}} \tilde{C}_{p,ex}dT
+\tag{5.1}\]</span></span></p>
+<p><span id="eq-exchange_energy_bal_sensible_ss"><span class="math display">\[
+0 = \dot{Q} + \dot {m}_{ex} \int_{T_{ex,in}}^{T_{ex}} \tilde{C}_{p,ex}dT
+\tag{5.2}\]</span></span></p>
+<p>In <a href="#eq-exchange_energy_bal_sensible" class="quarto-xref">Equation&nbsp;<span>5.1</span></a> and <a href="#eq-exchange_energy_bal_sensible_ss" class="quarto-xref">Equation&nbsp;<span>5.2</span></a> the sensible heat terms are expressed using the gravimetric heat capacity of the exchange fluid, <span class="math inline">\(\tilde{C}_{p,ex}\)</span>. It has units of energy per mass of exchange fluid per degree of temperature change. The sensible heat terms could also be written using either the volumetric heat capacity (<span class="math inline">\(\breve{C}_p\)</span>, energy per volume of exchange fluid per degree of temperature change) or the molar heat capacity (<span class="math inline">\(\hat{C}_p\)</span>, energy per mole of exchange fluid per degree of temperature change). <a href="#eq-equivalent_sens_heat_accumulation_terms" class="quarto-xref">Equation&nbsp;<span>5.3</span></a> shows the three equivalent ways of writing the accumulation term and <a href="#eq-equivalent_sens_heat_terms" class="quarto-xref">Equation&nbsp;<span>5.4</span></a> shows the three equivalent ways of writing the term for the sensible heat change.</p>
+<p><span id="eq-equivalent_sens_heat_accumulation_terms"><span class="math display">\[
+\rho_{ex} V_{ex} \tilde{C}_{p,ex}\frac{dT_{ex}}{dt}\ \Leftrightarrow\ V_{ex} \breve{C}_{p,ex}\frac{dT_{ex}}{dt}\ \Leftrightarrow\ \frac{\rho_{ex} V_{ex} \hat{C}_{p,ex}}{M_{ex}}\frac{dT_{ex}}{dt}
+\tag{5.3}\]</span></span></p>
+<p><span id="eq-equivalent_sens_heat_terms"><span class="math display">\[
+\dot{m}_{ex} \int_{T_{ex,in}}^{T_{ex}} \tilde{C}_{p,ex}dT\ \Leftrightarrow\ \frac{\dot{m}_{ex}}{\rho_{ex}} \int_{T_{ex,in}}^{T_{ex}} \breve{C}_{p,ex}dT\ \Leftrightarrow\ \frac{\dot{m}_{ex}}{M_{ex}} \int_{T_{ex,in}}^{T_{ex}} \hat {C}_{p,ex}dT
+\tag{5.4}\]</span></span></p>
+</section>
+<section id="exchange-of-latent-heat" class="level4" data-number="5.1.1.2">
+<h4 data-number="5.1.1.2" class="anchored" data-anchor-id="exchange-of-latent-heat"><span class="header-section-number">5.1.1.2</span> Exchange of Latent Heat</h4>
+<p>When the exchange fluid undergoes only phase change, the energy balance on it is given by <a href="apx_reactor_design_eqns.html#eq-ext_fluid_energy_bal_latent" class="quarto-xref">Equation&nbsp;<span>C.2</span></a>, which is reproduced here as <a href="#eq-exchange_energy_bal_latent" class="quarto-xref">Equation&nbsp;<span>5.5</span></a>. The term on the left side of the equation represents the accumulation of latent heat in the exchange fluid, the first term on the right side of the equation again represents the rate at which heat is transferred from the exchange fluid to the reacting fluid, and the last term represents the change in the latent heat of the exchange fluid as it flows through the reactor. As above, if the reactor operates at steady-state, the time derivative is equal to zero and the energy balance on the exchange fluid reduces to <a href="#eq-exchange_energy_bal_latent_ss" class="quarto-xref">Equation&nbsp;<span>5.6</span></a>.</p>
+<p><span id="eq-exchange_energy_bal_latent"><span class="math display">\[
+\frac{\rho_{ex} V_{ex} \Delta H_{\text{latent},ex}^0}{M_{ex}} \frac{d \gamma}{dt} = - \dot{Q} - \gamma \dot{m}_{ex} \frac{\Delta H_{\text{latent},ex}^0}{M_{ex}}
+\tag{5.5}\]</span></span></p>
+<p><span id="eq-exchange_energy_bal_latent_ss"><span class="math display">\[
+0 = \dot{Q} + \gamma \dot{m}_{ex} \frac{\Delta H_{\text{latent},ex}^0}{M_{ex}}
+\tag{5.6}\]</span></span></p>
+<p>The transient energy balance in <a href="#eq-exchange_energy_bal_latent" class="quarto-xref">Equation&nbsp;<span>5.5</span></a> assumes only some of the exchange fluid undergoes phase change so that the fluid leaving the system is a two-phase mixture. As an example of an alternative, consider using the condensation of saturated steam to provide heat. The alternative procedure is to maintain a constant steam pressure and remove the condensate immediately as it forms. This is the assumption that is used throughout <em>Reaction Engineering Basics.</em> In this procedure, <span class="math inline">\(\gamma\)</span> is constant and equal to 1, meaning only saturated water leaves the system. In this situation, the exchange fluid energy balance is given by <a href="#eq-exchange_energy_bal_latent_ss" class="quarto-xref">Equation&nbsp;<span>5.6</span></a> with <span class="math inline">\(\gamma\)</span> equal to one and with <span class="math inline">\(\dot{m}_{ex}\)</span> representing the instantaneous outlet mass flow rate of condensed water.</p>
+</section>
+</section>
+</section>
+<section id="sec-ch5_quant_analysis" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="sec-ch5_quant_analysis"><span class="header-section-number">5.2</span> Quantitative Reactor Analysis</h2>
+<p>The purpose of an ideal reactor model is to relate the reactor outputs to the reactor inputs and parameters. Mole balances relate the input molar amounts to the output molar amounts, so they are always included in a reactor model. A mole balance can be written for each reagent present at any point in the system, whether or not it is present in the reactor input. That includes reagents that are reactants or products in the reactions that are occurring, as well as reagents that are neither reactants nor products in any of the reactions. The reagents that do not participate in any of the reactions can be referred to as “inerts.”</p>
+<p>Energy balances on the reacting fluid and on the separate heat exchange fluid relate their output temperatures to the reactor inputs and parameters. The energy balance on the reacting fluid also accounts for any work it performs on the surroundings. Normally, the reacting fluid and exchange fluid energy balances are also included as reactor model equations. As discussed below, there are circumstances where a reactor can be modeled without using one or both of the energy balances.</p>
+<p>A momentum balance accounts for the conversion of kinetic energy of a flowing fluid to thermal energy. While the magnitude of this energy is negligible with respect to the terms in the energy balance, it can have a significant effect upon the pressure of the flowing fluid. Momentum balances are not needed with any of the ideal stirred tank reactors, but they are sometimes necessary when modeling ideal PFRs. When a momentum balance is not needed, the outlet pressure can be calculated from the other output variables using the equation of state (i. e. using the ideal gas law or assuming liquids to have constant density).</p>
+<p>Collectively, the mole balances, energy balances, and momentum balance, as needed, are referred to as the design equations for the reactor. In some situations where the design equations are ordinary differential equations, the mole, energy, and momentum balances are found to contain one too many dependent variables. In these cases a differential form of the ideal gas law must be added to the reactor design equations.</p>
+<p>The words “transient” and “steady state” are used to differentiate two modes of reactor operation. When a reactor operates at steady state, one can watch any one point in the reactor and the conditions (temperature, pressure, composition, flow rate, etc.) will not change over time. At a different point in the reactor, the conditions may be different, but they, too, will be constant over time. Putting it another way, when a reactor operates at steady state, the conditions may vary spatially, but they won’t vary temporally (i. e. over time). Of the ideal reactors considered in <em>Reaction Engineering Basics,</em> only CSTRs and PFRs can operate at steady-state.</p>
+<p>In a transient reactor one will observe changes in the conditions over time when watching any one point within the reactor. That is, within a transient reactor the conditions will vary temporally (and possibly spatially, too). The most general form of the design equations are those for transient operation. The steady-state design equations for CSTRs and PFRs represent simplifications of their transient design equations wherein all time derivatives are set equal to zero.</p>
+<section id="determining-which-reactor-design-equations-are-needed" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="determining-which-reactor-design-equations-are-needed"><span class="header-section-number">5.2.1</span> Determining Which Reactor Design Equations are Needed</h3>
+<p>It is not always necessary to use all of the reactor design equations. For example, in closed systems and in open steady-state systems, mole balances do not need to be written for every reagent in the system because the amounts of the reactants and products in the reactions are related through stoichiometry. As such, if <span class="math inline">\(N_{ind}\)</span> mathematically independent reactions are taking place, only <span class="math inline">\(N_{ind}\)</span> reactant or product mole balances are needed, together with a mole balance for each inert.</p>
+<p>When sensible heat terms associated with a reacting liquid-phase solution can be expressed in terms of the mass-specific or volume-specific heat capacity of the entire solution, a mole balance for the solvent need not be included among the design equations. However, if the sensible heat terms are written in terms of molar heat capacities of the individual reagents, then the solvent must be included among those reagents, and a mole balance on the solvent does need to be included in the design equations.</p>
+<p>A momentum balance is only needed when the reactor is an ideal PFR. Even then, if it is known that the pressure drop is negligible, the momentum balance is not needed.</p>
+<p>If a reactor operates adiabatically there will not be an exchange fluid, and consequently an energy balance on the exchange fluid cannot be included among the design equations. If a reactor operates isothermally at a known temperature, the mole balance equations can be solved separately from the two energy balance equations, and the energy balances may not be needed. (True isothermal operation of an industrial reactor is not very common, but laboratory reactors that are used to generate kinetics data normally do operate isothermally.)</p>
+<p><em>Reaction Engineering Basics</em> assumes that heat transfer always involves a perfectly mixed heat exchange fluid. If the outlet temperature of that fluid is known and constant, the other reactor design equations can be solved independently from the energy balance on the exchange fluid, and the latter may not be needed. One situation where this can happen is when the exchange fluid undergoes a phase change and exchanges only the latent heat associated with the phase change. Phase changes occur at constant temperature, so, for example, if condensation of saturated steam at 1 atm is being used to supply heat to the reacting fluid, the temperature of the exchange fluid will be constant and equal to 100 °C.</p>
+<p>Other times the heat exchange fluid may be treated as a constant temperature thermal sink with a known, constant temperature. In this situation, an energy balance on the exchange fluid is not needed. The other reactor design equations can be solved without it.</p>
+</section>
+<section id="quantitative-reaction-engineering-tasks" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="quantitative-reaction-engineering-tasks"><span class="header-section-number">5.2.2</span> Quantitative Reaction Engineering Tasks</h3>
+<p>The reactor design equations establish a quantitative relationship between the reactor inputs, the reactor outputs, and the reactor/process parameters. In any reactor modeling assignment, the reaction engineer is given values for some of the inputs, outputs and parameters and tasked with determining the values of the others. The reactor design equations can be used to accomplish four kinds of tasks: response, optimization, design, and parameter estimation. The difference between these tasks is found not in the equations themselves, but in how they are used. Examples of these tasks are deferred to later chapters, but they are defined here.</p>
+<p><strong>Reactor response tasks</strong>, as defined here, are the most straightforward of the four tasks. In a reactor response assignment the reaction engineer is provided with a sufficient number of reactor variables to allow calculation of all of the quantities of interest. Generally there is a single, correct answer to a reactor response assignment.</p>
+<p>Sometimes a reactor response assignment will ask for a graph where a quantity of interest is plotted <em>versus</em> some other reactor variable. This is still a reactor response task. The only difference is that the reactor design equations may need to be solved multiple times to generate the data to be plotted. Each time the reactor design equations are solved, there is a single, correct answer, and consequently, there is a single correct graph that completes the task.</p>
+<p>In <strong>optimization tasks</strong> the number of reactor variables that are specified or known is not sufficient to allow the reaction engineer to solve the reactor design equations and calculate the quantities of interest. The simplest example would task the engineer to maximize (or minimize) a quantity of interest (the target) with respect to some other reactor variable (the adjusted variable). Neither the value of the target nor the value of the adjusted variable are known. In lieu of knowing the actual value of the adjusted variable, the reaction engineer instead knows that it is the value that maximizes the target. Typically the engineer is tasked to find both the maximum value of the target and the corresponding value of the adjusted variable. Again, there is a single correct answer to this type of reactor optimization assignment.</p>
+<p>Knowing that the reactor design equations will be solved numerically, there are two ways the reaction engineer could approach an optimization task. In the first, a range of values of the adjusted variable is selected and the design equations are solved repeatedly to find the value of the target corresponding to each value of the adjusted variable. Then a table is generated with one column for the target and one column for the adjusted variable. The column for the target is scanned to identify the maximum value, and the corresponding value of the adjusted variable is found in the other column in the same row.</p>
+<p>Alternatively the results from solving the reactor design equations are plotted. The maximum in the graph is identified and the maximum value of the target and the corresponding value of the adjusted variable are read from the graph. In both approaches, it is possible that a maximum will not be present. In that case, the range of values of the adjusted variable must be shifted until a maximum is observed. Once a maximum is observed, the precision of the results can be improved by adding additional values of the adjusted variable between two points that bracket the maximum.</p>
+<p>Many software packages include a function (an optimizer) that performs optimization, that is finds a maximum or minimum. The second approach involves using such an optimizer. In this case, the numerical implementation of the solution would entail writing a reactor model function that receives the adjusted variable as an argument and returns target variable. That reactor model function would then be passed to the optimizer. Typically an initial guess for the optimum value of the adjusted variable would also need to be provided.</p>
+<p>Optimization tasks can be much more complicated than simply maximizing or minimizing a quantity of interest with respect to another reactor variable. In addition to specifying multiple adjusted variables, the assignment also could impose constraints on the values of one or more reactor variables (not just the adjusted variables). Constraints are conditions that must be obeyed. An example of a constraint would be that the temperature of the heat exchange fluid cannot exceed some specified value because it would boil or decompose above that temperature. Again, there are software packages that will perform constrained, multi-variable optimization.</p>
+<p><strong>Reactor design tasks</strong> are the most complicated of the tasks considered here. At the same time they can be intellectually stimulating, affording the reaction engineer an opportunity to be creative. A reactor design assignment does not provide sufficient information to solve the reactor design equations. The reaction engineer must choose values for the missing reactor variables. In more extreme cases, the assignment may provide little more than the reagents that are available and the products that are to be produced. The type of reactor to use and how to operate it may be among the choices the reaction engineer needs to make.</p>
+<p>Design tasks almost always involve an optimization sub-task. The quantity that needs to be maximized is typically financial in nature. The goal is to maximize the rate of making profit subject to technical, regulatory, and financial constraints. Design at this level is typically taught in chemical engineering courses on plant design, and the system being optimized is typically an entire process, not just an isolated reactor.</p>
+<p>That level of design task is well beyond the scope of <em>Reaction Engineering Basics</em>. However, simplified design tasks involving only the reactor are considered in <a href="design_reactors.html" class="quarto-xref"><span>Chapter 10</span></a>. Instead of optimizing a financial target, reactor variables that are related to the overall economics are used. For example, the cost of operating a process may scale with the temperature of that process, in which case minimizing the temperature minimizes the operating cost. In general, there is not a single correct solution to a reactor design assignment. Design tasks are inherently “open-ended,” and multiple solutions are possible and acceptable.</p>
+<p><strong>Parameter estimation tasks</strong> are inherently different from the three types of tasks described above, but they do use the same reactor design equations and those equations are solved the same way as in the other tasks. Briefly, a parameter estimation task involves using a reactor to generate data, and then using the data, together with a model for the reactor, to estimate the values of parameters appearing in a rate expression. The use of the ideal reactor models to estimate rate expression parameters is examined in <a href="gen_anal_kin_data.html" class="quarto-xref"><span>Chapter 11</span></a>. A similar approach can be used to estimate parameters that appear in empirical models for non-ideal reactors such as those considered in <a href="empir_non_ideal_reactors.html" class="quarto-xref"><span>Chapter 13</span></a>.</p>
+</section>
+</section>
+<section id="sec-ch5_workflow" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="sec-ch5_workflow"><span class="header-section-number">5.3</span> Assignment Completion Workflow</h2>
+<p>As the preceeding discussion suggests, the reactor design equations that are needed to complete a reaction engineering assignment will vary from assignment to assignment, as will the way that they are solved. To one who is just beginning to learn reaction engineering, it can seem that every assignment is different, and knowing how to proceed can seem overwhelming. As such, it can be helpful to establish a computational strategy and workflow that can be used consistently when completing assignments.</p>
+<p>The assignments in the next four chapters will all involve the analysis of a single, ideal reactor. In <em>Reaction Engineering Basics,</em> the reactor design equations are always solved numerically, and the computer code for doing so can often be structured in a variety of ways. However the same computational strategy can be employed in each analysis.</p>
+<ol type="1">
+<li>Select and simplify the design equations needed to model the reactor.</li>
+<li>Identify the reactor model variables that will be found by solving the design equations.</li>
+<li>Identify any additional unknowns that appear in the design equations, classifying them as computable, uncomputable, or coupled.</li>
+<li>Write equations for calculating the additional computable and coupled unknowns.</li>
+<li>If appropriate, define a range of values for the adjusted variable (parameter) to be used for generating a graph or optimizing a target variable.</li>
+<li>Solve the reactor design equations to get the values of the reactor model variables (for each value of the adjusted variable, if there is one).</li>
+<li>Use the results from solving the design equations to calculate any additional quantities of interest and for generating requested graphs.</li>
+</ol>
+<p>At this point, it may not be clear what some of these steps mean or entail. The examples included in the next four chapters will illustrate the use of this strategy and should clarify the meaning of the steps. The strategy is intended to be general enough to apply to any assignment involving the analysis of a single ideal reactor, but should not be viewed as a rigid recipe that must be followed exactly. It offers a general approach that can be adapted as needed.</p>
+<p>The remainder of this section describes a workflow that supports the preceding computational strategy and that will be used in every <em>Reaction Engineering Basics</em> example assignment involving the analysis of a single ideal reactor. Later chapters of the book will add items to this workflow as new reactor systems or engineering tasks are introduced. The workflow progresses through five sequential stages.</p>
+<ul>
+<li>Assignment Summary</li>
+<li>Formulation of the Equations</li>
+<li>Implementation of the Calculations</li>
+<li>Results and Discussion</li>
+<li>Deliverables</li>
+</ul>
+<p>The intent of the assignment summary is to replace the longer assignment narrative with a concise listing of the information it provides and requests. That information is organized under the following headings: Reactions, Rate Expressions, Reactor, Given Constants, Basis, Parameters, and Deliverables. Some examples will not require all of these headings. Upon completion of the assignment summary, it should not be necessary to read through the assignment narrative again.</p>
+<p>The formulation of the equations begins with the equations for modeling the reactor. The necessary reactor design equations are selected and simplified first, and the variables to be found by solving them are enumerated. Next, if there are additional computable unknowns appearing in the design equations, the equations for calculating them are listed. If there are additional coupled unknowns (see <a href="apx_numerical_methods.html#sec-apxd_ivodes" class="quarto-xref">Appendix&nbsp;<span>D.3</span></a>), implicit equations for calculating them are written. Then, if there are uncomputable unknowns, they are listed next (they will need to be provided as input when the reactor design equations are solved).</p>
+<p>The reactor design equations will either be algebraic-transcendental equations (ATEs) or initial value ordinary differential equations (IVODEs). The formulation of the equations continues with addition of the input that must be provided to the numerical equation solver or solvers that will be used to solve the ATEs or IVODEs. Finally, equations for calculating any additional quantities requested in the assignment are added.</p>
+<p>The implementation of the calculations involves writing computer code. <em>Reaction Engineering Basics, The Book</em> describes the code in general terms so readers can write it using whatever programming environment and language they choose. Most of the examples in the book are also presented in <em>Reaction Engineering Basics, The Course,</em> and there the implementation of the calculations using Python is presented and discussed. Links are provided so interested readers can view the Python implementation.</p>
+<p>The results and discussion section presents the results from performing the calculations. Qualitative analysis, which is described next, is used to interpret the results on a physical basis. Interesting or unexpected features of the results are identified and rationalized. If the assignment requires the engineer to make an assessment or recommendation, the basis for it is developed in the discussion.</p>
+<p>The term “Deliverables” is used here to refer to the things requested in the assignment narrative. The deliverables section is simply a concise presentation of the deliverables, based upon the preceding results and discussion.</p>
+<p>This is a <em>suggested</em> workflow, not a required one. Readers may adapt it however they choose, or ignore it completely. It has not been described at length, but upon progression through the examples in the following chapters, the purpose and content of the five sections should become evident.</p>
+</section>
+<section id="sec-ch5_qual_analysis" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="sec-ch5_qual_analysis"><span class="header-section-number">5.4</span> Qualitative Reactor Analysis</h2>
+<p>Qualitative analysis focuses upon how composition and temperature vary as reactions progress, but not on the magnitude of the variations. In batch reactors the time during which reactions occur is measured using clock time. The total reaction time is the difference between the clock time when the reaction starts and the clock time when it ends. It is customary to define an elapsed time, <span class="math inline">\(t\)</span>, as being equal to zero when the reaction starts, in which case the total reaction time is equal to the elapsed time when the reaction stops.</p>
+<p>In continuous flow systems, the time during which reactions occur is equal to the amount of time that the reagents spend in the reactor. One measure of the time reagents spend in the reactor is the space time, <span class="math inline">\(\tau\)</span>, defined in <a href="#eq-space_time" class="quarto-xref">Equation&nbsp;<span>5.7</span></a>. For flow reactors, the mixing of the reacting fluid while it is in the reactor is also critical to a physical understanding of reactor performance. That aspect of qualitative analysis is considered in the chapters on ideal flow reactors. This chapter focuses on the variation of concentrations and temperatures as functions of reaction time or space time. <span id="eq-space_time"><span class="math display">\[
+\tau = \frac{V}{\dot{V}_{in}}
+\tag{5.7}\]</span></span></p>
+<p>Because the analysis is qualitative, the rate expression is not used directly. Instead, the general behavior of reactions must be used, noting that for a typical reaction, holding all other conditions constant,</p>
+<ul>
+<li>the rate will increase if the temperature of the reacting system is increased,</li>
+<li>the rate will decrease if the concentration of one or more reactants decreases,</li>
+<li>the rate is not strongly affected by the concentration of the products if the reaction is irreversible,</li>
+<li>the rate decreases as the concentration of the products increases if the reaction is reversible,</li>
+<li>the equilibrium constant decreases as the temperature increases if the reaction is exothermic, and</li>
+<li>the equilibrium constant increases as the temperature increases if the reaction is endothermic.</li>
+</ul>
+<p>Of course, not all reactions behave “typically.” The qualitative analysis methodology presented here also can be applied to atypical reactions if the general behavior above is appropriately adjusted. Atypical behavior can often be recognized by examining the rate expression, if it is available. For example, if the rate increases as the concentration of a <em>product</em> increases, the reaction is said to be autocatalytic, and the qualitative behavior can be adjusted accordingly. It is important to note, however, that as a reaction with atypical kinetics approaches thermodynamic equilibrium, it will asymptotically approach “typical” behavior.</p>
+<p>The goal of qualitative analysis is to use understanding of physical effects to predict how the concentrations of reagents and the temperature vary as a function of reaction time or space time. This is easiest and most reliable when only one reaction is taking place in a reactor that operates either adiabatically or isothermally. When only one exothermic reaction is taking place adiabatically, the temperature will rise continually since the reaction is releasing heat, and that heat is not being removed. Similarly, when only one endothermic reaction takes place adiabatically, the temperature will drop continually. When a reactor operates isothermally, the temperature does not change as the reaction proceeds and does not need to be considered. When a reactor is neither adiabatic nor isothermal, qualitative analysis can be more difficult with greater uncertainty in the results.</p>
+<p>Plots of a reagent’s concentration or of the temperature versus reaction time will begin at a reaction time of zero. At time zero, the concentration or temperature will be located either at the orign or on the positive y-axis. The initial slope and curvature, and any changes in slope or curvature will depend upon the system being analyzed. Nonetheless, as the reaction approaches completion the curves must either be decreasing with a concave upward curvature or increasing with a concave downward shape as illustraed in <a href="#fig-ch5_final_shape" class="quarto-xref">Figure&nbsp;<span>5.1</span></a>. It can be seen that in both cases the quantity being plotted asymptotically approaches its final value. The goal of qualitative analysis, then, is to predict the shape of the curves between the y-axis and the point where they attain one of those two shapes.</p>
+<div id="fig-ch5_final_shape" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ch5_final_shape-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/concave_up_and_down.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ch5_final_shape-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.1: As a reaction approaches completion, a plot of a reagent’s concentration or of the temperature as a function of reaction time must either be decreasing with a concave upward shape (blue) or increasing with a concave downward shape (orange).
+</figcaption>
+</figure>
+</div>
+<p>The slope and shape plots of concentration or temperature change when the reaction rate changes. Important variables for a qualitative analysis are those that affect the reaction rate. If the reactions are irreversible, then only the concentrations of reactants are important, but if they are reversible, the concentrations of both reactants and products may be important. Similarly, if the reactor operates isothermally, then temperature is not important, but if the reactor is adiabatic or otherwise non-isothermal, the temperature is important.</p>
+<p>To begin a qualitative analysis, a set of axes is drawn to plot each important variable versus reaction time. Often it is also useful to draw a set of axes to plot reaction rate versus reaction time, too. Then the initial values of the important variables are plotted as points on their respective y-axes. The axes need not have a scale, and as such, plotted values only need to indicate whether the quantity is initially large, intermediate, small, or zero in value.</p>
+<p>Next, the initial rate of each reaction is determined to be either positive (if every reactant concentration is initially non-zero) or zero (if any reactant concentration is initially zero). The initial rates of the reactions determine the initial slopes of the concentration vs.&nbsp;time and temperature vs.&nbsp;time curves. Specifically curves for concentrations of reactants will have negative initial slopes, and curves for concentrations of products will have positive initial slopes. If a reagent is a reactant in one reaction and a product in another, its initial slope will depend on the relative rates of the two reactions. That may not be known, and it may be necessary to consider both possibilities. The initial slope of the temperature vs.&nbsp;time curve will be positive if the reaction is exothermic and negative if it is endothermic.</p>
+<p>To determine the initial curvature of the graphs, the values of the important variables after a very small interval of time are considered. The critical questions are whether each of the reaction rates at the end of the interval will be larger or smaller than their initial values. That then determines whether the change in each important varible during the next small interval of time will be greater than, equal to, or less than the change during the first small interval of time. So, for example, if an important variable decreased during the first interval and it will decrease more during the next interval, then initially that variable will be decreasing with a concave downward shape. If it will decrease less during the next interval, then initially that variable will be decreasing with a concave upward shape. If it will decrease by the same amount during the next interval, then there will be no curvature (i. e. it will be a straight line) at least for some initial period of time. Similarly, if an important variable increases more during the second interval than during the first, it is increasing with a concave upward shape, and if it increases less during the second interval than during the first, it is increasing with a concave downward shape.</p>
+<p>That may complete the qualitative analysis if the curves are all either decreasing with a concave upward shape or increasing with a concave downward shape as shown in <a href="#fig-ch5_final_shape" class="quarto-xref">Figure&nbsp;<span>5.1</span></a>. If not, it is necessary to infer what must happen to get to either of those shapes (i. e. pass through an inflection point, minimum, maximum, etc.), and explain why that happens on a physical basis.</p>
+<p>In <em>Reaction Engineering Basics</em>, qualitative analyses of this type often will be used in the discussion of the results of a quantitative analysis. In that context, qualitative analysis can be used to answer the question, “Do these results make sense?” or “Why does that graph have that shape?” Additionally, performing a qualitative analysis after the quantitative analysis helps new reaction engineers develop a physical understanding of results that complements the mathematical understanding obtained in quantitative analysis. As a reaction engineer gains experience and develops the necessary skills and understanding, qualitative analysis can often provide insight and guidance before beginning an assignment. This is particularly true for reactor design tasks like those described above.</p>
+</section>
+<section id="sec-ch5_learning_objectives" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="sec-ch5_learning_objectives"><span class="header-section-number">5.5</span> Learning Objectives and Examples</h2>
+<p>Upon completion of this chapter, readers should</p>
+<ul>
+<li>know the definition/defining equation for steady-state/transient/isothermal/adiabatic/non-isothermal/isobaric/isochoric reactor operation, sensible/latent heat, and response/optimization/design/parameter estimation tasks</li>
+<li>be able to qualitatively describe how composition, temperature, and related quantities evolve with reaction time, given appropriate information about rate expressions, reaction exothermicity, and reactor heat exchange</li>
+</ul>
+<p>Qualitative analyses will be used in subsequent chapters to provide a physical interpretation of the results of quantitative analyses. Here two examples of the second learning objective are provided. The first illustrates analysis of a single reaction where both compositional and thermal effects are important. The second involves two reactions in series where thermal effects are not significant.</p>
+<section id="sec-ch5_ex1" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="sec-ch5_ex1"><span class="header-section-number">5.5.1</span> Qualitative Analysis of a Reversible, Exothermic Reaction</h3>
+<p>Consider the typical reaction, A → Z, which is irreversible and exothermic. Suppose that reaction is run in an adiabatic reactor starting with pure A. Sketch the concentration of A, and the temperature versus reaction time. Describe the shape of each graph noting slopes, curvature, inflection points, etc. Then explain the shape on a physical basis.</p>
+<hr>
+<center>
+<strong>Analysis and Discussion</strong>
+</center>
+<p>Generally the reaction rate is affected by composition and temperature. Here the reaction is irreversible and the kinetics are typical, so the only important concentration is that of the reactant, A. The reaction is exothermic and the reactor is adiabatic, so the temperature will increase due to reaction, and consequently the temperature is also important.</p>
+<p>At the start of the reaction, the concentration of A and the temperature will both have positive values. The corresponding rate will be positive, so initially the concentration of A is decreasing because it is a reactant, and the temperature is increasing because the reaction is exothermic and the reactor is adiabatic.</p>
+<p>So after a very brief interval of time, the concentration of A will have decreased and the temperature will have increased. The curvature of the reactant concentration vs.&nbsp;time and temperature vs.&nbsp;time graphs will depend upon whether the reaction rate at the end of the small interval of time is greater of less than the initial rate. However, the decrease in reactant concentration and the increase in temperature have opposing effects on the rate. Decreasing reactant concentration decreases the composition term in the rate expression while increasing the temperature increases the rate through the Arrhenius term.</p>
+<p>In a qualitative analysis it isn’t possible to know whether the concentration decrease will have the greater effect leading to a rate decrease or whether the temperature increase will have the greater effect leading to a rate increase. Both possibilities must be considered.</p>
+<p>If the decrease in reactant concentration predominates over the increase in temperature the rate will decrease. That means that the concentration of A will decrease less during the next brief interval of time so that initially (over these brief time intervals) the concentration of A is decreasing with a concave upward shape. At the same time, the temperature will increase less during the second brief interval than during the first, so initially the temperature is increasing with a concave downward shape. These trends can continue for as long as required until eventually both the concentration and the temperature will asymptotically approach constant values as shown in <a href="#fig-ch5_ex1_conc_profile_r_decreasing" class="quarto-xref">Figure&nbsp;<span>5.2</span></a>.</p>
+<div id="fig-ch5_ex1_conc_profile_r_decreasing" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ch5_ex1_conc_profile_r_decreasing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="solutions/ch5_ex1/example_5_5_1_conc_profile_when_r_decreasing.png" class="img-fluid figure-img"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./solutions/ch5_ex1/example_5_5_1_temp_profile_when_r_decreasing.png" class="img-fluid figure-img"></p>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ch5_ex1_conc_profile_r_decreasing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.2: Concentration (left) and temperature (right) profiles during the adiabatic conversion of A to Z under conditions where the concentration dependence of the rate predominates over the temperature dependence.
+</figcaption>
+</figure>
+</div>
+<p>The other possibility is that the increase in temperature predominates over the decrease in reactant concentration and the rate increases. In this case the concentration initially decreases with a concave downward shape and the temperature initially increases with a concave upward shape. This can be seen at lower times in the concentration and temperature profiles shown in <a href="#fig-ch5_ex1_conc_profile_r_increasing" class="quarto-xref">Figure&nbsp;<span>5.3</span></a>. Those trends cannot continue indefinitely because they would lead an infinite negative concentration and an infinite positive temperature. Very clearly, and as shown in the figure, the curves must pass through an inflection point where their curvatures invert. The trends after the inflection point can continue for as long as required until eventually both the concentration and the temperature will asymptotically approach constant values.</p>
+<div id="fig-ch5_ex1_conc_profile_r_increasing" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ch5_ex1_conc_profile_r_increasing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="solutions/ch5_ex1/example_5_5_1_full_conc_profile.png" class="img-fluid figure-img"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="./solutions/ch5_ex1/example_5_5_1_full_temp_profile.png" class="img-fluid figure-img"></p>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ch5_ex1_conc_profile_r_increasing-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.3: Concentration (left) and temperature (right) profiles during the adiabatic conversion of A to Z under conditions where the temperature dependence of the rate initially predominates over the concentration dependence.
+</figcaption>
+</figure>
+</div>
+<p>The physical reason for the inflection point can be understood by considering the rate as a function of reaction time, shown in <a href="#fig-ch5_ex1_rate_profile" class="quarto-xref">Figure&nbsp;<span>5.4</span></a>. Initially the increase in temperature predominates over the decrease in reactant concentration and the rate increases. That cannot continue indefinitely, however, because eventually the reactant will run out and at which point the rate must equal zero. So as the reaction proceeds, the temperature effect becomes less and less predominant until a point is reached where the effects of the decreasing concentration and increasing temperature become equal. At that point, the rate reaches a maximum. The reaction time where the maximum rate occurs coincides with the times where the inflection points occur in the concentration and temperature profiles (<a href="#fig-ch5_ex1_conc_profile_r_increasing" class="quarto-xref">Figure&nbsp;<span>5.3</span></a>). At times beyond that point, the concentration term predominates over the temperature term. From this point on, the analysis is the same as first possibility considered above wherein the concentration term predominated from the start. Specifically the concentration decreases with a concave upward shape, the temperature increases with a concave downward shape, and they both asymptotically approach constant values at sufficiently large reaction times.</p>
+<div id="fig-ch5_ex1_rate_profile" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ch5_ex1_rate_profile-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="solutions/ch5_ex1/example_5_5_1_full_rate_profile.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ch5_ex1_rate_profile-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.4: Rate profile during the adiabatic conversion of A to Z under conditions where the temperature dependence of the rate initially predominates over the concentration dependence.
+</figcaption>
+</figure>
+</div>
+<p>A qualitative analysis is not always conclusive when used to predict the behavior of a system. That was seen here where two possible behaviors were identified depending on whether concentration effects on the rate or temperature effects on the rate predominate initially. In this case, one would expect the heat of reaction to play a significant role in determining which effect predominates. If the heat of reaction was equal to zero, the reaction would become isothermal (no heat released or absorbed) and there would not be a temperature effect. The greater the heat of reaction, then, the more likely that the temperature effect would predominate over the concentration effect. Even though qualitative analysis may not offer a unique prediction of reactor behavior, it can still be extremely helpful for understanding the actual observed behavior of a reactor or the behavior predicted by a quantitative analysis. For example, if a reaction engineer was studying or modeling an reaction system like that considered here, and the engineer observed concentration and temperature profiles like those shown in <a href="#fig-ch5_ex1_conc_profile_r_increasing" class="quarto-xref">Figure&nbsp;<span>5.3</span></a>, the qualitative analysis presented here provides valuable physical insight into why the system performs as it does.</p>
+</section>
+<section id="sec-ch5_ex2" class="level3" data-number="5.5.2">
+<h3 data-number="5.5.2" class="anchored" data-anchor-id="sec-ch5_ex2"><span class="header-section-number">5.5.2</span> Qualitative Analysis of Series Reactions</h3>
+<p>Suppose the irreversible series reactions given in equations (1) and (2) take place in the liquid phase in an isothermal reactor. Only reagent A is present initially, and the kinetics of both reactions are typical. On a single set of axes, sketch the concentrations of A, D, and U versus reaction time. Describe the shape of each curve noting slopes, curvature, inflection points, etc. Then interpret the results in physical terms.</p>
+<p><span class="math display">\[
+A \rightarrow D \tag{1}
+\]</span></p>
+<p><span class="math display">\[
+D \rightarrow U \tag{2}
+\]</span></p>
+<hr>
+<center>
+Analysis and Discussion
+</center>
+<p>Generally the reaction rate is affected by composition and temperature, but the reactor in this system operates isothermally so temperature is not important. The reactions are irreversible and the kinetics are typical, so only the concentrations of the reactants, A and D, are important in terms of the qualitative analysis, but the assignment narrative requests that the concentration of U be included as well.</p>
+<p>It is worth noting that because the rate of reaction (1) depends only on the concentration of A, it will track with it. That is, if at some reaction time the concentration of A is increasing with a concave upward shape, the rate of reaction (1) will also be increasing with a concave upward shape at that point. The same relationship holds between the concentration of D and the rate of reaction (2).</p>
+<p>At the start of the reaction, the concentration of A will have a positive value while the concentrations of both D and U will equal zero. The initial rate of reaction (1) will be positive, but because the initial concentration of D is zero, the initial rate of reaction (2) will equal zero. So to summarize, the concentration of A will start with a positive value that is decreasing. The concentration of D will start at zero, and it will be increasing because it is being produced by reaction (1). The concentration of U will start at zero and will not be changing initially because the rate of reaction (2) is zero initially.</p>
+<p>After a very brief interval of time the concentration of A will have decreased due to its participation in reaction (1). At the end of that brief interval, the concentration of A will be smaller than its initial value, and since the rate of reaction (2) tracks with the concentration of A, the rate of reaction (1) will be smaller than the its initial rate. Consequently, at the start of the next brief interval of time, the rate of reaction 1 will be smaller than at the start of the first interval, and therefore, the concentration of A will decrease by less during the second interval than it did during the first interval. In other words, the concentration of A will initially decrease with a shape that is concave upward. This trend can continue for as long as required until eventually the concentration of A will asymptotically approach zero as shown in <a href="#fig-ch5_series_conc_profiles" class="quarto-xref">Figure&nbsp;<span>5.5</span></a>.</p>
+<div id="fig-ch5_series_conc_profiles" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ch5_series_conc_profiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="solutions/ch5_ex2/example_5_5_2_concentration_profiles.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ch5_series_conc_profiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.5: Concentrations of A, D, and U as functions of reaction time.
+</figcaption>
+</figure>
+</div>
+<p>Since the rate of reaction (1) tracks with the concentration of A, the rate of reaction (1) decreases continuously by smaller and smaller amounts. The concentration of D, and hence the rate of reaction (2) starts at zero. So during the first very brief interval of time, the concentration of D will increase because it is being produced by reaction (1) and not being consumed by reaction (2). At the start of the next brief interval of time, less D will be generated by reaction (1) due to its decreasing rate, and more will be consumed by reaction (2), due to its increasing rate. The net effect is that the concentration of D will increase during the second time interval, but by less than during the first interval.</p>
+<p>In other words, the concentration of D initially will be increasing from zero with a curvature that is concave downward. The concentration of D cannot continue to increase indefinitely because eventually all of the D must be converted to U. Instead, the concentration of D must pass through a maximum where it changes from increasing to decreasing. In addition, it must pass through an inflection point where its shape changes from being concave downward to concave upward. That trend can then continue for as long as required until eventually the concentration of D asymptotically approaches zero as shown in <a href="#fig-ch5_series_conc_profiles" class="quarto-xref">Figure&nbsp;<span>5.5</span></a>.</p>
+<p>The physical reason for the maximum in the concentration of D can be understood by considering how the rates vary over time. During the period where the concentration of D is increasing with a concave downward curvature, the rate of reaction (2) is greater than the rate of reaction (1), but the difference is getting smaller and smaller leading to the concave downward curvature. The maximum in the concentration of D occurs at the reaction time where the two rates become equal. This is consistent with the change in the concentration of U which is only produced by reaction (2). Up to the time where D reaches a maximum. the rate of reaction (2), which tracks the concentration of D, is increasing, so the concentration of U increases by larger and larger amounts. It starts at zero and increases with a concave up curvature up to the time where D reaches a maximum. Beyond the maximum, the rate of reaction (2) is decreasing, so the concentration of U increases by smaller and smaller amounts. That is, at the point where D reaches a maximum and the rates of reactions (1) and (2) become equal, the concentration of U passes through an inflection point. After that, the concentration of U is increasing with a concave downward curvature. That trend can continue for as long as required until eventually the concentration of U asymptotically approaches the initial concentration of A as shown in <a href="#fig-ch5_series_conc_profiles" class="quarto-xref">Figure&nbsp;<span>5.5</span></a>. (It approaches the initial concentration of A due to the one-to-one stoichiometry an irreversibility of the reactions.)</p>
+<p>It remains to provide the physical reason for the change in the shape of the curve for the concentration of D from concave down to concave up after the maximum in the D concentration. The reason is more subtle, and cannot be seen directly in <a href="#fig-ch5_series_conc_profiles" class="quarto-xref">Figure&nbsp;<span>5.5</span></a>. The concentrations in <a href="#fig-ch5_series_conc_profiles" class="quarto-xref">Figure&nbsp;<span>5.5</span></a> correspond to reaction rates that become equal when the concentration of D reaches its maximum value as shown in <a href="#fig-ch5_series_rate_profiles" class="quarto-xref">Figure&nbsp;<span>5.6</span></a>.</p>
+<div id="fig-ch5_series_rate_profiles" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ch5_series_rate_profiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="solutions/ch5_ex2/example_5_5_2_rate_profiles.png" class="img-fluid figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ch5_series_rate_profiles-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5.6: Rates of reactions (1) and (2) as functions of reaction time.
+</figcaption>
+</figure>
+</div>
+<p>Immediately after the maximum, the curve for the concentration of D remains concave down because the rate of reaction (1) is decreasing faster than the rate of reaction (2). This is evidenced in <a href="#fig-ch5_series_rate_profiles" class="quarto-xref">Figure&nbsp;<span>5.6</span></a> by the widening gap between the two rates just after the maximum. However as reactant A approaches complete conversion, the rate of reaction (1) decreases more slowly. At some point the two reaction rates decrease at equal rates, corresponding to the inflection point. This is the point in <a href="#fig-ch5_series_rate_profiles" class="quarto-xref">Figure&nbsp;<span>5.6</span></a> where the gap between the two rates is greatest. After that, the rate of reaction (2) decreases faster than the rate of reaction 1, and the curve becomes concave up.</p>
+</section>
+</section>
+<section id="symbols-used-in-sec-ch5" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="symbols-used-in-sec-ch5"><span class="header-section-number">5.6</span> Symbols Used in <a href="#sec-ch5" class="quarto-xref"><span>Chapter 5</span></a></h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\tilde{C}_p\)</span></td>
+<td style="text-align: left;">Mass-specific heat capacity of a fluid.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\breve{C}_p\)</span></td>
+<td style="text-align: left;">Volume-specific heat capacity of a fluid.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\hat{C}_p\)</span></td>
+<td style="text-align: left;">Molar heat capacity of a fluid.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(ex\)</span></td>
+<td style="text-align: left;">Subscript denoting a property of the heat exchange fluid.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(in\)</span></td>
+<td style="text-align: left;">Subscript denoting a property of an inlet stream.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{m}\)</span></td>
+<td style="text-align: left;">Mass flow rate of a fluid.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(M\)</span></td>
+<td style="text-align: left;">Molecular weight.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\dot{Q}\)</span></td>
+<td style="text-align: left;">Rate of heat transfer from the exchange fluid to the reacting fluid.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(t\)</span></td>
+<td style="text-align: left;">Elapsed time.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: left;">Temperature of a fluid.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\rho\)</span></td>
+<td style="text-align: left;">Density of a fluid.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(V\)</span></td>
+<td style="text-align: left;">Volume of a fluid.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\dot{V}\)</span></td>
+<td style="text-align: left;">Volumetric flow rate of a fluid.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\Delta H_{\text{latent}}^0\)</span></td>
+<td style="text-align: left;">Molar latent heat of a fluid.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\gamma\)</span></td>
+<td style="text-align: left;">Vapor fraction of a fluid.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\tau\)</span></td>
+<td style="text-align: left;">Space time of a flow reactor.</td>
+</tr>
+</tbody>
+</table>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./mech_rate_expressions.html" class="pagination-link" aria-label="Mechanistic Rate Expressions">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Mechanistic Rate Expressions</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./cstr_analysis.html" class="pagination-link" aria-label="CSTR Analysis">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">CSTR Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
