@@ -1,6 +1,6 @@
 # Reactor Design Equations {#sec-apxc}
 
-Reaction engineering analysis requires models for reactors. This appendix derives model equations used in *Reaction Engineering Basics.* It begins with equations for modeling heat exchange in reactors, because those equations can be included in the design equations for any of the ideal reactors. Next the mole and energy balances are derived for ideal batch, semi-batch and continuous stirred tanks and for ideal plug flow reactors. Finally, the model equations for the ideal plug flow reactor are modified to allow for mixing in the axial direction.
+Reaction engineering analysis requires models for reactors. This appendix derives model equations used in *Reaction Engineering Basics.* It begins with equations for modeling heat exchange in reactors, because those equations can be included in the design equations for any of the ideal reactors. Next the mole and energy balances are derived for stirred tank reactors (continuous, batch, and semi-batch) and for ideal plug flow reactors. Finally, the model equations for the ideal plug flow reactor are modified to allow for mixing in the axial direction.
 
 ## Reactor Heat Exchange{#sec-apndx_heat_exch}
 
@@ -12,16 +12,16 @@ There are many different system geometries and heat exchanger types that can be 
 
 ::: {#fig-heat-exch-stirred layout-ncol=3}
 
-![Batch](./Graphics/bstr_non_adiabatic.png){#fig-heat-exch-batch}
+![Batch](./graphics/bstr_non_adiabatic.png){#fig-heat-exch-batch}
 
-![Semi-Batch](./Graphics/sbstr_non_adiabatic.png){#fig-heat-exch-semi}
+![Semi-Batch](./graphics/sbstr_non_adiabatic.png){#fig-heat-exch-semi}
 
-![Continuous](./Graphics/cstr_non_adiabatic.png){#fig-heat-exch-cstr}
+![Continuous](./graphics/cstr_non_adiabatic.png){#fig-heat-exch-cstr}
 
 Stirred Tank Heat Exchange
 :::
 
-![Tubular Reactor with Heat Exchange](./Graphics/pfr_non_adiabatic.png){#fig-heat-exch-tube}
+![Tubular Reactor with Heat Exchange](./graphics/pfr_non_adiabatic.png){#fig-heat-exch-tube}
 
 The inputs, outputs and flow patterns on the reaction side differ for each of the four reactors shown in [Figures -@fig-heat-exch-stirred] and [-@fig-heat-exch-tube]. However, the inputs, outputs and flow pattern on the shell/jacket sides of the four reactors are identical. Consequently, the mass balance and the energy balance on the heat exchange fluid is the same for all four reactors.
 
@@ -77,9 +77,213 @@ $$ {#eq-heat-trans-rate-tube}
 
 As is the case for steady-state CSTR, when a tubular reactor operates at steady state, the derivative in either of the energy balances, @eq-ext_fluid_energy_bal_sens or @eq-ext_fluid_energy_bal_latent, is equal to zero.
 
+## CSTR Mole and Energy Balances{#sec-apxc_CSTR_balances}
+
+Three types of stirred tank reactors are considered in *Reaction Engineering Basics.* Continuous stirred tank reactors (CSTRs) are distinctive in that fluid flows into **and** out of CSTRs. The CSTR model makes the following assumptions.
+
+* The fluid within the system is perfectly mixed.
+* Reagents continuously flow into and out of the system as it operates.
+
+During the derivation of the forms of the CSTR mole and energy balances used in *Reaction Engineering Basics*, the following additional assumptions are made.
+
+* Kinetic energy terms and gravitational potential energy terms are negligible.
+* Pressure variation associated with the hydrostatic head can be ignored.
+* Reaction rates are normalized per fluid volume.
+* Exchange of energy with the surroundings takes the form of heat or mechanical work associated with shafts, moving boundaries, etc.
+* The fluid mixture is ideal.
+    * Both $\Delta H$ and $\Delta V$ of mixing are zero.
+* No phase changes occur within the system while the reactions are taking place nor upon entering the system.
+
+### The CSTR Mole Balance
+
+The system being modeled is the volume of the fluid within the reactor at any instant in time. The derivation of the CSTR mole balance begins with a general balance equation written for the moles of any one species, $i$, present in that system.
+
+$$\text{Input Rate} + \text{Generation Rate} = \text{Output Rate} + \text{Accumulation Rate}$$
+
+The Input Rate and Output Rate terms are straightforward.
+
+$$\text{Input Rate} = \dot n_{i,in}$$
+
+$$\text{Output Rate} = \dot n_{i,out}$$
+
+The Generation Rate is the same as the BSTR and SBSTR.
+
+$$\text{Generation Rate} = V \sum_j \nu_{i,j}r_j$$
+
+The Accumulation Rate term is also the same as the BSTR and SBSTR, but the equation will be easier to work with if the accumulation is expressed in terms of the molar flow rate of $i$, $\dot n_i$, instead of the number of moles of $i$, $n_i$. This can be accomplished by noting that the number of moles is equal to the product of the volume and the concentration, $n_i = C_iV$. With the assumption that the reactor is perfectly mixed, the concentration within the reactor is equal to the concentration leaving the reactor, $C_i = \frac{\dot n_i}{\dot V}$.
+
+$$\text{Accumulation Rate} = \frac{dn_i}{dt} = \frac{d}{dt}\left( \frac{\dot n_iV}{\dot V}  \right)$$
+
+Substitution into the general balance equation yields the CSTR mole balance equation.
+
+$$\dot n_{i,in} + V \sum_j \nu_{i,j}r_j = \dot n_{i,out} + \frac{d}{dt}\left( \frac{\dot n_iV}{\dot V}  \right)$$
+
+This equation can be rearranged to put the derivative on one side of the equation and the remaining terms on the other.
+
+$$\frac{d}{dt}\left( \frac{\dot n_iV}{\dot V}  \right) = \dot n_{i,in} - \dot n_{i,out} + V \sum_j \nu_{i,j}r_j$$
+
+Applying the chain rule for differentiation then yields the desired form of the CSTR mole balance equation.
+
+$$\frac{V}{\dot V}\frac{d \dot n_i}{dt} + \frac{\dot n_i}{\dot V}\frac{dV}{dt} - \frac{\dot n_iV}{\dot V^2}\frac{d \dot V}{dt} = \dot n_{i,in} - \dot n_{i,out} + V \sum_j \nu_{i,j}r_j$$
+
+### The CSTR Energy Balance
+
+The CSTR energy balance begins with a general balance equation written for energy at any one instant of time during the operation of the reactor.
+
+$$\text{Input Rate} + \text{Generation Rate} = \text{Output Rate} + \text{Accumulation Rate}$$
+
+The Input Rate and Generation Rate are the same as the SBSTR.
+
+$$\text{Input Rate} = \dot Q + P\dot V_{in} + \sum_i \dot n_{i,in}\hat u_{i,in}$$
+
+$$\text{Generation Rate} = 0$$
+
+The Output Rate includes the shaft work term that appears in the BSTR and SBSTR and adds flow work and internal energy of the fluid leaving the reactor that are analogous to the input terms.
+
+$$\text{Output Rate} = \dot W + P\dot{V}_{out} + \sum_i \dot n_{i,out}\hat u_{i,out}$$
+
+The Accumulation Rate term is the same as a BSTR or SBSTR, but it is convient to express it in terms of the molar flow rate, $\dot n_{i,out}$, instead of the moles, $n_i$. This is accomplished in the same way as in the CSTR mole balance.
+
+$$\text{Accumulation Rate} = \frac{d}{dt}\left(  \sum_i n_i \hat u_i \right) = \frac{d}{dt}\left(  \sum_i \frac{\dot n_{i,out} \hat u_{i,out}V}{\dot{V}_{out}} \right)$$
+
+Substituting into the general balance equation yields a form of the CSTR energy balance expressed in terms of specific internal energies.
+
+$$\dot Q + P\dot V_{in} + \sum_i \dot n_{i,in}\hat u_{i,in} = \dot W + P\dot{V}_{out} + \sum_i \dot n_{i,out}\hat u_{i,out} + \frac{d}{dt}\left(  \sum_i \frac{\dot n_{i,out} \hat u_{i,out}V}{\dot{V}_{out}} \right)$$
+
+With the assumption that the fluid is an ideal mixture, i. e. no $\Delta V$ of mixing, the volumetric flow rates in the second and fifth terms are equal to the sums of the molar flow rates times the molar specific volumes.
+
+$$
+\begin{split}\dot Q + P\sum_i\left(  \dot n_{i,in}\hat V_{i,in} \right) + \sum_i \dot n_{i,in}\hat u_{i,in} &= \dot W + P\sum_i\left(  \dot n_{i,out}\hat V_{i,out} \right) + \sum_i \dot n_{i,out}\hat u_{i,out} \\&+ \frac{d}{dt}\left(  \sum_i \frac{\dot n_{i,out} \hat u_{i,out}V}{\dot{V}_{out}} \right)
+\end{split}
+$$
+
+The second and third summations and the fifth and sixth summations can each be combined.
+
+$$\dot Q + \sum_i\left(\dot n_{i,in}\left( P \hat V_{i,in} + \hat u_{i,in} \right)\right) = \dot W + \sum_i\left(  \dot n_{i,out}\left(P\hat V_{i,out}  + \hat u_{i,out} \right) \right) + \frac{d}{dt}\left(  \sum_i \frac{\dot n_{i,out} \hat u_{i,out}V}{\dot{V}_{out}} \right)$$
+
+The specific energy can be expressed in terms of the specific enthalpy and specific volume, $\hat u_{i,in} + P\hat V_{i,in} = \hat h_{i,in}$ and $\hat u_{i,out} + P\hat V_{i,out} = \hat h_{i,out}$.
+
+$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i \dot n_{i,out} \hat h_{i,out}   + \frac{d}{dt}\left(  \sum_i \frac{\dot n_{i,out} \hat u_{i,out}V}{\dot{V}_{out}} \right)$$
+
+Similarly, the specific internal energy in the last term can be expressed in terms of the specific enthalpy and volume.
+
+$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out}   + \frac{d}{dt}\left(  \sum_i \left( \hat h_{i,out} - P\hat V_{i,out}  \right)\frac{\dot n_{i,out} V}{\dot{V}_{out}} \right)$$
+
+The distributive property of multiplication can be applied to the last term.
+
+$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} + \frac{d}{dt}  \sum_i \left( \frac{\dot n_{i,out}\hat h_{i,out} V}{\dot{V}_{out}} - \frac{\dot n_{i,out} VP\hat V_{i,out}}{\dot{V}_{out}}  \right)$$
+
+The last term can be split into two terms.
+
+$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} + \frac{d}{dt}  \sum_i \left( \frac{\dot n_{i,out}\hat h_{i,out} V}{\dot{V}_{out}}  \right) - \frac{d}{dt}  \sum_i \left( \frac{\dot n_{i,out} VP\hat V_{i,out}}{\dot{V}_{out}}  \right)$$
+
+Then $\frac{PV}{\dot{V}_{out}}$ can be factored out of the final summation.
+
+$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} + \frac{d}{dt}  \sum_i \left( \frac{\dot n_{i,out}\hat h_{i,out} V}{\dot{V}_{out}}  \right) - \frac{d}{dt} \left(\frac{PV}{\dot{V}_{out}} \sum_i \left(\dot n_{i,out} \hat V_{i,out} \right)\right)$$
+
+With the assumption that the mixture is ideal $\left(\sum_i \left(\dot n_{i,out} \hat V_{i,out} \right) = \dot{V}_{out}\right)$, the final term can be simplified.
+
+$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out}   + \frac{d}{dt}  \sum_i \left( \frac{\dot n_{i,out}\hat h_{i,out} V}{\dot{V}_{out}}  \right) - \frac{d}{dt} \left( PV\right)$$
+
+The chain rule can be applied to the fifth term.
+
+$$
+\begin{split}
+\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i \dot n_{i,out} \hat h_{i,out} \\&+ \sum_i \hat h_{i,out}\frac{d}{dt}\left( \frac{\dot n_{i,out} V}{\dot{V}_{out}}  \right) +   \sum_i \left( \frac{\dot n_{i,out} V}{\dot{V}_{out}}  \right)\frac{d\hat h_{i,out}}{dt} - \frac{d}{dt} \left( PV\right)
+\end{split}
+$$
+
+With the assumption of no phase changes, changes in enthalpy only involve sensible heat and the time derivative of the specific enthalpy can be expressed in terms of the heat capacity and the temperature.
+
+$$
+\begin{split}
+\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} \\&+ \sum_i \hat h_{i,out}\left[\frac{d}{dt}\left( \frac{\dot n_{i,out} V}{\dot{V}_{out}}  \right)\right] +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right)
+\end{split}
+$$
+
+The term containing square brackets can be moved to the end of the equation.
+
+$$
+\begin{split}
+\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ \sum_i \hat h_{i,out}\left[\frac{d}{dt}\left( \frac{\dot n_{i,out} V}{\dot{V}_{out}}  \right)\right]
+\end{split}
+$$
+
+The chain rule can be applied to the term containing square brackets.
+
+$$
+\begin{split}
+\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ \sum_i \hat h_{i,out}\left[\frac{V}{\dot{V}_{out}}\frac{d \dot n_{i,out}}{dt} + \frac{\dot n_{i,out}}{\dot{V}_{out}}\frac{dV}{dt} - \frac{\dot n_{i,out}V}{\dot{V}_{out}^2}\frac{d \dot{V}_{out}}{dt}\right]
+\end{split}
+$$
+
+The term in the square brackets is equal to one side of the CSTR mole balance. The other side of the CSTR mole balance can be substituted in its place.
+
+$$
+\begin{split}
+\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ \sum_i \hat h_{i,out}\left[\dot n_{i,in} - \dot n_{i,out} + V \sum_j \nu_{i,j}r_j\right]
+\end{split}
+$$
+
+The distributive property of multiplication can be applied to the term with the square brackets.
+
+$$
+\begin{split}
+\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ \sum_i \hat h_{i,out}\dot n_{i,in} - \sum_i \hat h_{i,out}\dot n_{i,out} + V\sum_i \hat h_{i,out} \sum_j \nu_{i,j}r_j
+\end{split}
+$$
+
+The first term on the second line can be moved to the other side of the equation, and two other terms cancel out.
+
+$$
+\begin{split}
+\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} - \sum_i \hat h_{i,out}\dot n_{i,in} &= \dot W + \cancel{\sum_i  \dot n_{i,out} \hat h_{i,out}} +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} \\&- \frac{d}{dt} \left( PV\right)   - \cancel{\sum_i \hat h_{i,out}\dot n_{i,out}} + \sum_i \hat h_{i,out}V \sum_j \nu_{i,j}r_j
+\end{split}
+$$
+
+The second and third terms can be combined.
+
+$$
+\begin{split}
+\dot Q + \sum_i\dot n_{i,in} \left( \hat h_{i,in} - \hat h_{i,out} \right) &= \dot W + \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ V\sum_i \hat h_{i,out} \sum_j \nu_{i,j}r_j
+\end{split}
+$$
+
+The distributive property of multiplication can be applied to the last term.
+
+$$
+\begin{split}
+\dot Q + \sum_i\dot n_{i,in} \left( \hat h_{i,in} - \hat h_{i,out} \right) &= \dot W + \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ V\sum_i  \sum_j \hat h_{i,out}\nu_{i,j}r_j
+\end{split}
+$$
+
+The order of the sums in the last term can be switched and $r_j$ can be factored out of the inner summation.
+
+$$
+\begin{split}
+\dot Q + \sum_i\dot n_{i,in} \left( \hat h_{i,in} - \hat h_{i,out} \right) &= \dot W + \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ V\sum_j r_j \sum_i \hat h_{i,out}\nu_{i,j}
+\end{split}
+$$
+
+With the assumption of no phase changes, the specific enthalpy difference in the second term can be expressed in terms of the heat capacity and temperature, and with the assumption that the fluid is an ideal mixture (no $\Delta H$ of mixing), the final summation is simply equal to the heat of reaction $j$.
+
+$$\dot Q - \sum_i\dot n_{i,in} \int_{T_{in}}^{T_{out}} \hat C_{p,i}dT = \dot W + \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) + V\sum_j r_j \Delta H_j$$
+
+The derivatives can be moved to one side of the equation.
+
+$$\sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) = \dot Q - \dot W - \sum_i\dot n_{i,in} \int_{T_{in}}^{T_{out}} \hat C_{p,i}dT - V\sum_j r_j \Delta H_j$$
+
+Finally, $V$ and $\dot V$ can be factored out of the first term and the chain rule can be applied to the second term, yielding the desired form of the CSTR energy balance.
+
+$$
+\begin{split}
+\frac{V}{\dot{V}_{out}}\sum_i \left( \dot n_{i,out} \hat C_{p,i}  \right)\frac{dT_{out}}{dt} - P\frac{dV}{dt} - V \frac{dP}{dt} &= \dot Q - \dot W - \sum_i\dot n_{i,in} \int_{T_{in}}^{T_{out}} \hat C_{p,i}dT \\&- V\sum_j r_j \Delta H_j
+\end{split}
+$$
+
 ## BSTR Mole and Energy Balances{#sec-apxc_BSTR_balances}
 
-The BSTR model makes the following assumptions.
+In contrast to CSTRs, there is no reacting fluid flow into or from a batch stirred tank reactor (BSTR). The BSTR model makes the following assumptions.
 
 * The fluid within the system is perfectly mixed.
 * Mass neither enters nor leaves the system while the reactions are taking place.
@@ -373,210 +577,6 @@ $$
 \sum_i \left( n_i \hat C_{p,i}\right) \frac{dT}{dt} -V\frac{dP}{dt} - P\frac{dV}{dt} = \dot Q - \dot W - \sum_i \dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT  - V\sum_j r_j \Delta H_j
 $$
 
-## CSTR Mole and Energy Balances{#sec-apxc_CSTR_balances}
-
-CSTRs are another variant on a perfectly mixed reactor. They differ from BSTRs and SBSTRs in that fluid flows into **and** out of CSTRs. The CSTR model makes the following assumptions.
-
-* The fluid within the system is perfectly mixed.
-* Reagents continuously flow into and out of the system as it operates.
-
-During the derivation of the forms of the CSTR mole and energy balances used in *Reaction Engineering Basics*, the following additional assumptions are made.
-
-* Kinetic energy terms and gravitational potential energy terms are negligible.
-* Pressure variation associated with the hydrostatic head can be ignored.
-* Reaction rates are normalized per fluid volume.
-* Exchange of energy with the surroundings takes the form of heat or mechanical work associated with shafts, moving boundaries, etc.
-* The fluid mixture is ideal.
-    * Both $\Delta H$ and $\Delta V$ of mixing are zero.
-* No phase changes occur within the system while the reactions are taking place nor upon entering the system.
-
-### The CSTR Mole Balance
-
-The system being modeled is the volume of the fluid within the reactor at any instant in time. The derivation of the CSTR mole balance begins with a general balance equation written for the moles of any one species, $i$, present in that system.
-
-$$\text{Input Rate} + \text{Generation Rate} = \text{Output Rate} + \text{Accumulation Rate}$$
-
-The Input Rate and Output Rate terms are straightforward.
-
-$$\text{Input Rate} = \dot n_{i,in}$$
-
-$$\text{Output Rate} = \dot n_{i,out}$$
-
-The Generation Rate is the same as the BSTR and SBSTR.
-
-$$\text{Generation Rate} = V \sum_j \nu_{i,j}r_j$$
-
-The Accumulation Rate term is also the same as the BSTR and SBSTR, but the equation will be easier to work with if the accumulation is expressed in terms of the molar flow rate of $i$, $\dot n_i$, instead of the number of moles of $i$, $n_i$. This can be accomplished by noting that the number of moles is equal to the product of the volume and the concentration, $n_i = C_iV$. With the assumption that the reactor is perfectly mixed, the concentration within the reactor is equal to the concentration leaving the reactor, $C_i = \frac{\dot n_i}{\dot V}$.
-
-$$\text{Accumulation Rate} = \frac{dn_i}{dt} = \frac{d}{dt}\left( \frac{\dot n_iV}{\dot V}  \right)$$
-
-Substitution into the general balance equation yields the CSTR mole balance equation.
-
-$$\dot n_{i,in} + V \sum_j \nu_{i,j}r_j = \dot n_{i,out} + \frac{d}{dt}\left( \frac{\dot n_iV}{\dot V}  \right)$$
-
-This equation can be rearranged to put the derivative on one side of the equation and the remaining terms on the other.
-
-$$\frac{d}{dt}\left( \frac{\dot n_iV}{\dot V}  \right) = \dot n_{i,in} - \dot n_{i,out} + V \sum_j \nu_{i,j}r_j$$
-
-Applying the chain rule for differentiation then yields the desired form of the CSTR mole balance equation.
-
-$$\frac{V}{\dot V}\frac{d \dot n_i}{dt} + \frac{\dot n_i}{\dot V}\frac{dV}{dt} - \frac{\dot n_iV}{\dot V^2}\frac{d \dot V}{dt} = \dot n_{i,in} - \dot n_{i,out} + V \sum_j \nu_{i,j}r_j$$
-
-### The CSTR Energy Balance
-
-The CSTR energy balance begins with a general balance equation written for energy at any one instant of time during the operation of the reactor.
-
-$$\text{Input Rate} + \text{Generation Rate} = \text{Output Rate} + \text{Accumulation Rate}$$
-
-The Input Rate and Generation Rate are the same as the SBSTR.
-
-$$\text{Input Rate} = \dot Q + P\dot V_{in} + \sum_i \dot n_{i,in}\hat u_{i,in}$$
-
-$$\text{Generation Rate} = 0$$
-
-The Output Rate includes the shaft work term that appears in the BSTR and SBSTR and adds flow work and internal energy of the fluid leaving the reactor that are analogous to the input terms.
-
-$$\text{Output Rate} = \dot W + P\dot{V}_{out} + \sum_i \dot n_{i,out}\hat u_{i,out}$$
-
-The Accumulation Rate term is the same as a BSTR or SBSTR, but it is convient to express it in terms of the molar flow rate, $\dot n_{i,out}$, instead of the moles, $n_i$. This is accomplished in the same way as in the CSTR mole balance.
-
-$$\text{Accumulation Rate} = \frac{d}{dt}\left(  \sum_i n_i \hat u_i \right) = \frac{d}{dt}\left(  \sum_i \frac{\dot n_{i,out} \hat u_{i,out}V}{\dot{V}_{out}} \right)$$
-
-Substituting into the general balance equation yields a form of the CSTR energy balance expressed in terms of specific internal energies.
-
-$$\dot Q + P\dot V_{in} + \sum_i \dot n_{i,in}\hat u_{i,in} = \dot W + P\dot{V}_{out} + \sum_i \dot n_{i,out}\hat u_{i,out} + \frac{d}{dt}\left(  \sum_i \frac{\dot n_{i,out} \hat u_{i,out}V}{\dot{V}_{out}} \right)$$
-
-With the assumption that the fluid is an ideal mixture, i. e. no $\Delta V$ of mixing, the volumetric flow rates in the second and fifth terms are equal to the sums of the molar flow rates times the molar specific volumes.
-
-$$
-\begin{split}\dot Q + P\sum_i\left(  \dot n_{i,in}\hat V_{i,in} \right) + \sum_i \dot n_{i,in}\hat u_{i,in} &= \dot W + P\sum_i\left(  \dot n_{i,out}\hat V_{i,out} \right) + \sum_i \dot n_{i,out}\hat u_{i,out} \\&+ \frac{d}{dt}\left(  \sum_i \frac{\dot n_{i,out} \hat u_{i,out}V}{\dot{V}_{out}} \right)
-\end{split}
-$$
-
-The second and third summations and the fifth and sixth summations can each be combined.
-
-$$\dot Q + \sum_i\left(\dot n_{i,in}\left( P \hat V_{i,in} + \hat u_{i,in} \right)\right) = \dot W + \sum_i\left(  \dot n_{i,out}\left(P\hat V_{i,out}  + \hat u_{i,out} \right) \right) + \frac{d}{dt}\left(  \sum_i \frac{\dot n_{i,out} \hat u_{i,out}V}{\dot{V}_{out}} \right)$$
-
-The specific energy can be expressed in terms of the specific enthalpy and specific volume, $\hat u_{i,in} + P\hat V_{i,in} = \hat h_{i,in}$ and $\hat u_{i,out} + P\hat V_{i,out} = \hat h_{i,out}$.
-
-$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i \dot n_{i,out} \hat h_{i,out}   + \frac{d}{dt}\left(  \sum_i \frac{\dot n_{i,out} \hat u_{i,out}V}{\dot{V}_{out}} \right)$$
-
-Similarly, the specific internal energy in the last term can be expressed in terms of the specific enthalpy and volume.
-
-$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out}   + \frac{d}{dt}\left(  \sum_i \left( \hat h_{i,out} - P\hat V_{i,out}  \right)\frac{\dot n_{i,out} V}{\dot{V}_{out}} \right)$$
-
-The distributive property of multiplication can be applied to the last term.
-
-$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} + \frac{d}{dt}  \sum_i \left( \frac{\dot n_{i,out}\hat h_{i,out} V}{\dot{V}_{out}} - \frac{\dot n_{i,out} VP\hat V_{i,out}}{\dot{V}_{out}}  \right)$$
-
-The last term can be split into two terms.
-
-$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} + \frac{d}{dt}  \sum_i \left( \frac{\dot n_{i,out}\hat h_{i,out} V}{\dot{V}_{out}}  \right) - \frac{d}{dt}  \sum_i \left( \frac{\dot n_{i,out} VP\hat V_{i,out}}{\dot{V}_{out}}  \right)$$
-
-Then $\frac{PV}{\dot{V}_{out}}$ can be factored out of the final summation.
-
-$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} + \frac{d}{dt}  \sum_i \left( \frac{\dot n_{i,out}\hat h_{i,out} V}{\dot{V}_{out}}  \right) - \frac{d}{dt} \left(\frac{PV}{\dot{V}_{out}} \sum_i \left(\dot n_{i,out} \hat V_{i,out} \right)\right)$$
-
-With the assumption that the mixture is ideal $\left(\sum_i \left(\dot n_{i,out} \hat V_{i,out} \right) = \dot{V}_{out}\right)$, the final term can be simplified.
-
-$$\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} = \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out}   + \frac{d}{dt}  \sum_i \left( \frac{\dot n_{i,out}\hat h_{i,out} V}{\dot{V}_{out}}  \right) - \frac{d}{dt} \left( PV\right)$$
-
-The chain rule can be applied to the fifth term.
-
-$$
-\begin{split}
-\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i \dot n_{i,out} \hat h_{i,out} \\&+ \sum_i \hat h_{i,out}\frac{d}{dt}\left( \frac{\dot n_{i,out} V}{\dot{V}_{out}}  \right) +   \sum_i \left( \frac{\dot n_{i,out} V}{\dot{V}_{out}}  \right)\frac{d\hat h_{i,out}}{dt} - \frac{d}{dt} \left( PV\right)
-\end{split}
-$$
-
-With the assumption of no phase changes, changes in enthalpy only involve sensible heat and the time derivative of the specific enthalpy can be expressed in terms of the heat capacity and the temperature.
-
-$$
-\begin{split}
-\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} \\&+ \sum_i \hat h_{i,out}\left[\frac{d}{dt}\left( \frac{\dot n_{i,out} V}{\dot{V}_{out}}  \right)\right] +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right)
-\end{split}
-$$
-
-The term containing square brackets can be moved to the end of the equation.
-
-$$
-\begin{split}
-\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ \sum_i \hat h_{i,out}\left[\frac{d}{dt}\left( \frac{\dot n_{i,out} V}{\dot{V}_{out}}  \right)\right]
-\end{split}
-$$
-
-The chain rule can be applied to the term containing square brackets.
-
-$$
-\begin{split}
-\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ \sum_i \hat h_{i,out}\left[\frac{V}{\dot{V}_{out}}\frac{d \dot n_{i,out}}{dt} + \frac{\dot n_{i,out}}{\dot{V}_{out}}\frac{dV}{dt} - \frac{\dot n_{i,out}V}{\dot{V}_{out}^2}\frac{d \dot{V}_{out}}{dt}\right]
-\end{split}
-$$
-
-The term in the square brackets is equal to one side of the CSTR mole balance. The other side of the CSTR mole balance can be substituted in its place.
-
-$$
-\begin{split}
-\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ \sum_i \hat h_{i,out}\left[\dot n_{i,in} - \dot n_{i,out} + V \sum_j \nu_{i,j}r_j\right]
-\end{split}
-$$
-
-The distributive property of multiplication can be applied to the term with the square brackets.
-
-$$
-\begin{split}
-\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} &= \dot W + \sum_i  \dot n_{i,out} \hat h_{i,out} +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ \sum_i \hat h_{i,out}\dot n_{i,in} - \sum_i \hat h_{i,out}\dot n_{i,out} + V\sum_i \hat h_{i,out} \sum_j \nu_{i,j}r_j
-\end{split}
-$$
-
-The first term on the second line can be moved to the other side of the equation, and two other terms cancel out.
-
-$$
-\begin{split}
-\dot Q + \sum_i\dot n_{i,in} \hat h_{i,in} - \sum_i \hat h_{i,out}\dot n_{i,in} &= \dot W + \cancel{\sum_i  \dot n_{i,out} \hat h_{i,out}} +   \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} \\&- \frac{d}{dt} \left( PV\right)   - \cancel{\sum_i \hat h_{i,out}\dot n_{i,out}} + \sum_i \hat h_{i,out}V \sum_j \nu_{i,j}r_j
-\end{split}
-$$
-
-The second and third terms can be combined.
-
-$$
-\begin{split}
-\dot Q + \sum_i\dot n_{i,in} \left( \hat h_{i,in} - \hat h_{i,out} \right) &= \dot W + \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ V\sum_i \hat h_{i,out} \sum_j \nu_{i,j}r_j
-\end{split}
-$$
-
-The distributive property of multiplication can be applied to the last term.
-
-$$
-\begin{split}
-\dot Q + \sum_i\dot n_{i,in} \left( \hat h_{i,in} - \hat h_{i,out} \right) &= \dot W + \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ V\sum_i  \sum_j \hat h_{i,out}\nu_{i,j}r_j
-\end{split}
-$$
-
-The order of the sums in the last term can be switched and $r_j$ can be factored out of the inner summation.
-
-$$
-\begin{split}
-\dot Q + \sum_i\dot n_{i,in} \left( \hat h_{i,in} - \hat h_{i,out} \right) &= \dot W + \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) \\&+ V\sum_j r_j \sum_i \hat h_{i,out}\nu_{i,j}
-\end{split}
-$$
-
-With the assumption of no phase changes, the specific enthalpy difference in the second term can be expressed in terms of the heat capacity and temperature, and with the assumption that the fluid is an ideal mixture (no $\Delta H$ of mixing), the final summation is simply equal to the heat of reaction $j$.
-
-$$\dot Q - \sum_i\dot n_{i,in} \int_{T_{in}}^{T_{out}} \hat C_{p,i}dT = \dot W + \sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) + V\sum_j r_j \Delta H_j$$
-
-The derivatives can be moved to one side of the equation.
-
-$$\sum_i \left( \frac{\dot n_{i,out} \hat C_{p,i} V}{\dot{V}_{out}}  \right)\frac{dT_{out}}{dt} - \frac{d}{dt} \left( PV\right) = \dot Q - \dot W - \sum_i\dot n_{i,in} \int_{T_{in}}^{T_{out}} \hat C_{p,i}dT - V\sum_j r_j \Delta H_j$$
-
-Finally, $V$ and $\dot V$ can be factored out of the first term and the chain rule can be applied to the second term, yielding the desired form of the CSTR energy balance.
-
-$$
-\begin{split}
-\frac{V}{\dot{V}_{out}}\sum_i \left( \dot n_{i,out} \hat C_{p,i}  \right)\frac{dT_{out}}{dt} - P\frac{dV}{dt} - V \frac{dP}{dt} &= \dot Q - \dot W - \sum_i\dot n_{i,in} \int_{T_{in}}^{T_{out}} \hat C_{p,i}dT \\&- V\sum_j r_j \Delta H_j
-\end{split}
-$$
-
 ## PFR Mole and Energy Balances{#sec-apxc_PFR_balances}
 
 The PFR model makes the following assumptions.
@@ -603,7 +603,7 @@ During the derivation of the forms of the PFR mole and energy balances used in *
 
 Unlike the perfectly mixed stirred tank reactors, the composition in an ideal PFR is not uniform; it changes along the length of the reactor. As a consequence, it becomes necessary to write the mole and energy balance equations on a differential element of reactor volume and then take the limit as the size of this element goes to zero. With the assumption of perfect mixing in the radial direction, in the limit where its thickness goes to zero, the volume element is perfectly mixed. Here, we will assume that the reactor is cylindrical with a constant diameter, D, and a length, L, as shown in @fig-pfr-vol-element which additionally shows a differentially thick cross section that will be used in formulating the mole and energy balances.
 
-![Differential PFR Element](./Graphics/pfr_differential_element.png){#fig-pfr-vol-element}
+![Differential PFR Element](./graphics/pfr_differential_element.png){#fig-pfr-vol-element}
 
 ### The PFR Mole Balance
 
@@ -960,7 +960,7 @@ The axial dispersion design equations include second derivatives of the concentr
 
 The Danckwerts boundary conditions assume that upstream from the reactor inlet, the flow of each reagent is purely convective. Within the reactor the net flow of each reagent is the combination of convection and the diffusion-like mixing flux. Similar assumptions are made for energy. This is emphasized in @fig-axial_dispersion_inlet where a subscripted "feed" is used for feed properties, a "0" for properties at the reactor inlet, and a "1" for properties at the reactor outlet.
 
-![Due to mixing in the axial direction, the concentrations and temperature at the inlet are not equal to the feed concentrations and temperature.](Graphics/axial_dispersion_adiabatic.png){#fig-axial_dispersion_inlet width="50%"}
+![Due to mixing in the axial direction, the concentrations and temperature at the inlet are not equal to the feed concentrations and temperature.](graphics/axial_dispersion_adiabatic.png){#fig-axial_dispersion_inlet width="50%"}
 
 The Danckwerts boundary conditions simply assume that the purely convective feed flow is equal to the combined convective and flux-like mixing flow at the reactor inlet. Similarly, for the energy balance they assume the purely convective heat flow associated with the feed equals the combined convective flow and conduction-like mixing flux at the reactor inlet.
 
