@@ -17,13 +17,13 @@ A perfectly-mixed cylindrical tank with continuous flow of feed in and product o
 Schematic representations of three continuous stirred tank reactors, wherein heat is exchanged with an external fluid through the walls of (a) a jacket, (b) a submerged coil, and (c) an external heat exchanger.
 :::
 
-The full set of assumptions used in the ideal CSTR model is provided in [Appendix -@sec-apxc_CSTR_balances]. While stirred tanks are the most common type of CSTR in commercial facilities, other physical geometries are possible, as long as their contents are a perfectly mixed, single-phase fluid and they satisfy the other assumptions of the ideal CSTR model. Stirred tanks are well-suited to liquid phase reactions because a simple impeller can be used to do the mixing. Attaining perfect mixing of gases in large vessels can be more challenging.
+The full set of assumptions used in the ideal CSTR model is provided in [Appendix -@sec-apxc_CSTR_balances]. While stirred tanks are the most common type of CSTR in commercial facilities, other physical geometries are possible, as long as their contents are a perfectly mixed, single-phase fluid and they satisfy the other assumptions of the ideal CSTR model. Stirred tanks are well-suited to liquid phase reactions because a simple impeller can be used to do the mixing. Attaining perfect mixing of gases in large vessels can be more challenging, but it is possible.
 
 The characteristic that differentiates a CSTR from other ideal stirred tank reactors is the continuous flow of fluid into *and* out of the reactor as the reaction is taking place. This eliminates the need to stop processing to remove products and add fresh feed, and allows them to operate for extended periods of time without interruption. It results in two possible modes of operation, steady-state and transient. At steady-state, nothing changes over time. The inlet flow rate, temperature, and composition; the outlet flow rate, temperature, and composition; and the heat exchange fluid flow rate, inlet temperature, and outlet temperature are all constant. CSTRs are designed to operate at steady-state. Once a steady state has been reached, the labor demands to operate the reactor are minimal. Integration with other operations in the process such as feed purification, product separation, etc. is easier to implement when the entire process operates at steady-state.
 
-However, there are times when a CSTR must operate in a transient mode, such as when the process is being started up and when it is being shut down. This type of transient operation is typically planned, for example, the reactor might be shut down periodically so that routine maintenance can be performed. Unexpected events can also initiate transient operation of a CSTR. For example, a sudden change in the coolant flow rate or temperature or a change in the feed flow or temperature will initiate transient operation.
+However, there are times when a CSTR must operate in a transient mode, such as when the process is being started up and when it is being shut down. This type of transient operation is typically planned, for example, the reactor might be shut down periodically so that routine maintenance can be performed. Unexpected events can also initiate transient operation of a CSTR. For example, a sudden change in the coolant flow rate, coolant inlet temperature, reacting fluid feed flow rate, or feed temperature will initiate transient operation.
 
-Compared to the other type of ideal continuous reactor, namely the plug-flow reactor, the most significant feature of a CSTR is the instantaneous mixing of the feed with all of the reacting fluid in the reactor. Because it is perfectly mixed, the outlet temperature and composition equal the temperature and composition of the reacting fluid. At steady-state, the composition and temperature do not change while the fluid is reacting. Consequently, for the entire time the reacting fluid is in the reactor the reaction takes place at the outlet composition and temperature.
+Compared to the other type of ideal continuous reactor, namely the plug-flow reactor, the most significant feature of a CSTR is the instantaneous mixing of the feed with all of the reacting fluid in the reactor. Because it is perfectly mixed, the outlet temperature and composition equal the temperature and composition of the reacting fluid. At steady-state, the composition and temperature do not change while the fluid is reacting. Consequently, the composition and temperature of the reacting fluid remain constant for the whole time it is reacting.
 
 Depending upon the reaction kinetics, this can be either an advantage or a disadvantage. Generally, use of a CSTR can be advantageous when the reaction is exothermic and/or auto-catalytic. For exothermic reactions the product temperature most often is greater than the feed temperature, causing the rate to be greater. For all reactions, the product concentration is greater at the outlet than in the feed, and for an auto-catalytic reaction, this too causes the rate to be larger. In constrast the mixing can be a disadvantage when the reaction is endothermic and/or when the reaction kinetics are typical (i.e. lower reactant concentrations result in lower rates).
 
@@ -61,11 +61,11 @@ $$
 \frac{\rho_{ex} V_{ex} \Delta H_{\text{latent},ex}^0}{M_{ex}} \frac{d \gamma}{dt} = - \dot Q - \gamma \dot m_{ex} \frac{\Delta H_{\text{latent},ex}^0}{M_{ex}}
 $$
 
-The transient CSTR design equations are initial value ordinary differential equations (IVODEs, see [Appendix -@sec-apxd_ivodes]). The independent variable is the elapsed time ($t$) and the dependent variables are the outlet molar flow rates of the reagents ($\dot{n}_i$), the volume of reacting fluid within the reactor ($V$), the outlet volumetric flow rate ($\dot{V}$), the reacting fluid temperature ($T$), thre reacting fluid pressure ($P$), and either the exchange fluid temperature ($T_{ex}$) or the fraction of the exchange fluid that changes phase ($\gamma$). The number of dependent variables is three greater than the number of IVODEs, so before the design equations can be solved, either three IVODEs must be added or three of the dependent variables must be eliminated. 
+The transient CSTR design equations are initial value ordinary differential equations (IVODEs, see [Appendix -@sec-apxd_ivodes]). The independent variable is the elapsed time ($t$) and the dependent variables are the outlet molar flow rates of the reagents ($\dot{n}_i$), the volume of reacting fluid within the reactor ($V$), the outlet volumetric flow rate ($\dot{V}$), the reacting fluid temperature ($T$), the reacting fluid pressure ($P$), and either the exchange fluid temperature ($T_{ex}$) or the fraction of the exchange fluid that changes phase ($\gamma$). The number of dependent variables is three greater than the number of IVODEs, so before the design equations can be solved, either three IVODEs must be added or three of the dependent variables must be eliminated. 
 
 The pressure in a CSTR is almost always constant, in which case its time derivative, $\frac{dP}{dt}$, is zero, eliminating pressure as one of the dependent variables.
 
-Gases will always expand to fill the entire volume of a rigid-walled reactor, so for gases $\frac{dV}{dt} = 0$. This is also true for liquids if the reactor is full (assuming the liquid is an incompressible, ideal mixture). However, if the reactor is not full, the change in the volume of liquid within it is equal to the difference between the inlet and outlet volumetric flow rates as given in @eq-liquid_volume_accumulation, which must be added to the design equations.
+Gases will always expand to fill the entire volume of a rigid-walled reactor, so for gases $\frac{dV}{dt} = 0$. This is also true for liquids if the reactor is full (assuming the liquid is an incompressible, ideal mixture). However, if the reactor is not full, the change in the volume of liquid within it is equal to the difference between the inlet and outlet volumetric flow rates as given in @eq-liquid_volume_accumulation, which must be added to or substituted in the design equations.
 
 $$
 \frac{dV}{dt} = \dot{V}_{in} - \dot{V}
@@ -77,9 +77,9 @@ $$
 \dot{V} \frac{dP}{dt} + P \frac{d\dot{V}}{dt} = R\left(\sum_i{\dot{n}_i} \frac{dT}{dt} + T \sum_i{\frac{d\dot{n}_i}{dt}}\right)
 $${#eq-differential_ideal_gas_law}
 
-A few other simplifications or modifications of the design equations may be possible or necessary. When the only moving shaft or boundary is that of an agitator, the associated power of agitation is negligible, $\dot{W} = 0$, unless the reacting fluid is highly viscous. In addition, the units of the $P\frac{dV}{dt}$ term in the energy balance (pressure × volume ÷ time) will need to be converted to the same units as the other terms (energy ÷ time).
+A few other simplifications or modifications of the design equations may be possible or necessary. When the only moving shaft or boundary is that of an agitator, the associated power of agitation is negligible, $\dot{W} = 0$, unless the reacting fluid is highly viscous. Note also that the units of the $P\frac{dV}{dt}$ term in the energy balance (pressure × volume ÷ time) will need to be converted to the same units as the other terms (energy ÷ time).
 
-If the reactor operates adiabatically, the rate of heat transfer is zero, $\dot{Q} = 0$. Otherwise, assuming both the reacting fluid and the heat exchange fluid to be perfectly mixed, the rate of heat transfer to the reacting fluid can be expressed as shown in @eq-heat_transfer_rate, where $U$ is the overall heat transfer coefficient and $A$ is the area through which heat is transferred.
+If the reactor operates adiabatically, the rate of heat transfer is zero, $\dot{Q} = 0$, and since there isn't an exchange fluid, an exchange fluid energy balance is not included among the reactor design equations. Otherwise, assuming both the reacting fluid and the heat exchange fluid to be perfectly mixed, the rate of heat transfer to the reacting fluid can be expressed as shown in @eq-heat_transfer_rate, where $U$ is the overall heat transfer coefficient and $A$ is the area through which heat is transferred.
 
 $$
 \dot{Q} = UA(T_{ex} - T)
@@ -95,7 +95,7 @@ $$
 \sum_i \dot n_{i,in} \int_{T_{in}}^T \hat C_{p,i}dT\ \Leftrightarrow\ \rho \dot V_{in} \int_{T_{in}}^T \tilde C_pdT\ \Leftrightarrow\ \dot V_{in} \int_{T_{in}}^T \breve C_pdT
 $$
 
-Being IVODEs, the transient CSTR design equations are solved to find corresponding sets of values of the independent and dependent variables over a span of time defined in terms of the initial values of those variables and a "stopping criterion" (see [Appendix -@sec-apxd_ivodes]). A very common stopping criterion is simply that one of the dependent variables or the independent variable attains a known final value. In some instances, two final values are known, allowing the design equations to be solved for one additional variable that does not vary with time (again, see [Appendix -@sec-apxd_ivodes]).
+Being IVODEs, the transient CSTR design equations are solved to find corresponding sets of values of the independent and dependent variables over a span of time defined in terms of the initial values of those variables and a "stopping criterion" (see [Appendix -@sec-apxd_ivodes]). A very common stopping criterion is simply that one of the dependent variables or the independent variable attains a known final value. In some instances, two final values are known, allowing the design equations to be solved for one additional unknown that does not vary with time (again, see [Appendix -@sec-apxd_ivodes]).
 
 Thus, the numerical solution of IVODEs requires initial values for each of the dependent variables. This can lead to confusion when first learning to model transient CSTRs because both initial and inlet molar flow rates and temperatures appear in the design equations. The key point to remember is that the dependent variables in the IVODEs are the *[outlet]{.underline}* molar flow rates, volumetric flow rate, temperature and exchange fluid temperature. As a consequence, the initial values that are needed to solve the IVODEs are the [initial]{.underline} values of the [outlet]{.underline} molar flows, volumetric flow, and temperatures, not their inlet values.
 
@@ -211,37 +211,36 @@ Other types of parametric sensitivity and methods for identifying them are typic
 
 ## Learning Objectives and Examples {#sec-ch6_learning_objectives}
 
-The numbers in parentheses in the following list of learning objectives refer to the examples that follow in this section. Upon completion of this chapter, readers should
+Upon completion of this chapter, readers should
 
 * know the definition and/or defining equation for CSTR mole balance, CSTR energy balance, steady-state multiplicity, stable/unstable steady state, and parametric sensitivity
-* understand that
-	* the ideal CSTR model assumes that the reacting fluid is a perfectly mixed, single-phase fluid
-	* transient operation occurs following a change in a reactor variable or parameter
+* understand
+	* the ideal CSTR model assumptions
+	* that a change in a reactor variable or parameter initiates transient operation
 	* there may be more than one physically realizable solution of the steady-state CSTR design equations
 	* there is only one inlet CSTR temperature for each outlet temperature
 	* the procedure used to start up a CSTR determines the steady state it attains
 	* when a reactor is perturbed from a steady state it may return to that steady state, transition to a different steady state, or go into sustained oscillations
 * be able to
-	* differentiate between reaction engineering assignments involving a steady-state CSTR (-@sec-ch6_ex2, -@sec-ch6_ex1, -@sec-ch6_ex3) and those involving a transient (-@sec-ch6_ex5) CSTR
-	* select, modify, and simplify the CSTR design equations for modeling a given CSTR (-@sec-ch6_ex2, -@sec-ch6_ex1, -@sec-ch6_ex3, -@sec-ch6_ex4, -@sec-ch6_ex5, -@sec-ch6_ex6)
+	* differentiate between reaction engineering assignments involving a steady-state CSTR and those involving a transient CSTR
+	* select, modify, and simplify the CSTR design equations for modeling a given CSTR
 	* use the CSTR design equations, together with any other necessary equations, to complete a reaction engineering assignment involving
-		* steady-state (-@sec-ch6_ex2, -@sec-ch6_ex1, -@sec-ch6_ex3, -@sec-ch6_ex4) or transient (-@sec-ch6_ex5, -@sec-ch6_ex6) operation
-		* non-isothermal (-@sec-ch6_ex5) or adiabatic operation (-@sec-ch6_ex2, -@sec-ch6_ex1, -@sec-ch6_ex3, -@sec-ch6_ex4, -@sec-ch6_ex6)
-		* heat exchange fluids that transfer latent or sensible (-@sec-ch6_ex5) heat
-		* gas (-@sec-ch6_ex2) or liquid (-@sec-ch6_ex1, -@sec-ch6_ex3, -@sec-ch6_ex4, -@sec-ch6_ex5) phase reacting systems
-		* single (-@sec-ch6_ex1, -@sec-ch6_ex3, -@sec-ch6_ex4) or multiple (-@sec-ch6_ex2, -@sec-ch6_ex5) reactions
-		* specification (-@sec-ch6_ex2, -@sec-ch6_ex1, -@sec-ch6_ex4, -@sec-ch6_ex5, -@sec-ch6_ex6) or optimization (-@sec-ch6_ex3) tasks
-		* single (-@sec-ch6_ex2, -@sec-ch6_ex1, -@sec-ch6_ex3, -@sec-ch6_ex5) or multiple (-@sec-ch6_ex4, -@sec-ch6_ex6) steady states
-	* determine whether multiple CSTR steady states are possible (-@sec-ch6_ex1, -@sec-ch6_ex3, -@sec-ch6_ex4)
-	* use transient CSTR analysis to determine the stability of a steady state (-@sec-ch6_ex6)
-	* use qualitative analysis to assess and explain results from a quantitative analysis (-@sec-ch6_ex2, -@sec-ch6_ex1, -@sec-ch6_ex3, -@sec-ch6_ex4)
+		* steady-state or transient operation
+		* isothermal, non-isothermal or adiabatic operation
+		* heat exchange fluids that transfer latent or sensible heat
+		* gas or liquid phase reacting systems
+		* single or multiple reactions
+		* response or optimization tasks
+		* single or multiple steady states
+	* determine whether multiple CSTR steady states are possible
+	* use transient CSTR analysis to determine the stability of a steady state
 
 ::: {.callout-important collapse="true"}
 ## Computer Code for Performing Calculations
 
-The examples presented in *REB, The Book* describe how to perform the necessary calculations numerically, but they do not provide computer code for doing so. This is intentional so that readers can use whatever programming language and development environment they choose.
+The examples presented in *Reaction Engineering Basics, The Book* describe how to perform the necessary calculations numerically, but they do not provide computer code for doing so. This is intentional so that readers can use whatever programming language and development environment they choose.
 
-For readers who are interested, the Assignments by Topic Section of [*REB, The Course*]() describes and discusses performing the calculations for each example using Python, and includes links to the source code.
+For readers who are interested, the [Assignments Involving CSTR Analysis page from *REB, The Course*](https://buffalobadger.github.io/RE_Basics_Course/CSTR_examples.html) describes and discusses performing the calculations for each example in this chapter using Python and Matlab, and includes links to the source code.
 
 :::
 
@@ -262,9 +261,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The assignment involves an adiabatic CSTR. It doesn't mention startup, shut down, or indicate that any reactor variable or parameter was changed. This means the reactor is operating at steady-state. None of the given constants are extensive quantities, so I can choose one extensive variable as a basis for the calculations. I'll use an inlet volumetric flow rate of 1.0 m^3^ min^-1^ as the basis because that will make it easy to calculate the inlet molar flow rates when they are needed. 
-
-The deliverables can be calculated after solving the reactor design equations once, so I don't need to identify a parameter for the calculations. The assignment doesn't entail making a graph or optimizing anything, so it is not necessary to select a quantity to use as a parameter.
+The assignment involves an adiabatic CSTR. It doesn't mention startup, shut down, or indicate that any reactor variable or parameter was changed. This means the reactor is operating at steady-state. None of the given constants are extensive quantities, so I can choose one extensive variable as a basis for the calculations. I'll use an inlet volumetric flow rate of 1.0 m^3^ min^-1^ as the basis because that will make it easy to calculate the inlet molar flow rates when they are needed.
 
 I'll begin with an assignment summary making sure to use appropriate symbols to represent the quantities that are given in the assignment narrative. I'll use a subscripted "in" to denote values at the reactor inlet, and I won't add a subscript for values at the reactor outlet.
 
@@ -292,12 +289,16 @@ $$
 
 [Deliverables]{.underline}: $\tau$ and $T$
 
-<center>**Formulation of the Equations**</center>
+<center>**Completion Strategy**</center>
+
+This assignment provides the desired response (outlet mole fraction of reagent A) from a steady-state CSTR. It asks for the corresponding temperature and the necessary space time. The reactor volume, outlet molar flow rates of the other reagents and outlet temperature can be found directly by solving the steady-state CSTR design equations. Having assumed the volumetric feed rate as a basis, the volume found by solving the design equations can then be used to calculate the space time. 
+
+<center>**Formulation of the Calculations**</center>
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-As suggested in [Chapter -@sec-ch5_workflow], I'll start by creating a model of the reactor. It's a gas-phase, adiabatic, steady-state CSTR. There is one reaction and one inert, so at the minimum I need two mole balances to model the reactor, but I prefer to include a mole balance for every reagent when I'll be solving them numerically. The temperature of the reacting fluid is not known, so an energy balance on the reacting fluid is also necessary. Since there isn't an exchange fluid (the reactor is adiabatic), an exchange fluid energy balance is not needed.
+As suggested in [Chapter -@sec-ch5_workflow], I'll start by defining a reactor model function for solving the design equations. The reactor is a gas-phase, adiabatic, steady-state CSTR. There is one reaction and one inert, so at the minimum I need two mole balances to model the reactor, but I prefer to include a mole balance for every reagent when I'll be solving them numerically. The temperature of the reacting fluid is not known, so an energy balance on the reacting fluid is also necessary. Momentum balances are not used with stirred tank reactors, and since there isn't an exchange fluid (the reactor is adiabatic), an exchange fluid energy balance is not needed, either.
 
 The general steady-state mole balance is given by @eq-ss_cstr_mole_bal. There is only one reaction, so the final summation reduces to a single term. The inlet molar flow rate of Z is zero.
 
@@ -317,7 +318,9 @@ These reactor design equations are ATEs, so I'll write them in the form of resid
 
 :::
 
-[Reactor Model Equations]{.underline}
+**CSTR Model Function**
+
+[CSTR Design Equations]{.underline}
 
 $$
 0 = \dot n_{A,in} - \dot n_A - Vr_1 = \epsilon_1 \tag{3}
@@ -342,7 +345,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-There are five reactor design equations, and they can be solved to find the values of five reactor model variables. I usually solve the design equations for the outlet molar flow rates of the reagents and the outlet temperature. However, in this assignment I'm told the final amount of reagent A, so I don't need to solve for its outlet molar flow rate. I'm asked to find the space time, and I already chose the inlet volumetric flow rate as a basis, so I'll solve for the reacting fluid volume instead of the outlet molar flow rate of reagent A. Then once I've solved the design equations, I'll be able to calculate the space time from its definition. Solving the design equations will give the requested outlet temperature directly.
+There are five reactor design equations, and they can be solved to find the values of five reactor model variables. I usually solve the design equations for the outlet molar flow rates of the reagents and the outlet temperature. However, in this assignment I'm told the outlet mole fraction of reagent A, so I don't need to solve for its outlet molar flow rate. I'm asked to find the space time, and I already chose the inlet volumetric flow rate as a basis, so I'll solve for the reacting fluid volume instead of the outlet molar flow rate of reagent A. Then once I've solved the design equations, I'll be able to calculate the space time from its definition. Solving the design equations will give the requested outlet temperature directly.
 
 Having identified the reactor model variables, in order to solve the reactor design equations I need values for every other unknown quantity that appears in them. Going through the design equations quantity by quantity I see that the inlet molar flow rates of A, B, and I, the outlet molar flow rate of A, and the reaction rate are additional unknowns. The inlet molar flow rates can be calculated from their given percentages, but to do that, another unknown, the total inlet molar flow rate, will need to be calculated using the inlet volumetric flow rate I chose as the basis and the ideal gas law. The oultet molar flow rate of A can be calculated from its known final mole fraction. 
 
@@ -352,7 +355,7 @@ There aren't any other unknowns in the design equations for this reactor.
 
 :::
 
-[Reactor Model Variables]{.underline}: $V$, $\dot{n}_B$, $\dot{n}_Z$, $\dot{n}_I$, and $T$.
+[CSTR Model Variables]{.underline}: $V$, $\dot{n}_B$, $\dot{n}_Z$, $\dot{n}_I$, and $T$.
 
 [Additional Computable Unknowns]{.underline}: $\dot{n}_{A,in}$, $\dot{n}_A$, $r_1$, $k_1$, $C_A$, $C_B$, $\dot{V}$, $\dot{n}_{B,in}$, and $\dot{n}_{I,in}$.
 
@@ -366,10 +369,6 @@ $$
 
 $$
 y_A = \frac{\dot{n}_A}{\dot{n}_A + \dot{n}_B + \dot{n}_I + \dot{n}_Z} \qquad \Rightarrow \qquad \dot{n}_A = \frac{\left(\dot{n}_B + \dot{n}_I + \dot{n}_Z\right)y_A}{1-y_A} \tag{10}
-$$
-
-$$
-r_1 = k_1C_AC_B \tag{2}
 $$
 
 $$
@@ -387,44 +386,60 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-Since the design equations are ATEs, I'll use an ATE solver to solve them (see [Appendix -@sec-apxd_ates]). I'll need to provide an initial guess for the reactor model variables and a residuals function to it. I have no basis for guessing the reacting fluid volume, so I'll arbitrarily guess 1 m^3^. I usually use the inlet molar flow rates as a guess for the outlet molar flow rates, so I'll do that here. Since a temperature guess that is too large can cause solver issues, I'll guess that the outlet temperature only differs from the inlet temperature by 5 K. Since this reaction is exothermic and the reactor is adiabatic, I'll guess that it is 5 K greater than the inlet temperature. If the solver fails to converge, I'll need to revise these guesses until I find ones that lead to convergence. I won't need to check for multiple steady states in this assignment because I know the final amount of reagent A. Just as there is only one steady state for each outlet temperature, there is also only one steady state for each outlet molar flow rate.
+The reactor model function will solve the design equations using an ATE solver (see [Appendix -@sec-apxd_ates]), so I'll include the inputs it must provide in the function definition. The first input is an initial guess for the reactor model variables. I could define the guess within the CSTR model function, or I could define it outside the function and pass it in as an argument. I prefer the latter approach because there are situations where the CSTR model function is called multiple times and a single guess won't work for all of them. Even though that's not the case here, I'll still define the guess outside the function and pass it in as an argument for the sake of consistency.
 
-The residuals function must accept a guess for the reactor model variables and return the residuals, $\epsilon_1$ through $\epsilon_5$. Here it will use the guess it receives to calculate the additional unknowns using the equations above, and then it will evaluate the residuals using equations (3) through (7) and return them.
-
-The requested final temperature, one of the requested deliverables, is one of the reactor model variables that will be found upon solving the design equations, as will the reacting fluid volume. The space time, the other requested deliverable, can be calculated using its defining equation.
+The second input that must be provided to the ATE solver is a residuals function. The only argument that can be passed to the residuals function is a guess for the CSTR model variables, and the only thing it can return is the design equation residuals (see [Appendix -@sec-apxd_ates]) To do that here, it will use the guess it receives to calculate the additional unknowns and then evaluate the residuals. The CSTR model function definition should briefly describe this process.
 
 :::
 
-[ATE Solver Inputs]{.underline}: 
+[ATE Solver Requirements]{.underline}: 
 
-1. Initial guesses for the reactor model variables:
-
-$$
-V_{guess} = 1\, m^3 \tag{12}
-$$
-
-$$
-\dot{n}_{i,guess} = \dot{n}_{i,in} \qquad i = B, Z, \text{ and } I \tag{13}
-$$
-
-$$
-T_{guess} = T_{in} + 5\, K \tag{14}
-$$
+1. Initial guesses for the reactor model variables will be provided as an argument to the CSTR model function.
 
 2. Residuals function that
-	a. receives guesses for the reactor model variables,
-	b. calculates the additional computable unknowns, and
-	c. calculates and returns the residuals.
+	a. receives a guess for the reactor model variables ($V$, $\dot{n}_B$, $\dot{n}_Z$, $\dot{n}_I$, and $T$) as an argument,
+	b. calculates the additional computable unknowns, equations (2), and (8) through (13), and
+	c. calculates and returns the residuals, equations (3) through (7).
 
-[Deliverables Equation]{.underline}:
+
+:::{.callout-tip collapse="true"}
+## Click Here to See What an Expert Might be Thinking at this Point
+
+That completes the definition of the CSTR model function. Next I'll define a deliverables function that calculates the deliverables using the CSTR model function. This assignment involves a simple reactor response task, so the deliverables function simply need to define the initial guess for the reactor model variables, call the CSTR model function to get the solution of the design equations, and use the results to calculate the deliverables.
+
+I have no basis for guessing the reacting fluid volume, so I'll arbitrarily guess 1 m^3^. I usually use the inlet molar flow rates as a guess for the outlet molar flow rates, so I’ll do that here. Using the inlet temperature as a guess for the outlet temperature sometimes results in convergence issues, but a guess that is too large can also cause convergence issues. So I’ll guess that the outlet temperature only differs from the inlet temperature by 5 K. Since this reaction is exothermic and the reactor is adiabatic, I’ll guess that it is 5 K greater than the inlet temperature. If the solver fails to converge, I'll need to revise these guesses until I find ones that lead to convergence. I won't need to check for multiple steady states in this assignment because I know the final amount of reagent A. Just as there is only one steady state for each outlet temperature, there is also only one steady state for each outlet molar flow rate.
+
+The final temperature, one of the requested deliverables, is one of the reactor model variables that will be found upon solving the design equations, as will the reacting fluid volume. The space time, the other requested deliverable, can be calculated using its defining equation.
+
+:::
+
+**Deliverables Function**
+
+1. Define the initial guesses for the reactor model variables.
 
 $$
-\tau = \frac{V}{\dot V_{in}}
+V_{guess} = 1\, m^3 \tag{14}
+$$
+
+$$
+\dot{n}_{i,guess} = \dot{n}_{i,in} \qquad i = B, I, \text{ and } Z \tag{15}
+$$
+
+$$
+T_{guess}=T_{in}+ 5\,K \tag{16}
+$$
+
+2. Call the CSTR model function, passing the initial guess as an argument, to solve the design equations for the CSTR model variables.
+
+3. Calculate the space time using its defining equation.
+
+$$
+\tau = \frac{V}{\dot V_{in}} \tag{17}
 $$
 
 <center>**Implementation of the Calculations**</center>
 
-Computer code to perform the calculations can be written using a variety of programming languages and environments, and the actual code can be structured in a variety of ways. Referring to the preceding assignment summary and formulation of the equations, here are the essential things the computer code must do, irrespective of the programming language and environment that is used.
+Computer code to perform the calculations can be written using a variety of programming languages and environments, and the actual code can be structured in a variety of ways. The essential things the code must do are as follows.
 
 1. Make the given constants available wherever they are needed.
 2. Define the initial guess for the reactor model variables.
@@ -434,13 +449,15 @@ Computer code to perform the calculations can be written using a variety of prog
 	b. Receive a solution of the reactor design equations which will include the requested outlet temperature.
 5. Calculate the space time.
 
+Using the assignment summary and functions defined above, one way to accomplish this is to declare the given constants as global variables, define the CSTR model function, CSTR residuals function, and deliverables function, and then call the deliverables function.
+
 <center>**Results and Discussion**</center>
 
 The calculations were performed as described above. In this analysis, the initial composition and the conversion were specified. As such, the amount of heat released is fixed, and since the reactor is adiabatic, that also fixes the final temperature. Consequently, there is no need to check for other steady states.
 
 The reaction taking place is exothermic and the reactor operates adiabatically, so the temperature is expected to increase, and it does. The inlet temperature is 165 °C and the outlet temperature is 265 °C. The feed is immediately heated to the final temperature as it enters the reactor due to perfect mixing. As a consequence the reaction takes place at 265 °C. In this case, that must correspond to a large rate coefficient, because the required space time is only 0.42 min. In a plug flow reactor (see @sec-ch9) the feed would be heating from 165 to 265 °C as it was reacting. At 165 °C, the rate coefficient would be lower, and that would mean that a longer space time would be needed in a plug flow reactor.
 
-<center>**Deliverables**</center>
+<center>**Summary**</center>
 
 The space time necessary to reduce the inlet amount of reagent A from 10% to 0.1% is 0.42 min (25.2 s). The temperature will increase from 165 to 265 °C while doing so.
 
@@ -453,7 +470,7 @@ $$
 C_i = \frac{\dot{n}_{i}}{\dot{V}} \qquad \underset{\text{liquids}}{\Rightarrow} \qquad \frac{\dot{n}_{i}}{\dot{V}_{in}}
 $$
 
-Generaly, for gas phase reacting fluids, the inlet and outlet volumetric flow rates are **not** equal due to expansion or contraction. Setting the concentration equal to the molar flow rate divided by the [inlet]{.underline} volumetric flow rate of a gas will result in an incorrect solution of the reactor design equations. Instead the volumetric flow rate must be calculated using the ideal gas law as was done in equations (11) and (12).
+Generaly, for gas phase reacting fluids, the inlet and outlet volumetric flow rates are not equal due to expansion or contraction. Setting the concentration equal to the molar flow rate divided by the [inlet]{.underline} volumetric flow rate of a gas will result in an incorrect solution of the reactor design equations. Instead the volumetric flow rate must be calculated using the ideal gas law as was done in equations (11) and (12).
 
 :::
 
@@ -520,7 +537,11 @@ $$
 
 [Deliverables]{.underline}: $f_A$, $S_{D/U}$, and $T$
 
-<center>**Formulation of the Equations**</center>
+<center>**Completion Strategy**</center>
+
+This assignment asks for the response of a steady-state CSTR. The outlet molar flow rates and outlet temperature can be found by solving the design equations. The results from doing so can then be used to calculate the conversion and selectivity.
+
+<center>**Formulation of the Calculations**</center>
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -545,7 +566,9 @@ These equations are ATEs, so I'll write them in the form of residual expressions
 
 :::
 
-[Reactor Model Equations]{.underline}
+**CSTR Model Function**
+
+[CSTR Design Equations]{.underline}
 
 $$
 0 = \dot n_{A,in} - \dot n_A + V \left( -r_1 - r_2\right) = \epsilon_1 \tag{5}
@@ -580,20 +603,12 @@ There aren't any other unknowns in the design equations for this reactor.
 
 :::
 
-[Reactor Model Variables]{.underline}: $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$.
+[CSTR Model Variables]{.underline}: $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$.
 
 [Additional Computable Unknowns]{.underline}: $\dot{n}_{A,in}$, $r_1$, $k_1$, $C_A$, $C_B$, $\dot{V}$, $r_2$, $k_2$, $\dot{n}_{B,in}$, $\Delta H_1$, and $\Delta H_2$.
 
 $$
 \dot n_{i,in} = \dot C_{i,in} \dot{V}_{in} \qquad i = A \text{ and } B \tag{10}
-$$
-
-$$
-r_1 = k_1 C_AC_B \tag{3}
-$$
-
-$$
-r_2 = k_2 C_AC_B \tag{4}
 $$
 
 $$
@@ -627,9 +642,18 @@ The reactor model variables found by solving the design equations include the ou
 
 :::
 
-[ATE Solver Inputs]{.underline}:
+[ATE Solver Requirements]{.underline}:
 
-1. Initial guesses for the reactor model variables:
+1. Initial guesses for the reactor model variables(provided as an argument to the CSTR model function).
+
+2. Residuals function that
+	a. receives guesses for the reactor model variables ($\dot{n}_A$, $\dot{n}_B$, $\dot{n}_D$, $\dot{n}_U$, and $T$),
+	b. calculates the additional unknowns using equations, (3), (4), (10) - (15), and 
+	c. evaluates and returns the CSTR design equation residuals, equations (5) - (9).
+
+**Deliverables Function**
+
+1. Define an initial guess for the CSTR model variables.
 
 $$
 \dot{n}_{i,guess} = \dot{n}_{i,in} \qquad i = A, B, D, \text{ and } U \tag{16}
@@ -639,13 +663,9 @@ $$
 T_{guess} = T_{in} + 5\, K \tag{17}
 $$
 
-2. Residuals function that
-	a. receives guesses for the reactor model variables,
-	b. calculates the additional computable unknowns, and
-	c. calculates and returns the residuals.
+2. Call the CSTR model function, passing the initial guess as an argument, to solve the design equations for the CSTR model variables.
 
-[Deliverables Equations]{.underline}:
-
+3. Calculate the conversion and yield.
 $$
 f_A = \frac{\dot{n}_{A,in} - \dot{n}_A}{\dot{n}_{A,in}} \tag{18}
 $$
@@ -667,6 +687,8 @@ Computer code to perform the calculations can be written using a variety of prog
 5. Calculate the conversion of A and selectivity for D over U.
 6. Check whether other steady states are possible.
 
+Using the assignment summary and functions defined above, one way to accomplish this is to declare the given constants as global variables, define the CSTR model function, CSTR residuals function, and deliverables function, and then call the deliverables function.
+
 <center>**Results and Discussion**</center>
 
 The calculations were performed as described above. The calculations were repeated changing the initial guess for the outlet temperature to 0.01 K greater than the inlet temperature and to 100 K greater than the inlet temperature. In all three cases the solver converged to the same steady-state solution. While not a rigorous test, these results were taken to indicate that only one steady state is possible for this CSTR. To test more rigorously, a multiplicity plot could be generated and examined to see whether additional outlet temperatures are possible for the 350 K inlet temperature in this assignment.
@@ -676,14 +698,14 @@ Reagent A is the limiting reactant, and its steady-state conversion is 54.9%. Th
 The selectivity for the desired product, D, over the undesired product, U, is good. Since the reactions producing them occur in parallel, the instantaneous selectivity, @eq-def_inst_select, may suggest ways to improve the overall selectivity. Applying that definition to this CSTR yields equation (23). According to that equation, the only way to increase the selectivity is to increase $k_1$ or decrease $k_2$. The only way to change the rate coefficients is by changing the temperature, but changing the temperature will change both rate coefficients.
 
 $$
-S_{D/U} =  \frac{r_D}{r_U} = \frac{k_1 C_AC_B}{k_2 C_AC_B} = \frac{k_1}{k_2} = \frac{k_{0,1} \exp{\left(\frac{-E_1}{RT}\right)}}{k_{0,2} \exp{\left(\frac{-E_2}{RT}\right)}}  \tag{23}
+S_{D/U} =  \frac{r_D}{r_U} = \frac{k_1 C_AC_B}{k_2 C_AC_B} = \frac{k_1}{k_2} = \frac{k_{0,1} \exp{\left(\frac{-E_1}{RT}\right)}}{k_{0,2} \exp{\left(\frac{-E_2}{RT}\right)}}  \tag{20}
 $$
 
 The activation energy for reaction (2) is larger than that for reaction (1), so increasing the temperature will increase $k_2$ more than $k_1$, resulting in a lower selectivity for D over U. Thus, the selectivity for D over U can be increased by decreasing the temperature. However, if everything else remains fixed, decreasing the temperature will decrease the conversion because both rate coefficients will be smaller. That is, decreasing the temperature will increase the selectivity but decrease the conversion while increasing the temperature will decrease the selectivity but increase the conversion.
 
 To verify this prediction, the feed temperature was decreased to 325 K and the calculations were repeated. The selectivity did indeed increase to 10.6 mol D per mol U, but the conversion decreased to 46.7%. Increasing the temperature to 375 K gave a lower selectivity of 6.9 mol D per mol U at a higher conversion of 61.5%.
 
-<center>**Deliverables**</center>
+<center>**Summary**</center>
 
 A single steady state was identified for the CSTR described in the assignment narrative. At that steady state 54.9% of reagent A is converted with a selectivity of 8.39 mol D per mole of U. The outlet temperature is 383 K.
 
@@ -741,7 +763,11 @@ $$
 
 [Deliverables]{.underline}: $T_{in, opt}$ and $f_{A,max}$.
 
-<center>**Formulation of the Equations**</center>
+<center>**Completion Strategy**</center>
+
+This assignment entails optimizing the response (conversion) of a steady-state CSTR with respect to the feed temperature. A range of inlet temperatures can be chosen. Then for each inlet temperature in that range, the steady-state design equations can be solved to fin the outlet molar flow rates and outlet temperature. The conversion at that inlet temperature can then be calculated. This will generate a set of inlet temperatures and corresponding conversions from which the maximum conversion can be identified along with the inlet temperature where it occurred.
+
+<center>**Formulation of the Calculations**</center>
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -766,7 +792,9 @@ I'll write them in the form of residual expressions because they are ATEs and wi
 
 :::
 
-[Reactor Model Equations]{.underline}
+**CSTR Model Function**
+
+[CSTR Design Equations]{.underline}
 
 $$
 0 = \dot n_{A,in} - \dot n_A - Vr_1 = \epsilon_1 \tag{4}
@@ -797,17 +825,9 @@ $$
 
 :::
 
-[Reactor Model Variables]{.underline}: $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$/
+[CSTR Model Variables]{.underline}: $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$
 
 [Additional Computable Unknowns]{.underline}: $r_1$, $k_1$, $C_A$, $\dot{V}$, $C_B$, $C_Z$, and $K_1$
-
-$$
-r_1 = k_1C_AC_B\left( 1 - \frac{C_Z}{K_1C_AC_B}\right) \tag{2}
-$$
-
-$$
-K_1 = K_{0,1}\exp{\frac{-\Delta H_1}{RT}} \tag{3}
-$$
 
 $$
 k_1 = k_{0,1} \exp{\left(  \frac{-E_1}{RT} \right)} \tag{8}
@@ -823,10 +843,6 @@ $$
 
 [Additional Uncomputable Unknown]{.underline}: $T_{in}$
 
-$$
-\underline{T}_{in} = \left(\left[75, \cdots, 125\right] + 273.15\right) \text{ K} \tag{11}
-$$
-
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
@@ -838,31 +854,16 @@ Once the design equations have been solved, the conversion can be calculated usi
 
 :::
 
-[ATE Solver Inputs]{.underline}: 
+[ATE Solver Requirements]{.underline}: 
 
-1. Initial guesses for the reactor model variables:
+1. Initial guesses for the CSTR model variables (provided as an argument to the CSTR model function).
 
-$$
-\begin{align}
-\forall T_{in,n} \in \underline{T}_{in} \qquad &n =1 \qquad \begin{pmatrix}\dot{n}_{A,guess} = \dot{n}_{A,in}\\
-\dot{n}_{B,guess} = \dot{n}_{B,in}\\
-\dot{n}_{Z,guess} = \dot{n}_{Z,in}\\
-T_{guess} = T_{in,n} + 5 K
-\end{pmatrix}\\
-&n > 1 \qquad \begin{pmatrix}
-\dot{n}_{A,guess} = \dot{n}_A\big\vert_{T{_{in,n-1}}}\\
-\dot{n}_{B,guess} = \dot{n}_B\big\vert_{T{_{in,n-1}}}\\
-\dot{n}_{Z,guess} = \dot{n}_Z\big\vert_{T{_{in,n-1}}}\\
-T_{guess} = T\big\vert_{T{_{in,n-1}}}
-\end{pmatrix}
-\end{align} \tag{12}
-$$
+2. $T_{in}$ must be made available to the residuals function.
 
-2. Residuals function that
-	a. has been provided with the inlet temperature by some means other than as an argument,
-	b. receives guesses for the reactor model variables,
-	c. calculates the additional computable unknowns, and
-	d. calculates and returns the residuals.
+3. Residuals function that
+	a. receives guesses for the reactor model variables ($\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Z$, and $T$)
+	c. calculates the additional computable unknowns using equations (2), (3), (8) - (10), and
+	d. evaluates and returns the CSTR design equation residuals, equations (4) - (7)
 
 ::: {.callout-note collapse="false"}
 ## Note on Notation
@@ -875,18 +876,45 @@ The same notation is used below in equation (13) to indicate that the conversion
 
 :::
 
-[Deliverables Equations]{.underline}:
+**Deliverables Function**
+
+1. Define a range of values for $T_{in}$
 
 $$
-\forall T_{in,n} \in \underline{T}_{in} \qquad f_{A,n} = \frac{\dot{n}_{A,in} - \dot{n}_A \big\vert_{T_{in,n}}}{\dot{n}_{A,in}} \tag{13}
+\underline{T}_{in} = \left(\left[75, \cdots, 125\right] + 273.15\right) \tag{11}
+$$
+
+2. Define an initial guess for the CSTR model variables for the first value of $T_{in}$
+
+$$
+\dot{n}_{i,guess} = \dot{n}_{i,in} \qquad i = A, B, \text{ and } Z \tag{12}
 $$
 
 $$
-T_{in,opt} = \underset{T_{in}}{\arg\max}\left( \underline{f}_A \right)\tag{14}
+T_{guess} = T_{in} + 5K \tag{13}
 $$
+
+3. Loop through the values of $T_{in}$ and
+	a. Calls the CSTR model function, passing the initial guess as an argument, to solve the design equations for the CSTR model variables.
+	b. Calculates and saves the corresponding conversion and outlet temperature
+
+$$
+f_{A} = \frac{\dot{n}_{A,in} - \dot{n}_A}{\dot{n}_{A,in}} \tag{14}
+$$
+
+	c. Sets the initial guess equal to the current results
+4. Identifies the maximum conversion within the selected range of $T_{in}$, the corresponding outlet temperature, and the value of $T_{in}$ that gave that conversion
 
 $$
 f_{A,max} = \underline{f}_A \big\vert_{T_{in,opt}}\tag{15}
+$$
+
+$$
+T_{in,opt} = \underset{T_{in}}{\arg\max}\left( \underline{f}_A \right)\tag{16}
+$$
+
+$$
+T \big\vert_{f_{A,max}}=  T\big\vert_{T_{in,opt}} \tag{17}
 $$
 
 <center>**Implementation of the Calculations**</center>
@@ -907,6 +935,8 @@ Computer code to perform the calculations can be written using a variety of prog
 6. Find the maximum conversion and the corresponding initial temperature
 7. Check that no other steady states are possible at the inlet temperature where the conversion is maximized.
 
+Using the assignment summary and functions defined above, one way to accomplish this is to declare the given constants as global variables, define the CSTR model function, CSTR residuals function, and deliverables function, and then call the deliverables function.
+
 <center>**Results and Discussion**</center>
 
 The calculations were performed as described above using the range of inlet temperatures between 75 and 125 °C indicated in equation (11). Figure 1 shows the conversion for each inlet temperature in the range. The conversion does pass through a maximum, indicating that the chosen range of inlet temperatures did not need to be adjusted.
@@ -923,7 +953,7 @@ So looking at the rate expression, the first term will increase as with increasi
 
 CSTRs can sometimes have multiple steady states. To check rigorously here, a multiplicity plot could be generated and examined to see whether multiple steady states are possible at the optimum inlet temperature, 94.7 °C. Instead of doing that, the conversion and outlet temperature at an inlet temperature of 94.7 were calculated using outlet temperature guesses of 94.71, 99.7, and 294.7 °C. The same conversion (33.1%) and outlet temperature (110 °C) was found in all three cases. Also, the original calculations began at the lowest inlet temperature of the chosen range, and then proceeded through successively greater inlet temperatures. The curve does not show any discontinuities, which might occur if at any inlet temperature the solution jumped to a different steady state.  While not a rigorous test, these results suggests that there is only one steady state.
 
-<center>**Deliverables**</center>
+<center>**Summary**</center>
 
 The maximum conversion, 33%, occurs at an inlet temperature of 95 °C, and the corresponding outlet temperature is 110 °C. Lower inlet temperatures result in a lower rate that yields lower conversions. At higher temperatures, thermodynamic equilibrium limits the conversion. Because the reaction is exothermic, the equilibrium conversion decreases as the temperature increases. Thus the maximum in the conversion is due to the opposing effects of temperature on the rate coefficient and the equilibrium constant.
 
@@ -972,15 +1002,9 @@ $$
 
 [Given Constants]{.underline}: $V$ = 500 cm^3^, $\dot{V}_{in}$ = 1.0 cm^3^ s^-1^, $C_{A,in}$ = 0.015 mol cm^-3^, $C_{B,in}$ = 0.015 mol cm^-3^, $T_{in}$ = (50 +273.15) K (Part B only), $\tilde{C}_p$ = 0.35 cal g^-1^ K^-1^, $\rho$ = 0.93 gm cm^-3^, $\Delta H_1$ = –20 kJ mol^-1^, $k_{0,1}$ = 3.24 x 10^12^ cm^3^ mol^-1^ s^-1^, and $E_1$ = 105.0 kJ mol^-1^.
 
-**Part A, Generating the Multiplicity Plot**
-
-[Parameter]{.underline}: $T$
+[Parameter]{.underline}: $T$ (for multiplicity plot)
  
-[Deliverables]{.underline}: $\underline{T}$ *vs.* $\underline{T}_{in}$ as a graph and $N_{ss}$
-
-**Part B, Calculating the Steady-State Conversion and Outlet Temperature**
-
-[Deliverables]{.underline}: $f_A$ and $T$ for each steady state.
+[Deliverables]{.underline}: $\underline{T}$ *vs.* $\underline{T}_{in}$ as a graph and $N_{ss}$ (for multiplicity plot); $f_A$ and $T$ (for steady state responses).
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -1003,7 +1027,15 @@ I'm going to solve the design equations numerically, and since they are ATEs I'l
 
 :::
 
-[Reactor Model Equations]{.underline}
+<center>**Completion Strategy**</center>
+
+This assignment involves two distinct response tasks that will be completed sequentially. The first is the generation of a multiplicity plot, and the second is the calculation of the conversion and outlet temperature at each of three steady states. To generate the multiplicity plot, the design equations will be solved to find the outlet molar flow rates and inlet temperature for a range of outlet temperatures. Plotting the results will yield a multiplicity plot. To analyze the three steady states, the design equations will be solved for the outlet molar flow rates and outlet temperature. Different initial guesses for the outlet temperature will be required to find the three solutions.
+
+<center>**Formulation of the Calculations**</center>
+
+**CSTR Model Functions**
+
+[CSTR Design Equations]{.underline}
 
 $$
 0 = \dot n_{A,in} - \dot n_A - Vr_1 = \epsilon_1 \tag{3}
@@ -1036,16 +1068,12 @@ In Part A the outlet temperature is an uncomputable unknown. I'll be choosing a 
 
 :::
 
-[Reactor Model Variables]{.underline}: $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Y$, $\dot{n}_Z$, and either $T_{in}$ (Part A) or $T$ (Part B)
+[CSTR Model Variables]{.underline}: $\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Y$, $\dot{n}_Z$, and either $T_{in}$ (Part A) or $T$ (Part B)
 
 [Additional Computable Unknowns]{.underline}: $\dot{n}_{A,in}$, $r_1$, $k_1$, $C_A$, $\dot{V}$, $C_B$, and $\dot{n}_{B,in}$
 
 $$
 \dot{n}_{i,in} = \dot{V}_{in} C_{i,in} \qquad i = A \text{ and } B \tag{8}
-$$
-
-$$
-r_1 = k_1C_AC_B \tag{2}
 $$
 
 $$
@@ -1079,34 +1107,51 @@ In Part B, the conversion can be calculated using its defining equations each ti
 
 :::
 
-[ATE Solver Inputs]{.underline}:
+[ATE Solver Requirements]{.underline}:
 
-1. Initial guesses for the outlet molar flow rates
+1. Initial guesses for the CSTR model variables (provided as an argument to the CSTR model function)
+2. $T$ must be made available to the residuals function for multiplicity plot
+3. Residuals function that
+	a. receives guesses for the reactor model variables ($\dot{n}_A$, $\dot{n}_B$, $\dot{n}_Y$, $\dot{n}_Z$, and either $T_{in}$ (Part A) or $T$ (Part B))
+	b. calculates the additional unknowns using equations (2), (8) - (10)
+c.	evaluates and returns the CSTR design equation residuals, equations (3) - (7)
 
+**Deliverables Functions**
+
+1. For the multiplicity plot
+	a. Define a range of values for $T$
 $$
-\dot{n}_{i,guess} = \dot{n}_{i,in} \qquad i = A, B, Y, \text{ and } Z \tag{12}
+\underline{T} = \left[-25, \cdots, 350\right] + 273.15K \tag{14}
 $$
 
+	b. Define an initial guess for the CSTR model variables for the first value of 
 $$
-T_{in,guess} = T - 1\,K \qquad \text{Part A only}\tag{13}
+\dot{n}_{i,guess} = \dot{n}_{i,in} \qquad i = A, B, Y, \text{ and } Z \tag{15}
+$$
+$$
+T_{in,guess} = T - 1\,K\tag{16}
 $$
 
+	c. Loop through the values of $T$ and
+		i. Call the CSTR model function, passing the initial guess as an argument, to solve the design equations for the CSTR model variables
+		ii. Save the value of $T_{in}$
+		iii. Set the initial guess equal to the current solution of the design equations
+	d. Plot $T$ *vs.* $T_{in}$
+2. For calculating steady states
+	a. Define initial guesses for the three steady states
 $$
-T_{guess} = T \text{ read from multiplicity plot} \qquad \text{Part B only}\tag{14}
+\dot{n}_{i,guess} = \dot{n}_{i,in} \qquad i = A, B, Y,  \text{ and } Z \tag{12}
+$$
+$$
+T_{guess} = T \text{ read from multiplicity plot}\tag{13}
 $$
 
-2. Residuals function for each part that
-	a. (for Part A only) is provided with a value of the outlet temperature by some means other than as an argument,
-	b. receives a guess for the reactor model variables,
-	c. calculates the additional computable unknowns, and
-	d. calculates and return the residuals. 
-
-[Deliverables Equation]{.underline}: (Part B only)
-
+	b. For each steady state
+		i. Call the CSTR model function, passing the initial guess as an argument, to solve the design equations for the CSTR model variables
+		ii. Calculate the conversion
 $$
 f_A = \frac{\dot{n}_{A,in} - \dot n_A}{\dot{n}_{A,in}} \tag{14}
 $$
-
 
 <center>**Implementation of the Calculations**</center>
 
@@ -1136,6 +1181,8 @@ Here are the essential things that the code for Part B it must do.
 		ii. receive a solution of the reactor design equations which will include the requested temperature
 	c. calculate the conversion
 
+Using the assignment summary and functions defined above, one way to accomplish this for each part is to declare the given constants as global variables, define the CSTR model function, CSTR residuals function, and deliverables function, and then call the deliverables function.
+
 <center>**Results and Discussion**</center>
 
 The calculations for Parts A and B were performed as described above. The resulting multiplicity plot from Part A is shown in @fig-ch6_ex4_T_vs_Tin. The range of values chosen for the outlet temperature did not need to be adjusted. It was broad enough to show that between inlet temperatures of ca. 4 and 90°, three steady states are possible. At the specified inlet temperature of 50 °C, indicated by the blue line in the figure, it can be seen the three steady-state outlet temperatures are approximately 50, 140, and 270 °C.
@@ -1146,7 +1193,7 @@ Those approximate outlet temperatures, read from @fig-ch6_ex4_T_vs_Tin, were use
 
 @fig-ch6_ex4_T_vs_Tin shows the inlet temperature increases steadily from low temperature until it reaches an ignition point at 90.5 °C, where it begins decreasing. It continues to decrease until it reaches an extinction point at 3.9 °C, where it again begins increasing. [Example -@sec-ch6_ex6] examines the stability of the steady states using their transient response to small perturbations of the reactor's outlet temperature.
 
-<center>**Deliverables**</center>
+<center>**Summary**</center>
 
 Three steady states are possible for the specified CSTR. They have outlet temperatures of 50, 138, and 265 °C, and corresponding conversions of 0.03%, 39.9%, and 97.5%, respectively.
 
@@ -1226,7 +1273,11 @@ $$
 
 [Deliverables]{.underline}: $\underline{T}$, $\underline{T}_{ex}$, and $\underline{C}_B$ *vs.* $\underline{t}$ as graphs.
 
-<center>**Formulation of the Equations**</center>
+<center>**Completion Strategy**</center>
+
+This assignment asks for the response of a transient CSTR. The reacting fluid temperature and exchange fluid temperature over time can be found directly by solving the transient CSTR design equations. Solving the design equations will also yield the outlet molar flow rate of reagent B over time, from which the outlet concentration of B over time can be calculated.
+
+<center>**Formulation of the Calculations**</center>
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -1265,7 +1316,9 @@ These eight reactor design equations are IVODEs. They contain eight dependent va
 
 :::
 
-[Reactor Model Equations]{.underline}
+**CSTR Model Function**
+
+[CSTR Design Equations]{.underline}
 
 $$
 \frac{d\dot n_A}{dt} = \frac{\dot V}{V}\left(\dot n_{A,in} - \dot n_A - V\left(r_1 + r_2 + r_3\right)\right) \tag{7}
@@ -1306,24 +1359,12 @@ The reactor design equations are IVODEs. As such, they will be solved to find co
 
 :::
 
-[Reactor Model Variables]{.underline}: $\underline{t}$, $\underline{\dot{n}}_A$, $\underline{\dot{n}}_B$, $\underline{\dot{n}}_W$, $\underline{\dot{n}}_X$, $\underline{\dot{n}}_Y$, $\underline{\dot{n}}_Z$, $\underline{T}$, and $\underline{T}_{ex}$
+[CSTR Model Variables]{.underline}: $\underline{t}$, $\underline{\dot{n}}_A$, $\underline{\dot{n}}_B$, $\underline{\dot{n}}_W$, $\underline{\dot{n}}_X$, $\underline{\dot{n}}_Y$, $\underline{\dot{n}}_Z$, $\underline{T}$, and $\underline{T}_{ex}$
 
 [Additional Computable Unknowns]{.underline}: $\dot{n}_{A,in}$, $r_1$, $r_2$, $r_3$, $C_A$, $C_B$, $\dot{V}$, $\dot{n}_{B,in}$, and $\dot{Q}$
 
 $$
 \dot n_{i,in} = \dot V_{in}C_{i,in} \qquad i = A \text{ and } B \tag{15}
-$$
-
-$$
-r_1 = k_{0,1}\exp{\left(\frac{-E_1}{RT}\right)}C_AC_B \tag{4}
-$$
-
-$$
-r_2 = k_{0,2}\exp{\left(\frac{-E_2}{RT}\right)}C_AC_B \tag{5}
-$$
-
-$$
-r_3 = k_{0,3}\exp{\left(\frac{-E_3}{RT}\right)}C_AC_B \tag{6}
 $$
 
 $$
@@ -1351,33 +1392,45 @@ Solving the design equations will yield corresponding sets of values of the inde
 
 :::
 
-[IVODE Solver Inputs]{.underline}:
+[IVODE Solver Requirements]{.underline}:
 
-1. Initial values shown in @tbl-ch6_ex5_initial_values.
-2. Stopping criterion that $t$ equals the final valueshown in @tbl-ch6_ex5_initial_values.
-3. Derivatives function that
-	a. receives values of the independent and dependent variables at the start of an integration step
-	b. calculates the additional computable unknowns, and
-	c. evaluates and returns the derivatives.
-
-| Variable | Initial Value | Final Value |
-|:------:|:-------:|:-------:|
-| $t$ | $0$ | $t_f$ |
-| $\dot{n}_A$ | 0 | |
-| $\dot{n}_B$ | $\dot{n}_{B,0} = C_{B,0} \dot{V}$ | |
-| $\dot{n}_W$ | 0 | |
-| $\dot{n}_X$ | 0 | |
-| $\dot{n}_Y$ | 0 | |
-| $\dot{n}_Z$ | 0 | |
-| $T$ | $T_0$ | |
-| $T_{ex}$ | $T_{ex,0}$ | |
-  
-: Initial and final values of the design equation variables. {#tbl-ch6_ex5_initial_values}
-
-[Deliverables Equations]{.underline}:
+1. Initial values of the CSTR model variables
 
 $$
-\underline{C}_B = \frac{\underline{\dot{n}}_B}{\dot{V}} \tag{19}
+t \big|_{t=0} = 0 \tag{19}
+$$
+$$
+\dot{n}_i \big|_{t=0} = 0 \qquad i = A, W, X, Y, \text{ and } Z \tag{20}
+$$
+$$
+\dot{n}_B \big|_{t=0} = C_{B,0}\dot{V} \tag{21}
+$$
+$$
+T \big|_{t=0} = T_0 \tag{22}
+$$
+$$
+T_{ex} \big|_{t=0} = T_{ex,0} \tag{23}
+$$
+
+2. Stopping criterion
+
+$$
+t=t_f \tag{24}
+$$
+
+3. Derivatives function that
+	a. receives values of the independent and dependent variables at the start of an integration step
+	b. calculates the additional unknowns using equations (4) - (6), and (15) - (18)
+	c. evaluates and returns the design equation derivatives using equations (7) - (14)
+
+**Deliverables Function**
+
+1. Call the CSTR model function to get the CSTR model variables
+
+2. Calculate the outlet concentration of B over time
+
+$$
+\underline{C}_B = \frac{\underline{\dot{n}}_B}{\dot{V}} \tag{25}
 $$
 
 <center>**Implementation of the Calculations**</center>
@@ -1393,6 +1446,8 @@ Computer code to perform the calculations can be written using a variety of prog
 5. Calculate a corresponding set of values of the concentration of B
 6. Generate graphs showing $\underline{T}$, $\underline{T}_{ex}$, and $\underline{C}_B$ *vs.* $\underline{t}$
 
+Using the assignment summary and functions defined above, one way to accomplish this is to declare the given constants as global variables, define the CSTR model function, CSTR residuals function, and deliverables function, and then call the deliverables function.
+
 <center>**Results and Discussion**</center>
 
 The calculations were performed as described above. The reacting fluid temperature, exchange fluid temperature and concentration of B during the first 30 min of startup are shown in Figures [-@fig-ch6_ex5_T_vs_t], [-@fig-ch6_ex5_Te_vs_t], and [-@fig-ch6_ex5_CB_vs_t]. There are no undesired temperature excursions, and all three quantities appear to be approaching steady-state after 30 minutes. Specifically the reacting fluid temperature is approximately 58 °C, the exchange fluid, 48 °C, and the concentration of B, 0.2 mol gal^-1^. 
@@ -1405,7 +1460,7 @@ The calculations were performed as described above. The reacting fluid temperatu
 
 There are many ways to start-up a reactor. Here the reactor was filled with one reactant and the feed flow was initiated. Another option would be to charge the reactor with the feed and let it react in BSTR mode until the composition and temperature are near their steady-state values, and then start the flow. The start-up procedure that is ultimately used will likely be chosen, at least in part, on the basis of economics. For example, in this assignment the reactor operated for 30 minutes and still hadn't quite reached steady-state. During that time it was not producing the intended product. If there is no use for that partially reacted product, or if the reactants are relatively expensive, the alternative method described above might be preferred because it wastes less feed and generates less partially reacted product.
 
-<center>**Deliverables**</center>
+<center>**Summary**</center>
 
 The startup procedure does not cause any undesirable temperature behavior. After 30 min the the reactor appears to be close to steady-state with a reacting fluid temperature of 58 °C, an exchange fluid temperature of 48 °C and a concentration of B of 0.2 mol gal^-1^. 
 
@@ -1454,11 +1509,19 @@ $$
 
 [Reactor]{.underline}: Adiabatic, liquid-phase, transient CSTR
 
-[Given Constants]{.underline}: $V$ = 500 cm^3^, $\dot{V}_{in}$ = 1.0 cm^3^ s^-1^, $C_{A,in}$ = 0.015 mol cm^-3^, $C_{B,in}$ = 0.015 mol cm^-3^, $T_{in,u}$ = 50 °C, $\tilde{C}_p$ = 0.35 cal g^-1^ K^-1^, $\rho$ = 0.93 gm cm^-3^, $\Delta H_1$ = -20 kJ mol^-1^, $k_{0,1}$ = 3.24 x 10^12^ cm^3^ mol^-1^ s^-1^, $E_1$ = 105.0 kJ mol^-1^, $f_{A,low}$ = 0.0003, $f_{A,mid}$ = 0.399, $f_{A,ss,high}$ = 0.975, $T_{low}$ = 50 °C, $T_{mid}$ = 183 °C, $T_{high}$ = 265 °C, $\Delta T_s$ = 20 °C, and $\Delta T_u$ = 1.0 °C.
+[Given Constants]{.underline}: $V$ = 500 cm^3^, $\dot{V}_{in}$ = 1.0 cm^3^ s^-1^, $C_{A,in}$ = 0.015 mol cm^-3^, $C_{B,in}$ = 0.015 mol cm^-3^, $T_{in,u}$ = 50 °C, $\tilde{C}_p$ = 0.35 cal g^-1^ K^-1^, $\rho$ = 0.93 gm cm^-3^, $\Delta H_1$ = -20 kJ mol^-1^, $k_{0,1}$ = 3.24 x 10^12^ cm^3^ mol^-1^ s^-1^, and $E_1$ = 105.0 kJ mol^-1^
+
+[Parameters]{.underline}: $\underline{f}_A$ = [0.03, 39.9, 97.5] %, $\underline{T}$ = ([50, 183, 265] + 237.15) K, and $\underline{\Delta T}$ = [20, 1, 20] K.
 
 [Deliverables]{.underline}: $\underline{t}$ *vs.* $\underline{T}$ following ± 1 °C perturbations from the U~mid~ steady state and ± 20 °C perturbations form the S~high~ and S~low~ steady states.
 
-<center>**Formulation of the Equations**</center>
+<center>**Completion Strategy**</center>
+
+The outlet temperature versus time can be calculated by solving the CSTR design equations. Here, the design equations need to be solved two times for each steady state. One solution is for a positive perturbation, and one is for a negative perturbation.
+
+<center>**Formulation of the Calculations**</center>
+
+**CSTR Model Function**
 
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
@@ -1489,7 +1552,7 @@ I'm going to solve these IVODEs numerically, so they need to be written in the f
 
 :::
 
-[Reactor Model Equations]{.underline}
+[CSTR Design Equations]{.underline}
 
 $$
 \frac{d \dot{n}_A}{dt} = \frac{\dot{V}_{in}}{V}\left(\dot{n}_{A,in} - \dot{n}_A - V r_1\right) \tag{3}
@@ -1519,16 +1582,12 @@ The design equations are IVODEs, so solving them will yield sets of values of th
 The inlet molar flow rates can be calculated from the inlet volumetric flow rate and the inlet concentrations. A rate expression is provided for calculating the rate, but it introduces the rate coefficient and the concentrations of A and B as additional unknowns. They can be calculated using the defining equation for concentration in an open system. That introduces the outlet volumetric flow rate as the last additional unknown. Here the reacting fluid volume is constant, so assuming the reacting liquid to be an incompressible ideal mixture, the outlet volumetric flow rate equals the inlet volumetric flow rate.
 
 :::
-[Reactor Model Variables]{.underline}: $\underline{t}$, $\underline{\dot{n}}_A$, $\underline{\dot{n}}_B$, $\underline{\dot{n}}_Y$, $\underline{\dot{n}}_Z$, and $\underline{T}$.
+[CSTR Model Variables]{.underline}: $\underline{t}$, $\underline{\dot{n}}_A$, $\underline{\dot{n}}_B$, $\underline{\dot{n}}_Y$, $\underline{\dot{n}}_Z$, and $\underline{T}$.
 
 [Additional Computable Unknowns]{.underline}: $\dot{n}_{A,in}$, $r_1$, $k_1$, $C_A$, $C_B$, $\dot{V}$, and $\dot{n}_{B,in}$
 
 $$
 \dot{n}_{i,in} = \dot{V}_{in} C_{i,in} \qquad i = A \text{ and } B \tag{8}
-$$
-
-$$
-r_1 = k_1C_AC_B \tag{2}
 $$
 
 $$
@@ -1556,25 +1615,51 @@ Solving the design equations will yield the quantities to be plotted, so no furt
 
 :::
 
-[IVODE Solver Inputs]{.underline}:
+[IVODE Solver Requirements]{.underline}:
 
-1. Initial values shown in @tbl-ch6_ex6_initial_values where $x$ equals "low," "mid," or "high," depending on the steady state being analyzed, $y$ equals $s$ or $u$ depending on whether that steady state is stable or unstable, respectively, and $\Delta T_y$ is added when a positive perturbation is being analyzed and subtracted when a negative perturbation is being analyzed.
-2. Final value of $t$ shown in @tbl-ch6_ex6_initial_values as the stopping criterion.
+1. Initial values of the CSTR model variables (provided as an argument to the CSTR model function)
+2. Stopping criterion (provided as an argument to the CSTR model function)
 3. Derivatives function that
-	a. receives values of the independent and dependent variables at the start of an integration step
-	b. calculates the additional computable unknowns, and
-	c. evaluates and returns the derivatives.
+	a. receives values of the reactor model variables at the start of an integration step
+	b. calculates the additional unknowns using equations (2) and (8) - (11)
+	c. evaluates and returns the design equation derivatives using equations (3) - (7)
 
-| Variable | Initial Value | Final Value |
-|:------:|:-------:|:-------:|
-| $t$ | $0$ | $t_f$ = 30 min |
-| $\dot{n}_A$ | $\dot{n}_{A,in} - f_{A,ss,x} \dot{n}_{A,in}$ | |
-| $\dot{n}_B$ | $\dot{n}_{B,in} - f_{A,ss,x} \dot{n}_{A,in}$ | |
-| $\dot{n}_Y$ | $f_{A,ss,x} \dot{n}_{A,in}$ | |
-| $\dot{n}_Z$ | $f_{A,ss,x} \dot{n}_{A,in}$ | |
-| $T$ | $T_{ss,x} ± \Delta T_y$ | |
-  
-: Initial and final values of the design equation variables. {#tbl-ch6_ex6_initial_values}
+**Deliverables Function**
+
+Loop through the three sets of parameter values, and for each set of parameters, $n$
+
+1. define the initial values for a positive perturbation of the temperature
+
+$$
+t \big|_{t=0} = 0 \tag{12}
+$$
+$$
+\dot{n}_A \big|_{t=0} = \dot{n}_{A,in} \left(1-f_{A,0,n}\right)\tag{13}
+$$
+$$
+\dot{n}_B \big|_{t=0} = \dot{n}_{B,in} - f_{A,0,n}\dot{n}_{A,in} \tag{14}
+$$
+$$
+\dot{n}_i \big|_{t=0} = f_{A,0,n}\dot{n}_{A,in} \qquad i = Y \text{ and } Z \tag{15}
+$$
+$$
+T \big|_{t=0} = T_n + \Delta T_{n} \tag{16}
+$$
+
+2. define the stopping criterion
+
+$$
+t= 1 \text{ h} \tag{17}
+$$
+
+3. call the CSTR model function to get $\underline{t}$ and $\underline{T}$
+	
+4. repeat using a negative temperature perturbation
+$$
+T \big|_{t=0} = T_n - \Delta T_n \tag{18}
+$$
+
+5. Plot $\underline{T}$ *vs*. $\underline{t}$ for both perturbations
 
 <center>**Implementation of the Calculations**</center>
 
@@ -1591,11 +1676,15 @@ Computer code to perform the calculations can be written using a variety of prog
 	d. Call an IVODE solver as in step 3b.
 4. Generate graphs showing $\underline{T}$ *vs.* $\underline{t}$ for positive and negative perturbations from each of the three steady states.
 
+Using the assignment summary and functions defined above, one way to accomplish this is to declare the given constants as global variables, define the CSTR model function, CSTR residuals function, and deliverables function, and then call the deliverables function.
+
 <center>**Results and Discussion**</center>
 
 The calculations were performed as described above. @fig-ch6_ex6_unsteady shows the temperature as a function of time following perturbation from the unstable steady state by plus and minus 1 °C holding all of the inputs constant. Since none of the reactor inputs changed, the temperature would have returned to 138 °C had that been a stable steady state. Instead, the figure shows that following a 1 °C increase in the reacting fluid temperature, it continues to increase and stabilizes at the high temperature steady state. Following a 1°C decrease in the reacting fluid temperature, it continues to decrease and stabilizes at the low temperature steady state. This provides a rigorous confirmation of the argument made in @sec-ch6_stability that the middle temperature steady state is unstable.
 
 ![Reacting fluid temperature following a +1 °C (blue) and a -1 °C (orange) perturbation from the unsteady state. The dashed black line represents the unstable steady state, and the solid black lines represent the stable steady states.](solutions/ch6_ex6/example_6_6_6_response_at_U_mid.png){#fig-ch6_ex6_unsteady width="80%"}
+
+The duration of the transients in @fig-ch6_ex6_unsteady are different. This is likely because following the positive temperature perturbation the temperature is rising causing the reaction rate to rise also. Due to the faster reaction rates, the changes occur rapidly. Following the negative temperature perturbation, the temperature is decreasing and changes occur more slowly.
 
 For both the high temperature, @fig-ch6_ex6_high, and low temperature, @fig-ch6_ex6_low, steady states, following much larger perturbations of ± 20 °C the system returns to its original steady state. At the high temperature, the response briefly moves farther from the steady-state before reaching a maximum deviation and then returning to the steady state.
 
@@ -1603,7 +1692,9 @@ For both the high temperature, @fig-ch6_ex6_high, and low temperature, @fig-ch6_
 
 ![Reacting fluid temperature following a +1 °C (blue) and a -1 °C (orange) perturbation from the low temperature (black) steady state.](solutions/ch6_ex6/example_6_6_6_response_at_S_low.png){#fig-ch6_ex6_low width="80%"}
 
-<center>**Deliverables**</center>
+The brief increase in the deviation following perturbation from the high temperature steady state is likely due to concentration effects since only the temperature is perturbed. That causes an immediate jump in the rate, after which the changing composition and temperature have opposing effects. For a brief period, the effect of increasing temperature predominates, but after a short interval, the two effects become equal and the temperature deviation reaches a maximum. From that point on, the concentration effects predominate and the deviation steadily decreases. Apparently concentration effects predominate immediately after perturbation from the low temperature steady state.
+
+<center>**Summary**</center>
 
 A 1°C change of the reacting fluid temperature from the unstable steady state initiates transient operation leading to one of the stable steady states. This shows confirms that the initial steady state is, indeed, unstable. In contrast, a 20 °C change of the eacting fluid temperature from either of the stable steady states initiates transient operation leading back to the original steady state, confirming that these initial steady states are stable.
 
