@@ -952,13 +952,13 @@ This assignment involves two CSTRs operating in series. To begin, I'll sketch th
 
 The only equipment in this system is the two reactors. I'll need to generate the reactor design equations needed to model them. Since they are both steady-state adiabatic CSTRs and are processing the same set of reagents, the design equations needed to model them will be the same and will consist of mole balances on each of the reagents and an energy balance on the reacting fluid. Here I'll use "in" and "out" to label the flow streams entering and leaving the reactor.
 
-The general form of the steady-state CSTR mole balance is given in @eq-cstr_ss_mole_bal, and in this system there is only one reaction occurring. I'll use $V_{Rx}$ to represent the volume of the reactor where $x$ can be either 1 or 2.
+The general form of the steady-state CSTR mole balance is given in @eq-ss_cstr_mole_bal, and in this system there is only one reaction occurring. I'll use $V_{Rx}$ to represent the volume of the reactor where $x$ can be either 1 or 2.
 
 $$
 0 = \dot{n}_{i,in} - \dot{n}_{i,out} + V_{Rx} \sum_j \nu_{i,j}r_j = \dot{n}_{i,in} - \dot{n}_{i,out} + V_{Rx} \nu_{i,1}r_1
 $$
 
-The general form of the steady-state CSTR energy balance is given in @eq-cstr_ss_energy_balance. The reactors in this system are adiabatic ($\dot{Q} = 0$) and do no work ($\dot{W} = 0$). The assignment provides the gravimetric heat capacity of the reacting fluid as a whole, so the term for the sensible heat can be written using that heat capacity. It is constant so it can be taken outside of the integral and the integral can be evaluated. As for the mole balances, there is only one reaction taking place. Both non-zero terms are preceded by minus signs, so I'll multiply both sides of the equation by -1. Finally, the reacting fluid is a liquid and may be assumed to be incompressible, so I'll use $\dot{V}_0$ as the volumetric flow rate since it is the same in all three streams.
+The general form of the steady-state CSTR energy balance is given in @q-ss_cstr_energy_bal. The reactors in this system are adiabatic ($\dot{Q} = 0$) and do no work ($\dot{W} = 0$). The assignment provides the gravimetric heat capacity of the reacting fluid as a whole, so the term for the sensible heat can be written using that heat capacity. It is constant so it can be taken outside of the integral and the integral can be evaluated. As for the mole balances, there is only one reaction taking place. Both non-zero terms are preceded by minus signs, so I'll multiply both sides of the equation by -1. Finally, the reacting fluid is a liquid and may be assumed to be incompressible, so I'll use $\dot{V}_0$ as the volumetric flow rate since it is the same in all three streams.
 
 $$
 0 = \cancelto{0}{\dot{Q}} - \cancelto{0}{\dot{W}} - \cancelto{\rho \dot{V}_0 \tilde{C}_p \left(T_{out} - T_{in} \right)}{\sum_i\dot{n}_{i,in} \int_{T_{in}}^T \hat{C}_{p,i}dT} - V_{Rx} \sum_j r_j \Delta H_j
@@ -1106,7 +1106,7 @@ The calculations were performed as described above. The optimum volumes of react
 
 ![Total reactor volume as a function of the volume of reactor R2.](examples/reb_15_4_3/volume_plot.png){#fig-example_15_4_3_volume_plot width="70%"}
 
-It is easy to understand why there is a minimum total volume when two adiabatic CSTRs operate in series with a fixed overall conversion and a fixed feed rate. When an exothermic reaction takes place adiabatically, thermal effects and composition effects oppose each other as the reaction time, or equivalently, the conversion, increases. As a consequence, as the reaction time or the conversion increases, the reaction rate may increase, reach a maximum, and then decrease. (See [Example -@sec-example_9_6_1].)
+It is easy to understand why there is a minimum total volume when two adiabatic CSTRs operate in series with a fixed overall conversion and a fixed feed rate. When an exothermic reaction takes place adiabatically, thermal effects and composition effects oppose each other as the reaction time, or equivalently, the conversion, increases. As a consequence, as the reaction time or the conversion increases, the reaction rate may increase, reach a maximum, and then decrease. (See [Example -@sec-ch9_ex1].)
 
 As long as the final conversion from the two steady-state, adiabatic CSTRs in series is greater than the conversion where the rate is at its maximum, the rate will decrease as the conversion increases. In the present assignment, that means that the rate at 90% overall conversion, $r_{90\%}$, is smaler than the rate at, say, 85% conversion, $r_{85\%}$.
 
@@ -1601,7 +1601,7 @@ $$
 0 =\dot{V}_0 \breve{C}_p \left(T_1 - T_0 \right) - U_{LM}A \Delta T_{LM}
 $$
 
-I can substitute the defining equation for a log-mean temperature difference into that equation. However, in this system the volumetric flow rate and the heat capacity are constants. As a consequence $T_3 - T_0$ will be equal to $T_2 - T_1$. (This can be seen by rearranging the energy balance above.) As pointed out in @sec-5_reactor_networks, when this is true, the log-mean temperature difference becomes indeterminate, and should be set equal to either of the two temperature differences.
+I can substitute the defining equation for a log-mean temperature difference into that equation. However, in this system the volumetric flow rate and the heat capacity are constants. As a consequence $T_3 - T_0$ will be equal to $T_2 - T_1$. (This can be seen by rearranging the energy balance above.) As pointed out in @sec-ch5, when this is true, the log-mean temperature difference becomes indeterminate, and should be set equal to either of the two temperature differences.
 
 $$
 \frac{\left(T_3 - T_0 \right) - \left(T_2 - T_1 \right)}{\ln \left( \frac{T_3 - T_0}{T_2 - T_1} \right)} \qquad \underset{T_3 - T_0 = T_2 - T_1}{\Rightarrow} \qquad T_3 - T_0
@@ -1642,7 +1642,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-There are two heat exchanger design equations (9) and (10). That means I can solve them to find two unknown quantities. Examining those equations I see that they contain three unknown quantities: $T_1$, $T_2$, and $T_3$. As described in [Appendix -@sec-apndx_solve_daes],  I will solve the heat exchanger design equations, (9) and (10), for $T_1$ and $T_3$. To do so numerically, I will have to (a) provide an initial guess for those unknowns and (b) evaluate the residuals. At the point where I need to evaluate the residuals, I will have a guess for $T_1$ and $T_3$. So, to evaluate the residuals I'll need to calculate any other unknown quantities that appear in them. In this case, the only other unknown is $T_2$. $T_1$ is one of the initial values I need for solving the PFR design equations, so using the guess for $T_1$, I can solve the PFR design equations to find the outlet temperature, $T_2$.
+There are two heat exchanger design equations (9) and (10). That means I can solve them to find two unknown quantities. Examining those equations I see that they contain three unknown quantities: $T_1$, $T_2$, and $T_3$. As described in [Appendix -@sec-apxd_coupled_unknowns],  I will solve the heat exchanger design equations, (9) and (10), for $T_1$ and $T_3$. To do so numerically, I will have to (a) provide an initial guess for those unknowns and (b) evaluate the residuals. At the point where I need to evaluate the residuals, I will have a guess for $T_1$ and $T_3$. So, to evaluate the residuals I'll need to calculate any other unknown quantities that appear in them. In this case, the only other unknown is $T_2$. $T_1$ is one of the initial values I need for solving the PFR design equations, so using the guess for $T_1$, I can solve the PFR design equations to find the outlet temperature, $T_2$.
 
 :::
 
@@ -1918,7 +1918,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-There are two heat exchanger design equations (10) and (11). That means I can solve them to find two unknown quantities. Examining those equations I see that they contain three unknown quantities: $T_1$, $T_2$, and $T_3$. As described in [Appendix -@sec-apndx_solve_daes],  I will solve the heat exchanger design equations, (9) and (10), for $T_1$ and $T_3$. To do so numerically, I will have to (a) provide an initial guess for those unknowns and (b) evaluate the residuals. At the point where I need to evaluate the residuals, I will have a guess for $T_1$ and $T_3$. So, to evaluate the residuals I'll need to calculate any other unknown quantities that appear in them. In this case, the only other unknown is $T_2$. $T_1$ is one of the initial values I need for solving the PFR design equations, so using the guess for $T_1$, I can solve the PFR design equations to find the outlet temperature, $T_2$.
+There are two heat exchanger design equations (10) and (11). That means I can solve them to find two unknown quantities. Examining those equations I see that they contain three unknown quantities: $T_1$, $T_2$, and $T_3$. As described in [Appendix -@sec-apxd_coupled_unknowns],  I will solve the heat exchanger design equations, (9) and (10), for $T_1$ and $T_3$. To do so numerically, I will have to (a) provide an initial guess for those unknowns and (b) evaluate the residuals. At the point where I need to evaluate the residuals, I will have a guess for $T_1$ and $T_3$. So, to evaluate the residuals I'll need to calculate any other unknown quantities that appear in them. In this case, the only other unknown is $T_2$. $T_1$ is one of the initial values I need for solving the PFR design equations, so using the guess for $T_1$, I can solve the PFR design equations to find the outlet temperature, $T_2$.
 
 :::
 
@@ -2277,7 +2277,7 @@ $$
 :::{.callout-tip collapse="true"}
 ## Click Here to See What an Expert Might be Thinking at this Point
 
-The stream mixer balances are coupled ATEs. There are three ATEs, so I can solve them to find three unknowns. For the reasons explained in [Appendix -@sec-apndx_solve_daes], I will solve them for the molar flow rates of A and Z and the temperature of stream 1. 
+The stream mixer balances are coupled ATEs. There are three ATEs, so I can solve them to find three unknowns. For the reasons explained in [Appendix -@sec-apxd_coupled_unknowns], I will solve them for the molar flow rates of A and Z and the temperature of stream 1. 
 
 To solve them numerically I'll need to provide an initial guess for those unknowns, and I'll need to provide a function that evaluates the ATE residuals each time a new guess is generated. That function will be provided with the values of the unknowns, $\dot{n}_{A,1}$, $\dot{n}_{Z,1}$, and $T_1$. The given and known constants listed in the assignment summary will also be available. In order to evaluate the residuals, $\epsilon_1$, $\epsilon_2$, and $\epsilon_3$, every other quantity appearing in equations (6), (7), and (8) will need to be calculated. Looking at those ATEs, the quantities that are not known are $\dot{n}_{A,0}$, $\dot{n}_{Z,0}$, $\dot{n}_{A,4}$, $\dot{n}_{Z,4}$, $\dot{V}_4$, and $T_4$.
 
